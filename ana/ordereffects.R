@@ -1,5 +1,6 @@
 source('ana/shared.R')
 source('ana/learningRates.R')
+source('ana/exponentialModel.R')
 
 #Order effects: ROT----
 
@@ -431,6 +432,230 @@ plotIMIROrderEffects <- function(group = 'instructed', conditions = c(1,2), targ
     dev.off()
   }
   
+}
+
+#Order effects: Model----
+#need group data of % compensation, bootstrap to generate upper, mid, lower CIs
+getROTOrderEffectsPars <- function(groups = c('noninstructed', 'instructed'), location = 'maxvel', conditions = c(1,2), bootstraps = 1000){
+  for(group in groups){
+    if(group == 'noninstructed'){
+      maxppid <- 15
+    } else if (group == 'instructed'){
+      maxppid <- 31
+    }
+    for(condition in conditions){
+      data <- getROTOrderEffects(group = group, maxppid = maxppid, location = location, condition = condition)
+      subdat <- data[,2:ncol(data)]
+      lambda <- c()
+      N0 <- c()
+      for(bs in c(1:bootstraps)){
+        cat(sprintf('group: %s, condition: %s, iteration: %s \n', group, condition, bs))
+        bs_mat <- subdat[,sample(ncol(subdat),ncol(subdat), replace = TRUE)]
+        bs_dat <- rowMeans(bs_mat, na.rm = TRUE)
+        
+        par <- exponentialFit(signal = bs_dat)
+        lambda <- c(lambda, par['lambda'])
+        N0 <- c(N0, par['N0'])
+      }
+      
+      write.csv(data.frame(lambda, N0), file=sprintf('data/pilot/ROT_%s_modpar_ordereffects_%s.csv',group,condition), quote=F, row.names=F)
+    }
+  }
+  
+}
+
+plotROTOrderEffectsModel <- function(groups = c('noninstructed', 'instructed'), conditions = c(1,2), location = 'maxvel', target='inline'){
+  for(group in groups){
+    
+    #but we can save plot as svg file
+    if (target=='svg' & group == 'noninstructed') {
+      svglite(file='doc/fig/pilot/Fig1A_ROT_NI_ordereffects_model.svg', width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
+    } else if (target=='svg' & group == 'instructed'){
+      svglite(file='doc/fig/pilot/Fig2A_ROT_I_ordereffects_model.svg', width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
+    }
+    
+    par(mfrow = c(1,2))
+    
+    for(condition in conditions){
+      
+      plot(NA, NA, xlim = c(0,91), ylim = c(-200,200), 
+           xlab = "Trial", ylab = "Amount of Compensation (%)", frame.plot = FALSE, #frame.plot takes away borders
+           main = sprintf("ROT: %s, order: %s", group, condition), xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
+      abline(h = c(-100,0, 100), col = 8, lty = 2) #creates horizontal dashed lines through y =  0 and 30
+      axis(1, at = c(1, 30, 60, 90)) #tick marks for x axis
+      axis(2, at = c(-200, -100, 0, 100, 200)) #tick marks for y axis
+      
+      if(group == 'noninstructed'){
+        maxppid <- 15
+      } else if (group == 'instructed'){
+        maxppid <- 31
+      }
+      
+      #show the percent compensation from data
+      groupconfidence <- read.csv(file=sprintf('data/pilot/ROT_%s_CI_ordereffects_%d.csv', group, condition))
+      mid <- groupconfidence[,2]
+      col <- '#A9A9A9ff'
+      lines(mid, lty=1, col=col)
+      
+      #get model parameters from data - no bootstrapping
+      dat <- getROTOrderEffects(group = group, maxppid = maxppid, location = location, condition = condition)
+      subdat <- dat[,2:ncol(dat)]
+      bs_dat <- rowMeans(subdat, na.rm = TRUE)
+      par <- exponentialFit(signal = bs_dat)
+      
+      #get CIs for rate of change, asymptote will just be 50%, then solid line is based from pars of data (no bootstrapping)
+      #bootstrapped pars are used for lower and upper bounds
+      data <- read.csv(sprintf('data/pilot/ROT_%s_modpar_ordereffects_%s.csv', group, condition))
+      
+      qs_lambda <- quantile(data$lambda, probs = c(0.025, 0.500, 0.975))
+      qs_N0 <- quantile(data$N0, probs = c(0.025, 0.500, 0.975))
+      
+      lwr <- setNames(c(qs_lambda[['2.5%']], qs_N0[['50%']]), c('lambda', 'N0'))
+      mid <- setNames(c(par[['lambda']], qs_N0[['50%']]), c('lambda', 'N0'))
+      upr <- setNames(c(qs_lambda[['97.5%']], qs_N0[['50%']]), c('lambda', 'N0'))
+      
+      xcoords <- c(1:90)
+      dfit <- exponentialModel(par=lwr, timepoints=xcoords)
+      y_lwr <- dfit$output
+      dfit <- exponentialModel(par=mid, timepoints=xcoords)
+      y_mid <- dfit$output
+      dfit <- exponentialModel(par=upr, timepoints=xcoords)
+      y_upr <- dfit$output
+      
+      colourscheme <- getCtypeColourScheme(conditions = condition)
+      col <- colourscheme[[condition]][['T']] #use colour scheme according to group
+      #upper and lower bounds create a polygon
+      #polygon creates it from low left to low right, then up right to up left -> use rev
+      #x is just trial nnumber, y depends on values of bounds
+      polygon(x = c(xcoords, rev(xcoords)), y = c(y_lwr, rev(y_upr)), border=NA, col=col)
+      #add CIs for asymptote
+      abline(h = c(qs_N0[['2.5%']], qs_N0[['97.5%']]), col = col, lty = 2, lwd=2)
+      col <- colourscheme[[condition]][['S']]
+      lines(y_mid,col=col,lty=1,lwd=2)
+      
+      #add legend
+      legend(20,-100,legend=c('reaches','model (rate of change)','learning asymptote 95% CI'),
+             col=c('#A9A9A9ff',colourscheme[[condition]][['S']],colourscheme[[condition]][['T']]),
+             lty=c(1,1,2),bty='n',cex=1,lwd=2)
+      
+    }
+
+    #close everything if you saved plot as svg
+    if (target=='svg') {
+      dev.off()
+    }
+  }
+}
+
+getMIROrderEffectsPars <- function(groups = c('noninstructed', 'instructed'), location = 'maxvel', conditions = c(1,2), bootstraps = 1000){
+  for(group in groups){
+    if(group == 'noninstructed'){
+      maxppid <- 15
+    } else if (group == 'instructed'){
+      maxppid <- 31
+    }
+    for(condition in conditions){
+      data <- getMIROrderEffects(group = group, maxppid = maxppid, location = location, condition = condition)
+      subdat <- data[,2:ncol(data)]
+      lambda <- c()
+      N0 <- c()
+      for(bs in c(1:bootstraps)){
+        cat(sprintf('group: %s, condition: %s, iteration: %s \n', group, condition, bs))
+        bs_mat <- subdat[,sample(ncol(subdat),ncol(subdat), replace = TRUE)]
+        bs_dat <- rowMeans(bs_mat, na.rm = TRUE)
+        
+        par <- exponentialFit(signal = bs_dat)
+        lambda <- c(lambda, par['lambda'])
+        N0 <- c(N0, par['N0'])
+      }
+      
+      write.csv(data.frame(lambda, N0), file=sprintf('data/pilot/MIR_%s_modpar_ordereffects_%s.csv',group,condition), quote=F, row.names=F)
+    }
+  }
+  
+}
+
+plotMIROrderEffectsModel <- function(groups = c('noninstructed', 'instructed'), conditions = c(1,2), location = 'maxvel', target='inline'){
+  for(group in groups){
+    
+    #but we can save plot as svg file
+    if (target=='svg' & group == 'noninstructed') {
+      svglite(file='doc/fig/pilot/Fig3A_MIR_NI_ordereffects_model.svg', width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
+    } else if (target=='svg' & group == 'instructed'){
+      svglite(file='doc/fig/pilot/Fig4A_MIR_I_ordereffects_model.svg', width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
+    }
+    
+    par(mfrow = c(1,2))
+    
+    for(condition in conditions){
+      
+      plot(NA, NA, xlim = c(0,91), ylim = c(-200,200), 
+           xlab = "Trial", ylab = "Amount of Compensation (%)", frame.plot = FALSE, #frame.plot takes away borders
+           main = sprintf("MIR: %s, order: %s", group, condition), xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
+      abline(h = c(-100,0, 100), col = 8, lty = 2) #creates horizontal dashed lines through y =  0 and 30
+      axis(1, at = c(1, 30, 60, 90)) #tick marks for x axis
+      axis(2, at = c(-200, -100, 0, 100, 200)) #tick marks for y axis
+      
+      if(group == 'noninstructed'){
+        maxppid <- 15
+      } else if (group == 'instructed'){
+        maxppid <- 31
+      }
+      
+      #show the percent compensation from data
+      groupconfidence <- read.csv(file=sprintf('data/pilot/MIR_%s_CI_ordereffects_%d.csv', group, condition))
+      mid <- groupconfidence[,2]
+      col <- '#A9A9A9ff'
+      lines(mid, lty=1, col=col)
+        
+      #get model parameters from data - no bootstrapping
+      dat <- getMIROrderEffects(group = group, maxppid = maxppid, location = location, condition = condition)
+      subdat <- dat[,2:ncol(dat)]
+      bs_dat <- rowMeans(subdat, na.rm = TRUE)
+      par <- exponentialFit(signal = bs_dat)
+        
+      #get CIs for rate of change, asymptote will just be 50%, then solid line is based from pars of data (no bootstrapping)
+      #bootstrapped pars are used for lower and upper bounds
+      data <- read.csv(sprintf('data/pilot/MIR_%s_modpar_ordereffects_%s.csv', group, condition))
+        
+      qs_lambda <- quantile(data$lambda, probs = c(0.025, 0.500, 0.975))
+      qs_N0 <- quantile(data$N0, probs = c(0.025, 0.500, 0.975))
+        
+      lwr <- setNames(c(qs_lambda[['2.5%']], qs_N0[['50%']]), c('lambda', 'N0'))
+      mid <- setNames(c(par[['lambda']], qs_N0[['50%']]), c('lambda', 'N0'))
+      upr <- setNames(c(qs_lambda[['97.5%']], qs_N0[['50%']]), c('lambda', 'N0'))
+        
+      xcoords <- c(1:90)
+      dfit <- exponentialModel(par=lwr, timepoints=xcoords)
+      y_lwr <- dfit$output
+      dfit <- exponentialModel(par=mid, timepoints=xcoords)
+      y_mid <- dfit$output
+      dfit <- exponentialModel(par=upr, timepoints=xcoords)
+      y_upr <- dfit$output
+        
+      colourscheme <- getCtypeColourScheme(conditions = condition)
+      col <- colourscheme[[condition]][['T']] #use colour scheme according to group
+      #upper and lower bounds create a polygon
+      #polygon creates it from low left to low right, then up right to up left -> use rev
+      #x is just trial nnumber, y depends on values of bounds
+      polygon(x = c(xcoords, rev(xcoords)), y = c(y_lwr, rev(y_upr)), border=NA, col=col)
+      #add CIs for asymptote
+      abline(h = c(qs_N0[['2.5%']], qs_N0[['97.5%']]), col = col, lty = 2, lwd=2)
+      col <- colourscheme[[condition]][['S']]
+      lines(y_mid,col=col,lty=1,lwd=2)
+        
+      #add legend
+      legend(20,-100,legend=c('reaches','model (rate of change)','learning asymptote 95% CI'),
+              col=c('#A9A9A9ff',colourscheme[[condition]][['S']],colourscheme[[condition]][['T']]),
+              lty=c(1,1,2),bty='n',cex=1,lwd=2)
+        
+    }
+    
+    #close everything if you saved plot as svg
+    if (target=='svg') {
+      dev.off()
+    }
+  }
 }
 
 #Order Effects: Stats----
