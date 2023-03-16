@@ -482,7 +482,7 @@ plotROTOrderEffectsModel <- function(groups = c('noninstructed', 'instructed'), 
            xlab = "Trial", ylab = "Amount of Compensation (%)", frame.plot = FALSE, #frame.plot takes away borders
            main = sprintf("ROT: %s, order: %s", group, condition), xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
       abline(h = c(-100,0, 100), col = 8, lty = 2) #creates horizontal dashed lines through y =  0 and 30
-      axis(1, at = c(1, 30, 60, 90)) #tick marks for x axis
+      axis(1, at = c(0, 30, 60, 89)) #tick marks for x axis
       axis(2, at = c(-200, -100, 0, 100, 200)) #tick marks for y axis
       
       if(group == 'noninstructed'){
@@ -494,8 +494,9 @@ plotROTOrderEffectsModel <- function(groups = c('noninstructed', 'instructed'), 
       #show the percent compensation from data
       groupconfidence <- read.csv(file=sprintf('data/pilot/ROT_%s_CI_ordereffects_%d.csv', group, condition))
       mid <- groupconfidence[,2]
+      x <- c(1:90)
       col <- '#A9A9A9ff'
-      lines(mid, lty=1, col=col)
+      lines(x, mid, lty=1, col=col)
       
       #get model parameters from data - no bootstrapping
       dat <- getROTOrderEffects(group = group, maxppid = maxppid, location = location, condition = condition)
@@ -514,7 +515,7 @@ plotROTOrderEffectsModel <- function(groups = c('noninstructed', 'instructed'), 
       mid <- setNames(c(par[['lambda']], qs_N0[['50%']]), c('lambda', 'N0'))
       upr <- setNames(c(qs_lambda[['97.5%']], qs_N0[['50%']]), c('lambda', 'N0'))
       
-      xcoords <- c(1:90)
+      xcoords <- c(0:89)
       dfit <- exponentialModel(par=lwr, timepoints=xcoords)
       y_lwr <- dfit$output
       dfit <- exponentialModel(par=mid, timepoints=xcoords)
@@ -531,7 +532,7 @@ plotROTOrderEffectsModel <- function(groups = c('noninstructed', 'instructed'), 
       #add CIs for asymptote
       abline(h = c(qs_N0[['2.5%']], qs_N0[['97.5%']]), col = col, lty = 2, lwd=2)
       col <- colourscheme[[condition]][['S']]
-      lines(y_mid,col=col,lty=1,lwd=2)
+      lines(xcoords, y_mid,col=col,lty=1,lwd=2)
       
       #add legend
       legend(20,-100,legend=c('reaches','model (rate of change)','learning asymptote 95% CI'),
@@ -593,7 +594,7 @@ plotMIROrderEffectsModel <- function(groups = c('noninstructed', 'instructed'), 
            xlab = "Trial", ylab = "Amount of Compensation (%)", frame.plot = FALSE, #frame.plot takes away borders
            main = sprintf("MIR: %s, order: %s", group, condition), xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
       abline(h = c(-100,0, 100), col = 8, lty = 2) #creates horizontal dashed lines through y =  0 and 30
-      axis(1, at = c(1, 30, 60, 90)) #tick marks for x axis
+      axis(1, at = c(0, 30, 60, 89)) #tick marks for x axis
       axis(2, at = c(-200, -100, 0, 100, 200)) #tick marks for y axis
       
       if(group == 'noninstructed'){
@@ -604,9 +605,10 @@ plotMIROrderEffectsModel <- function(groups = c('noninstructed', 'instructed'), 
       
       #show the percent compensation from data
       groupconfidence <- read.csv(file=sprintf('data/pilot/MIR_%s_CI_ordereffects_%d.csv', group, condition))
+      x <- c(1:90)
       mid <- groupconfidence[,2]
       col <- '#A9A9A9ff'
-      lines(mid, lty=1, col=col)
+      lines(x, mid, lty=1, col=col)
         
       #get model parameters from data - no bootstrapping
       dat <- getMIROrderEffects(group = group, maxppid = maxppid, location = location, condition = condition)
@@ -625,7 +627,7 @@ plotMIROrderEffectsModel <- function(groups = c('noninstructed', 'instructed'), 
       mid <- setNames(c(par[['lambda']], qs_N0[['50%']]), c('lambda', 'N0'))
       upr <- setNames(c(qs_lambda[['97.5%']], qs_N0[['50%']]), c('lambda', 'N0'))
         
-      xcoords <- c(1:90)
+      xcoords <- c(0:89)
       dfit <- exponentialModel(par=lwr, timepoints=xcoords)
       y_lwr <- dfit$output
       dfit <- exponentialModel(par=mid, timepoints=xcoords)
@@ -642,7 +644,7 @@ plotMIROrderEffectsModel <- function(groups = c('noninstructed', 'instructed'), 
       #add CIs for asymptote
       abline(h = c(qs_N0[['2.5%']], qs_N0[['97.5%']]), col = col, lty = 2, lwd=2)
       col <- colourscheme[[condition]][['S']]
-      lines(y_mid,col=col,lty=1,lwd=2)
+      lines(xcoords, y_mid,col=col,lty=1,lwd=2)
         
       #add legend
       legend(20,-100,legend=c('reaches','model (rate of change)','learning asymptote 95% CI'),
