@@ -160,3 +160,126 @@ exponentialFit <- function(signal, timepoints=length(signal), mode='learning', g
   return(winpar)
   
 }
+
+
+# Step Function -----
+
+
+#' @title Run an step function given parameters.
+#' @param par A named vector with the model parameter (see details).
+#' @param timepoints An integer indicating the number of trials (N), or a vector
+#' with N trial numbers (these can have missing values or be fractions). If an
+#' integer, the timepoints at which the exponential will be evaluated is:
+#' 0, 1 ... N-2, N-1
+#' @description Get output of a step function given some parameters
+#' @details there are many details
+#' @examples
+#' # write example!
+#' @export
+stepFunctionModel <- function(par, timepoints) {
+  
+  if (length(timepoints) == 1) {
+    timepoints <- c(0:(timepoints-1))
+  }
+  
+  output <- rep(0,length(timepoints))
+  
+  output[c(round(par['step']):length(timepoints))] <- output[c(round(par['step']):length(timepoints))] + par['asymptote']
+  
+  return(data.frame(trial=timepoints,
+                    output=output))
+  
+}
+
+#' @title Get the MSE between a step function and a series of reach deviations.
+#' @param par A named numeric vector with the model parameters (see
+#' stepFunctionModel).
+#' @param signal A numeric vector with N reach deviations.
+#' @param timepoints Either an integer with the number of trials (N) or a vector
+#' with N trial numbers.
+#' @return A float: the mean squared error between the total model output and
+#' the reach deviations.
+#' @description This function is part of a set of functions to fit and
+#' evaluate an exponential function to describe a series of reach deviations.
+#' @details There are many details.
+#' @examples
+#' # write example?
+#' @export
+stepFunctionMSE <- function(par, signal, timepoints=c(0:(length(signal)-1))) {
+  
+  MSE <- mean((stepFunctionModel(par, timepoints)$output - signal)^2, na.rm=TRUE)
+  
+  return( MSE )
+  
+}
+
+#' @title Fit a step function to a series of reach deviations.
+#' @param signal A vector of length N with reach deviation data. These should
+#' start around 0 and go up (ideally they are baselined).
+#' @param gridpoints Number of values for rate of change and asymptote, that
+#' are tested in a grid.
+#' @param gridfits Number of best results from gridsearch that are used for
+#' optimizing a fit.
+#' @return A named numeric vector with the optimal parameter that fits a simple
+#' rate model to the data as best as possible, with these elements:
+#' - lambda: the rate of change in the range [0,1]
+#' - N0: the asymptote (or starting value) in the unit of the signal
+#' @description This function is part of a set of functions to fit and
+#' evaluate a simple exponential function to reach deviations.
+#' @details
+#' ?
+#' @examples
+#' # write example!
+#' @import optimx
+#' @export
+stepFunctionFit <- function(signal, gridpoints=11, gridfits=10) {
+  
+  timepoints=length(signal)
+  
+  # set the search grid:
+  parvals <- seq(1/gridpoints/2,1-(1/gridpoints/2),1/gridpoints)
+  
+  asymptoteRange <- c(-1,2)*max(abs(signal), na.rm=TRUE)
+  stepRange <- c(0,timepoints-1)
+  
+  searchgrid <- expand.grid('step'      = round(parvals * (timepoints-1)),
+                            'asymptote' = parvals * diff(asymptoteRange) + asymptoteRange[1] )
+  lo <- c(0,asymptoteRange[1])
+  hi <- c(timepoints-1,asymptoteRange[2])
+  
+  # evaluate starting positions:
+  MSE <- apply(searchgrid, FUN=stepFunctionMSE, MARGIN=c(1), signal=signal, timepoints=timepoints)
+  
+  # run optimx on the best starting positions:
+  allfits <- do.call("rbind",
+                     apply( data.frame(searchgrid[order(MSE)[1:gridfits],]),
+                            MARGIN=c(1),
+                            FUN=optimx::optimx,
+                            fn=stepFunctionMSE,
+                            method     = 'L-BFGS-B',
+                            lower      = lo,
+                            upper      = hi,
+                            timepoints = timepoints,
+                            signal     = signal ) )
+  
+  # pick the best fit:
+  win <- allfits[order(allfits$value)[1],]
+  winpar <- unlist(win[1:2])
+  
+  # return the best parameters:
+  return(winpar)
+  
+}
+
+#Model comparisons-----
+AIC <- function(MSE, k, N) {
+  return( (N * log(MSE)) + (2 * k) )
+}
+
+AICc <- function(MSE, k, N) {
+  return( AIC(MSE, k, N) * (((2*k^2) + 2*k) / (N - k - 1)) )
+}
+
+relativeLikelihood <- function(crit) {
+  return( exp( ( min( crit  ) - crit  ) / 2 ) )
+}
