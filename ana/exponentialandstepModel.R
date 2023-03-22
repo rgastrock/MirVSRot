@@ -271,6 +271,101 @@ stepFunctionFit <- function(signal, gridpoints=11, gridfits=10) {
   
 }
 
+# Logistic Function -----
+
+# for something in between exponential and sudden learning
+
+
+#' @title Return logistic function output given parameters.
+#' @param par A named vector with the model parameter (see details).
+#' @param x a vector of x coordinates at which to evaluate the function.
+#' @description Get output of a logistics function based on the cumulative
+#' normal distribution.
+#' @details The argument `par` is a named vector with 3 entries: `x0`, the
+#' steepest part of the logistic function, `k` the inverse of the steepness of
+#' the logistic function, and `L` the scale of the fuction, which starts at 0
+#' (at -infinity) and reaches `L` at infinity.
+#' @examples
+#' # write example!
+#' @export
+logisticFunction <- function(par,x) {
+  
+  x0 = par['x0']
+  k  = par['k']
+  L  = par['L']
+  #L  = 1
+  
+  return( L / ( 1 + exp( -k * (x - x0) ) ) )
+  
+}
+
+#' @title Return the MSE between a logistic function and data given parameters.
+#' @param par A named vector with the model parameter (see details).
+#' @param data A data frame with an x and y column.
+#' @description Compares the output of a step function given some parameters
+#' evaluated at points `x` in the data frame with the values of `y` in the 
+#' data frame.
+#' @details The argument `par` is a named vector with 3 entries: `x0`, the
+#' steepest part of the logistic function, `k` the inverse of the steepness of
+#' the logistic function, and `L` the scale of the fuction, which starts at 0
+#' (at -infinity) and reaches `L` at infinity.
+#' @examples
+#' # write example!
+#' @export
+logisticFunctionMSE <- function(par,data) {
+  
+  errors <- logisticFunction(par,data$x) - data$y
+  return( mean( errors^2 ) )
+  
+}
+
+#' @title Return logistic function parameters with minimized MSE between data
+#' and function.
+#' @param data A data frame with an x and y column.
+#' @param gridpoints Number of points to test in eahc dimension of grid search.
+#' @param gridfits Number of best points from the grid search to optimize.
+#' @description Get output of a step function given some parameters
+#' @details The output is named vector with 3 parameters for the logistic: `x0`,
+#' the steepest part of the logistic function, `k` the inverse of the steepness
+#' of the logistic function, and `L` the scale of the fuction, which starts at 
+#' 0 (at -infinity) and reaches `L` at infinity.
+#' @examples
+#' # write example!
+#' @export
+logisticFunctionFit <- function(data, gridpoints=11, gridfits=10) {
+  
+  # create a gird of possible starting positions:
+  x0 <- seq(min(data$x),max(data$x),length.out=gridpoints)
+  k  <- seq(-50,50,length.out=gridpoints)
+  L  <- seq(max(data$y)/2,max(data$y)*1.5,length.out=gridpoints)
+  
+  searchgrid <- expand.grid( x0 = x0,
+                             k  = k,
+                             L  = L
+  )
+  
+  # assess how good each of these already is:
+  MSE <- apply(searchgrid, FUN=logisticFunctionMSE, MARGIN=c(1), data=data)
+  
+  #print(MSE)
+  
+  # run error minimization on the best starting positions:
+  allfits <- do.call("rbind",
+                     apply( data.frame(searchgrid[order(MSE)[1:gridfits],]),
+                            MARGIN=c(1),
+                            FUN=optimx::optimx,
+                            fn=logisticFunctionMSE,
+                            method='Nelder-Mead',
+                            data=data ) )
+  
+  # pick the best fit:
+  win <- allfits[order(allfits$value)[1],]
+  
+  # return the best parameters:
+  return(unlist(win[1:3]))
+  
+}
+
 #Model comparisons-----
 AIC <- function(MSE, k, N) {
   return( (N * log(MSE)) + (2 * k) )
