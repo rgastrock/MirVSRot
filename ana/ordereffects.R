@@ -260,6 +260,51 @@ plotIndividualROTOrderEffects <- function(groups = c('noninstructed', 'instructe
   }
 }
 
+plotSmoothedIndividualROTOrderEffects <- function(groups = c('noninstructed', 'instructed'), location = 'maxvel', conditions = c(1,2), target = 'inline') {
+  
+  for(group in groups){
+    #but we can save plot as svg file
+    if (target=='pdf' & group == 'noninstructed') {
+      pdf(file='doc/fig/pilot/Fig1E_ROT_NI_individualLC_ordereffects.pdf', width=12, height=7, pointsize=14)
+    } else if (target=='pdf' & group == 'instructed'){
+      pdf(file='doc/fig/pilot/Fig2E_ROT_I_individualLC_ordereffects.pdf', width=12, height=7, pointsize=14)
+    }
+    
+    if(group == 'noninstructed'){
+      maxppid <- 15
+    } else if (group == 'instructed'){
+      maxppid <- 31
+    }
+    
+    #par(mfrow = c(4,4))
+    
+    for(condition in conditions){
+      
+      data <- getROTOrderEffects(group = group, maxppid = maxppid, location = location, condition = condition)
+      subdat <- data[,2:ncol(data)]
+      
+      for (icol in c(1:ncol(subdat))){
+        plot(NA, NA, xlim = c(0,91), ylim = c(-200,200), 
+             xlab = "Trial", ylab = "Amount of Compensation (%)", frame.plot = FALSE, #frame.plot takes away borders
+             main = sprintf("ROT: %s, Order: %d, p%03d", group, condition, icol), xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
+        abline(h = c(-100,0, 100), col = 8, lty = 2) #creates horizontal dashed lines through y =  0 and 30
+        axis(1, at = c(1, 30, 60, 90)) #tick marks for x axis
+        axis(2, at = c(-200, -100, 0, 100, 200)) #tick marks for y axis
+        
+        y <- subdat[,icol]
+        x <- seq(1, length(y), 1)
+        smoothdat <- ksmooth(x,y, bandwidth=5)
+        lines(smoothdat)
+        points(subdat[,icol])
+      }
+    }
+    #close everything if you saved plot as svg
+    if (target=='pdf') {
+      dev.off()
+    }
+  }
+}
+
 #Order effects: MIR----
 
 getMIROrderEffects <- function(group, maxppid, location,condition){
@@ -509,6 +554,52 @@ plotIndividualMIROrderEffects <- function(groups = c('noninstructed', 'instructe
         
         points(subdat[,icol])
         lines(subdat[,icol])
+      }
+    }
+    #close everything if you saved plot as svg
+    if (target=='pdf') {
+      dev.off()
+    }
+  }
+}
+
+plotSmoothedIndividualMIROrderEffects <- function(groups = c('noninstructed', 'instructed'), location = 'maxvel', conditions = c(1,2), target = 'inline') {
+  
+  for(group in groups){
+    #but we can save plot as svg file
+    if (target=='pdf' & group == 'noninstructed') {
+      pdf(file='doc/fig/pilot/Fig3E_MIR_NI_individualLC_ordereffects.pdf', width=12, height=7, pointsize=14)
+    } else if (target=='pdf' & group == 'instructed'){
+      pdf(file='doc/fig/pilot/Fig4E_MIR_I_individualLC_ordereffects.pdf', width=12, height=7, pointsize=14)
+    }
+    
+    if(group == 'noninstructed'){
+      maxppid <- 15
+    } else if (group == 'instructed'){
+      maxppid <- 31
+    }
+    
+    #par(mfrow = c(4,4))
+    
+    for(condition in conditions){
+      
+      data <- getMIROrderEffects(group = group, maxppid = maxppid, location = location, condition = condition)
+      subdat <- data[,2:ncol(data)]
+      
+      for (icol in c(1:ncol(subdat))){
+        plot(NA, NA, xlim = c(0,91), ylim = c(-200,200), 
+             xlab = "Trial", ylab = "Amount of Compensation (%)", frame.plot = FALSE, #frame.plot takes away borders
+             main = sprintf("MIR: %s, Order: %d, p%03d", group, condition, icol), xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
+        abline(h = c(-100,0, 100), col = 8, lty = 2) #creates horizontal dashed lines through y =  0 and 30
+        axis(1, at = c(1, 30, 60, 90)) #tick marks for x axis
+        axis(2, at = c(-200, -100, 0, 100, 200)) #tick marks for y axis
+        
+        y <- subdat[,icol]
+        x <- seq(1, length(y), 1)
+        smoothdat <- ksmooth(x,y, bandwidth=5)
+        lines(smoothdat)
+        points(subdat[,icol])
+        
       }
     }
     #close everything if you saved plot as svg
@@ -1223,6 +1314,10 @@ getOrderEffectsMSE <- function(perturb = c('ROT', 'MIR'), group = 'noninstructed
     lambda <- c()
     N0 <- c()
     mse_expl <- c()
+    x0 <- c()
+    k <- c()
+    L <- c()
+    mse_log <- c()
     order <- c()
     for(condition in conditions){
       if(ptype == 'ROT'){
@@ -1240,6 +1335,12 @@ getOrderEffectsMSE <- function(perturb = c('ROT', 'MIR'), group = 'noninstructed
         par_expl <- exponentialFit(signal = ppdat)
         pp_mse_expl<- exponentialMSE(par=par_expl, signal=ppdat)
         
+        y <- ppdat
+        x <- seq(1, length(y), 1)
+        bs_dat <- data.frame(x,y)
+        par_log <- logisticFunctionFit(data = bs_dat)
+        pp_mse_log<- logisticFunctionMSE(par=par_log, data=bs_dat)
+        
         cond <- condition
         
         step <- c(step, par_step['step'])
@@ -1248,59 +1349,70 @@ getOrderEffectsMSE <- function(perturb = c('ROT', 'MIR'), group = 'noninstructed
         lambda <- c(lambda, par_expl['lambda'])
         N0 <- c(N0, par_expl['N0'])
         mse_expl <- c(mse_expl, pp_mse_expl)
+        x0 <- c(x0, par_log['x0'])
+        k <- c(k, par_log['k'])
+        L <- c(L, par_log['L'])
+        mse_log <- c(mse_log, pp_mse_log)
         order <- c(order, cond)
       }
     }
-    ndat <- data.frame(step, asymptote, mse_step, lambda, N0, mse_expl, order)
+    ndat <- data.frame(step, asymptote, mse_step, lambda, N0, mse_expl, x0, k, L, mse_log, order)
     write.csv(ndat, file=sprintf('data/pilot/%s_%s_MSE_ordereffects.csv',ptype, group), quote=F, row.names=F)
   }
 }
 
-getParticipantOrderEffectsLikelihoods <- function(perturb = c('ROT', 'MIR'), klevel = 2, N = 2, conditions = c(1,2)){
+getParticipantOrderEffectsLikelihoods <- function(perturb = c('ROT', 'MIR'), klevel = c(2,2,3), N = 2, conditions = c(1,2)){
   participant <- c()
   loglikelihood_step <- c()
   loglikelihood_expl <- c()
+  loglikelihood_log <- c()
   for(ptype in perturb){
     data <- read.csv(sprintf('data/pilot/%s_noninstructed_MSE_ordereffects.csv', ptype))
-    for(cond in conditions){
-      ndat <- data[which(data$order == cond),]
+    for(condition in conditions){
+      ndat <- data[which(data$order == condition),]
       for(irow in c(1:nrow(ndat))){
         subdat <- ndat[irow,]
         MSE_step <- setNames(subdat$mse_step, 'mse_step')
         MSE_expl <- setNames(subdat$mse_expl, 'mse_expl')
+        MSE_log <- setNames(subdat$mse_log, 'mse_log')
         
-        MSE <- c(MSE_step, MSE_expl)
-        k <- rep(klevel, length(MSE))
-        AICs <- AIC(MSE, k, N)
+        MSE <- c(MSE_step, MSE_expl, MSE_log)
+        #k <- rep(klevel, length(MSE))
+        k <- klevel
+        AICs <- AICc(MSE, k, N)
         loglikelihoods <- relativeLikelihood(AICs)
         
-        pp <- sprintf('p%03d_%s_%d', irow, ptype, cond)
+        pp <- sprintf('p%03d_%s_%d', irow, ptype, condition)
         
         participant <- c(participant, pp)
         loglikelihood_step <- c(loglikelihood_step, loglikelihoods['mse_step'])
         loglikelihood_expl <- c(loglikelihood_expl, loglikelihoods['mse_expl'])
+        loglikelihood_log <- c(loglikelihood_log, loglikelihoods['mse_log'])
       }
     }
   }
-  alldat <- data.frame(participant, loglikelihood_step, loglikelihood_expl)
+  alldat <- data.frame(participant, loglikelihood_step, loglikelihood_expl, loglikelihood_log)
   write.csv(alldat,'data/pilot/participant_model_likelihoods.csv', row.names=FALSE)
 }
 
 #do model comparisons on group level (sums of MSEs)
-getGroupOrderEffectsLikelihoods <- function(perturb = c('ROT', 'MIR'), klevel = 2, N = 2, conditions = c(1,2)){
+getGroupOrderEffectsLikelihoods <- function(perturb = c('ROT', 'MIR'), klevel = c(2,2,3), N = 2, conditions = c(1,2)){
   group <- c()
   loglikelihood_step <- c()
   loglikelihood_expl <- c()
+  loglikelihood_log <- c()
   for(ptype in perturb){
     data <- read.csv(sprintf('data/pilot/%s_noninstructed_MSE_ordereffects.csv', ptype))
     for(cond in conditions){
       ndat <- data[which(data$order == cond),]
       MSE_step <- setNames(sum(ndat$mse_step), 'mse_step')
       MSE_expl <- setNames(sum(ndat$mse_expl), 'mse_expl')
+      MSE_log <- setNames(sum(ndat$mse_log), 'mse_log')
       
-      MSE <- c(MSE_step, MSE_expl)
-      k <- rep(klevel, length(MSE))
-      AICs <- AIC(MSE, k, N)
+      MSE <- c(MSE_step, MSE_expl, MSE_log)
+      #k <- rep(klevel, length(MSE))
+      k <- klevel
+      AICs <- AICc(MSE, k, N)
       loglikelihoods <- relativeLikelihood(AICs)
       
       grpinfo <- sprintf('%s_%d', ptype, cond)
@@ -1308,25 +1420,29 @@ getGroupOrderEffectsLikelihoods <- function(perturb = c('ROT', 'MIR'), klevel = 
       group <- c(group, grpinfo)
       loglikelihood_step <- c(loglikelihood_step, loglikelihoods['mse_step'])
       loglikelihood_expl <- c(loglikelihood_expl, loglikelihoods['mse_expl'])
+      loglikelihood_log <- c(loglikelihood_log, loglikelihoods['mse_log'])
     }
   }
-  alldat <- data.frame(group, loglikelihood_step, loglikelihood_expl)
+  alldat <- data.frame(group, loglikelihood_step, loglikelihood_expl, loglikelihood_log)
   write.csv(alldat,'data/pilot/group_model_likelihoods.csv', row.names=FALSE)
 }
 
-getPerturbOrderEffectsLikelihoods <- function(perturb = c('ROT', 'MIR'), klevel = 2, N = 2){
+getPerturbOrderEffectsLikelihoods <- function(perturb = c('ROT', 'MIR'), klevel = c(2,2,3), N = 2){
   group <- c()
   loglikelihood_step <- c()
   loglikelihood_expl <- c()
+  loglikelihood_log <- c()
   for(ptype in perturb){
     data <- read.csv(sprintf('data/pilot/%s_noninstructed_MSE_ordereffects.csv', ptype))
     
     MSE_step <- setNames(sum(data$mse_step), 'mse_step')
     MSE_expl <- setNames(sum(data$mse_expl), 'mse_expl')
+    MSE_log <- setNames(sum(data$mse_log), 'mse_log')
     
-    MSE <- c(MSE_step, MSE_expl)
-    k <- rep(klevel, length(MSE))
-    AICs <- AIC(MSE, k, N)
+    MSE <- c(MSE_step, MSE_expl, MSE_log)
+    #k <- rep(klevel, length(MSE))
+    k <- klevel
+    AICs <- AICc(MSE, k, N)
     loglikelihoods <- relativeLikelihood(AICs)
     
     grpinfo <- sprintf('%s', ptype)
@@ -1334,281 +1450,52 @@ getPerturbOrderEffectsLikelihoods <- function(perturb = c('ROT', 'MIR'), klevel 
     group <- c(group, grpinfo)
     loglikelihood_step <- c(loglikelihood_step, loglikelihoods['mse_step'])
     loglikelihood_expl <- c(loglikelihood_expl, loglikelihoods['mse_expl'])
+    loglikelihood_log <- c(loglikelihood_log, loglikelihoods['mse_log'])
     
   }
-  alldat <- data.frame(group, loglikelihood_step, loglikelihood_expl)
+  alldat <- data.frame(group, loglikelihood_step, loglikelihood_expl, loglikelihood_log)
   write.csv(alldat,'data/pilot/all_model_likelihoods.csv', row.names=FALSE)
 }
 
 #Order Effects: Stats----
 
-# We can just compare the two conditions per perturbation type across blocks of trials (much like learning rate analysis below)
-# We are only analyzing noninstructed group for now
-# Start with ROT
 
-#Use exponential decay model: https://github.com/thartbm/Reach/blob/main/R/models.R
-
-ROTgetLongFormat <- function(conditions=c(1,2), group){
-  
-  for (condition in conditions){
-    if(group == 'noninstructed'){
-      ROT1dat <- getROTOrderEffects(group='noninstructed',maxppid=15,location='maxvel',condition=condition)
-    } else if(group == 'instructed'){
-      ROT1dat <- getROTOrderEffects(group='instructed',maxppid=31,location='maxvel',condition=condition)
-    }
+#Exponential decay model will be fit for each participant, generating lambda and asymptote parameters for each.
+#We can then compare either lambdas or asymptotes for different conditions (e.g. order effects) using a t-test (frequentist and Bayesian)
+getLambdaOrderEffectsTTest <- function(perturbation = c('ROT', 'MIR')){
+  for(ptype in perturbation){
+    data <- read.csv(sprintf('data/pilot/%s_noninstructed_MSE_ordereffects.csv', ptype))
     
+    subdat1 <- data[which(data$order == 1),]
+    subdat1 <- subdat1$lambda
     
-    if(condition == 1){
-      ppcols <- c('First_p1','First_p2', 'First_p3', 'First_p4', 'First_p5', 'First_p6', 'First_p7', 'First_p8')
-      colnames(ROT1dat) <- c('trial', 'First_p1','First_p2', 'First_p3', 'First_p4', 'First_p5', 'First_p6', 'First_p7', 'First_p8')
-    } else if(condition == 2){
-      ppcols <- c('Second_p1','Second_p2', 'Second_p3', 'Second_p4', 'Second_p5', 'Second_p6', 'Second_p7', 'Second_p8')
-      colnames(ROT1dat) <- c('trial', 'Second_p1','Second_p2', 'Second_p3', 'Second_p4', 'Second_p5', 'Second_p6', 'Second_p7', 'Second_p8')
-    }
-    ROT1dat <- as.data.frame(ROT1dat)
+    subdat2 <- data[which(data$order == 2),]
+    subdat2 <- subdat2$lambda
     
-    #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
-    longdata <- gather(ROT1dat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
-
-    write.csv(longdata, file=sprintf('data/ROT_%s_ordereffects_long_%s.csv',group, condition), row.names = F)
-
-    
+    cat(sprintf('Frequentist t-test (perturbation: %s, condition: first vs. second): \n', ptype))
+    print(t.test(subdat1, subdat2))
+    cat(sprintf('Bayesian t-test (perturbation: %s, condition: first vs. second): \n', ptype))
+    print(ttestBF(subdat1, subdat2))
   }
 }
 
-ROTgetBlockedOrderEffectsAOV <- function(conditions = c(1,2), blockdefs, group) {
-  #function reads in learningcurves_long.csv file then creates a df with cols participant, block, reachdev
-  LCaov <- data.frame()
-  for (condition in conditions){  
-    curves <- read.csv(sprintf('data/ROT_%s_ordereffects_long_%s.csv',group,condition), stringsAsFactors=FALSE)  
-    participants <- unique(curves$participant)
-    #R <- dim(curves)[1] # not needed, checks if rows=90 (correct trial numbers)
-    #curves <- curves[,-1] #take away trial column
-    N <- length(participants) #gets the number of participants
+getAsymptoteOrderEffectsTTest <- function(perturbation = c('ROT', 'MIR')){
+  for(ptype in perturbation){
+    data <- read.csv(sprintf('data/pilot/%s_noninstructed_MSE_ordereffects.csv', ptype))
     
-    #blocked <- array(NA, dim=c(N,length(blockdefs))) #empty array where every participant will get 3 corresponding columns
-    #row.names(blocked) <- participants
-    #colnames(blocked) <- names(blockdefs)
+    subdat1 <- data[which(data$order == 1),]
+    subdat1 <- subdat1$N0
     
-    diffcond <- c()
-    participant <- c()
-    block <- c()
-    compensation <- c()
+    subdat2 <- data[which(data$order == 2),]
+    subdat2 <- subdat2$N0
     
-    for (pp.idx in c(1:length(participants))) {
-      
-      pp <- participants[pp.idx] #loop through each participant
-      
-      for (blockno in c(1:length(blockdefs))) { #loop through each block (first, second, third)
-        
-        blockdef <- blockdefs[[blockno]] #creates a list which specifies start trial of every block, and how many trials in total for this block
-        blockstart <- blockdef[1] #either trial 1, 4, or 76
-        blockend <- blockstart + blockdef[2] - 1 #either trial 3, 6, or 90
-        #samples <- curves[blockstart:blockend,pp] #gets corresponding reach angle per participant
-        # moved to long format files:
-        samples <- c()
-        for (trial in c(blockstart:blockend)) {
-          # print(which(curves$participant == pp))
-          # print(which(curves$participant == pp & curves$trial == trial))
-          samples <- c(samples, curves$compensation[which(curves$participant == pp & curves$trial == trial)]) #get reachdev for current pp and trial
-          
-        }
-        #print(mean(samples, na.rm=TRUE))
-        #blocked[pp.idx,block] <- mean(samples, na.rm=TRUE) #compute the mean for it and put it in array
-        diffcond <- c(diffcond, condition)
-        participant <- c(participant, pp) #the participant
-        block <- c(block, names(blockdefs)[blockno]) #the name of the block number (first, second or third)
-        compensation <- c(compensation, mean(samples, na.rm=T)) #mean compensation of trials for that block
-      }
-      
-    }
-    
-    GroupLCBlocked <- data.frame(diffcond,participant,block,compensation)
-    
-    
-    if (prod(dim(LCaov)) == 0){
-      LCaov <- GroupLCBlocked
-    } else {
-      LCaov <- rbind(LCaov, GroupLCBlocked)
-    }
-  }
-  #need to make some columns as factors for ANOVA
-  LCaov$diffcond <- as.factor(LCaov$diffcond)
-  LCaov$block <- as.factor(LCaov$block)
-  LCaov$block <- factor(LCaov$block, levels = c('first','second','last')) #so that it does not order it alphabetically
-  return(LCaov)
-  
-}
-
-ROTordereffectsANOVA <- function(group) {
-  
-  #styles <- getStyle()
-  blockdefs <- list('first'=c(1,6),'second'=c(7,6),'last'=c(85,6)) #6 trials per block
-  
-  LC4aov <- ROTgetBlockedOrderEffectsAOV(blockdefs=blockdefs, group=group)                      
-  
-  #looking into interaction below:
-  #interaction.plot(LC4aov$diffgroup, LC4aov$block, LC4aov$reachdeviation)
-  
-  #learning curve ANOVA's
-  # for ez, case ID should be a factor:
-  LC4aov$participant <- as.factor(LC4aov$participant)
-  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=compensation, within=block,between=diffcond,type=3, return_aov = TRUE) #which type of SS is appropriate?
-  print(firstAOV[1:3]) #so that it doesn't print the aov object as well
-}
-
-ROTordereffectsBayesANOVA <- function(group) {
-  
-  #styles <- getStyle()
-  blockdefs <- list('first'=c(1,6),'second'=c(7,6),'last'=c(85,6)) #6 trials per block
-  
-  LC4aov <- ROTgetBlockedOrderEffectsAOV(blockdefs=blockdefs, group=group)                      
-  
-  #looking into interaction below:
-  #interaction.plot(LC4aov$diffgroup, LC4aov$block, LC4aov$reachdeviation)
-  
-  #Bayes ANOVA - can use long format
-  #will compare models to null (intercept) or no effect - this will be 1
-  #higher than 1 will be evidence for alternative hypothesis, lower will be evidence for null hypothesis
-  #compare models either if only main effects, interaction of effects
-  #use lmBF function for specific models
-  LC4aov$participant <- as.factor(LC4aov$participant)
-  bfLC<- anovaBF(compensation ~ diffcond*block + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
-  #compare interaction contribution, over the contribution of both main effects
-  bfinteraction <- bfLC[4]/bfLC[3]
-  print(bfLC)
-  print(bfinteraction)
-}
-
-#Then do the same for MIR
-MIRgetLongFormat <- function(conditions=c(1,2), group){
-  
-  for (condition in conditions){
-    if(group == 'noninstructed'){
-      MIR1dat <- getMIROrderEffects(group='noninstructed',maxppid=15,location='maxvel',condition=condition)
-    } else if(group == 'instructed'){
-      MIR1dat <- getMIROrderEffects(group='instructed',maxppid=31,location='maxvel',condition=condition)
-    }
-    
-    
-    if(condition == 1){
-      ppcols <- c('First_p1','First_p2', 'First_p3', 'First_p4', 'First_p5', 'First_p6', 'First_p7', 'First_p8')
-      colnames(MIR1dat) <- c('trial', 'First_p1','First_p2', 'First_p3', 'First_p4', 'First_p5', 'First_p6', 'First_p7', 'First_p8')
-    } else if(condition == 2){
-      ppcols <- c('Second_p1','Second_p2', 'Second_p3', 'Second_p4', 'Second_p5', 'Second_p6', 'Second_p7', 'Second_p8')
-      colnames(MIR1dat) <- c('trial', 'Second_p1','Second_p2', 'Second_p3', 'Second_p4', 'Second_p5', 'Second_p6', 'Second_p7', 'Second_p8')
-    }
-    MIR1dat <- as.data.frame(MIR1dat)
-    
-    #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
-    longdata <- gather(MIR1dat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
-    write.csv(longdata, file=sprintf('data/MIR_%s_ordereffects_long_%s.csv',group,condition), row.names = F)
+    cat(sprintf('Frequentist t-test (perturbation: %s, condition: first vs. second): \n', ptype))
+    print(t.test(subdat1, subdat2))
+    cat(sprintf('Bayesian t-test (perturbation: %s, condition: first vs. second): \n', ptype))
+    print(ttestBF(subdat1, subdat2))
   }
 }
 
-MIRgetBlockedOrderEffectsAOV <- function(conditions = c(1,2), blockdefs, group) {
-  #function reads in learningcurves_long.csv file then creates a df with cols participant, block, reachdev
-  LCaov <- data.frame()
-  for (condition in conditions){  
-    curves <- read.csv(sprintf('data/MIR_%s_ordereffects_long_%s.csv',group, condition), stringsAsFactors=FALSE)  
-    participants <- unique(curves$participant)
-    #R <- dim(curves)[1] # not needed, checks if rows=90 (correct trial numbers)
-    #curves <- curves[,-1] #take away trial column
-    N <- length(participants) #gets the number of participants
-    
-    #blocked <- array(NA, dim=c(N,length(blockdefs))) #empty array where every participant will get 3 corresponding columns
-    #row.names(blocked) <- participants
-    #colnames(blocked) <- names(blockdefs)
-    
-    diffcond <- c()
-    participant <- c()
-    block <- c()
-    compensation <- c()
-    
-    for (pp.idx in c(1:length(participants))) {
-      
-      pp <- participants[pp.idx] #loop through each participant
-      
-      for (blockno in c(1:length(blockdefs))) { #loop through each block (first, second, third)
-        
-        blockdef <- blockdefs[[blockno]] #creates a list which specifies start trial of every block, and how many trials in total for this block
-        blockstart <- blockdef[1] #either trial 1, 4, or 76
-        blockend <- blockstart + blockdef[2] - 1 #either trial 3, 6, or 90
-        #samples <- curves[blockstart:blockend,pp] #gets corresponding reach angle per participant
-        # moved to long format files:
-        samples <- c()
-        for (trial in c(blockstart:blockend)) {
-          # print(which(curves$participant == pp))
-          # print(which(curves$participant == pp & curves$trial == trial))
-          samples <- c(samples, curves$compensation[which(curves$participant == pp & curves$trial == trial)]) #get reachdev for current pp and trial
-          
-        }
-        #print(mean(samples, na.rm=TRUE))
-        #blocked[pp.idx,block] <- mean(samples, na.rm=TRUE) #compute the mean for it and put it in array
-        diffcond <- c(diffcond, condition)
-        participant <- c(participant, pp) #the participant
-        block <- c(block, names(blockdefs)[blockno]) #the name of the block number (first, second or third)
-        compensation <- c(compensation, mean(samples, na.rm=T)) #mean compensation of trials for that block
-      }
-      
-    }
-    
-    GroupLCBlocked <- data.frame(diffcond,participant,block,compensation)
-    
-    
-    if (prod(dim(LCaov)) == 0){
-      LCaov <- GroupLCBlocked
-    } else {
-      LCaov <- rbind(LCaov, GroupLCBlocked)
-    }
-  }
-  #need to make some columns as factors for ANOVA
-  LCaov$diffcond <- as.factor(LCaov$diffcond)
-  LCaov$block <- as.factor(LCaov$block)
-  LCaov$block <- factor(LCaov$block, levels = c('first','second','last')) #so that it does not order it alphabetically
-  return(LCaov)
-  
-}
-
-MIRordereffectsANOVA <- function(group) {
-  
-  #styles <- getStyle()
-  blockdefs <- list('first'=c(1,6),'second'=c(7,6),'last'=c(85,6)) #6 trials per block
-  
-  LC4aov <- MIRgetBlockedOrderEffectsAOV(blockdefs=blockdefs, group=group)                      
-  
-  #looking into interaction below:
-  #interaction.plot(LC4aov$diffgroup, LC4aov$block, LC4aov$reachdeviation)
-  
-  #learning curve ANOVA's
-  # for ez, case ID should be a factor:
-  LC4aov$participant <- as.factor(LC4aov$participant)
-  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=compensation, within=block,between=diffcond,type=3, return_aov = TRUE) #which type of SS is appropriate?
-  print(firstAOV[1:3]) #so that it doesn't print the aov object as well
-}
-
-MIRordereffectsBayesANOVA <- function(group) {
-  
-  #styles <- getStyle()
-  blockdefs <- list('first'=c(1,6),'second'=c(7,6),'last'=c(85,6)) #6 trials per block
-  
-  LC4aov <- MIRgetBlockedOrderEffectsAOV(blockdefs=blockdefs, group=group)                      
-  
-  #looking into interaction below:
-  #interaction.plot(LC4aov$diffgroup, LC4aov$block, LC4aov$reachdeviation)
-  
-  #Bayes ANOVA - can use long format
-  #will compare models to null (intercept) or no effect - this will be 1
-  #higher than 1 will be evidence for alternative hypothesis, lower will be evidence for null hypothesis
-  #compare models either if only main effects, interaction of effects
-  #use lmBF function for specific models
-  LC4aov$participant <- as.factor(LC4aov$participant)
-  bfLC<- anovaBF(compensation ~ diffcond*block + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
-  #compare interaction contribution, over the contribution of both main effects
-  bfinteraction <- bfLC[4]/bfLC[3]
-  print(bfLC)
-  print(bfinteraction)
-}
 
 # Target Location Effects: ROT----
 getROTParticipantTargetLoc <- function(group, id, location) {

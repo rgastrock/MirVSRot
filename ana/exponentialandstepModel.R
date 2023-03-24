@@ -315,7 +315,7 @@ logisticFunction <- function(par,x) {
 logisticFunctionMSE <- function(par,data) {
   
   errors <- logisticFunction(par,data$x) - data$y
-  return( mean( errors^2 ) )
+  return( mean( errors^2, na.rm = TRUE ) )
   
 }
 
@@ -335,9 +335,9 @@ logisticFunctionMSE <- function(par,data) {
 logisticFunctionFit <- function(data, gridpoints=11, gridfits=10) {
   
   # create a gird of possible starting positions:
-  x0 <- seq(min(data$x),max(data$x),length.out=gridpoints)
+  x0 <- seq(min(data$x, na.rm = TRUE),max(data$x, na.rm = TRUE),length.out=gridpoints)
   k  <- seq(-50,50,length.out=gridpoints)
-  L  <- seq(max(data$y)/2,max(data$y)*1.5,length.out=gridpoints)
+  L  <- seq(max(data$y, na.rm = TRUE)/2,max(data$y, na.rm = TRUE)*1.5,length.out=gridpoints)
   
   searchgrid <- expand.grid( x0 = x0,
                              k  = k,
@@ -372,7 +372,7 @@ AIC <- function(MSE, k, N) {
 }
 
 AICc <- function(MSE, k, N) {
-  return( AIC(MSE, k, N) * (((2*k^2) + 2*k) / (N - k - 1)) )
+  return( AIC(MSE, k, N) + (((2*k^2) + 2*k) / (N - k - 1)) )
 }
 
 relativeLikelihood <- function(crit) {
