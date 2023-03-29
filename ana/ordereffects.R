@@ -1615,18 +1615,18 @@ getROTTargetEffects <- function(group, maxppid, location,condition){
   #0,1 get rot after axis, 2,3 get rot before axis and so on
   #but participant count starts at 0, whereas dat already starts at one
   #so condition 1 will be those falling after axis, condition 2 will be before
-  pp_ROTfirst <- dat[,c(1,2,5,6,9,10,13,14)] #targets fall after axis
-  pp_ROTsecond <- dat[,c(3,4,7,8,11,12,15,16)] #targets fall before axis
+  pp_ROTaft<- dat[,c(1,2,5,6,9,10,13,14)] #targets fall after axis
+  pp_ROTbef <- dat[,c(3,4,7,8,11,12,15,16)] #targets fall before axis
   #then we can add trial column back to each of the separated data
   trial <- seq(1,90,1)
-  pp_ROTfirst <- cbind(trial, pp_ROTfirst)
-  pp_ROTsecond <- cbind(trial, pp_ROTsecond)
+  pp_ROTaft <- cbind(trial, pp_ROTaft)
+  pp_ROTbef <- cbind(trial, pp_ROTbef)
   
   #return whichever data is needed
   if (condition == 1){
-    return(pp_ROTfirst)
+    return(pp_ROTaft)
   } else if (condition == 2){
-    return(pp_ROTsecond)
+    return(pp_ROTbef)
   }
   
 }
@@ -1659,9 +1659,9 @@ getROTTargetEffectsConfidenceInterval <- function(group, maxppid, location, cond
         confidence <- rbind(confidence, citrial)
       }
       if (group == 'noninstructed'){
-        write.csv(confidence, file='data/ROT_noninstructed_CI_targeteffects_1.csv', row.names = F) 
+        write.csv(confidence, file='data/pilot/ROT_noninstructed_CI_targeteffects_1.csv', row.names = F) 
       } else if (group == 'instructed'){
-        write.csv(confidence, file='data/ROT_instructed_CI_targeteffects_1.csv', row.names = F)
+        write.csv(confidence, file='data/pilot/ROT_instructed_CI_targeteffects_1.csv', row.names = F)
       }
       
     }
@@ -1691,9 +1691,9 @@ getROTTargetEffectsConfidenceInterval <- function(group, maxppid, location, cond
         confidence <- rbind(confidence, citrial)
       }
       if (group == 'noninstructed'){
-        write.csv(confidence, file='data/ROT_noninstructed_CI_targeteffects_2.csv', row.names = F) 
+        write.csv(confidence, file='data/pilot/ROT_noninstructed_CI_targeteffects_2.csv', row.names = F) 
       } else if (group == 'instructed'){
-        write.csv(confidence, file='data/ROT_instructed_CI_targeteffects_2.csv', row.names = F)
+        write.csv(confidence, file='data/pilot/ROT_instructed_CI_targeteffects_2.csv', row.names = F)
       }
       
     }
@@ -1706,7 +1706,7 @@ plotNIROTTargetEffects <- function(group = 'noninstructed', conditions = c(1,2),
   
   #but we can save plot as svg file
   if (target=='svg') {
-    svglite(file='doc/fig/Fig2_ROT_NI_targeteffects.svg', width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
+    svglite(file='doc/fig/pilot/Fig5_ROT_NI_targeteffects.svg', width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
   }
   
   # create plot
@@ -1723,7 +1723,7 @@ plotNIROTTargetEffects <- function(group = 'noninstructed', conditions = c(1,2),
   
   for(condition in conditions){
     #read in files created by getGroupConfidenceInterval in filehandling.R
-    groupconfidence <- read.csv(file=sprintf('data/ROT_%s_CI_targeteffects_%d.csv', group, condition))
+    groupconfidence <- read.csv(file=sprintf('data/pilot/ROT_%s_CI_targeteffects_%d.csv', group, condition))
     
     colourscheme <- getCtypeColourScheme(conditions = condition)
     #take only first, last and middle columns of file
@@ -1765,7 +1765,7 @@ plotIROTTargetEffects <- function(group = 'instructed', conditions = c(1,2), tar
   
   #but we can save plot as svg file
   if (target=='svg') {
-    svglite(file='doc/fig/Fig2_ROT_I_targeteffects.svg', width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
+    svglite(file='doc/fig/pilot/Fig6_ROT_I_targeteffects.svg', width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
   }
   
   # create plot
@@ -1782,7 +1782,7 @@ plotIROTTargetEffects <- function(group = 'instructed', conditions = c(1,2), tar
   
   for(condition in conditions){
     #read in files created by getGroupConfidenceInterval in filehandling.R
-    groupconfidence <- read.csv(file=sprintf('data/ROT_%s_CI_targeteffects_%d.csv', group, condition))
+    groupconfidence <- read.csv(file=sprintf('data/pilot/ROT_%s_CI_targeteffects_%d.csv', group, condition))
     
     colourscheme <- getCtypeColourScheme(conditions = condition)
     #take only first, last and middle columns of file
@@ -1817,140 +1817,6 @@ plotIROTTargetEffects <- function(group = 'instructed', conditions = c(1,2), tar
     dev.off()
   }
   
-}
-
-#Target Effect Stats: ROT----
-
-ROTgetTargetLongFormat <- function(conditions=c(1,2), group){
-  
-  for (condition in conditions){
-    if(group == 'noninstructed'){
-      ROT1dat <- getROTTargetEffects(group='noninstructed',maxppid=15,location='maxvel',condition=condition)
-    } else if(group == 'instructed'){
-      ROT1dat <- getROTTargetEffects(group='instructed',maxppid=31,location='maxvel',condition=condition)
-    }
-    
-    
-    if(condition == 1){
-      ppcols <- c('First_p1','First_p2', 'First_p3', 'First_p4', 'First_p5', 'First_p6', 'First_p7', 'First_p8')
-      colnames(ROT1dat) <- c('trial', 'First_p1','First_p2', 'First_p3', 'First_p4', 'First_p5', 'First_p6', 'First_p7', 'First_p8')
-    } else if(condition == 2){
-      ppcols <- c('Second_p1','Second_p2', 'Second_p3', 'Second_p4', 'Second_p5', 'Second_p6', 'Second_p7', 'Second_p8')
-      colnames(ROT1dat) <- c('trial', 'Second_p1','Second_p2', 'Second_p3', 'Second_p4', 'Second_p5', 'Second_p6', 'Second_p7', 'Second_p8')
-    }
-    ROT1dat <- as.data.frame(ROT1dat)
-    
-    #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
-    longdata <- gather(ROT1dat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
-    write.csv(longdata, file=sprintf('data/ROT_%s_targeteffects_long_%s.csv',group, condition), row.names = F)
-  }
-}
-
-ROTgetBlockedTargetEffectsAOV <- function(conditions = c(1,2), blockdefs, group) {
-  #function reads in learningcurves_long.csv file then creates a df with cols participant, block, reachdev
-  LCaov <- data.frame()
-  for (condition in conditions){  
-    curves <- read.csv(sprintf('data/ROT_%s_targeteffects_long_%s.csv',group, condition), stringsAsFactors=FALSE)
-    if (condition == 1){
-      curves$compensation <- (curves$compensation*-1)
-    }
-    participants <- unique(curves$participant)
-    #R <- dim(curves)[1] # not needed, checks if rows=90 (correct trial numbers)
-    #curves <- curves[,-1] #take away trial column
-    N <- length(participants) #gets the number of participants
-    
-    #blocked <- array(NA, dim=c(N,length(blockdefs))) #empty array where every participant will get 3 corresponding columns
-    #row.names(blocked) <- participants
-    #colnames(blocked) <- names(blockdefs)
-    
-    diffcond <- c()
-    participant <- c()
-    block <- c()
-    compensation <- c()
-    
-    for (pp.idx in c(1:length(participants))) {
-      
-      pp <- participants[pp.idx] #loop through each participant
-      
-      for (blockno in c(1:length(blockdefs))) { #loop through each block (first, second, third)
-        
-        blockdef <- blockdefs[[blockno]] #creates a list which specifies start trial of every block, and how many trials in total for this block
-        blockstart <- blockdef[1] #either trial 1, 4, or 76
-        blockend <- blockstart + blockdef[2] - 1 #either trial 3, 6, or 90
-        #samples <- curves[blockstart:blockend,pp] #gets corresponding reach angle per participant
-        # moved to long format files:
-        samples <- c()
-        for (trial in c(blockstart:blockend)) {
-          # print(which(curves$participant == pp))
-          # print(which(curves$participant == pp & curves$trial == trial))
-          samples <- c(samples, curves$compensation[which(curves$participant == pp & curves$trial == trial)]) #get reachdev for current pp and trial
-          
-        }
-        #print(mean(samples, na.rm=TRUE))
-        #blocked[pp.idx,block] <- mean(samples, na.rm=TRUE) #compute the mean for it and put it in array
-        diffcond <- c(diffcond, condition)
-        participant <- c(participant, pp) #the participant
-        block <- c(block, names(blockdefs)[blockno]) #the name of the block number (first, second or third)
-        compensation <- c(compensation, mean(samples, na.rm=T)) #mean compensation of trials for that block
-      }
-      
-    }
-    
-    GroupLCBlocked <- data.frame(diffcond,participant,block,compensation)
-    
-    
-    if (prod(dim(LCaov)) == 0){
-      LCaov <- GroupLCBlocked
-    } else {
-      LCaov <- rbind(LCaov, GroupLCBlocked)
-    }
-  }
-  #need to make some columns as factors for ANOVA
-  LCaov$diffcond <- as.factor(LCaov$diffcond)
-  LCaov$block <- as.factor(LCaov$block)
-  LCaov$block <- factor(LCaov$block, levels = c('first','second','last')) #so that it does not order it alphabetically
-  return(LCaov)
-  
-}
-
-ROTtargeteffectsANOVA <- function(group) {
-  
-  #styles <- getStyle()
-  blockdefs <- list('first'=c(1,6),'second'=c(7,6),'last'=c(85,6)) #6 trials per block
-  
-  LC4aov <- ROTgetBlockedTargetEffectsAOV(blockdefs=blockdefs, group=group)                      
-  
-  #looking into interaction below:
-  #interaction.plot(LC4aov$diffgroup, LC4aov$block, LC4aov$reachdeviation)
-  
-  #learning curve ANOVA's
-  # for ez, case ID should be a factor:
-  LC4aov$participant <- as.factor(LC4aov$participant)
-  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=compensation, within=block,between=diffcond,type=3, return_aov = TRUE) #which type of SS is appropriate?
-  print(firstAOV[1:3]) #so that it doesn't print the aov object as well
-}
-
-ROTtargeteffectsBayesANOVA <- function(group) {
-  
-  #styles <- getStyle()
-  blockdefs <- list('first'=c(1,6),'second'=c(7,6),'last'=c(85,6)) #6 trials per block
-  
-  LC4aov <- ROTgetBlockedTargetEffectsAOV(blockdefs=blockdefs, group=group)                      
-  
-  #looking into interaction below:
-  #interaction.plot(LC4aov$diffgroup, LC4aov$block, LC4aov$reachdeviation)
-  
-  #Bayes ANOVA - can use long format
-  #will compare models to null (intercept) or no effect - this will be 1
-  #higher than 1 will be evidence for alternative hypothesis, lower will be evidence for null hypothesis
-  #compare models either if only main effects, interaction of effects
-  #use lmBF function for specific models
-  LC4aov$participant <- as.factor(LC4aov$participant)
-  bfLC<- anovaBF(compensation ~ diffcond*block + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
-  #compare interaction contribution, over the contribution of both main effects
-  bfinteraction <- bfLC[4]/bfLC[3]
-  print(bfLC)
-  print(bfinteraction)
 }
 
 #Target Location Effects: MIR----
@@ -2063,18 +1929,18 @@ getMIRTargetEffects <- function(group, maxppid, location,condition){
   #0,1 get mir before axis, 2,3 get mir after axis and so on
   #but participant count starts at 0, whereas dat already starts at one
   #so condition 1 will be those falling before axis, condition 2 will be after
-  pp_ROTfirst <- dat[,c(1,2,5,6,9,10,13,14)] #targets fall before axis
-  pp_ROTsecond<- dat[,c(3,4,7,8,11,12,15,16)] #targets fall after axis
+  pp_MIRaft <- dat[,c(3,4,7,8,11,12,15,16)] #targets fall before axis
+  pp_MIRbef<- dat[,c(1,2,5,6,9,10,13,14)] #targets fall after axis
   #then we can add trial column back to each of the separated data
   trial <- seq(1,90,1)
-  pp_ROTfirst <- cbind(trial, pp_ROTfirst)
-  pp_ROTsecond <- cbind(trial, pp_ROTsecond)
+  pp_MIRaft <- cbind(trial, pp_MIRaft)
+  pp_MIRbef <- cbind(trial, pp_MIRbef)
   
   #return whichever data is needed
   if (condition == 1){
-    return(pp_ROTfirst)
+    return(pp_MIRaft)
   } else if (condition == 2){
-    return(pp_ROTsecond)
+    return(pp_MIRbef)
   }
   
 }
@@ -2107,9 +1973,9 @@ getMIRTargetEffectsConfidenceInterval <- function(group, maxppid, location, cond
         confidence <- rbind(confidence, citrial)
       }
       if (group == 'noninstructed'){
-        write.csv(confidence, file='data/MIR_noninstructed_CI_targeteffects_1.csv', row.names = F) 
+        write.csv(confidence, file='data/pilot/MIR_noninstructed_CI_targeteffects_1.csv', row.names = F) 
       } else if (group == 'instructed'){
-        write.csv(confidence, file='data/MIR_instructed_CI_targeteffects_1.csv', row.names = F)
+        write.csv(confidence, file='data/pilot/MIR_instructed_CI_targeteffects_1.csv', row.names = F)
       }
       
     }
@@ -2139,9 +2005,9 @@ getMIRTargetEffectsConfidenceInterval <- function(group, maxppid, location, cond
         confidence <- rbind(confidence, citrial)
       }
       if (group == 'noninstructed'){
-        write.csv(confidence, file='data/MIR_noninstructed_CI_targeteffects_2.csv', row.names = F) 
+        write.csv(confidence, file='data/pilot/MIR_noninstructed_CI_targeteffects_2.csv', row.names = F) 
       } else if (group == 'instructed'){
-        write.csv(confidence, file='data/MIR_instructed_CI_targeteffects_2.csv', row.names = F)
+        write.csv(confidence, file='data/pilot/MIR_instructed_CI_targeteffects_2.csv', row.names = F)
       }
       
     }
@@ -2154,7 +2020,7 @@ plotNIMIRTargetEffects <- function(group = 'noninstructed', conditions = c(1,2),
   
   #but we can save plot as svg file
   if (target=='svg') {
-    svglite(file='doc/fig/Fig2_MIR_NI_targeteffects.svg', width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
+    svglite(file='doc/fig/pilot/Fig7_MIR_NI_targeteffects.svg', width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
   }
   
   # create plot
@@ -2171,7 +2037,7 @@ plotNIMIRTargetEffects <- function(group = 'noninstructed', conditions = c(1,2),
   
   for(condition in conditions){
     #read in files created by getGroupConfidenceInterval in filehandling.R
-    groupconfidence <- read.csv(file=sprintf('data/MIR_%s_CI_targeteffects_%d.csv', group, condition))
+    groupconfidence <- read.csv(file=sprintf('data/pilot/MIR_%s_CI_targeteffects_%d.csv', group, condition))
     
     colourscheme <- getCtypeColourScheme(conditions = condition)
     #take only first, last and middle columns of file
@@ -2197,7 +2063,7 @@ plotNIMIRTargetEffects <- function(group = 'noninstructed', conditions = c(1,2),
   }
   
   #add legend
-  legend(60,-100,legend=c('Before Axis','After Axis'),
+  legend(60,-100,legend=c('After Axis','Before Axis'),
          col=c(colourscheme[[1]][['S']],colourscheme[[2]][['S']]),
          lty=1,bty='n',cex=1,lwd=2)
   
@@ -2213,7 +2079,7 @@ plotIMIRTargetEffects <- function(group = 'instructed', conditions = c(1,2), tar
   
   #but we can save plot as svg file
   if (target=='svg') {
-    svglite(file='doc/fig/Fig2_MIR_I_targeteffects.svg', width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
+    svglite(file='doc/fig/pilot/Fig8_MIR_I_targeteffects.svg', width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
   }
   
   # create plot
@@ -2230,7 +2096,7 @@ plotIMIRTargetEffects <- function(group = 'instructed', conditions = c(1,2), tar
   
   for(condition in conditions){
     #read in files created by getGroupConfidenceInterval in filehandling.R
-    groupconfidence <- read.csv(file=sprintf('data/MIR_%s_CI_targeteffects_%d.csv', group, condition))
+    groupconfidence <- read.csv(file=sprintf('data/pilot/MIR_%s_CI_targeteffects_%d.csv', group, condition))
     
     colourscheme <- getCtypeColourScheme(conditions = condition)
     #take only first, last and middle columns of file
@@ -2256,7 +2122,7 @@ plotIMIRTargetEffects <- function(group = 'instructed', conditions = c(1,2), tar
   }
   
   #add legend
-  legend(60,-100,legend=c('Before Axis','After Axis'),
+  legend(60,-100,legend=c('After Axis','Before Axis'),
          col=c(colourscheme[[1]][['S']],colourscheme[[2]][['S']]),
          lty=1,bty='n',cex=1,lwd=2)
   
@@ -2267,138 +2133,128 @@ plotIMIRTargetEffects <- function(group = 'instructed', conditions = c(1,2), tar
   
 }
 
-#Target Effect Stats: MIR----
-
-MIRgetTargetLongFormat <- function(conditions=c(1,2),group){
-  
-  for (condition in conditions){
-    if(group == 'noninstructed'){
-      MIR1dat <- getMIRTargetEffects(group='noninstructed',maxppid=15,location='maxvel',condition=condition)
-    } else if(group == 'instructed'){
-      MIR1dat <- getMIRTargetEffects(group='instructed',maxppid=31,location='maxvel',condition=condition)
-    }
-    
-    
-    if(condition == 1){
-      ppcols <- c('First_p1','First_p2', 'First_p3', 'First_p4', 'First_p5', 'First_p6', 'First_p7', 'First_p8')
-      colnames(MIR1dat) <- c('trial', 'First_p1','First_p2', 'First_p3', 'First_p4', 'First_p5', 'First_p6', 'First_p7', 'First_p8')
-    } else if(condition == 2){
-      ppcols <- c('Second_p1','Second_p2', 'Second_p3', 'Second_p4', 'Second_p5', 'Second_p6', 'Second_p7', 'Second_p8')
-      colnames(MIR1dat) <- c('trial', 'Second_p1','Second_p2', 'Second_p3', 'Second_p4', 'Second_p5', 'Second_p6', 'Second_p7', 'Second_p8')
-    }
-    MIR1dat <- as.data.frame(MIR1dat)
-    
-    #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
-    longdata <- gather(MIR1dat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
-    write.csv(longdata, file=sprintf('data/MIR_%s_targeteffects_long_%s.csv',group,condition), row.names = F)
-  }
-}
-
-MIRgetBlockedTargetEffectsAOV <- function(conditions = c(1,2), blockdefs, group) {
-  #function reads in learningcurves_long.csv file then creates a df with cols participant, block, reachdev
-  LCaov <- data.frame()
-  for (condition in conditions){  
-    curves <- read.csv(sprintf('data/MIR_%s_targeteffects_long_%s.csv',group,condition), stringsAsFactors=FALSE)
-    if (condition == 2){
-      curves$compensation <- (curves$compensation*-1)
-    }
-    participants <- unique(curves$participant)
-    #R <- dim(curves)[1] # not needed, checks if rows=90 (correct trial numbers)
-    #curves <- curves[,-1] #take away trial column
-    N <- length(participants) #gets the number of participants
-    
-    #blocked <- array(NA, dim=c(N,length(blockdefs))) #empty array where every participant will get 3 corresponding columns
-    #row.names(blocked) <- participants
-    #colnames(blocked) <- names(blockdefs)
-    
-    diffcond <- c()
-    participant <- c()
-    block <- c()
-    compensation <- c()
-    
-    for (pp.idx in c(1:length(participants))) {
-      
-      pp <- participants[pp.idx] #loop through each participant
-      
-      for (blockno in c(1:length(blockdefs))) { #loop through each block (first, second, third)
-        
-        blockdef <- blockdefs[[blockno]] #creates a list which specifies start trial of every block, and how many trials in total for this block
-        blockstart <- blockdef[1] #either trial 1, 4, or 76
-        blockend <- blockstart + blockdef[2] - 1 #either trial 3, 6, or 90
-        #samples <- curves[blockstart:blockend,pp] #gets corresponding reach angle per participant
-        # moved to long format files:
-        samples <- c()
-        for (trial in c(blockstart:blockend)) {
-          # print(which(curves$participant == pp))
-          # print(which(curves$participant == pp & curves$trial == trial))
-          samples <- c(samples, curves$compensation[which(curves$participant == pp & curves$trial == trial)]) #get reachdev for current pp and trial
-          
-        }
-        #print(mean(samples, na.rm=TRUE))
-        #blocked[pp.idx,block] <- mean(samples, na.rm=TRUE) #compute the mean for it and put it in array
-        diffcond <- c(diffcond, condition)
-        participant <- c(participant, pp) #the participant
-        block <- c(block, names(blockdefs)[blockno]) #the name of the block number (first, second or third)
-        compensation <- c(compensation, mean(samples, na.rm=T)) #mean compensation of trials for that block
+#Target Effect Stats----
+getTargetEffectsMSE <- function(perturb = c('ROT', 'MIR'), group = 'noninstructed', maxppid = 15, location = 'maxvel', conditions = c(1,2)){
+  for(ptype in perturb){
+    step <- c()
+    asymptote <- c()
+    mse_step <- c()
+    lambda <- c()
+    N0 <- c()
+    mse_expl <- c()
+    x0 <- c()
+    k <- c()
+    L <- c()
+    mse_log <- c()
+    order <- c()
+    for(condition in conditions){
+      if(ptype == 'ROT'){
+        data <- getROTTargetEffects(group = group, maxppid = maxppid, location = location, condition = condition)
+      } else if (ptype == 'MIR'){
+        data <- getMIRTargetEffects(group = group, maxppid = maxppid, location = location, condition = condition)
       }
       
+      subdat <- data[,2:ncol(data)]
+      if(condition == 1){
+        subdat <- subdat*-1 #signflip to make curves go in the same direction, but only if targets are after axis
+      }
+      for(icol in c(1:ncol(subdat))){
+        ppdat <- subdat[,icol]
+        par_step <- stepFunctionFit(signal = ppdat)
+        pp_mse_step <- stepFunctionMSE(par=par_step, signal=ppdat)
+        
+        par_expl <- exponentialFit(signal = ppdat)
+        pp_mse_expl<- exponentialMSE(par=par_expl, signal=ppdat)
+        
+        y <- ppdat
+        x <- seq(1, length(y), 1)
+        bs_dat <- data.frame(x,y)
+        par_log <- logisticFunctionFit(data = bs_dat)
+        pp_mse_log<- logisticFunctionMSE(par=par_log, data=bs_dat)
+        
+        cond <- condition
+        
+        step <- c(step, par_step['step'])
+        asymptote <- c(asymptote, par_step['asymptote'])
+        mse_step <- c(mse_step, pp_mse_step)
+        lambda <- c(lambda, par_expl['lambda'])
+        N0 <- c(N0, par_expl['N0'])
+        mse_expl <- c(mse_expl, pp_mse_expl)
+        x0 <- c(x0, par_log['x0'])
+        k <- c(k, par_log['k'])
+        L <- c(L, par_log['L'])
+        mse_log <- c(mse_log, pp_mse_log)
+        order <- c(order, cond)
+      }
     }
-    
-    GroupLCBlocked <- data.frame(diffcond,participant,block,compensation)
-    
-    
-    if (prod(dim(LCaov)) == 0){
-      LCaov <- GroupLCBlocked
-    } else {
-      LCaov <- rbind(LCaov, GroupLCBlocked)
+    ndat <- data.frame(step, asymptote, mse_step, lambda, N0, mse_expl, x0, k, L, mse_log, order)
+    write.csv(ndat, file=sprintf('data/pilot/%s_%s_MSE_targeteffects.csv',ptype, group), quote=F, row.names=F)
+  }
+}
+
+getGroupTargetEffectsLikelihoods <- function(perturb = c('ROT', 'MIR'), klevel = c(2,2,3), N = 2, conditions = c(1,2)){
+  group <- c()
+  loglikelihood_step <- c()
+  loglikelihood_expl <- c()
+  loglikelihood_log <- c()
+  for(ptype in perturb){
+    data <- read.csv(sprintf('data/pilot/%s_noninstructed_MSE_targeteffects.csv', ptype))
+    for(cond in conditions){
+      ndat <- data[which(data$order == cond),]
+      MSE_step <- setNames(sum(ndat$mse_step), 'mse_step')
+      MSE_expl <- setNames(sum(ndat$mse_expl), 'mse_expl')
+      MSE_log <- setNames(sum(ndat$mse_log), 'mse_log')
+      
+      MSE <- c(MSE_step, MSE_expl, MSE_log)
+      #k <- rep(klevel, length(MSE))
+      k <- klevel
+      AICs <- AICc(MSE, k, N)
+      loglikelihoods <- relativeLikelihood(AICs)
+      
+      grpinfo <- sprintf('%s_%d', ptype, cond)
+      
+      group <- c(group, grpinfo)
+      loglikelihood_step <- c(loglikelihood_step, loglikelihoods['mse_step'])
+      loglikelihood_expl <- c(loglikelihood_expl, loglikelihoods['mse_expl'])
+      loglikelihood_log <- c(loglikelihood_log, loglikelihoods['mse_log'])
     }
   }
-  #need to make some columns as factors for ANOVA
-  LCaov$diffcond <- as.factor(LCaov$diffcond)
-  LCaov$block <- as.factor(LCaov$block)
-  LCaov$block <- factor(LCaov$block, levels = c('first','second','last')) #so that it does not order it alphabetically
-  return(LCaov)
-  
+  alldat <- data.frame(group, loglikelihood_step, loglikelihood_expl, loglikelihood_log)
+  return(alldat)
 }
 
-MIRtargeteffectsANOVA <- function(group) {
-  
-  #styles <- getStyle()
-  blockdefs <- list('first'=c(1,6),'second'=c(7,6),'last'=c(85,6)) #6 trials per block
-  
-  LC4aov <- MIRgetBlockedTargetEffectsAOV(blockdefs=blockdefs, group=group)                      
-  
-  #looking into interaction below:
-  #interaction.plot(LC4aov$diffgroup, LC4aov$block, LC4aov$reachdeviation)
-  
-  #learning curve ANOVA's
-  # for ez, case ID should be a factor:
-  LC4aov$participant <- as.factor(LC4aov$participant)
-  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=compensation, within=block,between=diffcond,type=3, return_aov = TRUE) #which type of SS is appropriate?
-  print(firstAOV[1:3]) #so that it doesn't print the aov object as well
+getLambdaTargetEffectsTTest <- function(perturbation = c('ROT', 'MIR')){
+  for(ptype in perturbation){
+    data <- read.csv(sprintf('data/pilot/%s_noninstructed_MSE_targeteffects.csv', ptype))
+    
+    subdat1 <- data[which(data$order == 1),]
+    subdat1 <- subdat1$lambda
+    
+    subdat2 <- data[which(data$order == 2),]
+    subdat2 <- subdat2$lambda
+    
+    cat(sprintf('Frequentist t-test (perturbation: %s, condition: after vs. before): \n', ptype))
+    print(t.test(subdat1, subdat2))
+    cat(sprintf('Bayesian t-test (perturbation: %s, condition: after vs. before): \n', ptype))
+    print(ttestBF(subdat1, subdat2))
+  }
 }
 
-MIRtargeteffectsBayesANOVA <- function(group) {
-  
-  #styles <- getStyle()
-  blockdefs <- list('first'=c(1,6),'second'=c(7,6),'last'=c(85,6)) #6 trials per block
-  
-  LC4aov <- MIRgetBlockedTargetEffectsAOV(blockdefs=blockdefs, group=group)                      
-  
-  #looking into interaction below:
-  #interaction.plot(LC4aov$diffgroup, LC4aov$block, LC4aov$reachdeviation)
-  
-  #Bayes ANOVA - can use long format
-  #will compare models to null (intercept) or no effect - this will be 1
-  #higher than 1 will be evidence for alternative hypothesis, lower will be evidence for null hypothesis
-  #compare models either if only main effects, interaction of effects
-  #use lmBF function for specific models
-  LC4aov$participant <- as.factor(LC4aov$participant)
-  bfLC<- anovaBF(compensation ~ diffcond*block + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
-  #compare interaction contribution, over the contribution of both main effects
-  bfinteraction <- bfLC[4]/bfLC[3]
-  print(bfLC)
-  print(bfinteraction)
+getAsymptoteTargetEffectsTTest <- function(perturbation = c('ROT', 'MIR')){
+  for(ptype in perturbation){
+    data <- read.csv(sprintf('data/pilot/%s_noninstructed_MSE_targeteffects.csv', ptype))
+    
+    subdat1 <- data[which(data$order == 1),]
+    subdat1 <- subdat1$N0
+    
+    subdat2 <- data[which(data$order == 2),]
+    subdat2 <- subdat2$N0
+    
+    cat(sprintf('Frequentist t-test (perturbation: %s, condition: after vs. before): \n', ptype))
+    print(t.test(subdat1, subdat2))
+    cat(sprintf('Bayesian t-test (perturbation: %s, condition: after vs. before): \n', ptype))
+    print(ttestBF(subdat1, subdat2))
+  }
 }
 
 #Axis Effects: ROT----
@@ -2412,18 +2268,18 @@ getROTAxisEffects <- function(group, maxppid, location,condition){
   #0,1,2,3 gets ROT on HOR axis, 4,5,6,7 gets ROT on VER axis
   #but participant count starts at 0, whereas dat already starts at one
   #first condition would be horizontal, second would be vertical
-  pp_ROTfirst <- dat[,c(1,2,3,4,9,10,11,12)]
-  pp_ROTsecond <- dat[,c(5,6,7,8,13,14,15,16)]
+  pp_ROThor <- dat[,c(1,2,3,4,9,10,11,12)]
+  pp_ROTver <- dat[,c(5,6,7,8,13,14,15,16)]
   #then we can add trial column back to each of the separated data
   trial <- seq(1,90,1)
-  pp_ROTfirst <- cbind(trial, pp_ROTfirst)
-  pp_ROTsecond <- cbind(trial, pp_ROTsecond)
+  pp_ROThor <- cbind(trial, pp_ROThor)
+  pp_ROTver <- cbind(trial, pp_ROTver)
   
   #return whichever data is needed
   if (condition == 1){
-    return(pp_ROTfirst)
+    return(pp_ROThor)
   } else if (condition == 2){
-    return(pp_ROTsecond)
+    return(pp_ROTver)
   }
   
 }
@@ -2456,9 +2312,9 @@ getROTAxisEffectsConfidenceInterval <- function(group, maxppid, location, condit
         confidence <- rbind(confidence, citrial)
       }
       if (group == 'noninstructed'){
-        write.csv(confidence, file='data/ROT_noninstructed_CI_axiseffects_1.csv', row.names = F) 
+        write.csv(confidence, file='data/pilot/ROT_noninstructed_CI_axiseffects_1.csv', row.names = F) 
       } else if (group == 'instructed'){
-        write.csv(confidence, file='data/ROT_instructed_CI_axiseffects_1.csv', row.names = F)
+        write.csv(confidence, file='data/pilot/ROT_instructed_CI_axiseffects_1.csv', row.names = F)
       }
       
     }
@@ -2488,9 +2344,9 @@ getROTAxisEffectsConfidenceInterval <- function(group, maxppid, location, condit
         confidence <- rbind(confidence, citrial)
       }
       if (group == 'noninstructed'){
-        write.csv(confidence, file='data/ROT_noninstructed_CI_axiseffects_2.csv', row.names = F) 
+        write.csv(confidence, file='data/pilot/ROT_noninstructed_CI_axiseffects_2.csv', row.names = F) 
       } else if (group == 'instructed'){
-        write.csv(confidence, file='data/ROT_instructed_CI_axiseffects_2.csv', row.names = F)
+        write.csv(confidence, file='data/pilot/ROT_instructed_CI_axiseffects_2.csv', row.names = F)
       }
       
     }
@@ -2504,7 +2360,7 @@ plotNIROTAxisEffects <- function(group = 'noninstructed', conditions = c(1,2), t
   
   #but we can save plot as svg file
   if (target=='svg') {
-    svglite(file='doc/fig/Fig2_ROT_NI_axiseffects.svg', width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
+    svglite(file='doc/fig/pilot/Fig9_ROT_NI_axiseffects.svg', width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
   }
   
   # create plot
@@ -2521,7 +2377,7 @@ plotNIROTAxisEffects <- function(group = 'noninstructed', conditions = c(1,2), t
   
   for(condition in conditions){
     #read in files created by getGroupConfidenceInterval in filehandling.R
-    groupconfidence <- read.csv(file=sprintf('data/ROT_%s_CI_axiseffects_%d.csv', group, condition))
+    groupconfidence <- read.csv(file=sprintf('data/pilot/ROT_%s_CI_axiseffects_%d.csv', group, condition))
     
     colourscheme <- getCtypeColourScheme(conditions = condition)
     #take only first, last and middle columns of file
@@ -2563,7 +2419,7 @@ plotIROTAxisEffects <- function(group = 'instructed', conditions = c(1,2), targe
   
   #but we can save plot as svg file
   if (target=='svg') {
-    svglite(file='doc/fig/Fig2_ROT_I_axiseffects.svg', width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
+    svglite(file='doc/fig/pilot/Fig10_ROT_I_axiseffects.svg', width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
   }
   
   # create plot
@@ -2580,7 +2436,7 @@ plotIROTAxisEffects <- function(group = 'instructed', conditions = c(1,2), targe
   
   for(condition in conditions){
     #read in files created by getGroupConfidenceInterval in filehandling.R
-    groupconfidence <- read.csv(file=sprintf('data/ROT_%s_CI_axiseffects_%d.csv', group, condition))
+    groupconfidence <- read.csv(file=sprintf('data/pilot/ROT_%s_CI_axiseffects_%d.csv', group, condition))
     
     colourscheme <- getCtypeColourScheme(conditions = condition)
     #take only first, last and middle columns of file
@@ -2628,18 +2484,18 @@ getMIRAxisEffects <- function(group, maxppid, location,condition){
   #0,1,2,3 gets MIR on VER axis, 4,5,6,7 gets MIR on HOR axis
   #but participant count starts at 0, whereas dat already starts at one
   #first condition would be vertical, second would be horizontal
-  pp_MIRfirst <- dat[,c(1,2,3,4,9,10,11,12)]
-  pp_MIRsecond <- dat[,c(5,6,7,8,13,14,15,16)]
+  pp_MIRhor <- dat[,c(5,6,7,8,13,14,15,16)]
+  pp_MIRver <- dat[,c(1,2,3,4,9,10,11,12)]
   #then we can add trial column back to each of the separated data
   trial <- seq(1,90,1)
-  pp_MIRfirst <- cbind(trial, pp_MIRfirst)
-  pp_MIRsecond <- cbind(trial, pp_MIRsecond)
+  pp_MIRhor <- cbind(trial, pp_MIRhor)
+  pp_MIRver <- cbind(trial, pp_MIRver)
   
   #return whichever data is needed
   if (condition == 1){
-    return(pp_MIRfirst)
+    return(pp_MIRhor)
   } else if (condition == 2){
-    return(pp_MIRsecond)
+    return(pp_MIRver)
   }
   
 }
@@ -2672,9 +2528,9 @@ getMIRAxisEffectsConfidenceInterval <- function(group, maxppid, location, condit
         confidence <- rbind(confidence, citrial)
       }
       if (group == 'noninstructed'){
-        write.csv(confidence, file='data/MIR_noninstructed_CI_axiseffects_1.csv', row.names = F) 
+        write.csv(confidence, file='data/pilot/MIR_noninstructed_CI_axiseffects_1.csv', row.names = F) 
       } else if (group == 'instructed'){
-        write.csv(confidence, file='data/MIR_instructed_CI_axiseffects_1.csv', row.names = F)
+        write.csv(confidence, file='data/pilot/MIR_instructed_CI_axiseffects_1.csv', row.names = F)
       }
       
     }
@@ -2704,9 +2560,9 @@ getMIRAxisEffectsConfidenceInterval <- function(group, maxppid, location, condit
         confidence <- rbind(confidence, citrial)
       }
       if (group == 'noninstructed'){
-        write.csv(confidence, file='data/MIR_noninstructed_CI_axiseffects_2.csv', row.names = F) 
+        write.csv(confidence, file='data/pilot/MIR_noninstructed_CI_axiseffects_2.csv', row.names = F) 
       } else if (group == 'instructed'){
-        write.csv(confidence, file='data/MIR_instructed_CI_axiseffects_2.csv', row.names = F)
+        write.csv(confidence, file='data/pilot/MIR_instructed_CI_axiseffects_2.csv', row.names = F)
       }
       
     }
@@ -2720,7 +2576,7 @@ plotNIMIRAxisEffects <- function(group = 'noninstructed', conditions = c(1,2), t
   
   #but we can save plot as svg file
   if (target=='svg') {
-    svglite(file='doc/fig/Fig2_MIR_NI_axiseffects.svg', width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
+    svglite(file='doc/fig/pilot/Fig11_MIR_NI_axiseffects.svg', width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
   }
   
   # create plot
@@ -2737,7 +2593,7 @@ plotNIMIRAxisEffects <- function(group = 'noninstructed', conditions = c(1,2), t
   
   for(condition in conditions){
     #read in files created by getGroupConfidenceInterval in filehandling.R
-    groupconfidence <- read.csv(file=sprintf('data/MIR_%s_CI_axiseffects_%d.csv', group, condition))
+    groupconfidence <- read.csv(file=sprintf('data/pilot/MIR_%s_CI_axiseffects_%d.csv', group, condition))
     
     colourscheme <- getCtypeColourScheme(conditions = condition)
     #take only first, last and middle columns of file
@@ -2763,7 +2619,7 @@ plotNIMIRAxisEffects <- function(group = 'noninstructed', conditions = c(1,2), t
   }
   
   #add legend
-  legend(60,-100,legend=c('Ver_axis','Hor_axis'),
+  legend(60,-100,legend=c('Hor_axis','Ver_axis'),
          col=c(colourscheme[[1]][['S']],colourscheme[[2]][['S']]),
          lty=1,bty='n',cex=1,lwd=2)
   
@@ -2779,7 +2635,7 @@ plotIMIRAxisEffects <- function(group = 'instructed', conditions = c(1,2), targe
   
   #but we can save plot as svg file
   if (target=='svg') {
-    svglite(file='doc/fig/Fig2_MIR_I_axiseffects.svg', width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
+    svglite(file='doc/fig/pilot/Fig12_MIR_I_axiseffects.svg', width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
   }
   
   # create plot
@@ -2796,7 +2652,7 @@ plotIMIRAxisEffects <- function(group = 'instructed', conditions = c(1,2), targe
   
   for(condition in conditions){
     #read in files created by getGroupConfidenceInterval in filehandling.R
-    groupconfidence <- read.csv(file=sprintf('data/MIR_%s_CI_axiseffects_%d.csv', group, condition))
+    groupconfidence <- read.csv(file=sprintf('data/pilot/MIR_%s_CI_axiseffects_%d.csv', group, condition))
     
     colourscheme <- getCtypeColourScheme(conditions = condition)
     #take only first, last and middle columns of file
@@ -2822,7 +2678,7 @@ plotIMIRAxisEffects <- function(group = 'instructed', conditions = c(1,2), targe
   }
   
   #add legend
-  legend(60,-100,legend=c('Ver_axis','Hor_axis'),
+  legend(60,-100,legend=c('Hor_axis','Ver_axis'),
          col=c(colourscheme[[1]][['S']],colourscheme[[2]][['S']]),
          lty=1,bty='n',cex=1,lwd=2)
   
@@ -2835,266 +2691,123 @@ plotIMIRAxisEffects <- function(group = 'instructed', conditions = c(1,2), targe
 
 #Axis Effects: Stats----
 
-# We can just compare the two conditions per perturbation type across blocks of trials (much like learning rate analysis below)
-# We are only analyzing noninstructed group for now
-# Start with ROT
-
-ROTgetAxisLongFormat <- function(conditions=c(1,2), group){
-  
-  for (condition in conditions){
-    if(group == 'noninstructed'){
-      ROT1dat <- getROTAxisEffects(group='noninstructed',maxppid=15,location='maxvel',condition=condition)
-    } else if(group == 'instructed'){
-      ROT1dat <- getROTAxisEffects(group='instructed',maxppid=31,location='maxvel',condition=condition)
-    }
-    
-    
-    if(condition == 1){
-      ppcols <- c('First_p1','First_p2', 'First_p3', 'First_p4', 'First_p5', 'First_p6', 'First_p7', 'First_p8')
-      colnames(ROT1dat) <- c('trial', 'First_p1','First_p2', 'First_p3', 'First_p4', 'First_p5', 'First_p6', 'First_p7', 'First_p8')
-    } else if(condition == 2){
-      ppcols <- c('Second_p1','Second_p2', 'Second_p3', 'Second_p4', 'Second_p5', 'Second_p6', 'Second_p7', 'Second_p8')
-      colnames(ROT1dat) <- c('trial', 'Second_p1','Second_p2', 'Second_p3', 'Second_p4', 'Second_p5', 'Second_p6', 'Second_p7', 'Second_p8')
-    }
-    ROT1dat <- as.data.frame(ROT1dat)
-    
-    #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
-    longdata <- gather(ROT1dat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
-    write.csv(longdata, file=sprintf('data/ROT_%s_axiseffects_long_%s.csv',group,condition), row.names = F)
-  }
-}
-
-ROTgetBlockedAxisEffectsAOV <- function(conditions = c(1,2), blockdefs, group) {
-  #function reads in learningcurves_long.csv file then creates a df with cols participant, block, reachdev
-  LCaov <- data.frame()
-  for (condition in conditions){  
-    curves <- read.csv(sprintf('data/ROT_%s_axiseffects_long_%s.csv',group,condition), stringsAsFactors=FALSE)  
-    participants <- unique(curves$participant)
-    #R <- dim(curves)[1] # not needed, checks if rows=90 (correct trial numbers)
-    #curves <- curves[,-1] #take away trial column
-    N <- length(participants) #gets the number of participants
-    
-    #blocked <- array(NA, dim=c(N,length(blockdefs))) #empty array where every participant will get 3 corresponding columns
-    #row.names(blocked) <- participants
-    #colnames(blocked) <- names(blockdefs)
-    
-    diffcond <- c()
-    participant <- c()
-    block <- c()
-    compensation <- c()
-    
-    for (pp.idx in c(1:length(participants))) {
-      
-      pp <- participants[pp.idx] #loop through each participant
-      
-      for (blockno in c(1:length(blockdefs))) { #loop through each block (first, second, third)
-        
-        blockdef <- blockdefs[[blockno]] #creates a list which specifies start trial of every block, and how many trials in total for this block
-        blockstart <- blockdef[1] #either trial 1, 4, or 76
-        blockend <- blockstart + blockdef[2] - 1 #either trial 3, 6, or 90
-        #samples <- curves[blockstart:blockend,pp] #gets corresponding reach angle per participant
-        # moved to long format files:
-        samples <- c()
-        for (trial in c(blockstart:blockend)) {
-          # print(which(curves$participant == pp))
-          # print(which(curves$participant == pp & curves$trial == trial))
-          samples <- c(samples, curves$compensation[which(curves$participant == pp & curves$trial == trial)]) #get reachdev for current pp and trial
-          
-        }
-        #print(mean(samples, na.rm=TRUE))
-        #blocked[pp.idx,block] <- mean(samples, na.rm=TRUE) #compute the mean for it and put it in array
-        diffcond <- c(diffcond, condition)
-        participant <- c(participant, pp) #the participant
-        block <- c(block, names(blockdefs)[blockno]) #the name of the block number (first, second or third)
-        compensation <- c(compensation, mean(samples, na.rm=T)) #mean compensation of trials for that block
+getAxisEffectsMSE <- function(perturb = c('ROT', 'MIR'), group = 'noninstructed', maxppid = 15, location = 'maxvel', conditions = c(1,2)){
+  for(ptype in perturb){
+    step <- c()
+    asymptote <- c()
+    mse_step <- c()
+    lambda <- c()
+    N0 <- c()
+    mse_expl <- c()
+    x0 <- c()
+    k <- c()
+    L <- c()
+    mse_log <- c()
+    order <- c()
+    for(condition in conditions){
+      if(ptype == 'ROT'){
+        data <- getROTAxisEffects(group = group, maxppid = maxppid, location = location, condition = condition)
+      } else if (ptype == 'MIR'){
+        data <- getMIRAxisEffects(group = group, maxppid = maxppid, location = location, condition = condition)
       }
       
-    }
-    
-    GroupLCBlocked <- data.frame(diffcond,participant,block,compensation)
-    
-    
-    if (prod(dim(LCaov)) == 0){
-      LCaov <- GroupLCBlocked
-    } else {
-      LCaov <- rbind(LCaov, GroupLCBlocked)
-    }
-  }
-  #need to make some columns as factors for ANOVA
-  LCaov$diffcond <- as.factor(LCaov$diffcond)
-  LCaov$block <- as.factor(LCaov$block)
-  LCaov$block <- factor(LCaov$block, levels = c('first','second','last')) #so that it does not order it alphabetically
-  return(LCaov)
-  
-}
-
-ROTaxiseffectsANOVA <- function(group) {
-  
-  #styles <- getStyle()
-  blockdefs <- list('first'=c(1,6),'second'=c(7,6),'last'=c(85,6)) #6 trials per block
-  
-  LC4aov <- ROTgetBlockedAxisEffectsAOV(blockdefs=blockdefs, group=group)                      
-  
-  #looking into interaction below:
-  #interaction.plot(LC4aov$diffgroup, LC4aov$block, LC4aov$reachdeviation)
-  
-  #learning curve ANOVA's
-  # for ez, case ID should be a factor:
-  LC4aov$participant <- as.factor(LC4aov$participant)
-  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=compensation, within=block,between=diffcond,type=3, return_aov = TRUE) #which type of SS is appropriate?
-  print(firstAOV[1:3]) #so that it doesn't print the aov object as well
-}
-
-ROTaxiseffectsBayesANOVA <- function(group) {
-  
-  #styles <- getStyle()
-  blockdefs <- list('first'=c(1,6),'second'=c(7,6),'last'=c(85,6)) #6 trials per block
-  
-  LC4aov <- ROTgetBlockedAxisEffectsAOV(blockdefs=blockdefs, group=group)                      
-  
-  #looking into interaction below:
-  #interaction.plot(LC4aov$diffgroup, LC4aov$block, LC4aov$reachdeviation)
-  
-  #Bayes ANOVA - can use long format
-  #will compare models to null (intercept) or no effect - this will be 1
-  #higher than 1 will be evidence for alternative hypothesis, lower will be evidence for null hypothesis
-  #compare models either if only main effects, interaction of effects
-  #use lmBF function for specific models
-  LC4aov$participant <- as.factor(LC4aov$participant)
-  bfLC<- anovaBF(compensation ~ diffcond*block + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
-  #compare interaction contribution, over the contribution of both main effects
-  bfinteraction <- bfLC[4]/bfLC[3]
-  print(bfLC)
-  print(bfinteraction)
-}
-
-#Then do the same for MIR
-MIRgetAxisLongFormat <- function(conditions=c(1,2), group){
-  
-  for (condition in conditions){
-    if(group == 'noninstructed'){
-      MIR1dat <- getMIRAxisEffects(group='noninstructed',maxppid=15,location='maxvel',condition=condition)
-    } else if(group == 'instructed'){
-      MIR1dat <- getMIRAxisEffects(group='instructed',maxppid=31,location='maxvel',condition=condition)
-    }
-    
-    
-    if(condition == 1){
-      ppcols <- c('First_p1','First_p2', 'First_p3', 'First_p4', 'First_p5', 'First_p6', 'First_p7', 'First_p8')
-      colnames(MIR1dat) <- c('trial', 'First_p1','First_p2', 'First_p3', 'First_p4', 'First_p5', 'First_p6', 'First_p7', 'First_p8')
-    } else if(condition == 2){
-      ppcols <- c('Second_p1','Second_p2', 'Second_p3', 'Second_p4', 'Second_p5', 'Second_p6', 'Second_p7', 'Second_p8')
-      colnames(MIR1dat) <- c('trial', 'Second_p1','Second_p2', 'Second_p3', 'Second_p4', 'Second_p5', 'Second_p6', 'Second_p7', 'Second_p8')
-    }
-    MIR1dat <- as.data.frame(MIR1dat)
-    
-    #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
-    longdata <- gather(MIR1dat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
-    write.csv(longdata, file=sprintf('data/MIR_%s_axiseffects_long_%s.csv',group,condition), row.names = F)
-  }
-}
-
-MIRgetBlockedAxisEffectsAOV <- function(conditions = c(1,2), blockdefs,group) {
-  #function reads in learningcurves_long.csv file then creates a df with cols participant, block, reachdev
-  LCaov <- data.frame()
-  for (condition in conditions){  
-    curves <- read.csv(sprintf('data/MIR_%s_axiseffects_long_%s.csv',group,condition), stringsAsFactors=FALSE)  
-    participants <- unique(curves$participant)
-    #R <- dim(curves)[1] # not needed, checks if rows=90 (correct trial numbers)
-    #curves <- curves[,-1] #take away trial column
-    N <- length(participants) #gets the number of participants
-    
-    #blocked <- array(NA, dim=c(N,length(blockdefs))) #empty array where every participant will get 3 corresponding columns
-    #row.names(blocked) <- participants
-    #colnames(blocked) <- names(blockdefs)
-    
-    diffcond <- c()
-    participant <- c()
-    block <- c()
-    compensation <- c()
-    
-    for (pp.idx in c(1:length(participants))) {
-      
-      pp <- participants[pp.idx] #loop through each participant
-      
-      for (blockno in c(1:length(blockdefs))) { #loop through each block (first, second, third)
+      subdat <- data[,2:ncol(data)]
+      for(icol in c(1:ncol(subdat))){
+        ppdat <- subdat[,icol]
+        par_step <- stepFunctionFit(signal = ppdat)
+        pp_mse_step <- stepFunctionMSE(par=par_step, signal=ppdat)
         
-        blockdef <- blockdefs[[blockno]] #creates a list which specifies start trial of every block, and how many trials in total for this block
-        blockstart <- blockdef[1] #either trial 1, 4, or 76
-        blockend <- blockstart + blockdef[2] - 1 #either trial 3, 6, or 90
-        #samples <- curves[blockstart:blockend,pp] #gets corresponding reach angle per participant
-        # moved to long format files:
-        samples <- c()
-        for (trial in c(blockstart:blockend)) {
-          # print(which(curves$participant == pp))
-          # print(which(curves$participant == pp & curves$trial == trial))
-          samples <- c(samples, curves$compensation[which(curves$participant == pp & curves$trial == trial)]) #get reachdev for current pp and trial
-          
-        }
-        #print(mean(samples, na.rm=TRUE))
-        #blocked[pp.idx,block] <- mean(samples, na.rm=TRUE) #compute the mean for it and put it in array
-        diffcond <- c(diffcond, condition)
-        participant <- c(participant, pp) #the participant
-        block <- c(block, names(blockdefs)[blockno]) #the name of the block number (first, second or third)
-        compensation <- c(compensation, mean(samples, na.rm=T)) #mean compensation of trials for that block
+        par_expl <- exponentialFit(signal = ppdat)
+        pp_mse_expl<- exponentialMSE(par=par_expl, signal=ppdat)
+        
+        y <- ppdat
+        x <- seq(1, length(y), 1)
+        bs_dat <- data.frame(x,y)
+        par_log <- logisticFunctionFit(data = bs_dat)
+        pp_mse_log<- logisticFunctionMSE(par=par_log, data=bs_dat)
+        
+        cond <- condition
+        
+        step <- c(step, par_step['step'])
+        asymptote <- c(asymptote, par_step['asymptote'])
+        mse_step <- c(mse_step, pp_mse_step)
+        lambda <- c(lambda, par_expl['lambda'])
+        N0 <- c(N0, par_expl['N0'])
+        mse_expl <- c(mse_expl, pp_mse_expl)
+        x0 <- c(x0, par_log['x0'])
+        k <- c(k, par_log['k'])
+        L <- c(L, par_log['L'])
+        mse_log <- c(mse_log, pp_mse_log)
+        order <- c(order, cond)
       }
-      
     }
-    
-    GroupLCBlocked <- data.frame(diffcond,participant,block,compensation)
-    
-    
-    if (prod(dim(LCaov)) == 0){
-      LCaov <- GroupLCBlocked
-    } else {
-      LCaov <- rbind(LCaov, GroupLCBlocked)
+    ndat <- data.frame(step, asymptote, mse_step, lambda, N0, mse_expl, x0, k, L, mse_log, order)
+    write.csv(ndat, file=sprintf('data/pilot/%s_%s_MSE_axiseffects.csv',ptype, group), quote=F, row.names=F)
+  }
+}
+
+getGroupAxisEffectsLikelihoods <- function(perturb = c('ROT', 'MIR'), klevel = c(2,2,3), N = 2, conditions = c(1,2)){
+  group <- c()
+  loglikelihood_step <- c()
+  loglikelihood_expl <- c()
+  loglikelihood_log <- c()
+  for(ptype in perturb){
+    data <- read.csv(sprintf('data/pilot/%s_noninstructed_MSE_axiseffects.csv', ptype))
+    for(cond in conditions){
+      ndat <- data[which(data$order == cond),]
+      MSE_step <- setNames(sum(ndat$mse_step), 'mse_step')
+      MSE_expl <- setNames(sum(ndat$mse_expl), 'mse_expl')
+      MSE_log <- setNames(sum(ndat$mse_log), 'mse_log')
+      
+      MSE <- c(MSE_step, MSE_expl, MSE_log)
+      #k <- rep(klevel, length(MSE))
+      k <- klevel
+      AICs <- AICc(MSE, k, N)
+      loglikelihoods <- relativeLikelihood(AICs)
+      
+      grpinfo <- sprintf('%s_%d', ptype, cond)
+      
+      group <- c(group, grpinfo)
+      loglikelihood_step <- c(loglikelihood_step, loglikelihoods['mse_step'])
+      loglikelihood_expl <- c(loglikelihood_expl, loglikelihoods['mse_expl'])
+      loglikelihood_log <- c(loglikelihood_log, loglikelihoods['mse_log'])
     }
   }
-  #need to make some columns as factors for ANOVA
-  LCaov$diffcond <- as.factor(LCaov$diffcond)
-  LCaov$block <- as.factor(LCaov$block)
-  LCaov$block <- factor(LCaov$block, levels = c('first','second','last')) #so that it does not order it alphabetically
-  return(LCaov)
-  
+  alldat <- data.frame(group, loglikelihood_step, loglikelihood_expl, loglikelihood_log)
+  return(alldat)
 }
 
-MIRaxiseffectsANOVA <- function(group) {
-  
-  #styles <- getStyle()
-  blockdefs <- list('first'=c(1,6),'second'=c(7,6),'last'=c(85,6)) #6 trials per block
-  
-  LC4aov <- MIRgetBlockedAxisEffectsAOV(blockdefs=blockdefs, group=group)                      
-  
-  #looking into interaction below:
-  #interaction.plot(LC4aov$diffgroup, LC4aov$block, LC4aov$reachdeviation)
-  
-  #learning curve ANOVA's
-  # for ez, case ID should be a factor:
-  LC4aov$participant <- as.factor(LC4aov$participant)
-  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=compensation, within=block,between=diffcond,type=3, return_aov = TRUE) #which type of SS is appropriate?
-  print(firstAOV[1:3]) #so that it doesn't print the aov object as well
+getLambdaAxisEffectsTTest <- function(perturbation = c('ROT', 'MIR')){
+  for(ptype in perturbation){
+    data <- read.csv(sprintf('data/pilot/%s_noninstructed_MSE_axiseffects.csv', ptype))
+    
+    subdat1 <- data[which(data$order == 1),]
+    subdat1 <- subdat1$lambda
+    
+    subdat2 <- data[which(data$order == 2),]
+    subdat2 <- subdat2$lambda
+    
+    cat(sprintf('Frequentist t-test (perturbation: %s, condition: horizontal vs. vertical): \n', ptype))
+    print(t.test(subdat1, subdat2))
+    cat(sprintf('Bayesian t-test (perturbation: %s, condition: horizontal vs. vertical): \n', ptype))
+    print(ttestBF(subdat1, subdat2))
+  }
 }
 
-MIRaxiseffectsBayesANOVA <- function(group) {
-  
-  #styles <- getStyle()
-  blockdefs <- list('first'=c(1,6),'second'=c(7,6),'last'=c(85,6)) #6 trials per block
-  
-  LC4aov <- MIRgetBlockedAxisEffectsAOV(blockdefs=blockdefs, group=group)                      
-  
-  #looking into interaction below:
-  #interaction.plot(LC4aov$diffgroup, LC4aov$block, LC4aov$reachdeviation)
-  
-  #Bayes ANOVA - can use long format
-  #will compare models to null (intercept) or no effect - this will be 1
-  #higher than 1 will be evidence for alternative hypothesis, lower will be evidence for null hypothesis
-  #compare models either if only main effects, interaction of effects
-  #use lmBF function for specific models
-  LC4aov$participant <- as.factor(LC4aov$participant)
-  bfLC<- anovaBF(compensation ~ diffcond*block + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
-  #compare interaction contribution, over the contribution of both main effects
-  bfinteraction <- bfLC[4]/bfLC[3]
-  print(bfLC)
-  print(bfinteraction)
+getAsymptoteAxisEffectsTTest <- function(perturbation = c('ROT', 'MIR')){
+  for(ptype in perturbation){
+    data <- read.csv(sprintf('data/pilot/%s_noninstructed_MSE_axiseffects.csv', ptype))
+    
+    subdat1 <- data[which(data$order == 1),]
+    subdat1 <- subdat1$N0
+    
+    subdat2 <- data[which(data$order == 2),]
+    subdat2 <- subdat2$N0
+    
+    cat(sprintf('Frequentist t-test (perturbation: %s, condition: horizontal vs. vertical): \n', ptype))
+    print(t.test(subdat1, subdat2))
+    cat(sprintf('Bayesian t-test (perturbation: %s, condition: horizontal vs. vertical): \n', ptype))
+    print(ttestBF(subdat1, subdat2))
+  }
 }
 
