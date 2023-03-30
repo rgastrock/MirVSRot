@@ -1,4 +1,5 @@
 source('ana/shared.R')
+source('ana/exponentialandstepModel.R')
 
 #Learning Rates----
 
@@ -141,7 +142,7 @@ getAlignedTrainingBiases <- function(df, location) {
 plotLearningCurves <- function(target='inline'){
   #but we can save plot as svg file
   if (target=='svg') {
-    svglite(file='doc/fig/Fig3_learningcurve.svg', width=7, height=10, pointsize=14, system_fonts=list(sans="Arial"))
+    svglite(file='doc/fig/pilot/Fig15_NI_learningcurve.svg', width=7, height=10, pointsize=14, system_fonts=list(sans="Arial"))
   }
   
   par(mfrow = c(2,1))
@@ -153,6 +154,65 @@ plotLearningCurves <- function(target='inline'){
   if (target=='svg') {
     dev.off()
   }
+}
+
+plotPTypeLearningCurves <- function(perturb = c('ROT', 'MIR'), group = 'noninstructed', target='inline') {
+  
+  
+  #but we can save plot as svg file
+  if (target=='svg') {
+    svglite(file='doc/fig/pilot/Fig16_NI_ROTMIRLC.svg', width=11.5, height=8.5, pointsize=16, system_fonts=list(sans="Arial"))
+  }
+  
+  # create plot
+  meanGroupReaches <- list() #empty list so that it plots the means last
+  
+  #NA to create empty plot
+  # could maybe use plot.new() ?
+  plot(NA, NA, xlim = c(0,91), ylim = c(-200,200), 
+       xlab = "Trial", ylab = "Amount of compensation (%)", frame.plot = FALSE, #frame.plot takes away borders
+       main = "", xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
+  abline(h = c(-100,0, 100), col = '#000000', lty = 2) #creates horizontal dashed lines through y =  0 and 30
+  axis(1, at = c(1, 30, 60, 90)) #tick marks for x axis
+  axis(2, at = c(-200, -100, 0, 100, 200)) #tick marks for y axis
+  
+  for(ptype in perturb){
+    #read in files created by getGroupConfidenceInterval in filehandling.R
+    groupconfidence <- read.csv(file=sprintf('data/pilot/%s_%s_CI_learningcurve.csv', ptype, group))
+    
+    colourscheme <- getPtypeColourScheme(ptype)
+    #take only first, last and middle columns of file
+    lower <- groupconfidence[,1]
+    upper <- groupconfidence[,3]
+    mid <- groupconfidence[,2]
+    
+    col <- colourscheme[[ptype]][['T']] #use colour scheme according to group
+    
+    #upper and lower bounds create a polygon
+    #polygon creates it from low left to low right, then up right to up left -> use rev
+    #x is just trial nnumber, y depends on values of bounds
+    polygon(x = c(c(1:90), rev(c(1:90))), y = c(lower, rev(upper)), border=NA, col=col)
+    
+    meanGroupReaches[[ptype]] <- mid #use mean to fill in empty list for each group
+  }
+  
+  
+  for (ptype in perturb) {
+    # plot mean reaches for each group
+    col <- colourscheme[[ptype]][['S']]
+    lines(meanGroupReaches[[ptype]],col=col,lty=1)
+  }
+  
+  #add legend
+  legend(60,-150,legend=c('Visuomotor rotation','Mirror reversal'),
+         col=c(colourscheme[['ROT']][['S']],colourscheme[['MIR']][['S']]),
+         lty=1,bty='n',cex=1,lwd=2)
+  
+  #close everything if you saved plot as svg
+  if (target=='svg') {
+    dev.off()
+  }
+  
 }
 
 # Learning Curves ROTATION----
@@ -281,9 +341,9 @@ getROTGroupConfidenceInterval <- function(group, maxppid, location, type){
       confidence <- rbind(confidence, citrial)
     }
     if (group == 'noninstructed'){
-      write.csv(confidence, file='data/ROT_noninstructed_CI_learningcurve.csv', row.names = F) 
+      write.csv(confidence, file='data/pilot/ROT_noninstructed_CI_learningcurve.csv', row.names = F) 
     } else if (group == 'instructed'){
-      write.csv(confidence, file='data/ROT_instructed_CI_learningcurve.csv', row.names = F)
+      write.csv(confidence, file='data/pilot/ROT_instructed_CI_learningcurve.csv', row.names = F)
     }
     
   }
@@ -295,7 +355,7 @@ plotROTLearningCurves <- function(groups = c('noninstructed'),target='inline') {
   
   #but we can save plot as svg file
   if (target=='svg') {
-    svglite(file='doc/fig/Fig3_ROT_learningcurve.svg', width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
+    svglite(file='doc/fig/pilot/Fig13_ROT_learningcurve.svg', width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
   }
   
   # create plot
@@ -312,7 +372,7 @@ plotROTLearningCurves <- function(groups = c('noninstructed'),target='inline') {
   
   for(group in groups){
     #read in files created by getGroupConfidenceInterval in filehandling.R
-    groupconfidence <- read.csv(file=sprintf('data/ROT_%s_CI_learningcurve.csv', group))
+    groupconfidence <- read.csv(file=sprintf('data/pilot/ROT_%s_CI_learningcurve.csv', group))
     
     colourscheme <- getColourScheme(groups = group)
     #take only first, last and middle columns of file
@@ -520,9 +580,9 @@ getMIRGroupConfidenceInterval <- function(group, maxppid, location, type){
       confidence <- rbind(confidence, citrial)
     }
     if (group == 'noninstructed'){
-      write.csv(confidence, file='data/MIR_noninstructed_CI_learningcurve.csv', row.names = F) 
+      write.csv(confidence, file='data/pilot/MIR_noninstructed_CI_learningcurve.csv', row.names = F) 
     } else if (group == 'instructed'){
-      write.csv(confidence, file='data/MIR_instructed_CI_learningcurve.csv', row.names = F)
+      write.csv(confidence, file='data/pilot/MIR_instructed_CI_learningcurve.csv', row.names = F)
     }
   }
   #}
@@ -533,7 +593,7 @@ plotMIRLearningCurves <- function(groups = c('noninstructed'), target='inline') 
   
   #but we can save plot as svg file
   if (target=='svg') {
-    svglite(file='doc/fig/Fig3_MIR_learningcurve.svg', width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
+    svglite(file='doc/fig/pilot/Fig14_MIR_learningcurve.svg', width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
   }
   
   # create plot
@@ -550,7 +610,7 @@ plotMIRLearningCurves <- function(groups = c('noninstructed'), target='inline') 
   
   for(group in groups){
     #read in files created by getGroupConfidenceInterval in filehandling.R
-    groupconfidence <- read.csv(file=sprintf('data/MIR_%s_CI_learningcurve.csv', group))
+    groupconfidence <- read.csv(file=sprintf('data/pilot/MIR_%s_CI_learningcurve.csv', group))
     
     colourscheme <- getColourScheme(groups = group)
     #take only first, last and middle columns of file
@@ -719,9 +779,9 @@ getROTGroupConfidenceIntervalWONear <- function(group, maxppid, location, type){
       confidence <- rbind(confidence, citrial)
     }
     if (group == 'noninstructed'){
-      write.csv(confidence, file='data/ROT_noninstructed_CI_learningcurve_WONear.csv', row.names = F) 
+      write.csv(confidence, file='data/pilot/ROT_noninstructed_CI_learningcurve_WONear.csv', row.names = F) 
     } else if (group == 'instructed'){
-      write.csv(confidence, file='data/ROT_instructed_CI_learningcurve_WONear.csv', row.names = F)
+      write.csv(confidence, file='data/pilot/ROT_instructed_CI_learningcurve_WONear.csv', row.names = F)
     }
     
   }
@@ -733,7 +793,7 @@ plotROTLearningCurvesWONear <- function(groups = c('noninstructed','instructed')
   
   #but we can save plot as svg file
   if (target=='svg') {
-    svglite(file='doc/fig/Fig3_ROT_learningcurveWONear.svg', width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
+    svglite(file='doc/fig/pilot/Fig17_ROT_learningcurveWONear.svg', width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
   }
   
   # create plot
@@ -742,7 +802,7 @@ plotROTLearningCurvesWONear <- function(groups = c('noninstructed','instructed')
   #NA to create empty plot
   # could maybe use plot.new() ?
   plot(NA, NA, xlim = c(0,61), ylim = c(-200,200), 
-       xlab = "Trial", ylab = "Amount of Compensation (°)", frame.plot = FALSE, #frame.plot takes away borders
+       xlab = "Trial", ylab = "Amount of Compensation (%)", frame.plot = FALSE, #frame.plot takes away borders
        main = "Reach Learning over Time: ROT", xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
   abline(h = c(-100,0, 100), col = 8, lty = 2) #creates horizontal dashed lines through y =  0 and 30
   axis(1, at = c(1, 20, 40, 60)) #tick marks for x axis
@@ -750,7 +810,7 @@ plotROTLearningCurvesWONear <- function(groups = c('noninstructed','instructed')
   
   for(group in groups){
     #read in files created by getGroupConfidenceInterval in filehandling.R
-    groupconfidence <- read.csv(file=sprintf('data/ROT_%s_CI_learningcurve_WONear.csv', group))
+    groupconfidence <- read.csv(file=sprintf('data/pilot/ROT_%s_CI_learningcurve_WONear.csv', group))
     
     colourscheme <- getColourScheme(groups = group)
     #take only first, last and middle columns of file
@@ -919,9 +979,9 @@ getMIRGroupConfidenceIntervalWONear <- function(group, maxppid, location, type){
       confidence <- rbind(confidence, citrial)
     }
     if (group == 'noninstructed'){
-      write.csv(confidence, file='data/MIR_noninstructed_CI_learningcurve_WONear.csv', row.names = F) 
+      write.csv(confidence, file='data/pilot/MIR_noninstructed_CI_learningcurve_WONear.csv', row.names = F) 
     } else if (group == 'instructed'){
-      write.csv(confidence, file='data/MIR_instructed_CI_learningcurve_WONear.csv', row.names = F)
+      write.csv(confidence, file='data/pilot/MIR_instructed_CI_learningcurve_WONear.csv', row.names = F)
     }
   }
   #}
@@ -932,7 +992,7 @@ plotMIRLearningCurvesWONear <- function(groups = c('noninstructed','instructed')
   
   #but we can save plot as svg file
   if (target=='svg') {
-    svglite(file='doc/fig/Fig3_MIR_learningcurveWONear.svg', width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
+    svglite(file='doc/fig/pilot/Fig18_MIR_learningcurveWONear.svg', width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
   }
   
   # create plot
@@ -941,7 +1001,7 @@ plotMIRLearningCurvesWONear <- function(groups = c('noninstructed','instructed')
   #NA to create empty plot
   # could maybe use plot.new() ?
   plot(NA, NA, xlim = c(0,61), ylim = c(-200,200), 
-       xlab = "Trial", ylab = "Amount of Compensation (°)", frame.plot = FALSE, #frame.plot takes away borders
+       xlab = "Trial", ylab = "Amount of Compensation (%)", frame.plot = FALSE, #frame.plot takes away borders
        main = "Reach Learning over Time: MIR", xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
   abline(h = c(-100,0, 100), col = 8, lty = 2) #creates horizontal dashed lines through y =  0 and 30
   axis(1, at = c(1, 20, 40, 60)) #tick marks for x axis
@@ -949,7 +1009,7 @@ plotMIRLearningCurvesWONear <- function(groups = c('noninstructed','instructed')
   
   for(group in groups){
     #read in files created by getGroupConfidenceInterval in filehandling.R
-    groupconfidence <- read.csv(file=sprintf('data/MIR_%s_CI_learningcurve_WONear.csv', group))
+    groupconfidence <- read.csv(file=sprintf('data/pilot/MIR_%s_CI_learningcurve_WONear.csv', group))
     
     colourscheme <- getColourScheme(groups = group)
     #take only first, last and middle columns of file
@@ -1172,9 +1232,9 @@ getMIRGroupTargetCurveConfidenceInterval <- function(group, maxppid, location, a
         confidence <- rbind(confidence, citrial)
       }
       if (group == 'noninstructed'){
-        write.csv(confidence, file=sprintf('data/MIR_noninstructed_CI_targetcurve%s.csv', angle), row.names = F) 
+        write.csv(confidence, file=sprintf('data/pilot/MIR_noninstructed_CI_targetcurve%s.csv', angle), row.names = F) 
       } else if (group == 'instructed'){
-        write.csv(confidence, file=sprintf('data/MIR_instructed_CI_targetcurve%s.csv', angle), row.names = F)
+        write.csv(confidence, file=sprintf('data/pilot/MIR_instructed_CI_targetcurve%s.csv', angle), row.names = F)
       }
     }
   }
@@ -1186,7 +1246,7 @@ plotNIMIRTargetCurve<- function(group = 'noninstructed', angles = c(15,30,45), t
   
   #but we can save plot as svg file
   if (target=='svg') {
-    svglite(file='doc/fig/Fig3_MIR_NI_targetcurve.svg', width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
+    svglite(file='doc/fig/pilot/Fig19_MIR_NI_targetcurve.svg', width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
   }
   
   # create plot
@@ -1203,7 +1263,7 @@ plotNIMIRTargetCurve<- function(group = 'noninstructed', angles = c(15,30,45), t
   
   for(angle in angles){
     #read in files created by getGroupConfidenceInterval in filehandling.R
-    groupconfidence <- read.csv(file=sprintf('data/MIR_%s_CI_targetcurve%s.csv', group, angle))
+    groupconfidence <- read.csv(file=sprintf('data/pilot/MIR_%s_CI_targetcurve%s.csv', group, angle))
     
     colourscheme <- getTtypeColourScheme(angles = angle)
     #take only first, last and middle columns of file
@@ -1245,7 +1305,7 @@ plotIMIRTargetCurve<- function(group = 'instructed', angles = c(15,30,45), targe
   
   #but we can save plot as svg file
   if (target=='svg') {
-    svglite(file='doc/fig/Fig3_MIR_I_targetcurve.svg', width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
+    svglite(file='doc/fig/pilot/Fig20_MIR_I_targetcurve.svg', width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
   }
   
   # create plot
@@ -1262,7 +1322,7 @@ plotIMIRTargetCurve<- function(group = 'instructed', angles = c(15,30,45), targe
   
   for(angle in angles){
     #read in files created by getGroupConfidenceInterval in filehandling.R
-    groupconfidence <- read.csv(file=sprintf('data/MIR_%s_CI_targetcurve%s.csv', group, angle))
+    groupconfidence <- read.csv(file=sprintf('data/pilot/MIR_%s_CI_targetcurve%s.csv', group, angle))
     
     colourscheme <- getTtypeColourScheme(angles = angle)
     #take only first, last and middle columns of file
@@ -1290,6 +1350,65 @@ plotIMIRTargetCurve<- function(group = 'instructed', angles = c(15,30,45), targe
   #add legend
   legend(20,0,legend=c('15 deg','30 deg','45 deg'),
          col=c(colourscheme[[15]][['S']],colourscheme[[30]][['S']],colourscheme[[45]][['S']]),
+         lty=1,bty='n',cex=1,lwd=2)
+  
+  #close everything if you saved plot as svg
+  if (target=='svg') {
+    dev.off()
+  }
+  
+}
+
+plotPTypeLearningCurvesWONear <- function(perturb = c('ROT', 'MIR'), group = 'noninstructed', target='inline') {
+  
+  
+  #but we can save plot as svg file
+  if (target=='svg') {
+    svglite(file='doc/fig/pilot/Fig21_NI_learningcurveWONear.svg', width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
+  }
+  
+  # create plot
+  meanGroupReaches <- list() #empty list so that it plots the means last
+  
+  #NA to create empty plot
+  # could maybe use plot.new() ?
+  plot(NA, NA, xlim = c(0,61), ylim = c(-200,200), 
+       xlab = "Trial", ylab = "Amount of compensation (%)", frame.plot = FALSE, #frame.plot takes away borders
+       main = "", xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
+  abline(h = c(-100,0, 100), col = '#000000', lty = 2) #creates horizontal dashed lines through y =  0 and 30
+  axis(1, at = c(1, 20, 40, 60)) #tick marks for x axis
+  axis(2, at = c(-200, -100, 0, 100, 200)) #tick marks for y axis
+  
+  for(ptype in perturb){
+    #read in files created by getGroupConfidenceInterval in filehandling.R
+    groupconfidence <- read.csv(file=sprintf('data/pilot/%s_%s_CI_learningcurve_WONear.csv', ptype, group))
+    
+    colourscheme <- getPtypeColourScheme(ptype)
+    #take only first, last and middle columns of file
+    lower <- groupconfidence[,1]
+    upper <- groupconfidence[,3]
+    mid <- groupconfidence[,2]
+    
+    col <- colourscheme[[ptype]][['T']] #use colour scheme according to group
+    
+    #upper and lower bounds create a polygon
+    #polygon creates it from low left to low right, then up right to up left -> use rev
+    #x is just trial nnumber, y depends on values of bounds
+    polygon(x = c(c(1:60), rev(c(1:60))), y = c(lower, rev(upper)), border=NA, col=col)
+    
+    meanGroupReaches[[ptype]] <- mid #use mean to fill in empty list for each group
+  }
+  
+  
+  for (ptype in perturb) {
+    # plot mean reaches for each group
+    col <- colourscheme[[ptype]][['S']]
+    lines(meanGroupReaches[[ptype]],col=col,lty=1)
+  }
+  
+  #add legend
+  legend(40,-150,legend=c('Rotation','Mirror Reversal'),
+         col=c(colourscheme[['ROT']][['S']],colourscheme[['MIR']][['S']]),
          lty=1,bty='n',cex=1,lwd=2)
   
   #close everything if you saved plot as svg
@@ -1401,56 +1520,6 @@ getBlockedIndividualLearningCurves <- function(group, maxppid, location, targetn
   return(ndat_long)
 }
 
-# plotUncleanedBlockedIndLC <- function(group, maxppid, location, targetno, target='inline'){
-#   
-#   #but we can save plot as svg file
-#   if (target=='svg') {
-#     svglite(file='doc/fig/Fig2A_UncleanedBlockedIndLearningCurve.svg', width=12, height=7, pointsize=10, system_fonts=list(sans="Arial"))
-#   }
-#   
-#   data <- getBlockedIndividualLearningCurves(group = group, maxppid = maxppid, location = location, targetno = targetno)
-#   
-#   plot(NA, NA, xlim = c(0,16), ylim = c(-200,200), 
-#        xlab = "Trial", ylab = "Amount of Compensation (%)", frame.plot = FALSE, #frame.plot takes away borders
-#        main = "Individual Learning Curves by Block", xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
-#   abline(h = 100, col = 8, lty = 2) #creates horizontal dashed lines through y =  0 and 30
-#   abline(h = 0, col = 8, lty = 2)
-#   axis(1, at=c(1:15))#, labels=c('Exclusive', 'Inclusive')) #tick marks for x axis
-#   axis(2, at = c(-200, -150, -100, -50, 0, 50, 100, 150, 200)) #tick marks for y axis
-#   
-#   
-#   participants <- unique(data$participant)
-#   linetypeidx <- 1
-#   
-#   #library(RColorBrewer)
-#   #all palette available from RColorBrewer
-#   #display.brewer.all()
-#   #we will select the first n colors in the Set1 palette, depending on how many pp we have
-#   cols<-brewer.pal(n=maxppid+1,name="Set1")
-#   #cols contain the names of n different colors
-#   colidx <- 1
-#   
-#   
-#   for (pp in participants){
-#     row.idx <- which(data$participant == pp)
-#     lines(data$trial[row.idx],data$reachdev[row.idx], lwd = 2, lty = linetypeidx, col = cols[colidx])
-#     points(data$trial[row.idx],data$reachdev[row.idx], pch = 19, col = cols[colidx])
-#     
-#     linetypeidx <- linetypeidx + 1
-#     colidx <- colidx +1
-#   }
-#   
-#   #legend(12,-100,legend=c('Implicit 30°','Strategy 30°','Cursor Jump', 'Hand View'),
-#    #      col=c(colourscheme[['30implicit']][['S']],colourscheme[['30explicit']][['S']],colourscheme[['cursorjump']][['S']],colourscheme[['handview']][['S']]),
-#      #     lty=1,bty='n',cex=1)
-#   
-#   #close everything if you saved plot as svg
-#   if (target=='svg') {
-#     dev.off()
-#   }
-#  
-# }
-
 #from the function above, we see that one participant seems to have "anti-learned", so we remove them then try to plot a mean for all participants
 plotBlockedIndLC <- function(group, maxppid, location, targetno, perturb, target='inline'){
   
@@ -1458,14 +1527,10 @@ plotBlockedIndLC <- function(group, maxppid, location, targetno, perturb, target
     
     #but we can save plot as svg file
     if (target=='svg') {
-      svglite(file='doc/fig/Fig3_ROT_BlockedIndLearningCurve.svg', width=12, height=7, pointsize=16, system_fonts=list(sans="Arial"))
+      svglite(file='doc/fig/pilot/Fig22_ROT_BlockedIndLearningCurve.svg', width=12, height=7, pointsize=16, system_fonts=list(sans="Arial"))
     }
     
     data <- getBlockedIndividualLearningCurves(group = group, maxppid = maxppid, location = location, targetno = targetno, perturb = perturb)
-    #remove pp004 because they anti-learned
-    #data <- subset(data, participant != 'pp4')
-    # data <- subset(data, participant != 'pp0')
-    # data <- subset(data, participant != 'pp1')
     
     plot(NA, NA, xlim = c(0,16), ylim = c(-200,210), 
          xlab = "Block", ylab = "Amount of compensation (%)", frame.plot = FALSE, #frame.plot takes away borders
@@ -1546,7 +1611,7 @@ plotBlockedIndLC <- function(group, maxppid, location, targetno, perturb, target
     
     #but we can save plot as svg file
     if (target=='svg') {
-      svglite(file='doc/fig/Fig3_MIR_BlockedIndLearningCurve.svg', width=12, height=7, pointsize=16, system_fonts=list(sans="Arial"))
+      svglite(file='doc/fig/pilot/Fig23_MIR_BlockedIndLearningCurve.svg', width=12, height=7, pointsize=16, system_fonts=list(sans="Arial"))
     }
     
     data <- getBlockedIndividualLearningCurves(group = group, maxppid = maxppid, location = location, targetno = targetno, perturb = perturb)
@@ -1607,28 +1672,6 @@ plotBlockedIndLC <- function(group, maxppid, location, targetno, perturb, target
     }
     
     lines(x=c(1:length(blockno)),y=allmeans[,1], lwd = 2, lty = 1, col = col)
-    
-    # blockno <- unique(data$trial)
-    # allmeans <- data.frame()
-    # for (block in blockno){
-    #   row.idx <- which(data$trial == block)
-    #   blockmean <- data$reachdev[row.idx]
-    #   val <- mean(blockmean, na.rm = TRUE)
-    #   
-    #   if (prod(dim(allmeans)) == 0){
-    #     allmeans <- val
-    #   } else {
-    #     allmeans <- rbind(allmeans, val)
-    #   }
-    # }
-    # 
-    # col <- colourscheme[[perturb]][['S']]
-    # lines(c(1:length(allmeans)),allmeans[,1], lwd = 2, lty = 1, col = col)
-    # points(c(1:length(allmeans)),allmeans[,1], pch = 19, col = col)
-    
-    #legend(12,-100,legend=c('Implicit 30°','Strategy 30°','Cursor Jump', 'Hand View'),
-    #      col=c(colourscheme[['30implicit']][['S']],colourscheme[['30explicit']][['S']],colourscheme[['cursorjump']][['S']],colourscheme[['handview']][['S']]),
-    #     lty=1,bty='n',cex=1)
   }
   
   
@@ -1646,7 +1689,7 @@ plotROTMIRLC <- function(groups = c('noninstructed'), noninstmax = 15, instmax =
   
   #but we can save plot as svg file
   if (target=='svg') {
-    svglite(file='doc/fig/Fig3_BlockedIndLearningCurve.svg', width=18, height=7, pointsize=16, system_fonts=list(sans="Arial"))
+    svglite(file='doc/fig/pilot/Fig24_BlockedIndLearningCurve.svg', width=18, height=7, pointsize=16, system_fonts=list(sans="Arial"))
   }
   
   
@@ -1675,7 +1718,7 @@ plotCollapsedBlockedIndLC <- function(group='noninstructed', maxppid=15, locatio
   
   #but we can save plot as svg file
   if (target=='svg') {
-    svglite(file='doc/fig/Fig3_AllBlockedIndLearningCurve.svg', width=11.5, height=10.5, pointsize=16, system_fonts=list(sans="Arial"))
+    svglite(file='doc/fig/pilot/Fig25_AllBlockedIndLearningCurve.svg', width=11.5, height=10.5, pointsize=16, system_fonts=list(sans="Arial"))
   }
   
   plot(NA, NA, xlim = c(0,16), ylim = c(-200,210), 
@@ -1747,362 +1790,229 @@ plotCollapsedBlockedIndLC <- function(group='noninstructed', maxppid=15, locatio
   
 
 #Learning Curves STATS----
-#Stats are currently only for Non-instructed group
-
-getLearningCurvesLongFormat <- function(groups = c('noninstructed','instructed'), maxppid = 15, location = 'maxvel'){
-  
-  for (group in groups){
-    #Rotation data
-    ROTdat <- getROTGroupLearningCurves(group=group,maxppid=maxppid,location=location)
-    ppcols <- c('p0','p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9', 'p10', 'p11', 'p12', 'p13', 'p14', 'p15')
-    colnames(ROTdat) <- c('trial', 'p0','p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9', 'p10', 'p11', 'p12', 'p13', 'p14', 'p15')
-
-    ROTdat <- as.data.frame(ROTdat)
-    perturb <- rep('ROT', nrow(ROTdat))
-    ROTdat <- cbind(ROTdat, perturb)
-    #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
-    longROTdata <- gather(ROTdat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
-    write.csv(longROTdata, file=sprintf('data/ROT_%s_learningcurves_long.csv', group), row.names = F)
+getLearningCurvesMSE <- function(perturb = c('ROT', 'MIR'), group = 'noninstructed', maxppid = 15, location = 'maxvel'){
+  for(ptype in perturb){
+    step <- c()
+    asymptote <- c()
+    mse_step <- c()
+    lambda <- c()
+    N0 <- c()
+    mse_expl <- c()
+    x0 <- c()
+    k <- c()
+    L <- c()
+    mse_log <- c()
     
-    #Mirror data
-    MIRdat <- getMIRGroupLearningCurves(group=group,maxppid=maxppid,location=location)
-    ppcols <- c('p0','p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9', 'p10', 'p11', 'p12', 'p13', 'p14', 'p15')
-    colnames(MIRdat) <- c('trial', 'p0','p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9', 'p10', 'p11', 'p12', 'p13', 'p14', 'p15')
+    if(ptype == 'ROT'){
+      data <- getROTGroupLearningCurves(group = group, maxppid = maxppid, location = location)
+    } else if (ptype == 'MIR'){
+      data <- getMIRGroupLearningCurves(group = group, maxppid = maxppid, location = location)
+    }
     
-    MIRdat <- as.data.frame(MIRdat)
-    perturb <- rep('MIR', nrow(MIRdat))
-    MIRdat <- cbind(MIRdat, perturb)
-    #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
-    longMIRdata <- gather(MIRdat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
-    write.csv(longMIRdata, file=sprintf('data/MIR_%s_learningcurves_long.csv', group), row.names = F)
+    subdat <- data[,2:ncol(data)]
+    for(icol in c(1:ncol(subdat))){
+      ppdat <- subdat[,icol]
+      par_step <- stepFunctionFit(signal = ppdat)
+      pp_mse_step <- stepFunctionMSE(par=par_step, signal=ppdat)
+      
+      par_expl <- exponentialFit(signal = ppdat)
+      pp_mse_expl<- exponentialMSE(par=par_expl, signal=ppdat)
+      
+      y <- ppdat
+      x <- seq(1, length(y), 1)
+      bs_dat <- data.frame(x,y)
+      par_log <- logisticFunctionFit(data = bs_dat)
+      pp_mse_log<- logisticFunctionMSE(par=par_log, data=bs_dat)
+      
+      
+      step <- c(step, par_step['step'])
+      asymptote <- c(asymptote, par_step['asymptote'])
+      mse_step <- c(mse_step, pp_mse_step)
+      lambda <- c(lambda, par_expl['lambda'])
+      N0 <- c(N0, par_expl['N0'])
+      mse_expl <- c(mse_expl, pp_mse_expl)
+      x0 <- c(x0, par_log['x0'])
+      k <- c(k, par_log['k'])
+      L <- c(L, par_log['L'])
+      mse_log <- c(mse_log, pp_mse_log)
+    }
+    
+    ndat <- data.frame(step, asymptote, mse_step, lambda, N0, mse_expl, x0, k, L, mse_log)
+    write.csv(ndat, file=sprintf('data/pilot/%s_%s_MSE_LearningCurves.csv',ptype, group), quote=F, row.names=F)
   }
 }
 
-getBlockedLearningCurvesAOV <- function(perturbations = c('ROT','MIR'), group, blockdefs) {
-  #function reads in learningcurves_long.csv file then creates a df with cols participant, block, reachdev
-  LCaov <- data.frame()
-  #to include instructed group, just create another for loop here
-  for (perturb in perturbations){  
-    curves <- read.csv(sprintf('data/%s_%s_learningcurves_long.csv',perturb, group), stringsAsFactors=FALSE)  
-    participants <- unique(curves$participant)
-    #R <- dim(curves)[1] # not needed, checks if rows=90 (correct trial numbers)
-    #curves <- curves[,-1] #take away trial column
-    N <- length(participants) #gets the number of participants
+getGroupLearningCurvesLikelihoods <- function(perturb = c('ROT', 'MIR'), klevel = c(2,2,3), N = 2){
+  group <- c()
+  loglikelihood_step <- c()
+  loglikelihood_expl <- c()
+  loglikelihood_log <- c()
+  for(ptype in perturb){
+    data <- read.csv(sprintf('data/pilot/%s_noninstructed_MSE_LearningCurves.csv', ptype))
     
-    #blocked <- array(NA, dim=c(N,length(blockdefs))) #empty array where every participant will get 3 corresponding columns
-    #row.names(blocked) <- participants
-    #colnames(blocked) <- names(blockdefs)
+    ndat <- data
+    MSE_step <- setNames(sum(ndat$mse_step), 'mse_step')
+    MSE_expl <- setNames(sum(ndat$mse_expl), 'mse_expl')
+    MSE_log <- setNames(sum(ndat$mse_log), 'mse_log')
     
-    perturbtype <- c()
-    participant <- c()
-    block <- c()
-    compensation <- c()
+    MSE <- c(MSE_step, MSE_expl, MSE_log)
+    #k <- rep(klevel, length(MSE))
+    k <- klevel
+    AICs <- AICc(MSE, k, N)
+    loglikelihoods <- relativeLikelihood(AICs)
     
-    for (pp.idx in c(1:length(participants))) {
-      
-      pp <- participants[pp.idx] #loop through each participant
-      
-      for (blockno in c(1:length(blockdefs))) { #loop through each block (first, second, third)
-        
-        blockdef <- blockdefs[[blockno]] #creates a list which specifies start trial of every block, and how many trials in total for this block
-        blockstart <- blockdef[1] #either trial 1, 4, or 76
-        blockend <- blockstart + blockdef[2] - 1 #either trial 3, 6, or 90
-        #samples <- curves[blockstart:blockend,pp] #gets corresponding reach angle per participant
-        # moved to long format files:
-        samples <- c()
-        for (trial in c(blockstart:blockend)) {
-          # print(which(curves$participant == pp))
-          # print(which(curves$participant == pp & curves$trial == trial))
-          samples <- c(samples, curves$compensation[which(curves$participant == pp & curves$trial == trial)]) #get reachdev for current pp and trial
-          
-        }
-        #print(mean(samples, na.rm=TRUE))
-        #blocked[pp.idx,block] <- mean(samples, na.rm=TRUE) #compute the mean for it and put it in array
-        perturbtype <- c(perturbtype, perturb)
-        participant <- c(participant, pp) #the participant
-        block <- c(block, names(blockdefs)[blockno]) #the name of the block number (first, second or third)
-        compensation <- c(compensation, mean(samples, na.rm=T)) #mean compensation of trials for that block
-      }
-      
-    }
+    grpinfo <- ptype
     
-    GroupLCBlocked <- data.frame(perturbtype,participant,block,compensation)
+    group <- c(group, grpinfo)
+    loglikelihood_step <- c(loglikelihood_step, loglikelihoods['mse_step'])
+    loglikelihood_expl <- c(loglikelihood_expl, loglikelihoods['mse_expl'])
+    loglikelihood_log <- c(loglikelihood_log, loglikelihoods['mse_log'])
     
-    
-    if (prod(dim(LCaov)) == 0){
-      LCaov <- GroupLCBlocked
-    } else {
-      LCaov <- rbind(LCaov, GroupLCBlocked)
-    }
   }
-  #need to make some columns as factors for ANOVA
-  LCaov$perturbtype <- as.factor(LCaov$perturbtype)
-  LCaov$block <- as.factor(LCaov$block)
-  LCaov$block <- factor(LCaov$block, levels = c('first','second','last')) #so that it does not order it alphabetically
-  return(LCaov)
+  alldat <- data.frame(group, loglikelihood_step, loglikelihood_expl, loglikelihood_log)
+  return(alldat)
+}
+
+getLambdaLearningCurvesTTest <- function(){
+  
+  ROTdata <- read.csv('data/pilot/ROT_noninstructed_MSE_LearningCurves.csv')
+  MIRdata <- read.csv('data/pilot/MIR_noninstructed_MSE_LearningCurves.csv')
+  
+  subdat1 <- ROTdata$lambda
+  subdat2 <- MIRdata$lambda
+  
+  cat('Frequentist t-test (Rotation vs. Mirror): \n')
+  print(t.test(subdat1, subdat2))
+  cat('Bayesian t-test (Rotation vs. Mirror): \n')
+  print(ttestBF(subdat1, subdat2))
   
 }
 
-learningCurvesANOVA <- function(group) {
+getAsymptoteLearningCurvesTTest <- function(){
   
-  #styles <- getStyle()
-  blockdefs <- list('first'=c(1,6),'second'=c(7,6),'last'=c(85,6)) #6 trials per block
-  #blockdefs <- list('first'=c(13,6),'second'=c(19,6),'last'=c(85,6))
+  ROTdata <- read.csv('data/pilot/ROT_noninstructed_MSE_LearningCurves.csv')
+  MIRdata <- read.csv('data/pilot/MIR_noninstructed_MSE_LearningCurves.csv')
   
-  LC4aov <- getBlockedLearningCurvesAOV(group=group,blockdefs=blockdefs)                      
+  subdat1 <- ROTdata$N0
+  subdat2 <- MIRdata$N0
   
-  #looking into interaction below:
-  #interaction.plot(LC4aov$diffgroup, LC4aov$block, LC4aov$reachdeviation)
+  cat('Frequentist t-test (Rotation vs. Mirror): \n')
+  print(t.test(subdat1, subdat2))
+  cat('Bayesian t-test (Rotation vs. Mirror): \n')
+  print(ttestBF(subdat1, subdat2))
   
-  #learning curve ANOVA's
-  # for ez, case ID should be a factor:
-  LC4aov$participant <- as.factor(LC4aov$participant)
-  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=compensation, within=c(perturbtype, block),type=3, return_aov = TRUE) #which type of SS is appropriate?
-  print(firstAOV[1:3]) #so that it doesn't print the aov object as well
 }
-#there is a main effect of block, and a block x perturbtype interaction
-
-learningcurveComparisonMeans <- function(group){
-  
-  #can plot interaction just to eyeball it:
-  #plot(interactionMeans(lm(compensation ~ block * perturbtype, data=LC4aov), factors=c('perturbtype', 'block'), atx='block'))
-  
-  blockdefs <- list('first'=c(1,6),'second'=c(7,6),'last'=c(85,6))
-  #blockdefs <- list('first'=c(13,6),'second'=c(19,6),'last'=c(85,6))
-  
-  LC4aov <- getBlockedLearningCurvesAOV(group=group,blockdefs=blockdefs) 
-  secondAOV <- aov_ez("participant","compensation",LC4aov,within=c("perturbtype","block"))
-  
-  #nice(secondAOV, correction = 'none') #correction set to none since first AOV reveals no violation of sphericity
-  #summary(secondAOV) #shows all results
-  #run code above for figuring out df
-  #output is the same
-  #follow-ups using emmeans
-  
-  cellmeans <- emmeans(secondAOV,specs=c('perturbtype','block'))
-  #cellmeans <- lsmeans(secondAOV$aov,specs=c('perturbtype','block'))
-  print(cellmeans)
-}
-
-learningcurveComparisonsAllBlocks <- function(group,method='bonferroni'){
-  #styles <- getStyle()
-  blockdefs <- list('first'=c(1,6),'second'=c(7,6),'last'=c(85,6))
-  #blockdefs <- list('first'=c(13,6),'second'=c(19,6),'last'=c(85,6))
-  
-  LC4aov <- getBlockedLearningCurvesAOV(group=group,blockdefs=blockdefs) 
-  secondAOV <- aov_ez("participant","compensation",LC4aov,within=c("perturbtype","block"))
-  #based on cellmeans, confidence intervals and plots give us an idea of what contrasts we want to compare
-  
-  MIR_firstvsMIR_second  <- c(1,0,-1,0,0,0)
-  MIR_firstvsMIR_last    <- c(1,0,0,0,-1,0)
-  ROT_firstvsROT_second  <- c(0,1,0,-1,0,0)
-  ROT_firstvsROT_last    <- c(0,1,0,0,0,-1)
-  ROT_firstvsMIR_first   <- c(1,-1,0,0,0,0)
-  ROT_secondvsMIR_second <- c(0,0,1,-1,0,0)
-  ROT_lastvsMIR_last     <- c(0,0,0,0,1,-1)
-  
-  contrastList <- list('Block1: MIR vs. Block2: MIR'=MIR_firstvsMIR_second, 'Block1: MIR vs. Block3: MIR'=MIR_firstvsMIR_last,
-                       'Block1: ROT vs. Block2: ROT'=ROT_firstvsROT_second, 'Block1: ROT vs. Block3: ROT'=ROT_firstvsROT_last,
-                       'Block1: ROT vs. MIR'=ROT_firstvsMIR_first, 'Block2: ROT vs. MIR'=ROT_secondvsMIR_second, 'Block3: ROT vs. MIR'=ROT_lastvsMIR_last)
-
-  comparisons<- contrast(emmeans(secondAOV,specs=c('perturbtype','block')), contrastList, adjust=method)
-  
-  print(comparisons)
-}
-
-#effect size
-learningCurveComparisonsAllBlocksEffSize <- function(group, method = 'bonferroni'){
-  comparisons <- learningcurveComparisonsAllBlocks(group=group,method=method)
-  #we can use eta-squared as effect size
-  #% of variance in DV(percentcomp) accounted for 
-  #by the difference between target1 and target2
-  comparisonsdf <- as.data.frame(comparisons)
-  etasq <- ((comparisonsdf$t.ratio)^2)/(((comparisonsdf$t.ratio)^2)+(comparisonsdf$df))
-  comparisons1 <- cbind(comparisonsdf,etasq)
-  
-  effectsize <- data.frame(comparisons1$contrast, comparisons1$etasq)
-  colnames(effectsize) <- c('contrast', 'etasquared')
-  #print(comparisons)
-  print(effectsize)
-}
-
 
 #Learning Curves STATS WITHOUT NEAR TARGET----
-#Stats are currently only for Non-instructed group
-
-getLearningCurvesLongFormatWONear <- function(groups = c('noninstructed','instructed'), maxppid = 15, location = 'maxvel'){
-  
-  for (group in groups){
-    #Rotation data
-    ROTdat <- getROTGroupLearningCurvesWONear(group=group,maxppid=maxppid,location=location)
-    ppcols <- c('p0','p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9', 'p10', 'p11', 'p12', 'p13', 'p14', 'p15')
-    colnames(ROTdat) <- c('trial', 'p0','p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9', 'p10', 'p11', 'p12', 'p13', 'p14', 'p15')
+getLearningCurvesWONearMSE <- function(perturb = c('ROT', 'MIR'), group = 'noninstructed', maxppid = 15, location = 'maxvel'){
+  for(ptype in perturb){
+    step <- c()
+    asymptote <- c()
+    mse_step <- c()
+    lambda <- c()
+    N0 <- c()
+    mse_expl <- c()
+    x0 <- c()
+    k <- c()
+    L <- c()
+    mse_log <- c()
     
-    ROTdat <- as.data.frame(ROTdat)
-    perturb <- rep('ROT', nrow(ROTdat))
-    ROTdat <- cbind(ROTdat, perturb)
-    #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
-    longROTdata <- gather(ROTdat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
-    write.csv(longROTdata, file=sprintf('data/ROT_%s_learningcurves_long_wonear.csv', group), row.names = F)
+    if(ptype == 'ROT'){
+      data <- getROTGroupLearningCurvesWONear(group = group, maxppid = maxppid, location = location)
+    } else if (ptype == 'MIR'){
+      data <- getMIRGroupLearningCurvesWONear(group = group, maxppid = maxppid, location = location)
+    }
     
-    #Mirror data
-    MIRdat <- getMIRGroupLearningCurvesWONear(group=group,maxppid=maxppid,location=location)
-    ppcols <- c('p0','p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9', 'p10', 'p11', 'p12', 'p13', 'p14', 'p15')
-    colnames(MIRdat) <- c('trial', 'p0','p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9', 'p10', 'p11', 'p12', 'p13', 'p14', 'p15')
+    subdat <- data[,2:ncol(data)]
+    for(icol in c(1:ncol(subdat))){
+      ppdat <- subdat[,icol]
+      par_step <- stepFunctionFit(signal = ppdat)
+      pp_mse_step <- stepFunctionMSE(par=par_step, signal=ppdat)
+      
+      par_expl <- exponentialFit(signal = ppdat)
+      pp_mse_expl<- exponentialMSE(par=par_expl, signal=ppdat)
+      
+      y <- ppdat
+      x <- seq(1, length(y), 1)
+      bs_dat <- data.frame(x,y)
+      par_log <- logisticFunctionFit(data = bs_dat)
+      pp_mse_log<- logisticFunctionMSE(par=par_log, data=bs_dat)
+      
+      
+      step <- c(step, par_step['step'])
+      asymptote <- c(asymptote, par_step['asymptote'])
+      mse_step <- c(mse_step, pp_mse_step)
+      lambda <- c(lambda, par_expl['lambda'])
+      N0 <- c(N0, par_expl['N0'])
+      mse_expl <- c(mse_expl, pp_mse_expl)
+      x0 <- c(x0, par_log['x0'])
+      k <- c(k, par_log['k'])
+      L <- c(L, par_log['L'])
+      mse_log <- c(mse_log, pp_mse_log)
+    }
     
-    MIRdat <- as.data.frame(MIRdat)
-    perturb <- rep('MIR', nrow(MIRdat))
-    MIRdat <- cbind(MIRdat, perturb)
-    #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
-    longMIRdata <- gather(MIRdat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
-    write.csv(longMIRdata, file=sprintf('data/MIR_%s_learningcurves_long_wonear.csv', group), row.names = F)
+    ndat <- data.frame(step, asymptote, mse_step, lambda, N0, mse_expl, x0, k, L, mse_log)
+    write.csv(ndat, file=sprintf('data/pilot/%s_%s_MSE_LearningCurvesWONear.csv',ptype, group), quote=F, row.names=F)
   }
 }
 
-getBlockedLearningCurvesAOVWONear <- function(perturbations = c('ROT','MIR'), group, blockdefs) {
-  #function reads in learningcurves_long.csv file then creates a df with cols participant, block, reachdev
-  LCaov <- data.frame()
-  #to include instructed group, just create another for loop here
-  for (perturb in perturbations){  
-    curves <- read.csv(sprintf('data/%s_%s_learningcurves_long_wonear.csv',perturb,group), stringsAsFactors=FALSE)  
-    participants <- unique(curves$participant)
-    #R <- dim(curves)[1] # not needed, checks if rows=90 (correct trial numbers)
-    #curves <- curves[,-1] #take away trial column
-    N <- length(participants) #gets the number of participants
+getGroupLearningCurvesWONearLikelihoods <- function(perturb = c('ROT', 'MIR'), klevel = c(2,2,3), N = 2){
+  group <- c()
+  loglikelihood_step <- c()
+  loglikelihood_expl <- c()
+  loglikelihood_log <- c()
+  for(ptype in perturb){
+    data <- read.csv(sprintf('data/pilot/%s_noninstructed_MSE_LearningCurvesWONear.csv', ptype))
     
-    #blocked <- array(NA, dim=c(N,length(blockdefs))) #empty array where every participant will get 3 corresponding columns
-    #row.names(blocked) <- participants
-    #colnames(blocked) <- names(blockdefs)
+    ndat <- data
+    MSE_step <- setNames(sum(ndat$mse_step), 'mse_step')
+    MSE_expl <- setNames(sum(ndat$mse_expl), 'mse_expl')
+    MSE_log <- setNames(sum(ndat$mse_log), 'mse_log')
     
-    perturbtype <- c()
-    participant <- c()
-    block <- c()
-    compensation <- c()
+    MSE <- c(MSE_step, MSE_expl, MSE_log)
+    #k <- rep(klevel, length(MSE))
+    k <- klevel
+    AICs <- AICc(MSE, k, N)
+    loglikelihoods <- relativeLikelihood(AICs)
     
-    for (pp.idx in c(1:length(participants))) {
-      
-      pp <- participants[pp.idx] #loop through each participant
-      
-      for (blockno in c(1:length(blockdefs))) { #loop through each block (first, second, third)
-        
-        blockdef <- blockdefs[[blockno]] #creates a list which specifies start trial of every block, and how many trials in total for this block
-        blockstart <- blockdef[1] #either trial 1, 4, or 76
-        blockend <- blockstart + blockdef[2] - 1 #either trial 3, 6, or 90
-        #samples <- curves[blockstart:blockend,pp] #gets corresponding reach angle per participant
-        # moved to long format files:
-        samples <- c()
-        for (trial in c(blockstart:blockend)) {
-          # print(which(curves$participant == pp))
-          # print(which(curves$participant == pp & curves$trial == trial))
-          samples <- c(samples, curves$compensation[which(curves$participant == pp & curves$trial == trial)]) #get reachdev for current pp and trial
-          
-        }
-        #print(mean(samples, na.rm=TRUE))
-        #blocked[pp.idx,block] <- mean(samples, na.rm=TRUE) #compute the mean for it and put it in array
-        perturbtype <- c(perturbtype, perturb)
-        participant <- c(participant, pp) #the participant
-        block <- c(block, names(blockdefs)[blockno]) #the name of the block number (first, second or third)
-        compensation <- c(compensation, mean(samples, na.rm=T)) #mean compensation of trials for that block
-      }
-      
-    }
+    grpinfo <- ptype
     
-    GroupLCBlocked <- data.frame(perturbtype,participant,block,compensation)
+    group <- c(group, grpinfo)
+    loglikelihood_step <- c(loglikelihood_step, loglikelihoods['mse_step'])
+    loglikelihood_expl <- c(loglikelihood_expl, loglikelihoods['mse_expl'])
+    loglikelihood_log <- c(loglikelihood_log, loglikelihoods['mse_log'])
     
-    
-    if (prod(dim(LCaov)) == 0){
-      LCaov <- GroupLCBlocked
-    } else {
-      LCaov <- rbind(LCaov, GroupLCBlocked)
-    }
   }
-  #need to make some columns as factors for ANOVA
-  LCaov$perturbtype <- as.factor(LCaov$perturbtype)
-  LCaov$block <- as.factor(LCaov$block)
-  LCaov$block <- factor(LCaov$block, levels = c('first','second','last')) #so that it does not order it alphabetically
-  return(LCaov)
+  alldat <- data.frame(group, loglikelihood_step, loglikelihood_expl, loglikelihood_log)
+  return(alldat)
+}
+
+getLambdaLearningCurvesWONearTTest <- function(){
+  
+  ROTdata <- read.csv('data/pilot/ROT_noninstructed_MSE_LearningCurvesWONear.csv')
+  MIRdata <- read.csv('data/pilot/MIR_noninstructed_MSE_LearningCurvesWONear.csv')
+  
+  subdat1 <- ROTdata$lambda
+  subdat2 <- MIRdata$lambda
+  
+  cat('Frequentist t-test (Rotation vs. Mirror): \n')
+  print(t.test(subdat1, subdat2))
+  cat('Bayesian t-test (Rotation vs. Mirror): \n')
+  print(ttestBF(subdat1, subdat2))
   
 }
 
-learningCurvesANOVAWONear <- function(group) {
+getAsymptoteLearningCurvesWONearTTest <- function(){
   
-  #styles <- getStyle()
-  blockdefs <- list('first'=c(1,6),'second'=c(7,6),'last'=c(55,6)) #6 trials per block
+  ROTdata <- read.csv('data/pilot/ROT_noninstructed_MSE_LearningCurvesWONear.csv')
+  MIRdata <- read.csv('data/pilot/MIR_noninstructed_MSE_LearningCurvesWONear.csv')
   
-  LC4aov <- getBlockedLearningCurvesAOV(group=group,blockdefs=blockdefs)                      
+  subdat1 <- ROTdata$N0
+  subdat2 <- MIRdata$N0
   
-  #looking into interaction below:
-  #interaction.plot(LC4aov$diffgroup, LC4aov$block, LC4aov$reachdeviation)
+  cat('Frequentist t-test (Rotation vs. Mirror): \n')
+  print(t.test(subdat1, subdat2))
+  cat('Bayesian t-test (Rotation vs. Mirror): \n')
+  print(ttestBF(subdat1, subdat2))
   
-  #learning curve ANOVA's
-  # for ez, case ID should be a factor:
-  LC4aov$participant <- as.factor(LC4aov$participant)
-  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=compensation, within=c(perturbtype, block),type=3, return_aov = TRUE) #which type of SS is appropriate?
-  print(firstAOV[1:3]) #so that it doesn't print the aov object as well
 }
-#there is a main effect of block, and a block x perturbtype interaction
-
-learningcurveComparisonMeansWONear <- function(group){
-  
-  #can plot interaction just to eyeball it:
-  #plot(interactionMeans(lm(compensation ~ block * perturbtype, data=LC4aov), factors=c('perturbtype', 'block'), atx='block'))
-  
-  blockdefs <- list('first'=c(1,6),'second'=c(7,6),'last'=c(55,6))
-  
-  LC4aov <- getBlockedLearningCurvesAOVWONear(group=group,blockdefs=blockdefs) 
-  secondAOV <- aov_ez("participant","compensation",LC4aov,within=c("perturbtype","block"))
-  
-  #nice(secondAOV, correction = 'none') #correction set to none since first AOV reveals no violation of sphericity
-  #summary(secondAOV) #shows all results
-  #run code above for figuring out df
-  #output is the same
-  #follow-ups using emmeans
-  
-  cellmeans <- emmeans(secondAOV,specs=c('perturbtype','block'))
-  #cellmeans <- lsmeans(secondAOV$aov,specs=c('perturbtype','block'))
-  print(cellmeans)
-}
-
-learningcurveComparisonsAllBlocksWONear <- function(group, method='bonferroni'){
-  #styles <- getStyle()
-  blockdefs <- list('first'=c(1,6),'second'=c(7,6),'last'=c(55,6))
-  
-  LC4aov <- getBlockedLearningCurvesAOVWONear(group=group,blockdefs=blockdefs) 
-  secondAOV <- aov_ez("participant","compensation",LC4aov,within=c("perturbtype","block"))
-  #based on cellmeans, confidence intervals and plots give us an idea of what contrasts we want to compare
-  
-  MIR_firstvsMIR_second  <- c(1,0,-1,0,0,0)
-  MIR_firstvsMIR_last    <- c(1,0,0,0,-1,0)
-  ROT_firstvsROT_second  <- c(0,1,0,-1,0,0)
-  ROT_firstvsROT_last    <- c(0,1,0,0,0,-1)
-  ROT_firstvsMIR_first   <- c(1,-1,0,0,0,0)
-  ROT_secondvsMIR_second <- c(0,0,1,-1,0,0)
-  ROT_lastvsMIR_last     <- c(0,0,0,0,1,-1)
-  
-  contrastList <- list('Block1: MIR vs. Block2: MIR'=MIR_firstvsMIR_second, 'Block1: MIR vs. Block3: MIR'=MIR_firstvsMIR_last,
-                       'Block1: ROT vs. Block2: ROT'=ROT_firstvsROT_second, 'Block1: ROT vs. Block3: ROT'=ROT_firstvsROT_last,
-                       'Block1: ROT vs. MIR'=ROT_firstvsMIR_first, 'Block2: ROT vs. MIR'=ROT_secondvsMIR_second, 'Block3: ROT vs. MIR'=ROT_lastvsMIR_last)
-  
-  comparisons<- contrast(emmeans(secondAOV,specs=c('perturbtype','block')), contrastList, adjust=method)
-  
-  print(comparisons)
-}
-
-#effect size
-learningCurveComparisonsAllBlocksWONearEffSize <- function(group, method = 'bonferroni'){
-  comparisons <- learningcurveComparisonsAllBlocksWONear(group=group,method=method)
-  #we can use eta-squared as effect size
-  #% of variance in DV(percentcomp) accounted for 
-  #by the difference between target1 and target2
-  comparisonsdf <- as.data.frame(comparisons)
-  etasq <- ((comparisonsdf$t.ratio)^2)/(((comparisonsdf$t.ratio)^2)+(comparisonsdf$df))
-  comparisons1 <- cbind(comparisonsdf,etasq)
-  
-  effectsize <- data.frame(comparisons1$contrast, comparisons1$etasq)
-  colnames(effectsize) <- c('contrast', 'etasquared')
-  #print(comparisons)
-  print(effectsize)
-}
-
-#Findings are pretty much the same, except that difference in block 1 and 2 for mir is not quite significant p = .07
-#The trend that mirror is higher by second block is kept consistent however.
