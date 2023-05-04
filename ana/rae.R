@@ -29,35 +29,42 @@ getAlignedParticipant <- function(group, id, location) {
   #perturbation is constant here (always 30deg), so the (reachdev/30)*100
   #reachdeviations are all negative values, we just multiply by -1 to make percentage positive
   #we will still get some negative values because of some that go below 0%, but the direction of means if plotted will make more sense
-  alltargetsbef <- c(67.5, 75, 82.5,
-                     157.5, 165, 172.5,
-                     247.5, 255, 262.5,
-                     337.5, 345, 352.5) #should compensate for 30 degrees
-  alltargetsaft <- c(7.5, 15, 22.5,
-                     97.5, 105, 112.5,
-                     187.5, 195, 202.5,
-                     277.5, 285, 292.5) #compensate 30 degrees
+  alltargets15bef <- c(82.5, 172.5, 262.5, 352.5) #should compensate for 15 degrees
+  alltargets15aft <- c(7.5, 97.5, 187.5, 277.5)
+  alltargets30bef <- c(75, 165, 255, 345) #30 degrees
+  alltargets30aft <- c(15, 105, 195, 285)
+  alltargets45bef <- c(67.5, 157.5, 247.5, 337.5) #45 degrees
+  alltargets45aft <- c(22.5, 112.5, 202.5, 292.5)
   
   angles <- unique(AT$targetangle)
-  #RT['compensate'] <- NA
+  AT['compensate'] <- NA
   
+  #we want percentage of compensation
+  #we multily by -1 so that getting positive values mean that the hand went to the correct direction
+  #above 100 values would mean an overcompensation, 0 is going directly to target, negative values are undercompensation
   for (target in angles){
-    if (target %in% alltargetsbef){
+    if (target %in% alltargets15bef){
+      AT$reachdev[which(AT$targetangle == target)] <- ((AT$reachdev[which(AT$targetangle == target)])/15)*100
+      AT$compensate[which(AT$targetangle == target)] <- 15
+    } else if (target %in% alltargets15aft){
+      AT$reachdev[which(AT$targetangle == target)] <- (((AT$reachdev[which(AT$targetangle == target)])*-1)/15)*100
+      AT$compensate[which(AT$targetangle == target)] <- 15
+    } else if (target %in% alltargets30bef){
       AT$reachdev[which(AT$targetangle == target)] <- ((AT$reachdev[which(AT$targetangle == target)])/30)*100
-      #RT$compensate[which(RT$targetangle == target)] <- 30
-    } else if (target %in% alltargetsaft){
-      #multiply by negative 1 bec targets after axis will have negative values
+      AT$compensate[which(AT$targetangle == target)] <- 30
+    } else if (target %in% alltargets30aft){
       AT$reachdev[which(AT$targetangle == target)] <- (((AT$reachdev[which(AT$targetangle == target)])*-1)/30)*100
-      #RT$compensate[which(RT$targetangle == target)] <- 30
+      AT$compensate[which(AT$targetangle == target)] <- 30
+    } else if (target %in% alltargets45bef){
+      AT$reachdev[which(AT$targetangle == target)] <- ((AT$reachdev[which(AT$targetangle == target)])/45)*100
+      AT$compensate[which(AT$targetangle == target)] <- 45
+    } else if (target %in% alltargets45aft){
+      AT$reachdev[which(AT$targetangle == target)] <- (((AT$reachdev[which(AT$targetangle == target)])*-1)/45)*100
+      AT$compensate[which(AT$targetangle == target)] <- 45
     }
   }
-  
-  #WT$reachdev <- ((WT$reachdev * -1)/30)*100
-  
-  #use below for absolute errors:
-  #so we subtract rotation size (30deg) from all reach deviations
-  #RT$reachdev <- (RT$reachdev * -1) - 30 #if we want negative values
-  #RT$reachdev <- RT$reachdev - 30 #if we want positive values
+  #write.csv(RT, file='data/PPLCmir.csv', row.names = F)
+   
   return(AT)
 }
 
@@ -1283,7 +1290,7 @@ plotROTRAEModel <- function(groups = c('noninstructed', 'instructed'), location 
     #show the percent compensation from data
     groupconfidence <- read.csv(file=sprintf('data/pilot/ROT_%s_CI_Aftereffects.csv', group))
     mid <- groupconfidence[,2]
-    x <- c(1:48)
+    x <- c(0:47)
     col <- '#A9A9A9ff'
     lines(x, mid, lty=1, col=col)
       
@@ -1391,7 +1398,7 @@ plotMIRRAEModel <- function(groups = c('noninstructed', 'instructed'), location 
     #show the percent compensation from data
     groupconfidence <- read.csv(file=sprintf('data/pilot/MIR_%s_CI_Aftereffects.csv', group))
     mid <- groupconfidence[,2]
-    x <- c(1:48)
+    x <- c(0:47)
     col <- '#A9A9A9ff'
     lines(x, mid, lty=1, col=col)
       
@@ -1445,5 +1452,492 @@ plotMIRRAEModel <- function(groups = c('noninstructed', 'instructed'), location 
   }
 }
 
-#Stats: how to compare rot and mir if exponential does not work for mir? Mir looks similar to instruceted learning curves
+#Exploring model on Mirror data----
+getRAEMSE <- function(perturb = c('ROT', 'MIR'), group = 'noninstructed', maxppid = 15, location = 'maxvel'){
+  for(ptype in perturb){
+    lambda <- c()
+    N0 <- c()
+    mse_expl <- c()
+    
+    if(ptype == 'ROT'){
+      data <- getROTGroupAftereffects(group = group, maxppid = maxppid, location = location)
+    } else if (ptype == 'MIR'){
+      data <- getMIRGroupAftereffects(group = group, maxppid = maxppid, location = location)
+    }
+    
+    subdat <- data[,2:ncol(data)]
+    for(icol in c(1:ncol(subdat))){
+      ppdat <- subdat[,icol]
+      par_expl <- exponentialFit(signal = ppdat, mode='washout')
+      pp_mse_expl<- exponentialMSE(par=par_expl, signal=ppdat, mode='washout')
+      
 
+      lambda <- c(lambda, par_expl['lambda'])
+      N0 <- c(N0, par_expl['N0'])
+      mse_expl <- c(mse_expl, pp_mse_expl)
+
+    }
+    
+    ndat <- data.frame(lambda, N0, mse_expl)
+    write.csv(ndat, file=sprintf('data/pilot/%s_%s_MSE_RAE.csv',ptype, group), quote=F, row.names=F)
+  }
+}
+
+#check for warparounds - plots trajectory of first trial in washout; wrap arounds not an issue here - see individualDataCheck.R
+getWrapArounds <- function(group='noninstructed', id=2, location='maxvel'){
+  
+  alignedTraining <- getParticipantTaskData(group, id, taskno = 1, task = 'aligned') #these values will change if need nocursor or localization
+  
+  if (id%%2 == 1){
+    #mirror then rotation if odd id
+    washoutTrials <- getParticipantTaskData(group, id, taskno = 7, task = 'washout0')
+  } else if (id%%2 == 0){
+    #if pp id is even
+    #rotation first then mirror
+    washoutTrials <- getParticipantTaskData(group, id, taskno = 13, task = 'washout1')
+  }
+  WT<- getReachAngles(washoutTrials, starttrial=0, endtrial=47, location = location)
+  washoutTrials <- washoutTrials[which(washoutTrials$trial == 0),]
+  
+  target <- unique(washoutTrials$targetangle_deg)
+  maxvel <- washoutTrials[which(washoutTrials$maxvelocity_idx == 1),]
+  x_maxvel <- maxvel$mousex_cm
+  y_maxvel <- maxvel$mousey_cm
+  
+  
+  plot(washoutTrials$mousex_cm, washoutTrials$mousey_cm, type='l')
+  points(x_maxvel, y_maxvel, col='red')
+  
+}
+
+#Reach Aftereffects: STATS----
+# we cannot compare exponential function fits between rotation and mirror, since the mirror shows no aftereffects
+# we can use ANOVAs and t tests to compare aftereffects
+
+#First, we need the aligned data as well as the long formats for data
+
+getRAELongFormat <- function(groups = c('noninstructed','instructed'), location = 'maxvel'){
+  
+  for (group in groups){
+    if(group == 'noninstructed'){
+      maxppid = 15
+      #Aligned data
+      ALdat <- getAlignedGroup(group=group,maxppid=maxppid,location=location)
+      ppcols <- c('p0','p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9', 'p10', 'p11', 'p12', 'p13', 'p14', 'p15')
+      colnames(ALdat) <- c('trial', 'p0','p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9', 'p10', 'p11', 'p12', 'p13', 'p14', 'p15')
+      
+      ALdat <- as.data.frame(ALdat)
+      perturb <- rep('AL', nrow(ALdat))
+      ALdat <- cbind(ALdat, perturb)
+      #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
+      longALdata <- gather(ALdat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
+      write.csv(longALdata, file=sprintf('data/pilot/ALIGNED_%s_long.csv', group), row.names = F)
+      
+      
+      #Rotation data
+      ROTdat <- getROTGroupAftereffects(group=group,maxppid=maxppid,location=location)
+      ppcols <- c('p0','p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9', 'p10', 'p11', 'p12', 'p13', 'p14', 'p15')
+      colnames(ROTdat) <- c('trial', 'p0','p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9', 'p10', 'p11', 'p12', 'p13', 'p14', 'p15')
+      
+      ROTdat <- as.data.frame(ROTdat)
+      perturb <- rep('ROT', nrow(ROTdat))
+      ROTdat <- cbind(ROTdat, perturb)
+      #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
+      longROTdata <- gather(ROTdat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
+      write.csv(longROTdata, file=sprintf('data/pilot/ROT_%s_aftereffects_long.csv', group), row.names = F)
+      
+      #Mirror data
+      MIRdat <- getMIRGroupAftereffects(group=group,maxppid=maxppid,location=location)
+      ppcols <- c('p0','p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9', 'p10', 'p11', 'p12', 'p13', 'p14', 'p15')
+      colnames(MIRdat) <- c('trial', 'p0','p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9', 'p10', 'p11', 'p12', 'p13', 'p14', 'p15')
+      
+      MIRdat <- as.data.frame(MIRdat)
+      perturb <- rep('MIR', nrow(MIRdat))
+      MIRdat <- cbind(MIRdat, perturb)
+      #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
+      longMIRdata <- gather(MIRdat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
+      write.csv(longMIRdata, file=sprintf('data/pilot/MIR_%s_aftereffects_long.csv', group), row.names = F)
+    } else if (group == 'instructed'){
+      maxppid = 31
+      #Aligned data
+      ALdat <- getAlignedGroup(group=group,maxppid=maxppid,location=location)
+      ppcols <- c('p16','p17', 'p18', 'p19', 'p20', 'p21', 'p22', 'p23', 'p248', 'p25', 'p26', 'p27', 'p28', 'p29', 'p30', 'p31')
+      colnames(ALdat) <- c('trial', 'p16','p17', 'p18', 'p19', 'p20', 'p21', 'p22', 'p23', 'p248', 'p25', 'p26', 'p27', 'p28', 'p29', 'p30', 'p31')
+      
+      ALdat <- as.data.frame(ALdat)
+      perturb <- rep('AL', nrow(ALdat))
+      ALdat <- cbind(ALdat, perturb)
+      #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
+      longALdata <- gather(ALdat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
+      write.csv(longALdata, file=sprintf('data/pilot/ALIGNED_%s_long.csv', group), row.names = F)
+      
+      
+      #Rotation data
+      ROTdat <- getROTGroupAftereffects(group=group,maxppid=maxppid,location=location)
+      ppcols <- c('p16','p17', 'p18', 'p19', 'p20', 'p21', 'p22', 'p23', 'p248', 'p25', 'p26', 'p27', 'p28', 'p29', 'p30', 'p31')
+      colnames(ROTdat) <- c('trial', 'p16','p17', 'p18', 'p19', 'p20', 'p21', 'p22', 'p23', 'p248', 'p25', 'p26', 'p27', 'p28', 'p29', 'p30', 'p31')
+      
+      ROTdat <- as.data.frame(ROTdat)
+      perturb <- rep('ROT', nrow(ROTdat))
+      ROTdat <- cbind(ROTdat, perturb)
+      #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
+      longROTdata <- gather(ROTdat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
+      write.csv(longROTdata, file=sprintf('data/pilot/ROT_%s_aftereffects_long.csv', group), row.names = F)
+      
+      #Mirror data
+      MIRdat <- getMIRGroupAftereffects(group=group,maxppid=maxppid,location=location)
+      ppcols <- c('p16','p17', 'p18', 'p19', 'p20', 'p21', 'p22', 'p23', 'p248', 'p25', 'p26', 'p27', 'p28', 'p29', 'p30', 'p31')
+      colnames(MIRdat) <- c('trial', 'p16','p17', 'p18', 'p19', 'p20', 'p21', 'p22', 'p23', 'p248', 'p25', 'p26', 'p27', 'p28', 'p29', 'p30', 'p31')
+      
+      MIRdat <- as.data.frame(MIRdat)
+      perturb <- rep('MIR', nrow(MIRdat))
+      MIRdat <- cbind(MIRdat, perturb)
+      #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
+      longMIRdata <- gather(MIRdat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
+      write.csv(longMIRdata, file=sprintf('data/pilot/MIR_%s_aftereffects_long.csv', group), row.names = F)
+    }
+  }
+}
+
+#First, we confirm the presence of aftereffects
+getBlockedAlignedData <- function(group, blockdefs){
+  LCaov <- data.frame()
+  curves <- read.csv(sprintf('data/pilot/ALIGNED_%s_long.csv', group), stringsAsFactors=FALSE)  
+  participants <- unique(curves$participant)
+  #R <- dim(curves)[1] # not needed, checks if rows=90 (correct trial numbers)
+  #curves <- curves[,-1] #take away trial column
+  N <- length(participants) #gets the number of participants
+  perturb = 'AL'
+  #blocked <- array(NA, dim=c(N,length(blockdefs))) #empty array where every participant will get 3 corresponding columns
+  #row.names(blocked) <- participants
+  #colnames(blocked) <- names(blockdefs)
+  
+  perturbtype <- c()
+  participant <- c()
+  block <- c()
+  compensation <- c()
+  
+  for (pp.idx in c(1:length(participants))) {
+    
+    pp <- participants[pp.idx] #loop through each participant
+    
+    for (blockno in c(1:length(blockdefs))) { #loop through each block (first, second, third)
+      
+      blockdef <- blockdefs[[blockno]] #creates a list which specifies start trial of every block, and how many trials in total for this block
+      blockstart <- blockdef[1] #either trial 1, 4, or 76
+      blockend <- blockstart + blockdef[2] - 1 #either trial 3, 6, or 90
+      #samples <- curves[blockstart:blockend,pp] #gets corresponding reach angle per participant
+      # moved to long format files:
+      samples <- c()
+      for (trial in c(blockstart:blockend)) {
+        # print(which(curves$participant == pp))
+        # print(which(curves$participant == pp & curves$trial == trial))
+        samples <- c(samples, curves$compensation[which(curves$participant == pp & curves$trial == trial)]) #get reachdev for current pp and trial
+        
+      }
+      #print(mean(samples, na.rm=TRUE))
+      #blocked[pp.idx,block] <- mean(samples, na.rm=TRUE) #compute the mean for it and put it in array
+      perturbtype <- c(perturbtype, perturb)
+      participant <- c(participant, pp) #the participant
+      block <- c(block, names(blockdefs)[blockno]) #the name of the block number (first, second or third)
+      compensation <- c(compensation, mean(samples, na.rm=T)) #mean compensation of trials for that block
+    }
+    
+  }
+  
+  GroupLCBlocked <- data.frame(perturbtype,participant,block,compensation)
+  
+  
+  if (prod(dim(LCaov)) == 0){
+    LCaov <- GroupLCBlocked
+  } else {
+    LCaov <- rbind(LCaov, GroupLCBlocked)
+  }
+  
+  #need to make some columns as factors for ANOVA
+  LCaov$perturbtype <- as.factor(LCaov$perturbtype)
+  LCaov$block <- as.factor(LCaov$block)
+  LCaov$block <- factor(LCaov$block, levels = c('first','second','last')) #so that it does not order it alphabetically
+  return(LCaov)
+}
+
+getBlockedRAEAOV <- function(perturbations = c('ROT','MIR'), group, blockdefs) {
+  #function reads in aftereffects_long.csv file then creates a df with cols participant, block, reachdev
+  LCaov <- data.frame()
+  #to include instructed group, just create another for loop here
+  for (perturb in perturbations){  
+    curves <- read.csv(sprintf('data/pilot/%s_%s_aftereffects_long.csv',perturb,group), stringsAsFactors=FALSE)  
+    participants <- unique(curves$participant)
+    #R <- dim(curves)[1] # not needed, checks if rows=90 (correct trial numbers)
+    #curves <- curves[,-1] #take away trial column
+    N <- length(participants) #gets the number of participants
+    
+    #blocked <- array(NA, dim=c(N,length(blockdefs))) #empty array where every participant will get 3 corresponding columns
+    #row.names(blocked) <- participants
+    #colnames(blocked) <- names(blockdefs)
+    
+    perturbtype <- c()
+    participant <- c()
+    block <- c()
+    compensation <- c()
+    
+    for (pp.idx in c(1:length(participants))) {
+      
+      pp <- participants[pp.idx] #loop through each participant
+      
+      for (blockno in c(1:length(blockdefs))) { #loop through each block (first, second, third)
+        
+        blockdef <- blockdefs[[blockno]] #creates a list which specifies start trial of every block, and how many trials in total for this block
+        blockstart <- blockdef[1] #either trial 1, 4, or 76
+        blockend <- blockstart + blockdef[2] - 1 #either trial 3, 6, or 90
+        #samples <- curves[blockstart:blockend,pp] #gets corresponding reach angle per participant
+        # moved to long format files:
+        samples <- c()
+        for (trial in c(blockstart:blockend)) {
+          # print(which(curves$participant == pp))
+          # print(which(curves$participant == pp & curves$trial == trial))
+          samples <- c(samples, curves$compensation[which(curves$participant == pp & curves$trial == trial)]) #get reachdev for current pp and trial
+          
+        }
+        #print(mean(samples, na.rm=TRUE))
+        #blocked[pp.idx,block] <- mean(samples, na.rm=TRUE) #compute the mean for it and put it in array
+        perturbtype <- c(perturbtype, perturb)
+        participant <- c(participant, pp) #the participant
+        block <- c(block, names(blockdefs)[blockno]) #the name of the block number (first, second or third)
+        compensation <- c(compensation, mean(samples, na.rm=T)) #mean compensation of trials for that block
+      }
+      
+    }
+    
+    GroupLCBlocked <- data.frame(perturbtype,participant,block,compensation)
+    
+    
+    if (prod(dim(LCaov)) == 0){
+      LCaov <- GroupLCBlocked
+    } else {
+      LCaov <- rbind(LCaov, GroupLCBlocked)
+    }
+  }
+  #need to make some columns as factors for ANOVA
+  LCaov$perturbtype <- as.factor(LCaov$perturbtype)
+  LCaov$block <- as.factor(LCaov$block)
+  LCaov$block <- factor(LCaov$block, levels = c('first','second','last')) #so that it does not order it alphabetically
+  return(LCaov)
+  
+}
+
+RAEt.test <- function(group) {
+  
+  blockdefs <- list('first'=c(1,12),'second'=c(13,12),'last'=c(37,12))
+  LC4test1 <- getBlockedAlignedData(group=group,blockdefs=blockdefs)
+  
+  blockdefs <- list('first'=c(1,6),'second'=c(7,6),'last'=c(43,6)) #6 trials per block
+  LC4test2 <- getBlockedRAEAOV(group=group,blockdefs=blockdefs)
+  
+  LC4test <- rbind(LC4test1, LC4test2)
+  LC4test$participant <- as.factor(LC4test$participant)
+  
+  ALdat <- LC4test[which(LC4test$block == 'last' & LC4test$perturbtype == 'AL'),]
+  ROTdat <- LC4test[which(LC4test$block == 'first' & LC4test$perturbtype == 'ROT'),]
+  MIRdat <-LC4test[which(LC4test$block == 'first' & LC4test$perturbtype == 'MIR'),]
+  
+  cat('Aligned (last block) compared to Rotation Washout (first block):\n')
+  print(t.test(ALdat$compensation, ROTdat$compensation, paired = TRUE))
+  cat('Effect Size - Cohen d:\n')
+  print(cohensD(ALdat$compensation, ROTdat$compensation))
+  cat('Bayesian t-test Aligned (last block) compared to Rotation Washout (first block):\n')
+  print(ttestBF(ALdat$compensation, ROTdat$compensation))
+  
+  cat('Aligned (last block) compared to Mirror Washout (first block):\n')
+  print(t.test(ALdat$compensation, MIRdat$compensation, paired = TRUE))
+  cat('Effect Size - Cohen d:\n')
+  print(cohensD(ALdat$compensation, MIRdat$compensation))
+  cat('Bayesian t-test Aligned (last block) compared to Mirror Washout (first block):\n')
+  print(ttestBF(ALdat$compensation, MIRdat$compensation))
+  
+  cat('Rotation Washout (first block) compared to Mirror Washout (first block):\n')
+  print(t.test(ROTdat$compensation, MIRdat$compensation, paired = TRUE))
+  cat('Effect Size - Cohen d:\n')
+  print(cohensD(ROTdat$compensation, MIRdat$compensation))
+  cat('Bayesian t-test Rotation Washout (first block) compared to Mirror Washout (first block):\n')
+  print(ttestBF(ROTdat$compensation, MIRdat$compensation))
+  
+}
+
+#Rotation differs from aligned, but Mirror does not. So we can then look into the difference of ROT from MIR across blocks
+reachaftereffectsANOVA <- function(group) {
+  
+  #styles <- getStyle()
+  blockdefs <- list('first'=c(1,6),'second'=c(7,6),'last'=c(43,6)) #6 trials per block
+  
+  LC4aov <- getBlockedRAEAOV(group=group,blockdefs=blockdefs)                      
+  
+  #looking into interaction below:
+  #interaction.plot(LC4aov$diffgroup, LC4aov$block, LC4aov$reachdeviation)
+  
+  #learning curve ANOVA's
+  # for ez, case ID should be a factor:
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=compensation, within=c(perturbtype, block),type=3, return_aov = TRUE) #which type of SS is appropriate?
+  print(firstAOV[1:3]) #so that it doesn't print the aov object as well
+}
+
+RAEComparisonMeans <- function(group){
+  
+  #can plot interaction just to eyeball it:
+  #plot(interactionMeans(lm(compensation ~ block * perturbtype, data=LC4aov), factors=c('perturbtype', 'block'), atx='block'))
+  
+  blockdefs <- list('first'=c(1,6),'second'=c(7,6),'last'=c(43,6))
+  
+  LC4aov <- getBlockedRAEAOV(group=group,blockdefs=blockdefs) 
+  secondAOV <- aov_ez("participant","compensation",LC4aov,within=c("perturbtype","block"))
+  
+  #nice(secondAOV, correction = 'none') #correction set to none since first AOV reveals no violation of sphericity
+  #summary(secondAOV) #shows all results
+  #run code above for figuring out df
+  #output is the same
+  #follow-ups using emmeans
+  
+  cellmeans <- emmeans(secondAOV,specs=c('perturbtype','block'))
+  #cellmeans <- lsmeans(secondAOV$aov,specs=c('perturbtype','block'))
+  print(cellmeans)
+}
+
+RAEComparisonsAllBlocks <- function(group,method='bonferroni'){
+  #styles <- getStyle()
+  blockdefs <- list('first'=c(1,6),'second'=c(7,6),'last'=c(43,6))
+  
+  LC4aov <- getBlockedRAEAOV(group=group,blockdefs=blockdefs) 
+  secondAOV <- aov_ez("participant","compensation",LC4aov,within=c("perturbtype","block"))
+  #based on cellmeans, confidence intervals and plots give us an idea of what contrasts we want to compare
+  
+  MIR_firstvsMIR_second  <- c(1,0,-1,0,0,0)
+  MIR_firstvsMIR_last    <- c(1,0,0,0,-1,0)
+  ROT_firstvsROT_second  <- c(0,1,0,-1,0,0)
+  ROT_firstvsROT_last    <- c(0,1,0,0,0,-1)
+  ROT_firstvsMIR_first   <- c(1,-1,0,0,0,0)
+  ROT_secondvsMIR_second <- c(0,0,1,-1,0,0)
+  ROT_lastvsMIR_last     <- c(0,0,0,0,1,-1)
+  
+  contrastList <- list('Block1: MIR vs. Block2: MIR'=MIR_firstvsMIR_second, 'Block1: MIR vs. Block3: MIR'=MIR_firstvsMIR_last,
+                       'Block1: ROT vs. Block2: ROT'=ROT_firstvsROT_second, 'Block1: ROT vs. Block3: ROT'=ROT_firstvsROT_last,
+                       'Block1: ROT vs. MIR'=ROT_firstvsMIR_first, 'Block2: ROT vs. MIR'=ROT_secondvsMIR_second, 'Block3: ROT vs. MIR'=ROT_lastvsMIR_last)
+  
+  comparisons<- contrast(emmeans(secondAOV,specs=c('perturbtype','block')), contrastList, adjust=method)
+  
+  print(comparisons)
+}
+
+#effect size
+RAEComparisonsAllBlocksEffSize <- function(group, method = 'bonferroni'){
+  comparisons <- RAEComparisonsAllBlocks(group=group,method=method)
+  #we can use eta-squared as effect size
+  #% of variance in DV(percentcomp) accounted for 
+  #by the difference between target1 and target2
+  comparisonsdf <- as.data.frame(comparisons)
+  etasq <- ((comparisonsdf$t.ratio)^2)/(((comparisonsdf$t.ratio)^2)+(comparisonsdf$df))
+  comparisons1 <- cbind(comparisonsdf,etasq)
+  
+  effectsize <- data.frame(comparisons1$contrast, comparisons1$etasq)
+  colnames(effectsize) <- c('contrast', 'etasquared')
+  #print(comparisons)
+  print(effectsize)
+}
+
+#ROT differs from MIR for the first 2 blocks, but are not different at the end.
+# identifying where they stop being different, can easily be seen in the plots.
+#Lack of difference for the three blocks of MIR suggest it did not differ from aligned, but ROT did.
+
+#Bayesian stats for ANOVA and follow ups----
+reachaftereffectsBayesANOVA <- function(group) {
+  
+  #styles <- getStyle()
+  blockdefs <- list('first'=c(1,6),'second'=c(7,6),'last'=c(43,6)) #6 trials per block
+  
+  LC4aov <- getBlockedRAEAOV(blockdefs=blockdefs, group=group)                      
+  
+  #looking into interaction below:
+  #interaction.plot(LC4aov$diffgroup, LC4aov$block, LC4aov$reachdeviation)
+  
+  #Bayes ANOVA - can use long format
+  #will compare models to null (intercept) or no effect - this will be 1
+  #higher than 1 will be evidence for alternative hypothesis, lower will be evidence for null hypothesis
+  #compare models either if only main effects, interaction of effects
+  #use lmBF function for specific models
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  bfLC<- anovaBF(compensation ~ perturbtype*block + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+  #compare interaction contribution, over the contribution of both main effects
+  bfinteraction <- bfLC[4]/bfLC[3]
+  print(bfLC)
+  print(bfinteraction)
+  
+  #bfLC will give main effects of perturbtype, can test which perturbation has larger compensation with:
+  #LC4aov %>% group_by(perturbtype) %>% summarise(mean(compensation))
+  #can also test main effects of block:
+  #LC4aov %>% group_by(block) %>% summarise(mean(compensation))
+  #but since interaction has large bf (in frequentist, interaction was significant), we can just compare [3] and [4]
+}
+
+reachaftereffectsBayesfollowup <- function(group) {
+  
+  #styles <- getStyle()
+  blockdefs <- list('first'=c(1,6),'second'=c(7,6),'last'=c(43,6)) #6 trials per block
+  
+  LC4aov <- getBlockedRAEAOV(blockdefs=blockdefs, group=group)                      
+
+  MIRfirst <- LC4aov[which(LC4aov$block == 'first' & LC4aov$perturbtype == 'MIR'),]
+  MIRsecond <- LC4aov[which(LC4aov$block == 'second' & LC4aov$perturbtype == 'MIR'),]
+  MIRlast <- LC4aov[which(LC4aov$block == 'last' & LC4aov$perturbtype == 'MIR'),]
+  ROTfirst <- LC4aov[which(LC4aov$block == 'first' & LC4aov$perturbtype == 'ROT'),]
+  ROTsecond <- LC4aov[which(LC4aov$block == 'second' & LC4aov$perturbtype == 'ROT'),]
+  ROTlast <- LC4aov[which(LC4aov$block == 'last' & LC4aov$perturbtype == 'ROT'),]
+  
+  #mir first vs mir second
+  cat('Bayesian t-test Mirror block 1 vs block 2:\n')
+  print(ttestBF(MIRfirst$compensation, MIRsecond$compensation))
+  #mir first vs mir last
+  cat('Bayesian t-test Mirror block 1 vs last block:\n')
+  print(ttestBF(MIRfirst$compensation, MIRlast$compensation))
+  #rot first vs rot second
+  cat('Bayesian t-test Rotation block 1 vs block 2:\n')
+  print(ttestBF(ROTfirst$compensation, ROTsecond$compensation))
+  #rot first vs rot last
+  cat('Bayesian t-test Rotation block 1 vs last block:\n')
+  print(ttestBF(ROTfirst$compensation, ROTlast$compensation))
+  #rot first vs mir first
+  cat('Bayesian t-test Rotation block 1 vs Mirror block 1:\n')
+  print(ttestBF(ROTfirst$compensation, MIRfirst$compensation))
+  #rot second vs mir second
+  cat('Bayesian t-test Rotation block 2 vs Mirror block 2:\n')
+  print(ttestBF(ROTsecond$compensation, MIRsecond$compensation))
+  #rot last vs mir last
+  cat('Bayesian t-test Rotation  last block vs Mirror  last block:\n')
+  print(ttestBF(ROTlast$compensation, MIRlast$compensation))
+}
+
+#Do learning rates (during training) correlate with aftereffects?----
+getLambdaRAECorrelations <- function(group){
+  
+  blockdefs <- list('first'=c(1,6),'second'=c(7,6),'last'=c(43,6)) #6 trials per block
+  LC4aov <- getBlockedRAEAOV(blockdefs=blockdefs, group=group)                      
+  MIRfirst <- LC4aov[which(LC4aov$block == 'first' & LC4aov$perturbtype == 'MIR'),]
+  ROTfirst <- LC4aov[which(LC4aov$block == 'first' & LC4aov$perturbtype == 'ROT'),]
+  
+  MIRLC <- read.csv('data/pilot/MIR_noninstructed_MSE_LearningCurves.csv')
+  MIRlambda <- MIRLC$lambda
+  ROTLC <- read.csv('data/pilot/ROT_noninstructed_MSE_LearningCurves.csv')
+  ROTlambda <- ROTLC$lambda
+  
+  
+  MIRfirst$lambda <- MIRlambda
+  ROTfirst$lambda <- ROTlambda
+  
+  #plot(MIRfirst$lambda, MIRfirst$compensation)
+  #plot(ROTfirst$lambda, ROTfirst$compensation)
+  
+  cor.test(MIRfirst$lambda, MIRfirst$compensation)
+  cor.test(ROTfirst$lambda, ROTfirst$compensation)
+  
+  correlationBF(MIRfirst$lambda, MIRfirst$compensation)
+  correlationBF(ROTfirst$lambda, ROTfirst$compensation)
+}

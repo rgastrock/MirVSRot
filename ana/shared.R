@@ -11,6 +11,7 @@ library(emmeans)
 library(afex) #used for aov_ez
 library(lsr) #for cohensD
 library(BayesFactor)
+library(tidyverse)
 
 #Generic Functions----
 

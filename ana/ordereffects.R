@@ -669,7 +669,7 @@ plotROTOrderEffectsModel <- function(groups = c('noninstructed', 'instructed'), 
       #show the percent compensation from data
       groupconfidence <- read.csv(file=sprintf('data/pilot/ROT_%s_CI_ordereffects_%d.csv', group, condition))
       mid <- groupconfidence[,2]
-      x <- c(1:90)
+      x <- c(0:89)
       col <- '#A9A9A9ff'
       lines(x, mid, lty=1, col=col)
       
@@ -780,7 +780,7 @@ plotMIROrderEffectsModel <- function(groups = c('noninstructed', 'instructed'), 
       
       #show the percent compensation from data
       groupconfidence <- read.csv(file=sprintf('data/pilot/MIR_%s_CI_ordereffects_%d.csv', group, condition))
-      x <- c(1:90)
+      x <- c(0:89)
       mid <- groupconfidence[,2]
       col <- '#A9A9A9ff'
       lines(x, mid, lty=1, col=col)
@@ -895,7 +895,7 @@ plotROTOrderEffectsStepModel <- function(groups = c('noninstructed', 'instructed
       #show the percent compensation from data
       groupconfidence <- read.csv(file=sprintf('data/pilot/ROT_%s_CI_ordereffects_%d.csv', group, condition))
       mid <- groupconfidence[,2]
-      x <- c(1:90)
+      x <- c(0:89)
       col <- '#A9A9A9ff'
       lines(x, mid, lty=1, col=col)
         
@@ -1006,7 +1006,7 @@ plotMIROrderEffectsStepModel <- function(groups = c('noninstructed', 'instructed
       
       #show the percent compensation from data
       groupconfidence <- read.csv(file=sprintf('data/pilot/MIR_%s_CI_ordereffects_%d.csv', group, condition))
-      x <- c(1:90)
+      x <- c(0:89)
       mid <- groupconfidence[,2]
       col <- '#A9A9A9ff'
       lines(x, mid, lty=1, col=col)
@@ -1125,7 +1125,7 @@ plotROTOrderEffectsLogModel <- function(groups = c('noninstructed', 'instructed'
       #show the percent compensation from data
       groupconfidence <- read.csv(file=sprintf('data/pilot/ROT_%s_CI_ordereffects_%d.csv', group, condition))
       mid <- groupconfidence[,2]
-      x <- c(1:90)
+      x <- c(0:89)
       col <- '#A9A9A9ff'
       lines(x, mid, lty=1, col=col)
         
@@ -1244,7 +1244,7 @@ plotMIROrderEffectsLogModel <- function(groups = c('noninstructed', 'instructed'
       #show the percent compensation from data
       groupconfidence <- read.csv(file=sprintf('data/pilot/MIR_%s_CI_ordereffects_%d.csv', group, condition))
       mid <- groupconfidence[,2]
-      x <- c(1:90)
+      x <- c(0:89)
       col <- '#A9A9A9ff'
       lines(x, mid, lty=1, col=col)
         
