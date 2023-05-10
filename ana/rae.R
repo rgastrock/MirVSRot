@@ -1849,6 +1849,7 @@ RAEComparisonsAllBlocksEffSize <- function(group, method = 'bonferroni'){
 #Lack of difference for the three blocks of MIR suggest it did not differ from aligned, but ROT did.
 
 #Bayesian stats for ANOVA and follow ups----
+#bayesfactor_inclusion(bf)
 reachaftereffectsBayesANOVA <- function(group) {
   
   #styles <- getStyle()
@@ -1867,7 +1868,11 @@ reachaftereffectsBayesANOVA <- function(group) {
   LC4aov$participant <- as.factor(LC4aov$participant)
   bfLC<- anovaBF(compensation ~ perturbtype*block + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
   #compare interaction contribution, over the contribution of both main effects
-  bfinteraction <- bfLC[4]/bfLC[3]
+  #bfinteraction <- bfLC[4]/bfLC[3]
+  
+  #bfinclude to compare model with interactions against all other models
+  bfinteraction <- bayesfactor_inclusion(bfLC)
+  
   print(bfLC)
   print(bfinteraction)
   

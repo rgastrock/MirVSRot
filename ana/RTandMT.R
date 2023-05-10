@@ -1538,7 +1538,8 @@ RTBayesANOVA <- function(group) {
   LC4aov$participant <- as.factor(LC4aov$participant)
   bfLC<- anovaBF(compensation ~ perturbtype*block + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
   #compare interaction contribution, over the contribution of both main effects
-  bfinteraction <- bfLC[4]/bfLC[3]
+  #bfinteraction <- bfLC[4]/bfLC[3]
+  bfinteraction <- bayesfactor_inclusion(bfLC)
   print(bfLC)
   print(bfinteraction)
   
@@ -1754,9 +1755,9 @@ getMTBlockedAlignedConfInt <- function(group, maxppid, type = 't'){
       confidence <- rbind(confidence, citrial)
     }
     if (group == 'noninstructed'){
-      write.csv(confidence, file='data/ALIGNED_noninstructed_blocked_CI_MT.csv', row.names = F) 
+      write.csv(confidence, file='data/pilot/ALIGNED_noninstructed_blocked_CI_MT.csv', row.names = F) 
     } else if (group == 'instructed'){
-      write.csv(confidence, file='data/ALIGNED_instructed_blocked_CI_MT.csv', row.names = F)
+      write.csv(confidence, file='data/pilot/ALIGNED_instructed_blocked_CI_MT.csv', row.names = F)
     } 
     
   }
@@ -1793,9 +1794,9 @@ getMTAlignedConfInt <- function(group, maxppid, type = 't'){
       confidence <- rbind(confidence, citrial)
     }
     if (group == 'noninstructed'){
-      write.csv(confidence, file='data/ALIGNED_noninstructed_CI_MT.csv', row.names = F) 
+      write.csv(confidence, file='data/pilot/ALIGNED_noninstructed_CI_MT.csv', row.names = F) 
     } else if (group == 'instructed'){
-      write.csv(confidence, file='data/ALIGNED_instructed_CI_MT.csv', row.names = F)
+      write.csv(confidence, file='data/pilot/ALIGNED_instructed_CI_MT.csv', row.names = F)
     } 
     
   }
@@ -1918,9 +1919,9 @@ getMTBlockedROTConfInt <- function(group, maxppid, type = 't'){
       confidence <- rbind(confidence, citrial)
     }
     if (group == 'noninstructed'){
-      write.csv(confidence, file='data/ROT_noninstructed_blocked_CI_MT.csv', row.names = F) 
+      write.csv(confidence, file='data/pilot/ROT_noninstructed_blocked_CI_MT.csv', row.names = F) 
     } else if (group == 'instructed'){
-      write.csv(confidence, file='data/ROT_instructed_blocked_CI_MT.csv', row.names = F)
+      write.csv(confidence, file='data/pilot/ROT_instructed_blocked_CI_MT.csv', row.names = F)
     } 
     
   }
@@ -1957,9 +1958,9 @@ getMTROTConfInt <- function(group, maxppid, type = 't'){
       confidence <- rbind(confidence, citrial)
     }
     if (group == 'noninstructed'){
-      write.csv(confidence, file='data/ROT_noninstructed_CI_MT.csv', row.names = F) 
+      write.csv(confidence, file='data/pilot/ROT_noninstructed_CI_MT.csv', row.names = F) 
     } else if (group == 'instructed'){
-      write.csv(confidence, file='data/ROT_instructed_CI_MT.csv', row.names = F)
+      write.csv(confidence, file='data/pilot/ROT_instructed_CI_MT.csv', row.names = F)
     } 
     
   }
@@ -2082,9 +2083,9 @@ getMTBlockedMIRConfInt <- function(group, maxppid, type = 't'){
       confidence <- rbind(confidence, citrial)
     }
     if (group == 'noninstructed'){
-      write.csv(confidence, file='data/MIR_noninstructed_blocked_CI_MT.csv', row.names = F) 
+      write.csv(confidence, file='data/pilot/MIR_noninstructed_blocked_CI_MT.csv', row.names = F) 
     } else if (group == 'instructed'){
-      write.csv(confidence, file='data/MIR_instructed_blocked_CI_MT.csv', row.names = F)
+      write.csv(confidence, file='data/pilot/MIR_instructed_blocked_CI_MT.csv', row.names = F)
     } 
     
   }
@@ -2121,9 +2122,9 @@ getMTMIRConfInt <- function(group, maxppid, type = 't'){
       confidence <- rbind(confidence, citrial)
     }
     if (group == 'noninstructed'){
-      write.csv(confidence, file='data/MIR_noninstructed_CI_MT.csv', row.names = F) 
+      write.csv(confidence, file='data/pilot/MIR_noninstructed_CI_MT.csv', row.names = F) 
     } else if (group == 'instructed'){
-      write.csv(confidence, file='data/MIR_instructed_CI_MT.csv', row.names = F)
+      write.csv(confidence, file='data/pilot/MIR_instructed_CI_MT.csv', row.names = F)
     } 
     
   }
@@ -2247,9 +2248,9 @@ getMTBlockedRotwashConfInt <- function(group, maxppid, type = 't'){
       confidence <- rbind(confidence, citrial)
     }
     if (group == 'noninstructed'){
-      write.csv(confidence, file='data/ROTWASH_noninstructed_blocked_CI_MT.csv', row.names = F) 
+      write.csv(confidence, file='data/pilot/ROTWASH_noninstructed_blocked_CI_MT.csv', row.names = F) 
     } else if (group == 'instructed'){
-      write.csv(confidence, file='data/ROTWASH_instructed_blocked_CI_MT.csv', row.names = F)
+      write.csv(confidence, file='data/pilot/ROTWASH_instructed_blocked_CI_MT.csv', row.names = F)
     } 
     
   }
@@ -2286,9 +2287,9 @@ getMTRotwashConfInt <- function(group, maxppid, type = 't'){
       confidence <- rbind(confidence, citrial)
     }
     if (group == 'noninstructed'){
-      write.csv(confidence, file='data/ROTWASH_noninstructed_CI_MT.csv', row.names = F) 
+      write.csv(confidence, file='data/pilot/ROTWASH_noninstructed_CI_MT.csv', row.names = F) 
     } else if (group == 'instructed'){
-      write.csv(confidence, file='data/ROTWASH_instructed_CI_MT.csv', row.names = F)
+      write.csv(confidence, file='data/pilot/ROTWASH_instructed_CI_MT.csv', row.names = F)
     } 
     
   }
@@ -2411,9 +2412,9 @@ getMTBlockedMirwashConfInt <- function(group, maxppid, type = 't'){
       confidence <- rbind(confidence, citrial)
     }
     if (group == 'noninstructed'){
-      write.csv(confidence, file='data/MIRWASH_noninstructed_blocked_CI_MT.csv', row.names = F) 
+      write.csv(confidence, file='data/pilot/MIRWASH_noninstructed_blocked_CI_MT.csv', row.names = F) 
     } else if (group == 'instructed'){
-      write.csv(confidence, file='data/MIRWASH_instructed_blocked_CI_MT.csv', row.names = F)
+      write.csv(confidence, file='data/pilot/MIRWASH_instructed_blocked_CI_MT.csv', row.names = F)
     } 
     
   }
@@ -2450,9 +2451,9 @@ getMTMirwashConfInt <- function(group, maxppid, type = 't'){
       confidence <- rbind(confidence, citrial)
     }
     if (group == 'noninstructed'){
-      write.csv(confidence, file='data/MIRWASH_noninstructed_CI_MT.csv', row.names = F) 
+      write.csv(confidence, file='data/pilot/MIRWASH_noninstructed_CI_MT.csv', row.names = F) 
     } else if (group == 'instructed'){
-      write.csv(confidence, file='data/MIRWASH_instructed_CI_MT.csv', row.names = F)
+      write.csv(confidence, file='data/pilot/MIRWASH_instructed_CI_MT.csv', row.names = F)
     } 
     
   }
@@ -2463,15 +2464,15 @@ plotNIBlockedMT <- function(target='inline'){
   
   #but we can save plot as svg file
   if (target=='svg') {
-    svglite(file='doc/fig/Fig6_NI_movementtime.svg', width=11.5, height=8.5, pointsize=16, system_fonts=list(sans="Arial"))
+    svglite(file='doc/fig/pilot/Fig42_NI_movementtime.svg', width=11.5, height=8.5, pointsize=16, system_fonts=list(sans="Arial"))
   }
   
   #read in the csv files and plot them in one big plot
-  dat1 <- read.csv(file='data/ALIGNED_noninstructed_blocked_CI_MT.csv')
-  dat2 <- read.csv(file='data/ROT_noninstructed_blocked_CI_MT.csv')
-  dat3 <- read.csv(file='data/ROTWASH_noninstructed_blocked_CI_MT.csv')
-  dat4 <- read.csv(file='data/MIR_noninstructed_blocked_CI_MT.csv')
-  dat5 <- read.csv(file='data/MIRWASH_noninstructed_blocked_CI_MT.csv')
+  dat1 <- read.csv(file='data/pilot/ALIGNED_noninstructed_blocked_CI_MT.csv')
+  dat2 <- read.csv(file='data/pilot/ROT_noninstructed_blocked_CI_MT.csv')
+  dat3 <- read.csv(file='data/pilot/ROTWASH_noninstructed_blocked_CI_MT.csv')
+  dat4 <- read.csv(file='data/pilot/MIR_noninstructed_blocked_CI_MT.csv')
+  dat5 <- read.csv(file='data/pilot/MIRWASH_noninstructed_blocked_CI_MT.csv')
   
   dat <- rbind(dat1, dat2, dat3, dat4, dat5)
   
@@ -2530,15 +2531,15 @@ plotIBlockedMT <- function(target='inline'){
   
   #but we can save plot as svg file
   if (target=='svg') {
-    svglite(file='doc/fig/Fig6_I_movementtime.svg', width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
+    svglite(file='doc/fig/pilot/Fig43_I_movementtime.svg', width=12, height=7, pointsize=14, system_fonts=list(sans="Arial"))
   }
   
   #read in the csv files and plot them in one big plot
-  dat1 <- read.csv(file='data/ALIGNED_instructed_blocked_CI_MT.csv')
-  dat2 <- read.csv(file='data/ROT_instructed_blocked_CI_MT.csv')
-  dat3 <- read.csv(file='data/ROTWASH_instructed_blocked_CI_MT.csv')
-  dat4 <- read.csv(file='data/MIR_instructed_blocked_CI_MT.csv')
-  dat5 <- read.csv(file='data/MIRWASH_instructed_blocked_CI_MT.csv')
+  dat1 <- read.csv(file='data/pilot/ALIGNED_instructed_blocked_CI_MT.csv')
+  dat2 <- read.csv(file='data/pilot/ROT_instructed_blocked_CI_MT.csv')
+  dat3 <- read.csv(file='data/pilot/ROTWASH_instructed_blocked_CI_MT.csv')
+  dat4 <- read.csv(file='data/pilot/MIR_instructed_blocked_CI_MT.csv')
+  dat5 <- read.csv(file='data/pilot/MIRWASH_instructed_blocked_CI_MT.csv')
   
   dat <- rbind(dat1, dat2, dat3, dat4, dat5)
   
@@ -2599,7 +2600,7 @@ plotBlockedMT <- function(target='inline'){
   
   #but we can save plot as svg file
   if (target=='svg') {
-    svglite(file='doc/fig/Fig6_movementtime.svg', width=12, height=7, pointsize=10, system_fonts=list(sans="Arial"))
+    svglite(file='doc/fig/pilot/Fig44_movementtime.svg', width=12, height=7, pointsize=10, system_fonts=list(sans="Arial"))
   }
   
   
@@ -2618,76 +2619,141 @@ plotBlockedMT <- function(target='inline'){
 #Movement Time STATS----
 #analysis is similar in structure to Reaction time, comparing aligned to ROT and MIR, but we also have washout here
 
-getMTLongFormat <- function(groups = c('noninstructed','instructed'), maxppid = 15, location = 'maxvel'){
+getMTLongFormat <- function(groups = c('noninstructed','instructed'), location = 'maxvel'){
   
   for (group in groups){
-    #Aligned data
-    ALdat <- getMTAligned(group=group,maxppid=maxppid)
-    ppcols <- c('p0','p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9', 'p10', 'p11', 'p12', 'p13', 'p14', 'p15')
-    colnames(ALdat) <- c('trial', 'p0','p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9', 'p10', 'p11', 'p12', 'p13', 'p14', 'p15')
-    
-    ALdat <- as.data.frame(ALdat)
-    perturb <- rep('AL', nrow(ALdat))
-    ALdat <- cbind(ALdat, perturb)
-    #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
-    longALdata <- gather(ALdat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
-    write.csv(longALdata, file=sprintf('data/ALIGNED_%s_MT_long.csv', group), row.names = F)
-    
-    
-    #Rotation data
-    ROTdat <- getMTRot(group=group,maxppid=maxppid)
-    ppcols <- c('p0','p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9', 'p10', 'p11', 'p12', 'p13', 'p14', 'p15')
-    colnames(ROTdat) <- c('trial', 'p0','p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9', 'p10', 'p11', 'p12', 'p13', 'p14', 'p15')
-    
-    ROTdat <- as.data.frame(ROTdat)
-    perturb <- rep('ROT', nrow(ROTdat))
-    ROTdat <- cbind(ROTdat, perturb)
-    #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
-    longROTdata <- gather(ROTdat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
-    write.csv(longROTdata, file=sprintf('data/ROT_%s_MT_long.csv', group), row.names = F)
-    
-    #RotWASH data
-    ROTWASHdat <- getMTRotwash(group=group,maxppid=maxppid)
-    ppcols <- c('p0','p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9', 'p10', 'p11', 'p12', 'p13', 'p14', 'p15')
-    colnames(ROTWASHdat) <- c('trial', 'p0','p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9', 'p10', 'p11', 'p12', 'p13', 'p14', 'p15')
-    
-    ROTWASHdat <- as.data.frame(ROTWASHdat)
-    perturb <- rep('ROTWASH', nrow(ROTWASHdat))
-    ROTWASHdat <- cbind(ROTWASHdat, perturb)
-    #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
-    longROTWASHdata <- gather(ROTWASHdat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
-    write.csv(longROTWASHdata, file=sprintf('data/ROTWASH_%s_MT_long.csv', group), row.names = F)
-    
-    #Mirror data
-    MIRdat <- getMTMir(group=group,maxppid=maxppid)
-    ppcols <- c('p0','p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9', 'p10', 'p11', 'p12', 'p13', 'p14', 'p15')
-    colnames(MIRdat) <- c('trial', 'p0','p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9', 'p10', 'p11', 'p12', 'p13', 'p14', 'p15')
-    
-    MIRdat <- as.data.frame(MIRdat)
-    perturb <- rep('MIR', nrow(MIRdat))
-    MIRdat <- cbind(MIRdat, perturb)
-    #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
-    longMIRdata <- gather(MIRdat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
-    write.csv(longMIRdata, file=sprintf('data/MIR_%s_MT_long.csv', group), row.names = F)
-    
-    #MirWASH data
-    MIRWASHdat <- getMTMirwash(group=group,maxppid=maxppid)
-    ppcols <- c('p0','p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9', 'p10', 'p11', 'p12', 'p13', 'p14', 'p15')
-    colnames(MIRWASHdat) <- c('trial', 'p0','p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9', 'p10', 'p11', 'p12', 'p13', 'p14', 'p15')
-    
-    MIRWASHdat <- as.data.frame(MIRWASHdat)
-    perturb <- rep('MIRWASH', nrow(MIRWASHdat))
-    MIRWASHdat <- cbind(MIRWASHdat, perturb)
-    #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
-    longMIRWASHdata <- gather(MIRWASHdat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
-    write.csv(longMIRWASHdata, file=sprintf('data/MIRWASH_%s_MT_long.csv', group), row.names = F)
+    if(group == 'noninstructed'){
+      maxppid = 15
+      #Aligned data
+      ALdat <- getMTAligned(group=group,maxppid=maxppid)
+      ppcols <- c('p0','p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9', 'p10', 'p11', 'p12', 'p13', 'p14', 'p15')
+      colnames(ALdat) <- c('trial', 'p0','p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9', 'p10', 'p11', 'p12', 'p13', 'p14', 'p15')
+      
+      ALdat <- as.data.frame(ALdat)
+      perturb <- rep('AL', nrow(ALdat))
+      ALdat <- cbind(ALdat, perturb)
+      #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
+      longALdata <- gather(ALdat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
+      write.csv(longALdata, file=sprintf('data/pilot/ALIGNED_%s_MT_long.csv', group), row.names = F)
+      
+      
+      #Rotation data
+      ROTdat <- getMTRot(group=group,maxppid=maxppid)
+      ppcols <- c('p0','p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9', 'p10', 'p11', 'p12', 'p13', 'p14', 'p15')
+      colnames(ROTdat) <- c('trial', 'p0','p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9', 'p10', 'p11', 'p12', 'p13', 'p14', 'p15')
+      
+      ROTdat <- as.data.frame(ROTdat)
+      perturb <- rep('ROT', nrow(ROTdat))
+      ROTdat <- cbind(ROTdat, perturb)
+      #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
+      longROTdata <- gather(ROTdat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
+      write.csv(longROTdata, file=sprintf('data/pilot/ROT_%s_MT_long.csv', group), row.names = F)
+      
+      #RotWASH data
+      ROTWASHdat <- getMTRotwash(group=group,maxppid=maxppid)
+      ppcols <- c('p0','p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9', 'p10', 'p11', 'p12', 'p13', 'p14', 'p15')
+      colnames(ROTWASHdat) <- c('trial', 'p0','p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9', 'p10', 'p11', 'p12', 'p13', 'p14', 'p15')
+      
+      ROTWASHdat <- as.data.frame(ROTWASHdat)
+      perturb <- rep('ROTWASH', nrow(ROTWASHdat))
+      ROTWASHdat <- cbind(ROTWASHdat, perturb)
+      #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
+      longROTWASHdata <- gather(ROTWASHdat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
+      write.csv(longROTWASHdata, file=sprintf('data/pilot/ROTWASH_%s_MT_long.csv', group), row.names = F)
+      
+      #Mirror data
+      MIRdat <- getMTMir(group=group,maxppid=maxppid)
+      ppcols <- c('p0','p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9', 'p10', 'p11', 'p12', 'p13', 'p14', 'p15')
+      colnames(MIRdat) <- c('trial', 'p0','p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9', 'p10', 'p11', 'p12', 'p13', 'p14', 'p15')
+      
+      MIRdat <- as.data.frame(MIRdat)
+      perturb <- rep('MIR', nrow(MIRdat))
+      MIRdat <- cbind(MIRdat, perturb)
+      #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
+      longMIRdata <- gather(MIRdat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
+      write.csv(longMIRdata, file=sprintf('data/pilot/MIR_%s_MT_long.csv', group), row.names = F)
+      
+      #MirWASH data
+      MIRWASHdat <- getMTMirwash(group=group,maxppid=maxppid)
+      ppcols <- c('p0','p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9', 'p10', 'p11', 'p12', 'p13', 'p14', 'p15')
+      colnames(MIRWASHdat) <- c('trial', 'p0','p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9', 'p10', 'p11', 'p12', 'p13', 'p14', 'p15')
+      
+      MIRWASHdat <- as.data.frame(MIRWASHdat)
+      perturb <- rep('MIRWASH', nrow(MIRWASHdat))
+      MIRWASHdat <- cbind(MIRWASHdat, perturb)
+      #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
+      longMIRWASHdata <- gather(MIRWASHdat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
+      write.csv(longMIRWASHdata, file=sprintf('data/pilot/MIRWASH_%s_MT_long.csv', group), row.names = F)
+    } else if (group == 'instructed'){
+      maxppid = 31
+      #Aligned data
+      ALdat <- getMTAligned(group=group,maxppid=maxppid)
+      ppcols <- c('p16','p17', 'p18', 'p19', 'p20', 'p21', 'p22', 'p23', 'p24', 'p25', 'p26', 'p27', 'p28', 'p29', 'p30', 'p31')
+      colnames(ALdat) <- c('trial', 'p16','p17', 'p18', 'p19', 'p20', 'p21', 'p22', 'p23', 'p24', 'p25', 'p26', 'p27', 'p28', 'p29', 'p30', 'p31')
+      
+      ALdat <- as.data.frame(ALdat)
+      perturb <- rep('AL', nrow(ALdat))
+      ALdat <- cbind(ALdat, perturb)
+      #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
+      longALdata <- gather(ALdat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
+      write.csv(longALdata, file=sprintf('data/pilot/ALIGNED_%s_MT_long.csv', group), row.names = F)
+      
+      
+      #Rotation data
+      ROTdat <- getMTRot(group=group,maxppid=maxppid)
+      ppcols <- c('p16','p17', 'p18', 'p19', 'p20', 'p21', 'p22', 'p23', 'p24', 'p25', 'p26', 'p27', 'p28', 'p29', 'p30', 'p31')
+      colnames(ROTdat) <- c('trial', 'p16','p17', 'p18', 'p19', 'p20', 'p21', 'p22', 'p23', 'p24', 'p25', 'p26', 'p27', 'p28', 'p29', 'p30', 'p31')
+      
+      ROTdat <- as.data.frame(ROTdat)
+      perturb <- rep('ROT', nrow(ROTdat))
+      ROTdat <- cbind(ROTdat, perturb)
+      #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
+      longROTdata <- gather(ROTdat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
+      write.csv(longROTdata, file=sprintf('data/pilot/ROT_%s_MT_long.csv', group), row.names = F)
+      
+      #RotWASH data
+      ROTWASHdat <- getMTRotwash(group=group,maxppid=maxppid)
+      ppcols <- c('p16','p17', 'p18', 'p19', 'p20', 'p21', 'p22', 'p23', 'p24', 'p25', 'p26', 'p27', 'p28', 'p29', 'p30', 'p31')
+      colnames(ROTWASHdat) <- c('trial', 'p16','p17', 'p18', 'p19', 'p20', 'p21', 'p22', 'p23', 'p24', 'p25', 'p26', 'p27', 'p28', 'p29', 'p30', 'p31')
+      
+      ROTWASHdat <- as.data.frame(ROTWASHdat)
+      perturb <- rep('ROTWASH', nrow(ROTWASHdat))
+      ROTWASHdat <- cbind(ROTWASHdat, perturb)
+      #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
+      longROTWASHdata <- gather(ROTWASHdat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
+      write.csv(longROTWASHdata, file=sprintf('data/pilot/ROTWASH_%s_MT_long.csv', group), row.names = F)
+      
+      #Mirror data
+      MIRdat <- getMTMir(group=group,maxppid=maxppid)
+      ppcols <- c('p16','p17', 'p18', 'p19', 'p20', 'p21', 'p22', 'p23', 'p24', 'p25', 'p26', 'p27', 'p28', 'p29', 'p30', 'p31')
+      colnames(MIRdat) <- c('trial', 'p16','p17', 'p18', 'p19', 'p20', 'p21', 'p22', 'p23', 'p24', 'p25', 'p26', 'p27', 'p28', 'p29', 'p30', 'p31')
+      
+      MIRdat <- as.data.frame(MIRdat)
+      perturb <- rep('MIR', nrow(MIRdat))
+      MIRdat <- cbind(MIRdat, perturb)
+      #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
+      longMIRdata <- gather(MIRdat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
+      write.csv(longMIRdata, file=sprintf('data/pilot/MIR_%s_MT_long.csv', group), row.names = F)
+      
+      #MirWASH data
+      MIRWASHdat <- getMTMirwash(group=group,maxppid=maxppid)
+      ppcols <- c('p16','p17', 'p18', 'p19', 'p20', 'p21', 'p22', 'p23', 'p24', 'p25', 'p26', 'p27', 'p28', 'p29', 'p30', 'p31')
+      colnames(MIRWASHdat) <- c('trial', 'p16','p17', 'p18', 'p19', 'p20', 'p21', 'p22', 'p23', 'p24', 'p25', 'p26', 'p27', 'p28', 'p29', 'p30', 'p31')
+      
+      MIRWASHdat <- as.data.frame(MIRWASHdat)
+      perturb <- rep('MIRWASH', nrow(MIRWASHdat))
+      MIRWASHdat <- cbind(MIRWASHdat, perturb)
+      #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
+      longMIRWASHdata <- gather(MIRWASHdat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
+      write.csv(longMIRWASHdata, file=sprintf('data/pilot/MIRWASH_%s_MT_long.csv', group), row.names = F)
+    }
   }
 }
 
 #First, we grab data from aligned, since it is the baseline for all
 getMTBlockedAlignedData <- function(group, blockdefs){
   LCaov <- data.frame()
-  curves <- read.csv(sprintf('data/ALIGNED_%s_MT_long.csv',group), stringsAsFactors=FALSE)  
+  curves <- read.csv(sprintf('data/pilot/ALIGNED_%s_MT_long.csv',group), stringsAsFactors=FALSE)  
   participants <- unique(curves$participant)
   #R <- dim(curves)[1] # not needed, checks if rows=90 (correct trial numbers)
   #curves <- curves[,-1] #take away trial column
@@ -2753,7 +2819,7 @@ getMTBlockedPerturbData <- function(perturbations = c('ROT','MIR'), group, block
   LCaov <- data.frame()
   #to include instructed group, just create another for loop here
   for (perturb in perturbations){  
-    curves <- read.csv(sprintf('data/%s_%s_MT_long.csv',perturb,group), stringsAsFactors=FALSE)  
+    curves <- read.csv(sprintf('data/pilot/%s_%s_MT_long.csv',perturb,group), stringsAsFactors=FALSE)  
     participants <- unique(curves$participant)
     #R <- dim(curves)[1] # not needed, checks if rows=90 (correct trial numbers)
     #curves <- curves[,-1] #take away trial column
@@ -2818,7 +2884,7 @@ getMTBlockedWashoutData <- function(perturbations = c('ROTWASH','MIRWASH'), grou
   LCaov <- data.frame()
   #to include instructed group, just create another for loop here
   for (perturb in perturbations){  
-    curves <- read.csv(sprintf('data/%s_%s_MT_long.csv',perturb,group), stringsAsFactors=FALSE)  
+    curves <- read.csv(sprintf('data/pilot/%s_%s_MT_long.csv',perturb,group), stringsAsFactors=FALSE)  
     participants <- unique(curves$participant)
     #R <- dim(curves)[1] # not needed, checks if rows=90 (correct trial numbers)
     #curves <- curves[,-1] #take away trial column
@@ -2909,21 +2975,29 @@ MTt.test <- function(group) {
   print(t.test(ALdat$compensation, ROTdat$compensation, paired = TRUE))
   cat('Effect Size - Cohen d:\n')
   print(cohensD(ALdat$compensation, ROTdat$compensation))
+  cat('Bayesian t-test Aligned (last block) compared to Rotation (first block):\n')
+  print(ttestBF(ALdat$compensation, ROTdat$compensation))
   
   cat('Aligned (last block) compared to Mirror (first block):\n')
   print(t.test(ALdat$compensation, MIRdat$compensation, paired = TRUE))
   cat('Effect Size - Cohen d:\n')
   print(cohensD(ALdat$compensation, MIRdat$compensation))
+  cat('Bayesian t-test Aligned (last block) compared to Mirror (first block):\n')
+  print(ttestBF(ALdat$compensation, MIRdat$compensation))
   
   cat('Aligned (last block) compared to Rotation Washout (first block):\n')
   print(t.test(ALdat$compensation, ROTWASHdat$compensation, paired = TRUE))
   cat('Effect Size - Cohen d:\n')
   print(cohensD(ALdat$compensation, ROTWASHdat$compensation))
+  cat('Bayesian t-test Aligned (last block) compared to Rotation Washout (first block):\n')
+  print(ttestBF(ALdat$compensation, ROTWASHdat$compensation))
   
   cat('Aligned (last block) compared to Mirror Washout (first block):\n')
   print(t.test(ALdat$compensation, MIRWASHdat$compensation, paired = TRUE))
   cat('Effect Size - Cohen d:\n')
   print(cohensD(ALdat$compensation, MIRWASHdat$compensation))
+  cat('Bayesian t-test Aligned (last block) compared to Mirror Washout (first block):\n')
+  print(ttestBF(ALdat$compensation, MIRWASHdat$compensation))
   
   #I add a comparison of last block of ROT and MIR compared to aligned, and ROTWASH and MIRWASH last blocks.
   ROTdatlast <- LC4test[which(LC4test$block == 'last' & LC4test$perturbtype == 'ROT'),]
@@ -2935,21 +3009,29 @@ MTt.test <- function(group) {
   print(t.test(ALdat$compensation, ROTdatlast$compensation, paired = TRUE))
   cat('Effect Size - Cohen d:\n')
   print(cohensD(ALdat$compensation, ROTdatlast$compensation))
+  cat('Bayesian t-test Aligned (last block) compared to Rotation (last block):\n')
+  print(ttestBF(ALdat$compensation, ROTdatlast$compensation))
   
   cat('Aligned (last block) compared to Mirror (last block):\n')
   print(t.test(ALdat$compensation, MIRdatlast$compensation, paired = TRUE))
   cat('Effect Size - Cohen d:\n')
   print(cohensD(ALdat$compensation, MIRdatlast$compensation))
+  cat('Bayesian t-test Aligned (last block) compared to Mirror (last block):\n')
+  print(ttestBF(ALdat$compensation, MIRdatlast$compensation))
   
   cat('Aligned (last block) compared to Rotation Washout (last block):\n')
   print(t.test(ALdat$compensation, ROTWASHdatlast$compensation, paired = TRUE))
   cat('Effect Size - Cohen d:\n')
   print(cohensD(ALdat$compensation, ROTWASHdatlast$compensation))
+  cat('Bayesian t-test Aligned (last block) compared to Rotation Washout (last block):\n')
+  print(ttestBF(ALdat$compensation, ROTWASHdatlast$compensation))
   
   cat('Aligned (last block) compared to Mirror Washout (last block):\n')
   print(t.test(ALdat$compensation, MIRWASHdatlast$compensation, paired = TRUE))
   cat('Effect Size - Cohen d:\n')
   print(cohensD(ALdat$compensation, MIRWASHdatlast$compensation))
+  cat('Bayesian t-test Aligned (last block) compared to Mirror Washout (last block):\n')
+  print(ttestBF(ALdat$compensation, MIRWASHdatlast$compensation))
   
 }
 
@@ -2959,6 +3041,7 @@ MTt.test <- function(group) {
 
 #One issue that arises is that ezANOVA needs complete cases for it to complete the analysis. P001, has a lot of deleted MIR MT trials.
 # This results in MIR 2nd block to be a NaN. I remove this participant from analyses below.
+#instructed group: remove p029
 
 movementtimePerturbANOVA <- function(group) {
   
@@ -2967,11 +3050,11 @@ movementtimePerturbANOVA <- function(group) {
   
   LC4aov <- getMTBlockedPerturbData(group=group,blockdefs=blockdefs)
   
-  # if(group == 'noninstructed'){
-  #   LC4aov <- LC4aov[-which(LC4aov$participant == 'p1'),]
-  # } else if (group == 'instructed'){
-  #   LC4aov <- LC4aov[-which(LC4aov$participant == 'p13'),]
-  # }
+  if(group == 'noninstructed'){
+    LC4aov <- LC4aov[-which(LC4aov$participant == 'p1'),]
+  } else if (group == 'instructed'){
+    LC4aov <- LC4aov[-which(LC4aov$participant == 'p29'),]
+  }
   
   
   
@@ -2985,7 +3068,8 @@ movementtimePerturbANOVA <- function(group) {
   print(firstAOV[1:3]) #so that it doesn't print the aov object as well
 }
 
-#No main effects, not interaction effects. Further analysis below is commented out as it is unnecessary.
+#No main effects, not interaction effects for noninstructed
+#main effect of block for instructed
 
 MTPerturbComparisonMeans <- function(group){
 
@@ -2998,7 +3082,7 @@ MTPerturbComparisonMeans <- function(group){
   if(group == 'noninstructed'){
     LC4aov <- LC4aov[-which(LC4aov$participant == 'p1'),]
   } else if (group == 'instructed'){
-    LC4aov <- LC4aov[-which(LC4aov$participant == 'p13'),]
+    LC4aov <- LC4aov[-which(LC4aov$participant == 'p29'),]
   }
   secondAOV <- aov_ez("participant","compensation",LC4aov,within=c("perturbtype","block"))
 
@@ -3021,7 +3105,7 @@ MTPerturbComparisonsAllBlocks <- function(group, method='bonferroni'){
   if(group == 'noninstructed'){
     LC4aov <- LC4aov[-which(LC4aov$participant == 'p1'),]
   } else if (group == 'instructed'){
-    LC4aov <- LC4aov[-which(LC4aov$participant == 'p13'),]
+    LC4aov <- LC4aov[-which(LC4aov$participant == 'p29'),]
   }
   secondAOV <- aov_ez("participant","compensation",LC4aov,within=c("perturbtype","block"))
   #based on cellmeans, confidence intervals and plots give us an idea of what contrasts we want to compare
@@ -3043,6 +3127,8 @@ MTPerturbComparisonsAllBlocks <- function(group, method='bonferroni'){
   print(comparisons)
 }
 
+#instructed group main effect of block is driven by difference in ROT blocks 1 and 2
+
 #effect size
 MTPerturbComparisonsAllBlocksEffSize <- function(group, method = 'bonferroni'){
   comparisons <- MTPerturbComparisonsAllBlocks(group=group,method=method)
@@ -3057,6 +3143,83 @@ MTPerturbComparisonsAllBlocksEffSize <- function(group, method = 'bonferroni'){
   colnames(effectsize) <- c('contrast', 'etasquared')
   #print(comparisons)
   print(effectsize)
+}
+
+#BayesAnova
+MTBayesANOVA <- function(group) {
+  
+  #styles <- getStyle()
+  blockdefs <- list('first'=c(1,6),'second'=c(7,6),'last'=c(85,6)) #6 trials per block
+  
+  LC4aov <- getMTBlockedPerturbData(group=group,blockdefs=blockdefs)
+  
+  if(group == 'noninstructed'){
+    LC4aov <- LC4aov[-which(LC4aov$participant == 'p1'),]
+  } else if (group == 'instructed'){
+    LC4aov <- LC4aov[-which(LC4aov$participant == 'p29'),]
+  }
+  
+  #Bayes ANOVA - can use long format
+  #will compare models to null (intercept) or no effect - this will be 1
+  #higher than 1 will be evidence for alternative hypothesis, lower will be evidence for null hypothesis
+  #compare models either if only main effects, interaction of effects
+  #use lmBF function for specific models
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  bfLC<- anovaBF(compensation ~ perturbtype*block + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+  #compare interaction contribution, over the contribution of both main effects
+  #bfinteraction <- bfLC[4]/bfLC[3]
+  bfinteraction <- bayesfactor_inclusion(bfLC)
+  print(bfLC)
+  print(bfinteraction)
+  
+  #bfLC will give main effects of perturbtype, can test which perturbation has larger compensation with:
+  #LC4aov %>% group_by(perturbtype) %>% summarise(mean(compensation))
+  #can also test main effects of block:
+  #LC4aov %>% group_by(block) %>% summarise(mean(compensation))
+  #but since interaction has large bf (in frequentist, interaction was significant), we can just compare [3] and [4]
+}
+
+MTBayesfollowup <- function(group) {
+  
+  #styles <- getStyle()
+  blockdefs <- list('first'=c(1,6),'second'=c(7,6),'last'=c(85,6)) #6 trials per block
+  
+  LC4aov <- getMTBlockedPerturbData(group=group,blockdefs=blockdefs)
+  
+  if(group == 'noninstructed'){
+    LC4aov <- LC4aov[-which(LC4aov$participant == 'p1'),]
+  } else if (group == 'instructed'){
+    LC4aov <- LC4aov[-which(LC4aov$participant == 'p29'),]
+  }
+  
+  MIRfirst <- LC4aov[which(LC4aov$block == 'first' & LC4aov$perturbtype == 'MIR'),]
+  MIRsecond <- LC4aov[which(LC4aov$block == 'second' & LC4aov$perturbtype == 'MIR'),]
+  MIRlast <- LC4aov[which(LC4aov$block == 'last' & LC4aov$perturbtype == 'MIR'),]
+  ROTfirst <- LC4aov[which(LC4aov$block == 'first' & LC4aov$perturbtype == 'ROT'),]
+  ROTsecond <- LC4aov[which(LC4aov$block == 'second' & LC4aov$perturbtype == 'ROT'),]
+  ROTlast <- LC4aov[which(LC4aov$block == 'last' & LC4aov$perturbtype == 'ROT'),]
+  
+  #mir first vs mir second
+  cat('Bayesian t-test Mirror block 1 vs block 2:\n')
+  print(ttestBF(MIRfirst$compensation, MIRsecond$compensation))
+  #mir first vs mir last
+  cat('Bayesian t-test Mirror block 1 vs last block:\n')
+  print(ttestBF(MIRfirst$compensation, MIRlast$compensation))
+  #rot first vs rot second
+  cat('Bayesian t-test Rotation block 1 vs block 2:\n')
+  print(ttestBF(ROTfirst$compensation, ROTsecond$compensation))
+  #rot first vs rot last
+  cat('Bayesian t-test Rotation block 1 vs last block:\n')
+  print(ttestBF(ROTfirst$compensation, ROTlast$compensation))
+  #rot first vs mir first
+  cat('Bayesian t-test Rotation block 1 vs Mirror block 1:\n')
+  print(ttestBF(ROTfirst$compensation, MIRfirst$compensation))
+  #rot second vs mir second
+  cat('Bayesian t-test Rotation block 2 vs Mirror block 2:\n')
+  print(ttestBF(ROTsecond$compensation, MIRsecond$compensation))
+  #rot last vs mir last
+  cat('Bayesian t-test Rotation  last block vs Mirror  last block:\n')
+  print(ttestBF(ROTlast$compensation, MIRlast$compensation))
 }
 
 #washout data has complete data (include p001 in analysis; results do not differ whether or not we include this participant).
@@ -3077,6 +3240,33 @@ movementtimeWashoutANOVA <- function(group) {
   LC4aov$participant <- as.factor(LC4aov$participant)
   firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=compensation, within=c(perturbtype, block),type=3, return_aov = TRUE) #which type of SS is appropriate?
   print(firstAOV[1:3]) #so that it doesn't print the aov object as well
+}
+
+MTWashoutBayesANOVA <- function(group) {
+  
+  #styles <- getStyle()
+  blockdefs <- list('first'=c(1,6),'second'=c(7,6),'last'=c(43,6)) #6 trials per block
+  
+  LC4aov <- getMTBlockedWashoutData(group=group,blockdefs=blockdefs)
+
+  #Bayes ANOVA - can use long format
+  #will compare models to null (intercept) or no effect - this will be 1
+  #higher than 1 will be evidence for alternative hypothesis, lower will be evidence for null hypothesis
+  #compare models either if only main effects, interaction of effects
+  #use lmBF function for specific models
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  bfLC<- anovaBF(compensation ~ perturbtype*block + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+  #compare interaction contribution, over the contribution of both main effects
+  #bfinteraction <- bfLC[4]/bfLC[3]
+  bfinteraction <- bayesfactor_inclusion(bfLC)
+  print(bfLC)
+  print(bfinteraction)
+  
+  #bfLC will give main effects of perturbtype, can test which perturbation has larger compensation with:
+  #LC4aov %>% group_by(perturbtype) %>% summarise(mean(compensation))
+  #can also test main effects of block:
+  #LC4aov %>% group_by(block) %>% summarise(mean(compensation))
+  #but since interaction has large bf (in frequentist, interaction was significant), we can just compare [3] and [4]
 }
 
 #No main effects, not interaction effects. Further analysis below is commented out as it is unnecessary.
