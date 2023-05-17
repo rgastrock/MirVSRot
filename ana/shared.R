@@ -452,3 +452,76 @@ getCtrlColourScheme <- function(groups = c('far', 'mid', 'near')){
   }
   return(colourscheme)
 }
+
+getAngularReachDevsCI <- function(data, group, resamples = 1000){
+  
+  #CI's generated for far target are very wide, given the negative or positive directions in circular values
+  #To fix this, we can generate angular reach deviations using x and y coordinates instead
+  #We bootstrap with replacement, so that we can generate lower, mid, upper values for CI
+  data <- data[which(is.finite(data))]
+  n <- length(data)
+  
+  samplematrix <- matrix(sample(data, size = resamples*length(data), replace = TRUE), nrow = resamples)
+  BS <- c()
+  for (irow in 1:nrow(samplematrix)){
+    subdat <- samplematrix[irow,]
+    #convert reach deviations from degrees to radians
+    degtorad <- (subdat / 180) * pi
+    #sin of radians values will be y values, cos will be x
+    yvals <- sin(degtorad)
+    xvals <- cos(degtorad)
+    #summation of all y and x values to be passed on to atan2, then converted to degrees
+    y <- sum(yvals)
+    x <- sum(xvals)
+    rd <- (atan2(y,x) / pi) * 180
+    
+    # BS should have as much as resamples (i.e. 1000)
+    BS <- as.numeric(c(BS, rd))
+  }
+  #wide CI's are generated for far group after atan2 (i.e. -178 should be the same as 182 in a 2D plot)
+  #to fix for this, we add 360 for bootstrapped values below -90 for only the far group
+  for (angleidx in 1:length(BS)){
+    angle <- BS[angleidx]
+    if (group == 'far' && angle < -90){
+      BS[angleidx] <- angle + 360
+    }
+  }
+  
+  return(quantile(BS, probs = c(0.025, 0.50, 0.975)))
+  
+  
+}
+
+getAngularReachDevsStats <- function(data){
+  
+  #CI's generated for far target are very wide, given the negative or positive directions in circular values
+  #To fix this, we can generate angular reach deviations using x and y coordinates instead
+  #We bootstrap with replacement, so that we can generate lower, mid, upper values for CI
+  data <- data[which(is.finite(data))]
+  n <- length(data)
+  
+  #convert reach deviations from degrees to radians
+  degtorad <- (data / 180) * pi
+  #sin of radians values will be y values, cos will be x
+  yvals <- sin(degtorad)
+  xvals <- cos(degtorad)
+  #summation of all y and x values to be passed on to atan2, then converted to degrees
+  y <- sum(yvals)
+  x <- sum(xvals)
+  rd <- (atan2(y,x) / pi) * 180
+  
+  
+  
+  #wide CI's are generated for far group after atan2 (i.e. -178 should be the same as 182 in a 2D plot)
+  #to fix for this, we add 360 for bootstrapped values below -90 for only the far group
+  # for (angleidx in 1:length(BS)){
+  #   angle <- BS[angleidx]
+  #   if (group == 'far' && angle < -90){
+  #     BS[angleidx] <- angle + 360
+  #   }
+  # }
+  
+  return(rd)
+  
+  
+}
