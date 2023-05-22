@@ -1621,7 +1621,7 @@ getDeviceRAEMirOnlineConfInt <- function(groups = c('30','60'), set='fa2020', de
       } else {
         confidence <- rbind(confidence, citrial)
       }
-      write.csv(confidence, file=sprintf('data/mironline-master/data/processed/%s_%s_DeviceRAE_CI.csv', group, device), row.names = F)
+      write.csv(confidence, file=sprintf('data/mirrorreversal-fall/raw/processed_post/%s_%s_DeviceRAE_CI.csv', group, device), row.names = F)
     }
   }
 }
@@ -1630,7 +1630,7 @@ plotDeviceMirOnline <- function(groups = c('30', '60'), devices = c('Mouse','Tra
   for (group in groups){
     #but we can save plot as svg file
     if (target=='svg'){
-      svglite(file=sprintf('data/mironline-master/doc/fig/Fig2_%s_DeviceAllTasks.svg', group), width=10, height=7, pointsize=14, system_fonts=list(sans="Arial"))
+      svglite(file=sprintf('doc/fig/mirrorreversal-fall/processed_post/Fig2_%s_DeviceAllTasks.svg', group), width=10, height=7, pointsize=14, system_fonts=list(sans="Arial"))
     }
     
     # create plot
@@ -1648,9 +1648,9 @@ plotDeviceMirOnline <- function(groups = c('30', '60'), devices = c('Mouse','Tra
     
     for(device in devices){
       #read in files created by getGroupConfidenceInterval in filehandling.R
-      groupconfidenceAligned <- read.csv(file=sprintf('data/mironline-master/data/processed/%s_%s_DeviceAligned_CI.csv', group, device))
-      groupconfidenceLC <- read.csv(file=sprintf('data/mironline-master/data/processed/%s_%s_DeviceLC_CI.csv', group, device))
-      groupconfidenceRAE <- read.csv(file=sprintf('data/mironline-master/data/processed/%s_%s_DeviceRAE_CI.csv', group, device))
+      groupconfidenceAligned <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed_post/%s_%s_DeviceAligned_CI.csv', group, device))
+      groupconfidenceLC <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed_post/%s_%s_DeviceLC_CI.csv', group, device))
+      groupconfidenceRAE <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed_post/%s_%s_DeviceRAE_CI.csv', group, device))
       
       
       
@@ -1854,7 +1854,7 @@ getDeviceMirrorMirOnline <- function(group, device){
   #then get pplist according to device
   devqualt <- qualtdat[which(qualtdat$Q15 == device),]
   ppqualt <- devqualt$id
-  dat <- read.csv(file=sprintf('data/mironline-master/data/statistics/%s_PercentCompensation.csv', group), check.names = FALSE)
+  dat <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed_post/%s_PercentCompensation.csv', group), check.names = FALSE)
   
   #dat <- removeOutlierAlignedReaches(group = group, set = set)
   
@@ -2128,7 +2128,7 @@ getDeviceMirOnlineMT <- function(groups = c('30','60'), device){
     #then get pplist according to device
     devqualt <- qualtdat[which(qualtdat$Q15 == device),]
     ppqualt <- devqualt$id
-    dat <- read.csv(file=sprintf('data/mirrorreversal-fall/data/processed/%s_step2_MovementTime.csv', group), check.names = FALSE)
+    dat <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_step2_MovementTime.csv', group), check.names = FALSE)
     
     #dat <- removeOutlierAlignedReaches(group = group, set = set)
     
@@ -2168,7 +2168,7 @@ getDeviceMirOnlineMTCI <- function(groups = c('30','60'), device, type='t'){
       } else {
         confidence <- rbind(confidence, citrial)
       }
-      write.csv(confidence, file=sprintf('data/mironline-master/data/processed/%s_%s_MovementTime_CI.csv', group, device), row.names = F) 
+      write.csv(confidence, file=sprintf('data/mirrorreversal-fall/raw/processed_post/%s_%s_MovementTime_CI.csv', group, device), row.names = F) 
     }
   }
 }
@@ -2177,7 +2177,7 @@ plotDeviceMirOnlineMT <- function(groups = c('30', '60'), devices = c('Mouse','T
   for (group in groups){
     #but we can save plot as svg file
     if (target=='svg'){
-      svglite(file=sprintf('data/mironline-master/doc/fig/Fig3_%s_DeviceMT.svg', group), width=10, height=7, pointsize=14, system_fonts=list(sans="Arial"))
+      svglite(file=sprintf('doc/fig/mirrorreversal-fall/processed_post/Fig3_%s_DeviceMT.svg', group), width=10, height=7, pointsize=14, system_fonts=list(sans="Arial"))
     }
     
     # create plot
@@ -2195,7 +2195,7 @@ plotDeviceMirOnlineMT <- function(groups = c('30', '60'), devices = c('Mouse','T
     
     for(device in devices){
       #read in files created
-      groupconfidence <- read.csv(file=sprintf('data/mironline-master/data/processed/%s_%s_MovementTime_CI.csv', group, device))
+      groupconfidence <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed_post/%s_%s_MovementTime_CI.csv', group, device))
       
       
       #split up data set for plotting purposes
