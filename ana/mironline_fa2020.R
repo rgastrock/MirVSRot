@@ -2553,7 +2553,7 @@ getDeviceMirOnlinePL <- function(groups = c('30','60'), device){
     #then get pplist according to device
     devqualt <- qualtdat[which(qualtdat$Q15 == device),]
     ppqualt <- devqualt$id
-    dat <- read.csv(file=sprintf('data/mirrorreversal-fall/data/processed/%s_step2_PathLength.csv', group), check.names = FALSE)
+    dat <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_step2_PathLength.csv', group), check.names = FALSE)
     
     #dat <- removeOutlierAlignedReaches(group = group, set = set)
     
@@ -2593,7 +2593,7 @@ getDeviceMirOnlinePLCI <- function(groups = c('30','60'), device, type='t'){
       } else {
         confidence <- rbind(confidence, citrial)
       }
-      write.csv(confidence, file=sprintf('data/mironline-master/data/processed/%s_%s_PathLength_CI.csv', group, device), row.names = F) 
+      write.csv(confidence, file=sprintf('data/mirrorreversal-fall/raw/processed_post/%s_%s_PathLength_CI.csv', group, device), row.names = F) 
     }
   }
 }
@@ -2602,7 +2602,7 @@ plotDeviceMirOnlinePL <- function(groups = c('30', '60'), devices = c('Mouse','T
   for (group in groups){
     #but we can save plot as svg file
     if (target=='svg'){
-      svglite(file=sprintf('data/mironline-master/doc/fig/Fig4_%s_DevicePL.svg', group), width=10, height=7, pointsize=14, system_fonts=list(sans="Arial"))
+      svglite(file=sprintf('doc/fig/mirrorreversal-fall/processed_post/Fig4_%s_DevicePL.svg', group), width=10, height=7, pointsize=14, system_fonts=list(sans="Arial"))
     }
     
     # create plot
@@ -2620,7 +2620,7 @@ plotDeviceMirOnlinePL <- function(groups = c('30', '60'), devices = c('Mouse','T
     
     for(device in devices){
       #read in files created
-      groupconfidence <- read.csv(file=sprintf('data/mironline-master/data/processed/%s_%s_PathLength_CI.csv', group, device))
+      groupconfidence <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed_post/%s_%s_PathLength_CI.csv', group, device))
       
       
       #split up data set for plotting purposes
@@ -2807,8 +2807,6 @@ deviceRAEMirOnlinePLANOVA <- function(groups = c('30','60')) {
 #Mouse moves faster, but has larger PL (could be that trackpad users stop more along the way?)
 
 
-
-
 #Sex (Male vs. Female): Learning Plots ----
 getSexMirOnlineConfInt <- function(groups = c('30','60'), set='fa2020', sex){
   for(group in groups){
@@ -2826,7 +2824,7 @@ getSexMirOnlineConfInt <- function(groups = c('30','60'), set='fa2020', sex){
       } else {
         confidence <- rbind(confidence, citrial)
       }
-      write.csv(confidence, file=sprintf('data/mironline-master/data/processed/%s_%s_SexLC_CI.csv', group, sex), row.names = F)
+      write.csv(confidence, file=sprintf('data/mirrorreversal-fall/raw/processed_post/%s_%s_SexLC_CI.csv', group, sex), row.names = F)
     }
   }
 }
@@ -2838,7 +2836,7 @@ getSexAlignedMirOnline <- function(group, sex){
   #then get pplist according to sex
   devqualt <- qualtdat[which(qualtdat$Q5 == sex),]
   ppqualt <- devqualt$id
-  dat <- read.csv(file=sprintf('data/mironline-master/data/processed/%s_CircularAligned.csv', group), check.names = FALSE)
+  dat <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed_post/%s_CircularAligned.csv', group), check.names = FALSE)
   
   #dat <- removeOutlierAlignedReaches(group = group, set = set)
   
@@ -2867,7 +2865,7 @@ getSexAlignedMirOnlineConfInt <- function(groups = c('30','60'), sex){
       } else {
         confidence <- rbind(confidence, citrial)
       }
-      write.csv(confidence, file=sprintf('data/mironline-master/data/processed/%s_%s_SexAligned_CI.csv', group, sex), row.names = F)
+      write.csv(confidence, file=sprintf('data/mirrorreversal-fall/raw/processed_post/%s_%s_SexAligned_CI.csv', group, sex), row.names = F)
     }
   }
 }
@@ -2889,7 +2887,7 @@ getSexRAEMirOnlineConfInt <- function(groups = c('30','60'), set='fa2020', sex){
       } else {
         confidence <- rbind(confidence, citrial)
       }
-      write.csv(confidence, file=sprintf('data/mironline-master/data/processed/%s_%s_SexRAE_CI.csv', group, sex), row.names = F)
+      write.csv(confidence, file=sprintf('data/mirrorreversal-fall/raw/processed_post/%s_%s_SexRAE_CI.csv', group, sex), row.names = F)
     }
   }
 }
@@ -2898,7 +2896,7 @@ plotSexMirOnline <- function(groups = c('30', '60'), sexes = c('Male','Female'),
   for (group in groups){
     #but we can save plot as svg file
     if (target=='svg'){
-      svglite(file=sprintf('data/mironline-master/doc/fig/Fig5_%s_SexAllTasks.svg', group), width=10, height=7, pointsize=14, system_fonts=list(sans="Arial"))
+      svglite(file=sprintf('doc/fig/mirrorreversal-fall/processed_post/Fig5_%s_SexAllTasks.svg', group), width=10, height=7, pointsize=14, system_fonts=list(sans="Arial"))
     }
     
     # create plot
@@ -2916,9 +2914,9 @@ plotSexMirOnline <- function(groups = c('30', '60'), sexes = c('Male','Female'),
     
     for(sex in sexes){
       #read in files created by getGroupConfidenceInterval in filehandling.R
-      groupconfidenceAligned <- read.csv(file=sprintf('data/mironline-master/data/processed/%s_%s_SexAligned_CI.csv', group, sex))
-      groupconfidenceLC <- read.csv(file=sprintf('data/mironline-master/data/processed/%s_%s_SexLC_CI.csv', group, sex))
-      groupconfidenceRAE <- read.csv(file=sprintf('data/mironline-master/data/processed/%s_%s_SexRAE_CI.csv', group, sex))
+      groupconfidenceAligned <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed_post/%s_%s_SexAligned_CI.csv', group, sex))
+      groupconfidenceLC <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed_post/%s_%s_SexLC_CI.csv', group, sex))
+      groupconfidenceRAE <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed_post/%s_%s_SexRAE_CI.csv', group, sex))
       
       
       
@@ -3121,7 +3119,7 @@ getSexMirrorMirOnline <- function(group, sex){
   #then get pplist according to sex
   devqualt <- qualtdat[which(qualtdat$Q5 == sex),]
   ppqualt <- devqualt$id
-  dat <- read.csv(file=sprintf('data/mironline-master/data/statistics/%s_PercentCompensation.csv', group), check.names = FALSE)
+  dat <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed_post/%s_PercentCompensation.csv', group), check.names = FALSE)
   
   #dat <- removeOutlierAlignedReaches(group = group, set = set)
   
@@ -3397,7 +3395,7 @@ getSexMirOnlineMT <- function(groups = c('30','60'), sex){
     #then get pplist according to sex
     devqualt <- qualtdat[which(qualtdat$Q5 == sex),]
     ppqualt <- devqualt$id
-    dat <- read.csv(file=sprintf('data/mirrorreversal-fall/data/processed/%s_step2_MovementTime.csv', group), check.names = FALSE)
+    dat <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_step2_MovementTime.csv', group), check.names = FALSE)
     
     #dat <- removeOutlierAlignedReaches(group = group, set = set)
     
@@ -3437,7 +3435,7 @@ getSexMirOnlineMTCI <- function(groups = c('30','60'), sex, type='t'){
       } else {
         confidence <- rbind(confidence, citrial)
       }
-      write.csv(confidence, file=sprintf('data/mironline-master/data/processed/%s_%s_MovementTime_CI.csv', group, sex), row.names = F) 
+      write.csv(confidence, file=sprintf('data/mirrorreversal-fall/raw/processed_post/%s_%s_MovementTime_CI.csv', group, sex), row.names = F) 
     }
   }
 }
@@ -3446,7 +3444,7 @@ plotSexMirOnlineMT <- function(groups = c('30', '60'), sexes = c('Male','Female'
   for (group in groups){
     #but we can save plot as svg file
     if (target=='svg'){
-      svglite(file=sprintf('data/mironline-master/doc/fig/Fig6_%s_SexMT.svg', group), width=10, height=7, pointsize=14, system_fonts=list(sans="Arial"))
+      svglite(file=sprintf('doc/fig/mirrorreversal-fall/processed_post/Fig6_%s_SexMT.svg', group), width=10, height=7, pointsize=14, system_fonts=list(sans="Arial"))
     }
     
     # create plot
@@ -3464,7 +3462,7 @@ plotSexMirOnlineMT <- function(groups = c('30', '60'), sexes = c('Male','Female'
     
     for(sex in sexes){
       #read in files created
-      groupconfidence <- read.csv(file=sprintf('data/mironline-master/data/processed/%s_%s_MovementTime_CI.csv', group, sex))
+      groupconfidence <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed_post/%s_%s_MovementTime_CI.csv', group, sex))
       
       
       #split up data set for plotting purposes
@@ -3826,7 +3824,7 @@ getSexMirOnlinePL <- function(groups = c('30','60'), sex){
     #then get pplist according to sex
     devqualt <- qualtdat[which(qualtdat$Q5 == sex),]
     ppqualt <- devqualt$id
-    dat <- read.csv(file=sprintf('data/mirrorreversal-fall/data/processed/%s_step2_PathLength.csv', group), check.names = FALSE)
+    dat <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_step2_PathLength.csv', group), check.names = FALSE)
     
     #dat <- removeOutlierAlignedReaches(group = group, set = set)
     
@@ -3866,7 +3864,7 @@ getSexMirOnlinePLCI <- function(groups = c('30','60'), sex, type='t'){
       } else {
         confidence <- rbind(confidence, citrial)
       }
-      write.csv(confidence, file=sprintf('data/mironline-master/data/processed/%s_%s_PathLength_CI.csv', group, sex), row.names = F) 
+      write.csv(confidence, file=sprintf('data/mirrorreversal-fall/raw/processed_post/%s_%s_PathLength_CI.csv', group, sex), row.names = F) 
     }
   }
 }
@@ -3875,7 +3873,7 @@ plotSexMirOnlinePL <- function(groups = c('30', '60'), sexes = c('Male','Female'
   for (group in groups){
     #but we can save plot as svg file
     if (target=='svg'){
-      svglite(file=sprintf('data/mironline-master/doc/fig/Fig7_%s_SexPL.svg', group), width=10, height=7, pointsize=14, system_fonts=list(sans="Arial"))
+      svglite(file=sprintf('doc/fig/mirrorreversal-fall/processed_post/Fig7_%s_SexPL.svg', group), width=10, height=7, pointsize=14, system_fonts=list(sans="Arial"))
     }
     
     # create plot
@@ -3893,7 +3891,7 @@ plotSexMirOnlinePL <- function(groups = c('30', '60'), sexes = c('Male','Female'
     
     for(sex in sexes){
       #read in files created
-      groupconfidence <- read.csv(file=sprintf('data/mironline-master/data/processed/%s_%s_PathLength_CI.csv', group, sex))
+      groupconfidence <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed_post/%s_%s_PathLength_CI.csv', group, sex))
       
       
       #split up data set for plotting purposes
