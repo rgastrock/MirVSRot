@@ -86,14 +86,14 @@ getCtrlMirWithoutQualtrics <- function(){
   
   #participant list from behavioral data
   
-  datafilenames <- list.files('data/controlmironline-master/data', pattern = '*.csv')
+  datafilenames <- list.files('data/controlmironline-master/raw', pattern = '*.csv')
   
   
   
   dataoutput<- c() #create place holder
   for(datafilenum in c(1:length(datafilenames))){
     
-    datafilename <- sprintf('data/controlmironline-master/data/%s', datafilenames[datafilenum]) #change this, depending on location in directory
+    datafilename <- sprintf('data/controlmironline-master/raw/%s', datafilenames[datafilenum]) #change this, depending on location in directory
     
     
     cat(sprintf('file %d / %d     (%s)\n',datafilenum,length(datafilenames),datafilename))
@@ -116,14 +116,14 @@ getCtrlMirWithoutQualtrics <- function(){
 
 #Function below will generate a new csv file of Qualtrics data that contains only participants that also have experimental data
 getCtrlMirQualtricsData <- function(){
-  datafilenames <- list.files('data/controlmironline-master/data', pattern = '*.csv')
+  datafilenames <- list.files('data/controlmironline-master/raw', pattern = '*.csv')
   
   
   
   dataoutput<- c() #create place holder
   for(datafilenum in c(1:length(datafilenames))){
     
-    datafilename <- sprintf('data/controlmironline-master/data/%s', datafilenames[datafilenum]) #change this, depending on location in directory
+    datafilename <- sprintf('data/controlmironline-master/raw/%s', datafilenames[datafilenum]) #change this, depending on location in directory
     
     
     cat(sprintf('file %d / %d     (%s)\n',datafilenum,length(datafilenames),datafilename))
@@ -157,12 +157,12 @@ getCtrlMirQualtricsData <- function(){
 #Funtion collects hand responses for checking (i.e. did they use appropriate hand for task)
 getCtrlHandMatches <- function(){
   
-  datafilenames <- list.files('data/controlmironline-master/data', pattern = '*.csv')
+  datafilenames <- list.files('data/controlmironline-master/raw', pattern = '*.csv')
   
   allresp <- data.frame()
   for(datafilenum in c(1:length(datafilenames))){
     
-    datafilename <- sprintf('data/controlmironline-master/data/%s', datafilenames[datafilenum]) #change this, depending on location in directory
+    datafilename <- sprintf('data/controlmironline-master/raw/%s', datafilenames[datafilenum]) #change this, depending on location in directory
     
     cat(sprintf('file %d / %d     (%s)\n',datafilenum,length(datafilenames),datafilename))
     df <- read.csv(datafilename, stringsAsFactors = F)
@@ -190,7 +190,7 @@ getCtrlHandMatches <- function(){
   
   handmatches <- merge(allresp, qualtresp, by='ppname')
   
-  write.csv(handmatches, file='data/controlmironline-master/data/processed/HandMatches.csv', row.names = F)
+  write.csv(handmatches, file='data/controlmironline-master/raw/processed/HandMatches.csv', row.names = F)
   #These were then manually inspected to see any mismatches
 }
 
@@ -226,12 +226,12 @@ getParticipantLearningCtrl <- function(filename){
 getAlignedGroupLearningCtrl <- function(groups = c('far', 'mid', 'near')){
   #group is either 'far', 'mid', 'near' in relation to mirror
   for(group in groups){
-    datafilenames <- list.files('data/controlmironline-master/data', pattern = '*.csv')
+    datafilenames <- list.files('data/controlmironline-master/raw', pattern = '*.csv')
     
     
     dataoutput<- data.frame() #create place holder
     for(datafilenum in c(1:length(datafilenames))){
-      datafilename <- sprintf('data/controlmironline-master/data/%s', datafilenames[datafilenum]) #change this, depending on location in directory
+      datafilename <- sprintf('data/controlmironline-master/raw/%s', datafilenames[datafilenum]) #change this, depending on location in directory
       
       cat(sprintf('file %d / %d     (%s)\n',datafilenum,length(datafilenames),datafilename))
       adat <- getParticipantLearningCtrl(filename = datafilename)
@@ -264,14 +264,14 @@ getAlignedGroupLearningCtrl <- function(groups = c('far', 'mid', 'near')){
     
     
     #return(dataoutput)
-    write.csv(dataoutput, file=sprintf('data/controlmironline-master/data/processed/%s_AlignedCtrl.csv', group), row.names = F)
+    write.csv(dataoutput, file=sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl.csv', group), row.names = F)
   }
 }
 
 getAlignedGroupLearningCtrlCI <- function(groups = c('far', 'mid', 'near')){
   
   for(group in groups){
-    data <- read.csv(file=sprintf('data/controlmironline-master/data/processed/%s_AlignedCtrl.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+    data <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
     
     trialno <- data$trial
     
@@ -286,7 +286,7 @@ getAlignedGroupLearningCtrlCI <- function(groups = c('far', 'mid', 'near')){
       } else {
         confidence <- rbind(confidence, citrial)
       }
-      write.csv(confidence, file=sprintf('data/controlmironline-master/data/processed/%s_AlignedCtrl_CI.csv', group), row.names = F)
+      write.csv(confidence, file=sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl_CI.csv', group), row.names = F)
     }
   }
 }
@@ -294,7 +294,7 @@ getAlignedGroupLearningCtrlCI <- function(groups = c('far', 'mid', 'near')){
 getAlignedGroupLearningCtrlCircularCI <- function(groups = c('far', 'mid', 'near')){
   for(group in groups){
     
-    data <- read.csv(file=sprintf('data/controlmironline-master/data/processed/%s_AlignedCtrl.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+    data <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
     
     
     
@@ -320,7 +320,7 @@ getAlignedGroupLearningCtrlCircularCI <- function(groups = c('far', 'mid', 'near
         confidence <- rbind(confidence, citrial)
       }
       
-      write.csv(confidence, file=sprintf('data/controlmironline-master/data/processed/%s_AlignedCtrl_Circular_CI.csv', group), row.names = F) 
+      write.csv(confidence, file=sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl_Circular_CI.csv', group), row.names = F) 
       
     }
   }
@@ -330,7 +330,7 @@ plotAlignedCtrl <- function(groups = c('far', 'mid', 'near'), target='inline') {
   
   
   if (target=='svg') {
-    svglite(file='data/controlmironline-master/doc/fig/Fig1A_AlignedCtrl.svg', width=10, height=7, pointsize=14, system_fonts=list(sans="Arial"))
+    svglite(file='doc/fig/controlmironline-master/Fig1A_AlignedCtrl.svg', width=10, height=7, pointsize=14, system_fonts=list(sans="Arial"))
   }
   
   
@@ -349,7 +349,7 @@ plotAlignedCtrl <- function(groups = c('far', 'mid', 'near'), target='inline') {
   
   for(group in groups){
     #read in files created by getGroupConfidenceInterval in filehandling.R
-    groupconfidence <- read.csv(file=sprintf('data/controlmironline-master/data/processed/%s_AlignedCtrl_CI.csv', group))
+    groupconfidence <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl_CI.csv', group))
     
     #split up data set for plotting purposes
     groupconfidenceAligned <- groupconfidence[1:45,]
@@ -405,7 +405,7 @@ plotAlignedCtrlCircular <- function(groups = c('far', 'mid', 'near'), target='in
   
   
   if (target=='svg') {
-    svglite(file='data/controlmironline-master/doc/fig/Fig1A_AlignedCtrlCircular.svg', width=10, height=7, pointsize=14, system_fonts=list(sans="Arial"))
+    svglite(file='doc/fig/controlmironline-master/Fig1A_AlignedCtrlCircular.svg', width=10, height=7, pointsize=14, system_fonts=list(sans="Arial"))
   }
   
   
@@ -424,7 +424,7 @@ plotAlignedCtrlCircular <- function(groups = c('far', 'mid', 'near'), target='in
   
   for(group in groups){
     #read in files created by getGroupConfidenceInterval in filehandling.R
-    groupconfidence <- read.csv(file=sprintf('data/controlmironline-master/data/processed/%s_AlignedCtrl_Circular_CI.csv', group))
+    groupconfidence <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl_Circular_CI.csv', group))
     
     #split up data set for plotting purposes
     groupconfidenceAligned <- groupconfidence[1:45,]
@@ -503,12 +503,12 @@ getMirroredParticipantLearningCtrl <- function(filename){
 getMirroredGroupLearningCtrl <- function(groups = c('far', 'mid', 'near')){
   #group is either 'far', 'mid', 'near' in relation to mirror
   for(group in groups){
-    datafilenames <- list.files('data/controlmironline-master/data', pattern = '*.csv')
+    datafilenames <- list.files('data/controlmironline-master/raw', pattern = '*.csv')
     
     
     dataoutput<- data.frame() #create place holder
     for(datafilenum in c(1:length(datafilenames))){
-      datafilename <- sprintf('data/controlmironline-master/data/%s', datafilenames[datafilenum]) #change this, depending on location in directory
+      datafilename <- sprintf('data/controlmironline-master/raw/%s', datafilenames[datafilenum]) #change this, depending on location in directory
       
       cat(sprintf('file %d / %d     (%s)\n',datafilenum,length(datafilenames),datafilename))
       mdat <- getMirroredParticipantLearningCtrl(filename = datafilename)
@@ -541,14 +541,14 @@ getMirroredGroupLearningCtrl <- function(groups = c('far', 'mid', 'near')){
     
     
     #return(dataoutput)
-    write.csv(dataoutput, file=sprintf('data/controlmironline-master/data/processed/%s_MirCtrl.csv', group), row.names = F)
+    write.csv(dataoutput, file=sprintf('data/controlmironline-master/raw/processed/%s_MirCtrl.csv', group), row.names = F)
   }
 }
 
 getMirroredGroupLearningCtrlCI <- function(groups = c('far', 'mid', 'near')){
   
   for(group in groups){
-    data <- read.csv(file=sprintf('data/controlmironline-master/data/processed/%s_MirCtrl.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+    data <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_MirCtrl.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
     
     trialno <- data$trial
     
@@ -563,7 +563,7 @@ getMirroredGroupLearningCtrlCI <- function(groups = c('far', 'mid', 'near')){
       } else {
         confidence <- rbind(confidence, citrial)
       }
-      write.csv(confidence, file=sprintf('data/controlmironline-master/data/processed/%s_MirCtrl_CI.csv', group), row.names = F)
+      write.csv(confidence, file=sprintf('data/controlmironline-master/raw/processed/%s_MirCtrl_CI.csv', group), row.names = F)
     }
   }
 }
@@ -571,7 +571,7 @@ getMirroredGroupLearningCtrlCI <- function(groups = c('far', 'mid', 'near')){
 getMirroredGroupLearningCtrlCircularCI <- function(groups = c('far', 'mid', 'near')){
   for(group in groups){
     
-    data <- read.csv(file=sprintf('data/controlmironline-master/data/processed/%s_MirCtrl.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+    data <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_MirCtrl.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
     
     
     
@@ -597,7 +597,7 @@ getMirroredGroupLearningCtrlCircularCI <- function(groups = c('far', 'mid', 'nea
         confidence <- rbind(confidence, citrial)
       }
       
-      write.csv(confidence, file=sprintf('data/controlmironline-master/data/processed/%s_MirCtrl_Circular_CI.csv', group), row.names = F) 
+      write.csv(confidence, file=sprintf('data/controlmironline-master/raw/processed/%s_MirCtrl_Circular_CI.csv', group), row.names = F) 
       
     }
   }
@@ -607,7 +607,7 @@ plotMirCtrl <- function(groups = c('far', 'mid', 'near'), target='inline') {
   
   
   if (target=='svg') {
-    svglite(file='data/controlmironline-master/doc/fig/Fig1B_MirCtrl.svg', width=10, height=7, pointsize=14, system_fonts=list(sans="Arial"))
+    svglite(file='doc/fig/controlmironline-master/Fig1B_MirCtrl.svg', width=10, height=7, pointsize=14, system_fonts=list(sans="Arial"))
   }
   
   
@@ -626,7 +626,7 @@ plotMirCtrl <- function(groups = c('far', 'mid', 'near'), target='inline') {
   
   for(group in groups){
     #read in files created by getGroupConfidenceInterval in filehandling.R
-    groupconfidence <- read.csv(file=sprintf('data/controlmironline-master/data/processed/%s_MirCtrl_CI.csv', group))
+    groupconfidence <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_MirCtrl_CI.csv', group))
     
     colourscheme <- getCtrlColourScheme(groups = group)
     #plot Mir Data
@@ -660,7 +660,7 @@ plotMirCtrlCircular <- function(groups = c('far', 'mid', 'near'), target='inline
   
   
   if (target=='svg') {
-    svglite(file='data/controlmironline-master/doc/fig/Fig1B_MirCtrlCircular.svg', width=10, height=7, pointsize=14, system_fonts=list(sans="Arial"))
+    svglite(file='doc/fig/controlmironline-master/Fig1B_MirCtrlCircular.svg', width=10, height=7, pointsize=14, system_fonts=list(sans="Arial"))
   }
   
   
@@ -679,7 +679,7 @@ plotMirCtrlCircular <- function(groups = c('far', 'mid', 'near'), target='inline
   
   for(group in groups){
     #read in files created by getGroupConfidenceInterval in filehandling.R
-    groupconfidence <- read.csv(file=sprintf('data/controlmironline-master/data/processed/%s_MirCtrl_Circular_CI.csv', group))
+    groupconfidence <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_MirCtrl_Circular_CI.csv', group))
     
     colourscheme <- getCtrlColourScheme(groups = group)
     #plot Mir Data
@@ -736,12 +736,12 @@ getRAEParticipantLearningCtrl <- function(filename){
 getRAEGroupLearningCtrl <- function(groups = c('far', 'mid', 'near')){
   #group is either 'far', 'mid', 'near' in relation to mirror
   for(group in groups){
-    datafilenames <- list.files('data/controlmironline-master/data', pattern = '*.csv')
+    datafilenames <- list.files('data/controlmironline-master/raw', pattern = '*.csv')
     
     
     dataoutput<- data.frame() #create place holder
     for(datafilenum in c(1:length(datafilenames))){
-      datafilename <- sprintf('data/controlmironline-master/data/%s', datafilenames[datafilenum]) #change this, depending on location in directory
+      datafilename <- sprintf('data/controlmironline-master/raw/%s', datafilenames[datafilenum]) #change this, depending on location in directory
       
       cat(sprintf('file %d / %d     (%s)\n',datafilenum,length(datafilenames),datafilename))
       mdat <- getRAEParticipantLearningCtrl(filename = datafilename)
@@ -774,14 +774,14 @@ getRAEGroupLearningCtrl <- function(groups = c('far', 'mid', 'near')){
     
     
     #return(dataoutput)
-    write.csv(dataoutput, file=sprintf('data/controlmironline-master/data/processed/%s_RAECtrl.csv', group), row.names = F)
+    write.csv(dataoutput, file=sprintf('data/controlmironline-master/raw/processed/%s_RAECtrl.csv', group), row.names = F)
   }
 }
 
 getRAEGroupLearningCtrlCI <- function(groups = c('far', 'mid', 'near')){
   
   for(group in groups){
-    data <- read.csv(file=sprintf('data/controlmironline-master/data/processed/%s_RAECtrl.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+    data <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_RAECtrl.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
     
     trialno <- data$trial
     
@@ -796,7 +796,7 @@ getRAEGroupLearningCtrlCI <- function(groups = c('far', 'mid', 'near')){
       } else {
         confidence <- rbind(confidence, citrial)
       }
-      write.csv(confidence, file=sprintf('data/controlmironline-master/data/processed/%s_RAECtrl_CI.csv', group), row.names = F)
+      write.csv(confidence, file=sprintf('data/controlmironline-master/raw/processed/%s_RAECtrl_CI.csv', group), row.names = F)
     }
   }
 }
@@ -804,7 +804,7 @@ getRAEGroupLearningCtrlCI <- function(groups = c('far', 'mid', 'near')){
 getRAEGroupLearningCtrlCircularCI <- function(groups = c('far', 'mid', 'near')){
   for(group in groups){
     
-    data <- read.csv(file=sprintf('data/controlmironline-master/data/processed/%s_RAECtrl.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+    data <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_RAECtrl.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
     
     
     
@@ -830,7 +830,7 @@ getRAEGroupLearningCtrlCircularCI <- function(groups = c('far', 'mid', 'near')){
         confidence <- rbind(confidence, citrial)
       }
       
-      write.csv(confidence, file=sprintf('data/controlmironline-master/data/processed/%s_RAECtrl_Circular_CI.csv', group), row.names = F) 
+      write.csv(confidence, file=sprintf('data/controlmironline-master/raw/processed/%s_RAECtrl_Circular_CI.csv', group), row.names = F) 
       
     }
   }
@@ -840,7 +840,7 @@ plotRAECtrl <- function(groups = c('far', 'mid', 'near'), target='inline') {
   
   
   if (target=='svg') {
-    svglite(file='data/controlmironline-master/doc/fig/Fig1C_RAECtrl.svg', width=10, height=7, pointsize=14, system_fonts=list(sans="Arial"))
+    svglite(file='doc/fig/controlmironline-master/Fig1C_RAECtrl.svg', width=10, height=7, pointsize=14, system_fonts=list(sans="Arial"))
   }
   
   
@@ -859,7 +859,7 @@ plotRAECtrl <- function(groups = c('far', 'mid', 'near'), target='inline') {
   
   for(group in groups){
     #read in files created by getGroupConfidenceInterval in filehandling.R
-    groupconfidence <- read.csv(file=sprintf('data/controlmironline-master/data/processed/%s_RAECtrl_CI.csv', group))
+    groupconfidence <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_RAECtrl_CI.csv', group))
     
     colourscheme <- getCtrlColourScheme(groups = group)
     #plot Mir Data
@@ -893,7 +893,7 @@ plotRAECtrlCircular <- function(groups = c('far', 'mid', 'near'), target='inline
   
   
   if (target=='svg') {
-    svglite(file='data/controlmironline-master/doc/fig/Fig1C_RAECtrlCircular.svg', width=10, height=7, pointsize=14, system_fonts=list(sans="Arial"))
+    svglite(file='doc/fig/controlmironline-master/Fig1C_RAECtrlCircular.svg', width=10, height=7, pointsize=14, system_fonts=list(sans="Arial"))
   }
   
   
@@ -912,7 +912,7 @@ plotRAECtrlCircular <- function(groups = c('far', 'mid', 'near'), target='inline
   
   for(group in groups){
     #read in files created by getGroupConfidenceInterval in filehandling.R
-    groupconfidence <- read.csv(file=sprintf('data/controlmironline-master/data/processed/%s_RAECtrl_Circular_CI.csv', group))
+    groupconfidence <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_RAECtrl_Circular_CI.csv', group))
     
     colourscheme <- getCtrlColourScheme(groups = group)
     #plot Mir Data
@@ -948,7 +948,7 @@ plotAllTasksCtrl <- function(groups = c('far', 'mid', 'near'), target='inline') 
   
   #but we can save plot as svg file
   if (target=='svg'){
-    svglite(file='data/controlmironline-master/doc/fig/Fig1_LearningCtrl.svg', width=14, height=8, pointsize=14, system_fonts=list(sans="Arial"))
+    svglite(file='doc/fig/controlmironline-master/Fig1_LearningCtrl.svg', width=14, height=8, pointsize=14, system_fonts=list(sans="Arial"))
   }
   
   plot(NA, NA, xlim = c(0,178), ylim = c(-65,225), 
@@ -966,9 +966,9 @@ plotAllTasksCtrl <- function(groups = c('far', 'mid', 'near'), target='inline') 
   
   for(group in groups){
     #read in files created by getGroupConfidenceInterval in filehandling.R
-    groupconfidence <- read.csv(file=sprintf('data/controlmironline-master/data/processed/%s_AlignedCtrl_CI.csv', group))
-    groupconfidenceLC <- read.csv(file=sprintf('data/controlmironline-master/data/processed/%s_MirCtrl_CI.csv', group))
-    groupconfidenceRAE <- read.csv(file=sprintf('data/controlmironline-master/data/processed/%s_RAECtrl_CI.csv', group))
+    groupconfidence <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl_CI.csv', group))
+    groupconfidenceLC <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_MirCtrl_CI.csv', group))
+    groupconfidenceRAE <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_RAECtrl_CI.csv', group))
     
     
     
@@ -1054,7 +1054,7 @@ plotAllTasksCtrlCircular <- function(groups = c('far', 'mid', 'near'), target='i
   
   #but we can save plot as svg file
   if (target=='svg'){
-    svglite(file='data/controlmironline-master/doc/fig/Fig1_LearningCtrlCircular.svg', width=14, height=8, pointsize=14, system_fonts=list(sans="Arial"))
+    svglite(file='doc/fig/controlmironline-master/Fig1_LearningCtrlCircular.svg', width=14, height=8, pointsize=14, system_fonts=list(sans="Arial"))
   }
   
   plot(NA, NA, xlim = c(0,178), ylim = c(-200,200), 
@@ -1067,9 +1067,9 @@ plotAllTasksCtrlCircular <- function(groups = c('far', 'mid', 'near'), target='i
   
   for(group in groups){
     #read in files created by getGroupConfidenceInterval in filehandling.R
-    groupconfidence <- read.csv(file=sprintf('data/controlmironline-master/data/processed/%s_AlignedCtrl_Circular_CI.csv', group))
-    groupconfidenceLC <- read.csv(file=sprintf('data/controlmironline-master/data/processed/%s_MirCtrl_Circular_CI.csv', group))
-    groupconfidenceRAE <- read.csv(file=sprintf('data/controlmironline-master/data/processed/%s_RAECtrl_Circular_CI.csv', group))
+    groupconfidence <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl_Circular_CI.csv', group))
+    groupconfidenceLC <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_MirCtrl_Circular_CI.csv', group))
+    groupconfidenceRAE <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_RAECtrl_Circular_CI.csv', group))
     
     
     
@@ -1150,9 +1150,76 @@ plotAllTasksCtrlCircular <- function(groups = c('far', 'mid', 'near'), target='i
   }
 }
 
+#get far reach devs corrected
+getMirrorCorrectedFarAngDevs <- function(group = 'far'){
+  
+  data <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_MirCtrl.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+  
+  trialno <- data$trial
+  #postrials <- c(1:21, 64:126)
+  
+  for(trial in trialno){
+    subdat <- as.numeric(data[trial, 2:length(data)])
+    
+    for (angleidx in 1:length(subdat)){
+      angle <- subdat[angleidx]
+      if (group == 'far' && angle < -90 && !is.na(angle)){
+        subdat[angleidx] <- angle + 360
+      }
+    }
+    
+    data[trial, 2:length(data)] <- subdat
+  }
+  return(data)
+}
+
+# convert to percent of compensation
+getMirrorGroupPercentCompensation <- function(groups = c('far', 'mid', 'near')){
+  
+  for(group in groups){
+    #far group
+    if (group == 'far'){
+      data <- getMirrorCorrectedFarAngDevs()
+      trialno <- data$trial
+      #postrials <- c(1:21, 64:126)
+      
+      for(trial in trialno){
+        subdat <- as.numeric(data[trial, 2:length(data)])
+        for (angleidx in 1:length(subdat)){
+          angle <- subdat[angleidx]
+          if (!is.na(angle)){
+            subdat[angleidx] <- (angle/170)*100 #full compensation for far targets is 170 deg
+          }
+        }
+        data[trial, 2:length(data)] <- subdat
+      }
+    } else {
+      data <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_MirCtrl.csv', group), check.names = FALSE)
+      trialno <- data$trial
+      #postrials <- c(1:21, 64:126)
+      
+      for(trial in trialno){
+        subdat <- as.numeric(data[trial, 2:length(data)])
+        for (angleidx in 1:length(subdat)){
+          angle <- subdat[angleidx]
+          if (!is.na(angle) && group == 'mid'){
+            subdat[angleidx] <- (angle/90)*100 #full compensation for mid targets is 90 deg
+          } else if(!is.na(angle) && group == 'near'){
+            subdat[angleidx] <- (angle/10)*100 #full compensation for near targets is 10 deg
+          }
+        }
+        data[trial, 2:length(data)] <- subdat
+      }
+    }
+    write.csv(data, file=sprintf('data/controlmironline-master/raw/processed/%s_Mirror_PercentCompensation.csv', group), row.names = F) 
+    
+  }
+  
+}
+
 getBlockedMirCtrl <- function(group, blockdefs) {
   
-  curves <- read.csv(sprintf('data/controlmironline-master/data/processed/%s_MirCtrl.csv',group), stringsAsFactors=FALSE)  
+  curves <- read.csv(sprintf('data/controlmironline-master/raw/processed/%s_MirCtrl.csv',group), stringsAsFactors=FALSE)  
   curves <- curves[,-1] #remove trial rows
   N <- dim(curves)[2]
   
@@ -1178,7 +1245,7 @@ getBlockedMirCtrl <- function(group, blockdefs) {
 
 getBlockedMirCtrlPercentage <- function(group, blockdefs) {
   
-  curves <- read.csv(sprintf('data/controlmironline-master/data/statistics/%s_Mirror_PercentCompensation.csv',group), stringsAsFactors=FALSE, check.names = FALSE) 
+  curves <- read.csv(sprintf('data/controlmironline-master/raw/processed/%s_Mirror_PercentCompensation.csv',group), stringsAsFactors=FALSE, check.names = FALSE) 
   curves <- curves[,-1] #remove trial rows
   N <- dim(curves)[2]
   
@@ -1205,7 +1272,7 @@ getBlockedMirCtrlPercentage <- function(group, blockdefs) {
 plotBlockedMirCtrl <- function(target='inline', groups = c('far', 'mid', 'near')) {
   
   if (target == 'svg') {
-    svglite(file='data/controlmironline-master/doc/fig/Fig1F_BlockedLearningCtrl.svg', width=14, height=9, pointsize=18, system_fonts=list(sans='Arial'))
+    svglite(file='doc/fig/controlmironline-master/Fig1F_BlockedLearningCtrl.svg', width=14, height=9, pointsize=18, system_fonts=list(sans='Arial'))
   }
   
   #par(mfrow=c(1,2), mar=c(4,4,2,0.1))
@@ -1327,9 +1394,9 @@ plotAlignedCtrlCircFreq <- function(groups = c('far', 'mid', 'near')){
   
   for(group in groups){
     
-    dat <- read.csv(file=sprintf('data/controlmironline-master/data/processed/%s_AlignedCtrl.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+    dat <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
     
-    pdf(sprintf("data/controlmironline-master/doc/fig/Distribution_%s_AlignedCtrl.pdf", group))
+    pdf(sprintf("doc/fig/controlmironline-master/Distribution_%s_AlignedCtrl.pdf", group))
     
     triallist <- c(1:66)
     #triallist <- c(1,2,90)
@@ -1394,9 +1461,9 @@ plotMirroredCtrlCircFreq <- function(groups = c('far', 'mid', 'near')){
   
   for(group in groups){
     
-    dat <- read.csv(file=sprintf('data/controlmironline-master/data/processed/%s_MirCtrl.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+    dat <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_MirCtrl.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
     
-    pdf(sprintf("data/controlmironline-master/doc/fig/Distribution_%s_MirCtrl.pdf", group))
+    pdf(sprintf("doc/fig/controlmironline-master/Distribution_%s_MirCtrl.pdf", group))
     
     triallist <- c(1:90)
     #triallist <- c(1,2,90)
@@ -1461,9 +1528,9 @@ plotRAECtrlCircFreq <- function(groups = c('far', 'mid', 'near')){
   
   for(group in groups){
     
-    dat <- read.csv(file=sprintf('data/controlmironline-master/data/processed/%s_RAECtrl.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+    dat <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_RAECtrl.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
     
-    pdf(sprintf("data/controlmironline-master/doc/fig/Distribution_%s_RAECtrl.pdf", group))
+    pdf(sprintf("doc/fig/controlmironline-master/Distribution_%s_RAECtrl.pdf", group))
     
     triallist <- c(1:21)
     #triallist <- c(1,2,90)
@@ -1597,12 +1664,12 @@ handleOneMTCtrlFile <- function(filename, step = 2) {
 
 getGroupCtrlMT <- function(groups = c('far', 'mid', 'near')){
   for(group in groups){
-    datafilenames <- list.files('data/controlmironline-master/data', pattern = '*.csv')
+    datafilenames <- list.files('data/controlmironline-master/raw', pattern = '*.csv')
     
     
     dataoutput<- data.frame() #create place holder
     for(datafilenum in c(1:length(datafilenames))){
-      datafilename <- sprintf('data/controlmironline-master/data/%s', datafilenames[datafilenum]) #change this, depending on location in directory
+      datafilename <- sprintf('data/controlmironline-master/raw/%s', datafilenames[datafilenum]) #change this, depending on location in directory
       
       cat(sprintf('file %d / %d     (%s)\n',datafilenum,length(datafilenames),datafilename))
       alldat <- handleOneMTCtrlFile(filename = datafilename)
@@ -1648,7 +1715,7 @@ getGroupCtrlMT <- function(groups = c('far', 'mid', 'near')){
     # }
     
     #return(dataoutput)
-    write.csv(dataoutput, file=sprintf('data/controlmironline-master/data/processed/%s_MovementTime.csv', group), row.names = F)
+    write.csv(dataoutput, file=sprintf('data/controlmironline-master/raw/processed/%s_MovementTime.csv', group), row.names = F)
     #can keep track of deleted trials here, by using the saved csv file or counting NA values in dataoutput
   }
 }
@@ -1656,7 +1723,7 @@ getGroupCtrlMT <- function(groups = c('far', 'mid', 'near')){
 getGroupCtrlMTCI <- function(groups = c('far','mid', 'near'), type = 't'){
   for(group in groups){
     
-    data <- read.csv(file=sprintf('data/controlmironline-master/data/processed/%s_MovementTime.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+    data <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_MovementTime.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
     
     trialno <- data$trial
     data1 <- as.matrix(data[,2:dim(data)[2]])
@@ -1683,7 +1750,7 @@ getGroupCtrlMTCI <- function(groups = c('far','mid', 'near'), type = 't'){
       } else {
         confidence <- rbind(confidence, citrial)
       }
-      write.csv(confidence, file=sprintf('data/controlmironline-master/data/processed/%s_MovementTime_CI.csv', group), row.names = F) 
+      write.csv(confidence, file=sprintf('data/controlmironline-master/raw/processed/%s_MovementTime_CI.csv', group), row.names = F) 
     }
   }
 }
@@ -1692,7 +1759,7 @@ plotCtrlMT <- function(groups = c('far', 'mid', 'near'), target='inline') {
   
   #but we can save plot as svg file
   if (target=='svg'){
-    svglite(file='data/controlmironline-master/doc/fig/Fig2_MovementTime.svg', width=10, height=7, pointsize=14, system_fonts=list(sans="Arial"))
+    svglite(file='doc/fig/controlmironline-master/Fig2_MovementTime.svg', width=10, height=7, pointsize=14, system_fonts=list(sans="Arial"))
   }
   
   plot(NA, NA, xlim = c(0,178), ylim = c(-0.2,11), 
@@ -1709,7 +1776,7 @@ plotCtrlMT <- function(groups = c('far', 'mid', 'near'), target='inline') {
   axis(2, at = c(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10), las = 2) #tick marks for y axis
   
   for(group in groups){
-    groupconfidence <- read.csv(file=sprintf('data/controlmironline-master/data/processed/%s_MovementTime_CI.csv', group))
+    groupconfidence <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_MovementTime_CI.csv', group))
     
     
     #split up data set for plotting purposes
@@ -1880,12 +1947,12 @@ handleOnePLCtrlFile <- function(filename, step = 2) {
 
 getGroupCtrlPL <- function(groups = c('far', 'mid', 'near')){
   for(group in groups){
-    datafilenames <- list.files('data/controlmironline-master/data', pattern = '*.csv')
+    datafilenames <- list.files('data/controlmironline-master/raw', pattern = '*.csv')
     
     
     dataoutput<- data.frame() #create place holder
     for(datafilenum in c(1:length(datafilenames))){
-      datafilename <- sprintf('data/controlmironline-master/data/%s', datafilenames[datafilenum]) #change this, depending on location in directory
+      datafilename <- sprintf('data/controlmironline-master/raw/%s', datafilenames[datafilenum]) #change this, depending on location in directory
       
       cat(sprintf('file %d / %d     (%s)\n',datafilenum,length(datafilenames),datafilename))
       alldat <- handleOnePLCtrlFile(filename = datafilename)
@@ -1931,7 +1998,7 @@ getGroupCtrlPL <- function(groups = c('far', 'mid', 'near')){
     # }
     
     #return(dataoutput)
-    write.csv(dataoutput, file=sprintf('data/controlmironline-master/data/processed/%s_PathLength.csv', group), row.names = F)
+    write.csv(dataoutput, file=sprintf('data/controlmironline-master/raw/processed/%s_PathLength.csv', group), row.names = F)
     #can keep track of deleted trials here, by using the saved csv file or counting NA values in dataoutput
   }
 }
@@ -1939,7 +2006,7 @@ getGroupCtrlPL <- function(groups = c('far', 'mid', 'near')){
 getGroupCtrlPLCI <- function(groups = c('far','mid', 'near'), type = 't'){
   for(group in groups){
     
-    data <- read.csv(file=sprintf('data/controlmironline-master/data/processed/%s_PathLength.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+    data <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_PathLength.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
     
     trialno <- data$trial
     data1 <- as.matrix(data[,2:dim(data)[2]])
@@ -1966,7 +2033,7 @@ getGroupCtrlPLCI <- function(groups = c('far','mid', 'near'), type = 't'){
       } else {
         confidence <- rbind(confidence, citrial)
       }
-      write.csv(confidence, file=sprintf('data/controlmironline-master/data/processed/%s_PathLength_CI.csv', group), row.names = F) 
+      write.csv(confidence, file=sprintf('data/controlmironline-master/raw/processed/%s_PathLength_CI.csv', group), row.names = F) 
     }
   }
 }
@@ -1975,7 +2042,7 @@ plotCtrlPL <- function(groups = c('far', 'mid', 'near'), target='inline') {
   
   #but we can save plot as svg file
   if (target=='svg'){
-    svglite(file='data/controlmironline-master/doc/fig/Fig3_PathLength.svg', width=10, height=7, pointsize=14, system_fonts=list(sans="Arial"))
+    svglite(file='doc/fig/controlmironline-master/Fig3_PathLength.svg', width=10, height=7, pointsize=14, system_fonts=list(sans="Arial"))
   }
   
   plot(NA, NA, xlim = c(0,178), ylim = c(-0.2,4), 
@@ -1992,7 +2059,7 @@ plotCtrlPL <- function(groups = c('far', 'mid', 'near'), target='inline') {
   axis(2, at = c(0, .5, 1, 1.5, 2, 2.5, 3, 3.5, 4), las = 2) #tick marks for y axis
   
   for(group in groups){
-    groupconfidence <- read.csv(file=sprintf('data/controlmironline-master/data/processed/%s_PathLength_CI.csv', group))
+    groupconfidence <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_PathLength_CI.csv', group))
     
     
     #split up data set for plotting purposes
@@ -3690,72 +3757,6 @@ alignedLearningANOVA2Hands <- function(handA='trained', handB='untrained') {
 
 
 # Next, we focus on MIRROR REVERSED TRIALS
-
-#get far reach devs corrected
-getMirrorCorrectedFarAngDevs <- function(group = 'far'){
-  
-  data <- read.csv(file=sprintf('data/controlmironline-master/data/processed/%s_MirCtrl.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
-  
-  trialno <- data$trial
-  #postrials <- c(1:21, 64:126)
-  
-  for(trial in trialno){
-    subdat <- as.numeric(data[trial, 2:length(data)])
-    
-    for (angleidx in 1:length(subdat)){
-      angle <- subdat[angleidx]
-      if (group == 'far' && angle < -90 && !is.na(angle)){
-        subdat[angleidx] <- angle + 360
-      }
-    }
-    
-    data[trial, 2:length(data)] <- subdat
-  }
-  return(data)
-}
-# convert to percent of compensation
-getMirrorGroupPercentCompensation <- function(groups = c('far', 'mid', 'near')){
-  
-  for(group in groups){
-    #far group
-    if (group == 'far'){
-      data <- getMirrorCorrectedFarAngDevs()
-      trialno <- data$trial
-      #postrials <- c(1:21, 64:126)
-      
-      for(trial in trialno){
-        subdat <- as.numeric(data[trial, 2:length(data)])
-        for (angleidx in 1:length(subdat)){
-          angle <- subdat[angleidx]
-          if (!is.na(angle)){
-            subdat[angleidx] <- (angle/170)*100 #full compensation for far targets is 170 deg
-          }
-        }
-        data[trial, 2:length(data)] <- subdat
-      }
-    } else {
-      data <- read.csv(file=sprintf('data/controlmironline-master/data/processed/%s_MirCtrl.csv', group), check.names = FALSE)
-      trialno <- data$trial
-      #postrials <- c(1:21, 64:126)
-      
-      for(trial in trialno){
-        subdat <- as.numeric(data[trial, 2:length(data)])
-        for (angleidx in 1:length(subdat)){
-          angle <- subdat[angleidx]
-          if (!is.na(angle) && group == 'mid'){
-            subdat[angleidx] <- (angle/90)*100 #full compensation for mid targets is 90 deg
-          } else if(!is.na(angle) && group == 'near'){
-            subdat[angleidx] <- (angle/10)*100 #full compensation for near targets is 10 deg
-          }
-        }
-        data[trial, 2:length(data)] <- subdat
-      }
-    }
-    write.csv(data, file=sprintf('data/controlmironline-master/data/statistics/%s_Mirror_PercentCompensation.csv', group), row.names = F) 
-    
-  }
-  
-}
 #run tests
 getMirrorBlockedLearningAOV <- function(groups = c('far', 'mid', 'near'), blockdefs) {
   
