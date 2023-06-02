@@ -11,13 +11,13 @@ getParticipantMatchedParts <- function(){
   ppqualt <- qualtdat$id[-c(1)]
   
   #get all filenames in generalizaton/part 2 data
-  datafilenames <- list.files('data/controlmirgenonline-master/data', pattern = '*.csv')
+  datafilenames <- list.files('data/controlmirgenonline-master/raw', pattern = '*.csv')
   ppdel <- c()
   #ppgen <- c()
   #fdat <- c()
   for (datafilenum in c(1:length(datafilenames))){
     
-    filename <- sprintf('data/controlmirgenonline-master/data/%s', datafilenames[datafilenum])
+    filename <- sprintf('data/controlmirgenonline-master/raw/%s', datafilenames[datafilenum])
     cat(sprintf('file %d / %d     (%s)\n',datafilenum,length(datafilenames),filename))
     dat <- handleOneCtrlFile(filename = filename)
     ppdat <- unique(dat$participant)
@@ -32,14 +32,14 @@ getParticipantMatchedParts <- function(){
 }
 
 getCtrlMirGenQualtricsData <- function(){
-  datafilenames <- list.files('data/controlmirgenonline-master/data', pattern = '*.csv')
+  datafilenames <- list.files('data/controlmirgenonline-master/raw', pattern = '*.csv')
   
   
   
   dataoutput<- c() #create place holder
   for(datafilenum in c(1:length(datafilenames))){
     
-    datafilename <- sprintf('data/controlmirgenonline-master/data/%s', datafilenames[datafilenum]) #change this, depending on location in directory
+    datafilename <- sprintf('data/controlmirgenonline-master/raw/%s', datafilenames[datafilenum]) #change this, depending on location in directory
     
     
     cat(sprintf('file %d / %d     (%s)\n',datafilenum,length(datafilenames),datafilename))
@@ -72,13 +72,13 @@ getCtrlMirGenQualtricsData <- function(){
 
 getCtrlGenHandMatches <- function(){
   #check hand matches both within and across sessions
-  datafilenames <- list.files('data/controlmirgenonline-master/data', pattern = '*.csv')
+  datafilenames <- list.files('data/controlmirgenonline-master/raw', pattern = '*.csv')
   
   #within: check if the key response they entered during the experiment, matches their qualtrics response
   allresp <- data.frame()
   for(datafilenum in c(1:length(datafilenames))){
     
-    datafilename <- sprintf('data/controlmirgenonline-master/data/%s', datafilenames[datafilenum]) #change this, depending on location in directory
+    datafilename <- sprintf('data/controlmirgenonline-master/raw/%s', datafilenames[datafilenum]) #change this, depending on location in directory
     
     cat(sprintf('file %d / %d     (%s)\n',datafilenum,length(datafilenames),datafilename))
     df <- read.csv(datafilename, stringsAsFactors = F)
@@ -121,7 +121,7 @@ getCtrlGenHandMatches <- function(){
   
   handmatches <- merge(p1_qualtresp, p2_handmatches, by='ppname')
   
-  write.csv(handmatches, file='data/controlmirgenonline-master/data/processed/HandMatches.csv', row.names = F)
+  write.csv(handmatches, file='data/controlmirgenonline-master/raw/processed/HandMatches.csv', row.names = F)
   #These were then manually inspected to see any mismatches
 }
 
@@ -195,18 +195,18 @@ getCtrlGroupDates<- function(sets = c('part1', 'part2')){
   
   for (set in sets){
     if (set == 'part1'){
-      datafilenames <- list.files('data/controlmironline-master/data', pattern = '*.csv')
+      datafilenames <- list.files('data/controlmironline-master/raw', pattern = '*.csv')
     } else if (set == 'part2'){
-      datafilenames <- list.files('data/controlmirgenonline-master/data', pattern = '*.csv')
+      datafilenames <- list.files('data/controlmirgenonline-master/raw', pattern = '*.csv')
     }
     
     
     dataoutput<- data.frame() #create place holder
     for(datafilenum in c(1:length(datafilenames))){
       if (set == 'part1'){
-        datafilename <- sprintf('data/controlmironline-master/data/%s', datafilenames[datafilenum]) #change this, depending on location in directory
+        datafilename <- sprintf('data/controlmironline-master/raw/%s', datafilenames[datafilenum]) #change this, depending on location in directory
       } else if (set == 'part2'){
-        datafilename <- sprintf('data/controlmirgenonline-master/data/%s', datafilenames[datafilenum]) #change this, depending on location in directory
+        datafilename <- sprintf('data/controlmirgenonline-master/raw/%s', datafilenames[datafilenum]) #change this, depending on location in directory
       }
       
       
@@ -221,17 +221,17 @@ getCtrlGroupDates<- function(sets = c('part1', 'part2')){
     }
     #return(dataoutput)
     if (set == 'part1'){
-      write.csv(dataoutput, file=sprintf('data/controlmironline-master/data/processed/%sDate.csv', set), row.names = F)
+      write.csv(dataoutput, file=sprintf('data/controlmironline-master/raw/processed/%sDate.csv', set), row.names = F)
     } else if (set == 'part2'){
-      write.csv(dataoutput, file=sprintf('data/controlmirgenonline-master/data/processed/%sDate.csv', set), row.names = F)
+      write.csv(dataoutput, file=sprintf('data/controlmirgenonline-master/raw/processed/%sDate.csv', set), row.names = F)
     }
   }
 }
 
 getCtrlMatchGroupDates <- function(){
   
-  part1dat <- read.csv(file='data/controlmironline-master/data/processed/part1Date.csv')
-  part2dat <- read.csv(file='data/controlmirgenonline-master/data/processed/part2Date.csv')
+  part1dat <- read.csv(file='data/controlmironline-master/raw/processed/part1Date.csv')
+  part2dat <- read.csv(file='data/controlmirgenonline-master/raw/processed/part2Date.csv')
   
   dat <- merge(part1dat, part2dat, by.x = 'id', by.y = 'id')
   colnames(dat) <- c('id', 'part1_date', 'part2_date')
@@ -248,7 +248,7 @@ plotCtrlDaysApart <- function(target='inline'){
   
   #but we can save plot as svg file
   if (target=='svg') {
-    svglite(file='data/controlmirgenonline-master/doc/fig/Fig0_HistDaysApart.svg', width=10, height=7, pointsize=14, system_fonts=list(sans="Arial"))
+    svglite(file='doc/fig/controlmirgenonline-master/Fig0_HistDaysApart.svg', width=10, height=7, pointsize=14, system_fonts=list(sans="Arial"))
   }
   
   dat <- getCtrlMatchGroupDates()
@@ -279,11 +279,11 @@ getAlignedGroupLearningCtrlGen <- function(){
   ppqualt <- qualtdat$id[-c(1)]
   
   #get all filenames in part 1
-  datafilenames <- list.files('data/controlmironline-master/data', pattern = '*.csv')
+  datafilenames <- list.files('data/controlmironline-master/raw', pattern = '*.csv')
   part1dat <- data.frame()
   for (datafilenum in c(1:length(datafilenames))){
     
-    filename <- sprintf('data/controlmironline-master/data/%s', datafilenames[datafilenum])
+    filename <- sprintf('data/controlmironline-master/raw/%s', datafilenames[datafilenum])
     cat(sprintf('file %d / %d     (%s)\n',datafilenum,length(datafilenames),filename))
     dat <- handleOneCtrlFile(filename = filename)
     ppdat <- unique(dat$participant)
@@ -295,7 +295,7 @@ getAlignedGroupLearningCtrlGen <- function(){
     part1dat <- rbind(part1dat, adat)
   }
   #return(part1dat)
-  write.csv(part1dat, file='data/controlmirgenonline-master/data/processed/Part1_Aligned.csv', row.names = F)
+  write.csv(part1dat, file='data/controlmirgenonline-master/raw/processed/Part1_Aligned.csv', row.names = F)
 }
 
 getMirroredParticipantLearningCtrlGen <- function(filename){
@@ -308,7 +308,7 @@ getMirroredParticipantLearningCtrlGen <- function(filename){
   
   #part 1 data
   #can grab all part 1 data from previous function
-  adat <- read.csv('data/controlmirgenonline-master/data/processed/Part1_Aligned.csv', stringsAsFactors = F)
+  adat <- read.csv('data/controlmirgenonline-master/raw/processed/Part1_Aligned.csv', stringsAsFactors = F)
   #convert data to circular
   adat$circ_rd <- as.circular(adat$circ_rd, type='angles', units='degrees', template = 'none', modulo = 'asis', zero = 0, rotation = 'counter')
   adat <- adat[which(adat$participant == ppid),] #get only aligned data for participant
@@ -353,12 +353,12 @@ getMirroredParticipantLearningCtrlGen <- function(filename){
 getMirroredGroupLearningCtrlGen <- function(groups = c('far', 'mid', 'near')){
   #group is either 'far', 'mid', 'near' in relation to mirror
   for(group in groups){
-    datafilenames <- list.files('data/controlmirgenonline-master/data', pattern = '*.csv')
+    datafilenames <- list.files('data/controlmirgenonline-master/raw', pattern = '*.csv')
     
     
     dataoutput<- data.frame() #create place holder
     for(datafilenum in c(1:length(datafilenames))){
-      datafilename <- sprintf('data/controlmirgenonline-master/data/%s', datafilenames[datafilenum]) #change this, depending on location in directory
+      datafilename <- sprintf('data/controlmirgenonline-master/raw/%s', datafilenames[datafilenum]) #change this, depending on location in directory
       
       cat(sprintf('file %d / %d     (%s)\n',datafilenum,length(datafilenames),datafilename))
       mdat <- getMirroredParticipantLearningCtrlGen(filename = datafilename)
@@ -391,14 +391,14 @@ getMirroredGroupLearningCtrlGen <- function(groups = c('far', 'mid', 'near')){
     
     
     #return(dataoutput)
-    write.csv(dataoutput, file=sprintf('data/controlmirgenonline-master/data/processed/%s_MirCtrlGen.csv', group), row.names = F)
+    write.csv(dataoutput, file=sprintf('data/controlmirgenonline-master/raw/processed/%s_MirCtrlGen.csv', group), row.names = F)
   }
 }
 
 getMirroredGroupLearningCtrlGenCI <- function(groups = c('far', 'mid', 'near')){
   for(group in groups){
     
-    data <- read.csv(file=sprintf('data/controlmirgenonline-master/data/processed/%s_MirCtrlGen.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+    data <- read.csv(file=sprintf('data/controlmirgenonline-master/raw/processed/%s_MirCtrlGen.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
     
     
     
@@ -422,7 +422,7 @@ getMirroredGroupLearningCtrlGenCI <- function(groups = c('far', 'mid', 'near')){
         confidence <- rbind(confidence, citrial)
       }
       
-      write.csv(confidence, file=sprintf('data/controlmirgenonline-master/data/processed/%s_MirCtrlGen_CI.csv', group), row.names = F) 
+      write.csv(confidence, file=sprintf('data/controlmirgenonline-master/raw/processed/%s_MirCtrlGen_CI.csv', group), row.names = F) 
       
     }
   }
@@ -431,7 +431,7 @@ getMirroredGroupLearningCtrlGenCI <- function(groups = c('far', 'mid', 'near')){
 getMirroredGroupLearningCtrlGenCircularCI <- function(groups = c('far', 'mid', 'near')){
   for(group in groups){
     
-    data <- read.csv(file=sprintf('data/controlmirgenonline-master/data/processed/%s_MirCtrlGen.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+    data <- read.csv(file=sprintf('data/controlmirgenonline-master/raw/processed/%s_MirCtrlGen.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
     
     
     
@@ -457,7 +457,7 @@ getMirroredGroupLearningCtrlGenCircularCI <- function(groups = c('far', 'mid', '
         confidence <- rbind(confidence, citrial)
       }
       
-      write.csv(confidence, file=sprintf('data/controlmirgenonline-master/data/processed/%s_MirCtrlGen_Circular_CI.csv', group), row.names = F) 
+      write.csv(confidence, file=sprintf('data/controlmirgenonline-master/raw/processed/%s_MirCtrlGen_Circular_CI.csv', group), row.names = F) 
       
     }
   }
@@ -469,7 +469,7 @@ plotBlockedLearningCtrlGen<- function(groups = c('far', 'mid', 'near'), target='
   
   
   if (target=='svg') {
-    svglite(file='data/controlmirgenonline-master/doc/fig/Fig1D_BlockedLearningCtrlGen.svg', width=14, height=8.5, pointsize=18, system_fonts=list(sans="Arial"))
+    svglite(file='doc/fig/controlmirgenonline-master/Fig1D_BlockedLearningCtrlGen.svg', width=14, height=8.5, pointsize=18, system_fonts=list(sans="Arial"))
   }
   
   
@@ -507,7 +507,7 @@ plotBlockedLearningPercentages<- function(groups = c('far', 'mid', 'near'), quad
   
   
   if (target=='svg') {
-    svglite(file='data/controlmirgenonline-master/doc/fig/Fig1C_LearningCtrlGenPercentages.svg', width=14, height=8.5, pointsize=14, system_fonts=list(sans="Arial"))
+    svglite(file='doc/fig/controlmirgenonline-master/Fig1C_LearningCtrlGenPercentages.svg', width=14, height=8.5, pointsize=14, system_fonts=list(sans="Arial"))
   }
   
   
@@ -593,7 +593,7 @@ plotLearningCtrlGen<- function(groups = c('far', 'mid', 'near'), target='inline'
   
   
   if (target=='svg') {
-    svglite(file='data/controlmirgenonline-master/doc/fig/Fig1_LearningCtrlGen.svg', width=14, height=8.5, pointsize=18, system_fonts=list(sans="Arial"))
+    svglite(file='doc/fig/controlmirgenonline-master/Fig1_LearningCtrlGen.svg', width=14, height=8.5, pointsize=18, system_fonts=list(sans="Arial"))
   }
   
   
@@ -649,7 +649,7 @@ plotLearningCtrlGen<- function(groups = c('far', 'mid', 'near'), target='inline'
   
   for(group in groups){
     #read in files created by getGroupConfidenceInterval in filehandling.R
-    groupconfidence <- read.csv(file=sprintf('data/controlmirgenonline-master/data/processed/%s_MirCtrlGen_CI.csv', group))
+    groupconfidence <- read.csv(file=sprintf('data/controlmirgenonline-master/raw/processed/%s_MirCtrlGen_CI.csv', group))
     
     #split up data set for plotting purposes
     groupconfidenceQ1 <- groupconfidence[1:21,]
@@ -765,7 +765,7 @@ plotLearningCtrlGenCircular <- function(groups = c('far', 'mid', 'near'), target
   
   
   if (target=='svg') {
-    svglite(file='data/controlmirgenonline-master/doc/fig/Fig1_LearningCtrlGenCircular.svg', width=14, height=8, pointsize=14, system_fonts=list(sans="Arial"))
+    svglite(file='doc/fig/controlmirgenonline-master/Fig1_LearningCtrlGenCircular.svg', width=14, height=8, pointsize=14, system_fonts=list(sans="Arial"))
   }
   
   
@@ -814,7 +814,7 @@ plotLearningCtrlGenCircular <- function(groups = c('far', 'mid', 'near'), target
   
   for(group in groups){
     #read in files created by getGroupConfidenceInterval in filehandling.R
-    groupconfidence <- read.csv(file=sprintf('data/controlmirgenonline-master/data/processed/%s_MirCtrlGen_Circular_CI.csv', group))
+    groupconfidence <- read.csv(file=sprintf('data/controlmirgenonline-master/raw/processed/%s_MirCtrlGen_Circular_CI.csv', group))
     
     #split up data set for plotting purposes
     groupconfidenceQ1 <- groupconfidence[1:21,]
@@ -931,9 +931,9 @@ plotCtrlGenCircFreq <- function(groups = c('far', 'mid', 'near')){
   
   for(group in groups){
     
-    dat <- read.csv(file=sprintf('data/controlmirgenonline-master/data/processed/%s_MirCtrlGen.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+    dat <- read.csv(file=sprintf('data/controlmirgenonline-master/raw/processed/%s_MirCtrlGen.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
     
-    pdf(sprintf("data/controlmirgenonline-master/doc/fig/Distribution_%s_MirCtrlGen.pdf", group))
+    pdf(sprintf("doc/fig/controlmirgenonline-master/Distribution_%s_MirCtrlGen.pdf", group))
     
     #Quad 1
     triallist <- c(1:21)
@@ -1263,12 +1263,12 @@ plotCtrlGenCircFreq <- function(groups = c('far', 'mid', 'near')){
 
 getGroupCtrlGenMT <- function(groups = c('far', 'mid', 'near')){
   for(group in groups){
-    datafilenames <- list.files('data/controlmirgenonline-master/data', pattern = '*.csv')
+    datafilenames <- list.files('data/controlmirgenonline-master/raw', pattern = '*.csv')
     
     
     dataoutput<- data.frame() #create place holder
     for(datafilenum in c(1:length(datafilenames))){
-      datafilename <- sprintf('data/controlmirgenonline-master/data/%s', datafilenames[datafilenum]) #change this, depending on location in directory
+      datafilename <- sprintf('data/controlmirgenonline-master/raw/%s', datafilenames[datafilenum]) #change this, depending on location in directory
       
       cat(sprintf('file %d / %d     (%s)\n',datafilenum,length(datafilenames),datafilename))
       alldat <- handleOneMTCtrlFile(filename = datafilename)
@@ -1329,14 +1329,14 @@ getGroupCtrlGenMT <- function(groups = c('far', 'mid', 'near')){
     # cat(sprintf('%s target : %d deleted out of %d total trials for %f percent\n',group, del, tot, perc))
     
     #return(dataoutput)
-    write.csv(dataoutput, file=sprintf('data/controlmirgenonline-master/data/processed/%s_MovementTime.csv', group), row.names = F)
+    write.csv(dataoutput, file=sprintf('data/controlmirgenonline-master/raw/processed/%s_MovementTime.csv', group), row.names = F)
   }
 }
 
 getGroupCtrlGenMTCI <- function(groups = c('far','mid', 'near'), type = 't'){
   for(group in groups){
     
-    data <- read.csv(file=sprintf('data/controlmirgenonline-master/data/processed/%s_MovementTime.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+    data <- read.csv(file=sprintf('data/controlmirgenonline-master/raw/processed/%s_MovementTime.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
     
     trialno <- data$trial
     data1 <- as.matrix(data[,2:dim(data)[2]])
@@ -1363,7 +1363,7 @@ getGroupCtrlGenMTCI <- function(groups = c('far','mid', 'near'), type = 't'){
       } else {
         confidence <- rbind(confidence, citrial)
       }
-      write.csv(confidence, file=sprintf('data/controlmirgenonline-master/data/processed/%s_MovementTime_CI.csv', group), row.names = F) 
+      write.csv(confidence, file=sprintf('data/controlmirgenonline-master/raw/processed/%s_MovementTime_CI.csv', group), row.names = F) 
     }
   }
 }
@@ -1372,7 +1372,7 @@ plotCtrlGenMT <- function(groups = c('far', 'mid', 'near'), target='inline') {
   
   #but we can save plot as svg file
   if (target=='svg'){
-    svglite(file='data/controlmirgenonline-master/doc/fig/Fig2_MovementTime.svg', width=10, height=7, pointsize=14, system_fonts=list(sans="Arial"))
+    svglite(file='doc/fig/controlmirgenonline-master/Fig2_MovementTime.svg', width=10, height=7, pointsize=14, system_fonts=list(sans="Arial"))
   }
   
   plot(NA, NA, xlim = c(0,127), ylim = c(-0.2, 11), 
@@ -1394,7 +1394,7 @@ plotCtrlGenMT <- function(groups = c('far', 'mid', 'near'), target='inline') {
   #axis(3, at = c(10, 32, 53, 74, 95, 116), labels = c('Q1', 'Q4', 'Q2', 'Q1', 'Q1', 'Q1'), line = -2, tick = FALSE) #tick marks for x axis
   
   for(group in groups){
-    groupconfidence <- read.csv(file=sprintf('data/controlmirgenonline-master/data/processed/%s_MovementTime_CI.csv', group))
+    groupconfidence <- read.csv(file=sprintf('data/controlmirgenonline-master/raw/processed/%s_MovementTime_CI.csv', group))
     
     
     #split up data set for plotting purposes
@@ -1514,12 +1514,12 @@ plotCtrlGenMT <- function(groups = c('far', 'mid', 'near'), target='inline') {
 
 getGroupCtrlGenPL <- function(groups = c('far', 'mid', 'near')){
   for(group in groups){
-    datafilenames <- list.files('data/controlmirgenonline-master/data', pattern = '*.csv')
+    datafilenames <- list.files('data/controlmirgenonline-master/raw', pattern = '*.csv')
     
     
     dataoutput<- data.frame() #create place holder
     for(datafilenum in c(1:length(datafilenames))){
-      datafilename <- sprintf('data/controlmirgenonline-master/data/%s', datafilenames[datafilenum]) #change this, depending on location in directory
+      datafilename <- sprintf('data/controlmirgenonline-master/raw/%s', datafilenames[datafilenum]) #change this, depending on location in directory
       
       cat(sprintf('file %d / %d     (%s)\n',datafilenum,length(datafilenames),datafilename))
       alldat <- handleOnePLCtrlFile(filename = datafilename)
@@ -1565,7 +1565,7 @@ getGroupCtrlGenPL <- function(groups = c('far', 'mid', 'near')){
     # }
     
     #return(dataoutput)
-    write.csv(dataoutput, file=sprintf('data/controlmirgenonline-master/data/processed/%s_PathLength.csv', group), row.names = F)
+    write.csv(dataoutput, file=sprintf('data/controlmirgenonline-master/raw/processed/%s_PathLength.csv', group), row.names = F)
     #can keep track of deleted trials here, by using the saved csv file or counting NA values in dataoutput
   }
 }
@@ -1573,7 +1573,7 @@ getGroupCtrlGenPL <- function(groups = c('far', 'mid', 'near')){
 getGroupCtrlGenPLCI <- function(groups = c('far','mid', 'near'), type = 't'){
   for(group in groups){
     
-    data <- read.csv(file=sprintf('data/controlmirgenonline-master/data/processed/%s_PathLength.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+    data <- read.csv(file=sprintf('data/controlmirgenonline-master/raw/processed/%s_PathLength.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
     
     trialno <- data$trial
     data1 <- as.matrix(data[,2:dim(data)[2]])
@@ -1600,7 +1600,7 @@ getGroupCtrlGenPLCI <- function(groups = c('far','mid', 'near'), type = 't'){
       } else {
         confidence <- rbind(confidence, citrial)
       }
-      write.csv(confidence, file=sprintf('data/controlmirgenonline-master/data/processed/%s_PathLength_CI.csv', group), row.names = F) 
+      write.csv(confidence, file=sprintf('data/controlmirgenonline-master/raw/processed/%s_PathLength_CI.csv', group), row.names = F) 
     }
   }
 }
@@ -1609,7 +1609,7 @@ plotCtrlGenPL <- function(groups = c('far', 'mid', 'near'), target='inline') {
   
   #but we can save plot as svg file
   if (target=='svg'){
-    svglite(file='data/controlmirgenonline-master/doc/fig/Fig3_PathLength.svg', width=10, height=7, pointsize=14, system_fonts=list(sans="Arial"))
+    svglite(file='doc/fig/controlmirgenonline-master/Fig3_PathLength.svg', width=10, height=7, pointsize=14, system_fonts=list(sans="Arial"))
   }
   
   plot(NA, NA, xlim = c(0,127), ylim = c(-0.2,4), 
@@ -1631,7 +1631,7 @@ plotCtrlGenPL <- function(groups = c('far', 'mid', 'near'), target='inline') {
   #axis(3, at = c(10, 32, 53, 74, 95, 116), labels = c('Q1', 'Q4', 'Q2', 'Q1', 'Q1', 'Q1'), line = -2, tick = FALSE) #tick marks for x axis
   
   for(group in groups){
-    groupconfidence <- read.csv(file=sprintf('data/controlmirgenonline-master/data/processed/%s_PathLength_CI.csv', group))
+    groupconfidence <- read.csv(file=sprintf('data/controlmirgenonline-master/raw/processed/%s_PathLength_CI.csv', group))
     
     
     #split up data set for plotting purposes
@@ -1752,11 +1752,11 @@ plotIndividualCtrlGen <- function(groups = c('far', 'mid', 'near'), target='inli
   for (group in groups){
     #but we can save plot as svg file
     if (target=='svg'){
-      svglite(file=sprintf('data/controlmirgenonline-master/doc/fig/Fig1A_%s_IndividualAllTasks.svg', group), width=14, height=8, pointsize=14, system_fonts=list(sans="Arial"))
+      svglite(file=sprintf('doc/fig/controlmirgenonline-master/Fig1A_%s_IndividualAllTasks.svg', group), width=14, height=8, pointsize=14, system_fonts=list(sans="Arial"))
     }
     
     
-    data<- read.csv(file=sprintf('data/controlmirgenonline-master/data/processed/%s_MirCtrlGen.csv', group), check.names = FALSE)
+    data<- read.csv(file=sprintf('data/controlmirgenonline-master/raw/processed/%s_MirCtrlGen.csv', group), check.names = FALSE)
     
     dataQ1 <- data[1:21,]
     dataQ4 <- data[22:42,]
@@ -1797,7 +1797,7 @@ plotIndividualCtrlGen <- function(groups = c('far', 'mid', 'near'), target='inli
     }
     lines(x=c(1:21), y=mean_Q1, col='orange', lw=2)
     #plot line indicating mean of data points as circular values
-    dat_CI <- read.csv(file=sprintf('data/controlmirgenonline-master/data/processed/%s_MirCtrlGen_CI.csv', group))
+    dat_CI <- read.csv(file=sprintf('data/controlmirgenonline-master/raw/processed/%s_MirCtrlGen_CI.csv', group))
     circmean_Q1 <- dat_CI[1:21,2]
     lines(x=c(1:21), y=circmean_Q1, col='red', lw=2)
     
@@ -1816,7 +1816,7 @@ plotIndividualCtrlGen <- function(groups = c('far', 'mid', 'near'), target='inli
     }
     lines(x=c(22:42), y=mean_Q4, col='orange', lw=2)
     #plot line indicating mean of data points as circular values
-    dat_CI <- read.csv(file=sprintf('data/controlmirgenonline-master/data/processed/%s_MirCtrlGen_CI.csv', group))
+    dat_CI <- read.csv(file=sprintf('data/controlmirgenonline-master/raw/processed/%s_MirCtrlGen_CI.csv', group))
     circmean_Q4 <- dat_CI[22:42,2]
     lines(x=c(22:42), y=circmean_Q4, col='red', lw=2)
     
@@ -1835,7 +1835,7 @@ plotIndividualCtrlGen <- function(groups = c('far', 'mid', 'near'), target='inli
     }
     lines(x=c(43:63), y=mean_Q2, col='orange', lw=2)
     #plot line indicating mean of data points as circular values
-    dat_CI <- read.csv(file=sprintf('data/controlmirgenonline-master/data/processed/%s_MirCtrlGen_CI.csv', group))
+    dat_CI <- read.csv(file=sprintf('data/controlmirgenonline-master/raw/processed/%s_MirCtrlGen_CI.csv', group))
     circmean_Q2 <- dat_CI[43:63,2]
     lines(x=c(43:63), y=circmean_Q2, col='red', lw=2)
     
@@ -1855,7 +1855,7 @@ plotIndividualCtrlGen <- function(groups = c('far', 'mid', 'near'), target='inli
     }
     lines(x=c(64:84), y=mean_Q1A, col='orange', lw=2)
     #plot line indicating mean of data points as circular values
-    dat_CI <- read.csv(file=sprintf('data/controlmirgenonline-master/data/processed/%s_MirCtrlGen_CI.csv', group))
+    dat_CI <- read.csv(file=sprintf('data/controlmirgenonline-master/raw/processed/%s_MirCtrlGen_CI.csv', group))
     circmean_Q1A <- dat_CI[64:84,2]
     lines(x=c(64:84), y=circmean_Q1A, col='red', lw=2)
     
@@ -1875,7 +1875,7 @@ plotIndividualCtrlGen <- function(groups = c('far', 'mid', 'near'), target='inli
     }
     lines(x=c(85:105), y=mean_SQ1, col='orange', lw=2)
     #plot line indicating mean of data points as circular values
-    dat_CI <- read.csv(file=sprintf('data/controlmirgenonline-master/data/processed/%s_MirCtrlGen_CI.csv', group))
+    dat_CI <- read.csv(file=sprintf('data/controlmirgenonline-master/raw/processed/%s_MirCtrlGen_CI.csv', group))
     circmean_SQ1 <- dat_CI[85:105,2]
     lines(x=c(85:105), y=circmean_SQ1, col='red', lw=2)
     
@@ -1895,7 +1895,7 @@ plotIndividualCtrlGen <- function(groups = c('far', 'mid', 'near'), target='inli
     }
     lines(x=c(106:126), y=mean_WQ1, col='orange', lw=2)
     #plot line indicating mean of data points as circular values
-    dat_CI <- read.csv(file=sprintf('data/controlmirgenonline-master/data/processed/%s_MirCtrlGen_CI.csv', group))
+    dat_CI <- read.csv(file=sprintf('data/controlmirgenonline-master/raw/processed/%s_MirCtrlGen_CI.csv', group))
     circmean_WQ1 <- dat_CI[106:126,2]
     lines(x=c(106:126), y=circmean_WQ1, col='red', lw=2)
     
@@ -1915,10 +1915,10 @@ plotCtrlGenHeatmaps <- function(groups = c('far', 'mid', 'near'), target = 'inli
   for(group in groups){
     #but we can save plot as svg file
     if (target=='svg'){
-      svglite(file=sprintf('data/controlmirgenonline-master/doc/fig/Fig1B_%s_Heatmap.svg', group), width=14, height=8, pointsize=14, system_fonts=list(sans="Arial"))
+      svglite(file=sprintf('doc/fig/controlmirgenonline-master/Fig1B_%s_Heatmap.svg', group), width=14, height=8, pointsize=14, system_fonts=list(sans="Arial"))
     }
     
-    data<- read.csv(file=sprintf('data/controlmirgenonline-master/data/processed/%s_MirCtrlGen.csv', group), check.names = FALSE)
+    data<- read.csv(file=sprintf('data/controlmirgenonline-master/raw/processed/%s_MirCtrlGen.csv', group), check.names = FALSE)
     
     interval <- seq(-200, 200, 10) #group ang devs in bins of 10 degrees each, -200 and 200 due to some values above 180
     alldat <- c()
@@ -1987,7 +1987,7 @@ plotCtrlGenHeatmaps <- function(groups = c('far', 'mid', 'near'), target = 'inli
 #first, we should get corrected values for the far targets (add or subtract 360 for extreme values, as we did for plotting)
 getCorrectedFarAngDevs <- function(group = 'far'){
   
-  data <- read.csv(file=sprintf('data/controlmirgenonline-master/data/processed/%s_MirCtrlGen.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+  data <- read.csv(file=sprintf('data/controlmirgenonline-master/raw/processed/%s_MirCtrlGen.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
   
   trialno <- data$trial
   postrials <- c(1:21, 64:126)
@@ -2045,7 +2045,7 @@ getGroupPercentCompensation <- function(groups = c('far', 'mid', 'near')){
         data[trial, 2:length(data)] <- subdat
       }
     } else {
-      data <- read.csv(file=sprintf('data/controlmirgenonline-master/data/processed/%s_MirCtrlGen.csv', group), check.names = FALSE)
+      data <- read.csv(file=sprintf('data/controlmirgenonline-master/raw/processed/%s_MirCtrlGen.csv', group), check.names = FALSE)
       trialno <- data$trial
       postrials <- c(1:21, 64:126)
       
@@ -2073,7 +2073,7 @@ getGroupPercentCompensation <- function(groups = c('far', 'mid', 'near')){
         data[trial, 2:length(data)] <- subdat
       }
     }
-    write.csv(data, file=sprintf('data/controlmirgenonline-master/data/statistics/%s_PercentCompensation.csv', group), row.names = F) 
+    write.csv(data, file=sprintf('data/controlmirgenonline-master/raw/processed/%s_PercentCompensation.csv', group), row.names = F) 
     
   }
   
@@ -2093,7 +2093,7 @@ getBlockedLearningAOV <- function(groups = c('far', 'mid', 'near'), blockdefs, q
   
   LCaov <- data.frame()
   for(group in groups){
-    curves <- read.csv(sprintf('data/controlmirgenonline-master/data/statistics/%s_PercentCompensation.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
+    curves <- read.csv(sprintf('data/controlmirgenonline-master/raw/processed/%s_PercentCompensation.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
     curves <- curves[,-1] #remove trial rows
     participants <- colnames(curves)
     N <- length(participants)
@@ -2163,6 +2163,41 @@ learningANOVA <- function(quadrants = c('1', '4', '2', '1A', '1L')) {
   }
 }
 
+learningBayesANOVA <- function(quadrants = c('1', '4', '2', '1A', '1L')) {
+  for(quadrant in quadrants){
+    if(quadrant == '1'){
+      blockdefs <- list('first'=c(1,3),'second'=c(4,3),'last'=c(19,3))
+    } else if(quadrant == '4'){
+      blockdefs <- list('first'=c(22,3),'second'=c(25,3),'last'=c(40,3))
+    } else if(quadrant == '2'){
+      blockdefs <- list('first'=c(43,3),'second'=c(46,3),'last'=c(61,3))
+    } else if(quadrant == '1A'){
+      blockdefs <- list('first'=c(64,3),'second'=c(67,3),'last'=c(82,3))
+    } else if(quadrant == '1L'){
+      blockdefs <- list('first'=c(85,3),'second'=c(88,3),'last'=c(103,3))
+    }
+    
+    LC4aov <- getBlockedLearningAOV(blockdefs=blockdefs, quadrant=quadrant)                      
+    
+    #looking into interaction below:
+    #interaction.plot(LC4aov$target, LC4aov$block, LC4aov$percentcomp)
+    
+    #learning curve ANOVA's
+    # for ez, case ID should be a factor:
+    LC4aov$participant <- as.factor(LC4aov$participant)
+    cat(sprintf('Quadrant %s:\n', quadrant))
+    bfLC<- anovaBF(percentcomp ~ target*block + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+    #compare interaction contribution, over the contribution of both main effects
+    #bfinteraction <- bfLC[4]/bfLC[3]
+    
+    #bfinclude to compare model with interactions against all other models
+    bfinteraction <- bayesfactor_inclusion(bfLC)
+    
+    print(bfLC)
+    print(bfinteraction)
+  }
+}
+
 #follow up on quadrant 4 (main effect of target)
 quadrant4ComparisonMeans <- function(quadrant='4'){
   blockdefs <- list('first'=c(22,3),'second'=c(25,3),'last'=c(40,3))
@@ -2215,13 +2250,36 @@ quadrant4ComparisonsEffSize <- function(method = 'bonferroni'){
   print(effectsize)
 }
 
+quadrant4ComparisonsBayesfollowup <- function(quadrant='4') {
+  
+  blockdefs <- list('first'=c(22,3),'second'=c(25,3),'last'=c(40,3))
+  LC4aov <- getBlockedLearningAOV(blockdefs=blockdefs, quadrant=quadrant) 
+  
+  LC4aov <- aggregate(percentcomp ~ target* participant, data=LC4aov, FUN=mean)
+  
+  
+  fartarget <- LC4aov[which(LC4aov$target == 'far'),]
+  midtarget <- LC4aov[which(LC4aov$target == 'mid'),]
+  neartarget <- LC4aov[which(LC4aov$target == 'near'),]
+  
+  #far vs mid
+  cat('Bayesian t-test far vs mid target:\n')
+  print(ttestBF(fartarget$percentcomp, midtarget$percentcomp))
+  #far vs near
+  cat('Bayesian t-test far vs near target:\n')
+  print(ttestBF(fartarget$percentcomp, neartarget$percentcomp))
+  #mid vs near
+  cat('Bayesian t-test mid vs near target:\n')
+  print(ttestBF(midtarget$percentcomp, neartarget$percentcomp))
+}
+
 #work with angular reach deviations for washout
 # blockdefs <- list('first'=c(106,3),'second'=c(109,3),'last'=c(124,3))
 getWashoutBlockedLearningAOV <- function(groups = c('far', 'mid', 'near'), blockdefs, quadrant) {
   
   LCaov <- data.frame()
   for(group in groups){
-    curves <- read.csv(sprintf('data/controlmirgenonline-master/data/processed/%s_MirCtrlGen.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
+    curves <- read.csv(sprintf('data/controlmirgenonline-master/raw/processed/%s_MirCtrlGen.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
     curves <- curves[,-1] #remove trial rows
     participants <- colnames(curves)
     N <- length(participants)
@@ -2283,6 +2341,29 @@ washoutLearningANOVA <- function(quadrant='1W') {
   
 }
 
+washoutLearningBayesANOVA <- function(quadrant='1W') {
+  
+  blockdefs <- list('first'=c(106,3),'second'=c(109,3),'last'=c(124,3))
+  
+  
+  LC4aov <- getWashoutBlockedLearningAOV(blockdefs=blockdefs, quadrant=quadrant)                      
+  
+  #learning curve ANOVA's
+  # for ez, case ID should be a factor:
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  cat(sprintf('Quadrant %s:\n', quadrant))
+  bfLC<- anovaBF(angdev ~ target*block + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+  #compare interaction contribution, over the contribution of both main effects
+  #bfinteraction <- bfLC[4]/bfLC[3]
+  
+  #bfinclude to compare model with interactions against all other models
+  bfinteraction <- bayesfactor_inclusion(bfLC)
+  
+  print(bfLC)
+  print(bfinteraction)
+  
+}
+
 #follow up on washout (main effect of block)
 washoutComparisonMeans <- function(quadrant='1W'){
   blockdefs <- list('first'=c(106,3),'second'=c(109,3),'last'=c(124,3))
@@ -2333,6 +2414,29 @@ washoutComparisonsEffSize <- function(method = 'bonferroni'){
   colnames(effectsize) <- c('contrast', 'etasquared')
   #print(comparisons)
   print(effectsize)
+}
+
+washoutComparisonsBayesfollowup <- function(quadrant='4') {
+  
+  blockdefs <- list('first'=c(106,3),'second'=c(109,3),'last'=c(124,3))
+  LC4aov <- getWashoutBlockedLearningAOV(blockdefs=blockdefs, quadrant=quadrant)
+  
+  LC4aov <- aggregate(angdev ~ block* participant, data=LC4aov, FUN=mean)
+  
+  
+  b1 <- LC4aov[which(LC4aov$block == 'first'),]
+  b2 <- LC4aov[which(LC4aov$block == 'second'),]
+  b3 <- LC4aov[which(LC4aov$block == 'last'),]
+  
+  #far vs mid
+  cat('Bayesian t-test block 1 vs block 2:\n')
+  print(ttestBF(b1$angdev, b2$angdev))
+  #far vs near
+  cat('Bayesian t-test block 1 vs last block:\n')
+  print(ttestBF(b1$angdev, b3$angdev))
+  #mid vs near
+  cat('Bayesian t-test block 2 vs last block:\n')
+  print(ttestBF(b2$angdev, b3$angdev))
 }
 
 #follow up on washout (main effect of target)
@@ -2387,6 +2491,28 @@ washoutTargetEffectComparisonsEffSize <- function(method = 'bonferroni'){
   print(effectsize)
 }
 
+washoutTargetEffectComparisonsBayesfollowup <- function(quadrant='4') {
+  blockdefs <- list('first'=c(106,3),'second'=c(109,3),'last'=c(124,3))
+  LC4aov <- getWashoutBlockedLearningAOV(blockdefs=blockdefs, quadrant=quadrant)
+  
+  LC4aov <- aggregate(angdev ~ target* participant, data=LC4aov, FUN=mean)
+  
+  
+  fartarget <- LC4aov[which(LC4aov$target == 'far'),]
+  midtarget <- LC4aov[which(LC4aov$target == 'mid'),]
+  neartarget <- LC4aov[which(LC4aov$target == 'near'),]
+  
+  #far vs mid
+  cat('Bayesian t-test far vs mid target:\n')
+  print(ttestBF(fartarget$angdev, midtarget$angdev))
+  #far vs near
+  cat('Bayesian t-test far vs near target:\n')
+  print(ttestBF(fartarget$angdev, neartarget$angdev))
+  #mid vs near
+  cat('Bayesian t-test mid vs near target:\n')
+  print(ttestBF(midtarget$angdev, neartarget$angdev))
+}
+
 #Next, we want to compare 2 quadrants with each other (3X3X2)
 #add an identifier of which quadrant it is, regardless of block
 getBlockedLearningAOV2Quads <- function(quadrantA, quadrantB){
@@ -2418,6 +2544,7 @@ getBlockedLearningAOV2Quads <- function(quadrantA, quadrantB){
   return(LC4aov)
 }
 
+#compare: Q1 vs Q4; Q1 vs Q2; Q1L vs Q1; Q1L vs Q1W
 learningANOVA2Quads <- function(quadrantA, quadrantB) {
   
   LC4aov <- getBlockedLearningAOV2Quads(quadrantA=quadrantA, quadrantB=quadrantB)                      
@@ -2432,6 +2559,30 @@ learningANOVA2Quads <- function(quadrantA, quadrantB) {
   firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=percentcomp, within= c(target, block, quadrant), type=3, return_aov = TRUE) #df is k-2 or 3 levels minus 2; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
   cat(sprintf('Quadrants %s and %s:\n', quadrantA, quadrantB))
   print(firstAOV[1:3]) #so that it doesn't print the aov object as well
+  
+}
+
+learningBayesANOVA2Quads <- function(quadrantA, quadrantB) {
+  
+  LC4aov <- getBlockedLearningAOV2Quads(quadrantA=quadrantA, quadrantB=quadrantB)                      
+  
+  #looking into interaction below:
+  #interaction.plot(LC4aov$target, LC4aov$quadrant, LC4aov$percentcomp)
+  #interaction.plot(LC4aov$block, LC4aov$quadrant, LC4aov$percentcomp)
+  
+  #learning curve ANOVA's
+  # for ez, case ID should be a factor:
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  cat(sprintf('Quadrants %s and %s:\n', quadrantA, quadrantB))
+  bfLC<- anovaBF(percentcomp ~ target*block*quadrant + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+  #compare interaction contribution, over the contribution of both main effects
+  #bfinteraction <- bfLC[4]/bfLC[3]
+  
+  #bfinclude to compare model with interactions against all other models
+  bfinteraction <- bayesfactor_inclusion(bfLC)
+  
+  print(bfLC)
+  print(bfinteraction)
   
 }
 
@@ -2483,6 +2634,27 @@ Q1and4ComparisonsEffSize <- function(method = 'bonferroni'){
   colnames(effectsize) <- c('contrast', 'etasquared')
   #print(comparisons)
   print(effectsize)
+}
+
+Q1and4ComparisonsBayesfollowup <- function(quadrantA='1', quadrantB='4') {
+  LC4aov <- getBlockedLearningAOV2Quads(quadrantA=quadrantA, quadrantB=quadrantB)  
+  
+  LC4aov <- aggregate(percentcomp ~ target* participant, data=LC4aov, FUN=mean) #this will be mean for each target, regardless of block and quadrant
+  
+  
+  fartarget <- LC4aov[which(LC4aov$target == 'far'),]
+  midtarget <- LC4aov[which(LC4aov$target == 'mid'),]
+  neartarget <- LC4aov[which(LC4aov$target == 'near'),]
+  
+  #far vs mid
+  cat('Bayesian t-test far vs mid target:\n')
+  print(ttestBF(fartarget$percentcomp, midtarget$percentcomp))
+  #far vs near
+  cat('Bayesian t-test far vs near target:\n')
+  print(ttestBF(fartarget$percentcomp, neartarget$percentcomp))
+  #mid vs near
+  cat('Bayesian t-test mid vs near target:\n')
+  print(ttestBF(midtarget$percentcomp, neartarget$percentcomp))
 }
 
 #follow up on quadrant 1L and 1W (block by quadrant interaction)
@@ -2538,6 +2710,35 @@ Q1Land1WComparisonsEffSize <- function(method = 'bonferroni'){
   print(effectsize)
 }
 
+Q1Land1WComparisonsBayesfollowup <- function(quadrantA='1L', quadrantB='1W') {
+  LC4aov <- getBlockedLearningAOV2Quads(quadrantA=quadrantA, quadrantB=quadrantB)  
+  
+  LC4aov <- aggregate(percentcomp ~ block* quadrant* participant, data=LC4aov, FUN=mean) #regardless of target, the mean for every block within each quadrant
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  
+  
+  untrainedb1 <- LC4aov[which(LC4aov$block == 'first' & LC4aov$quadrant == '1L'),]
+  untrainedb2 <- LC4aov[which(LC4aov$block == 'second' & LC4aov$quadrant == '1L'),]
+  untrainedb3 <- LC4aov[which(LC4aov$block == 'last' & LC4aov$quadrant == '1L'),]
+  washoutb1 <- LC4aov[which(LC4aov$block == 'first' & LC4aov$quadrant == '1W'),]
+  washoutb2 <- LC4aov[which(LC4aov$block == 'second' & LC4aov$quadrant == '1W'),]
+  washoutb3 <- LC4aov[which(LC4aov$block == 'last' & LC4aov$quadrant == '1W'),]
+  
+  
+  #Block 1: L vs W
+  cat('Bayesian t-test Untrained block 1 vs Washout block 1:\n')
+  print(ttestBF(untrainedb1$percentcomp, washoutb1$percentcomp))
+  #Block 2: L vs W
+  cat('Bayesian t-test Untrained block 2 vs Washout block 2:\n')
+  print(ttestBF(untrainedb2$percentcomp, washoutb2$percentcomp))
+  #Block last: L vs W
+  cat('Bayesian t-test Untrained last block vs Washout last block:\n')
+  print(ttestBF(untrainedb3$percentcomp, washoutb3$percentcomp))
+  #last block L vs block 1 W
+  cat('Bayesian t-test Untrained last block vs Washout block 1:\n')
+  print(ttestBF(untrainedb3$percentcomp, washoutb1$percentcomp))
+}
+
 #comparing washout of untrained hand with baseline of untrained hand
 RAEUntrainedHandANOVA <- function() {
   
@@ -2563,6 +2764,40 @@ RAEUntrainedHandANOVA <- function() {
   firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=angdev, within= c(block, target, session), type=3, return_aov = TRUE) #df is k-2 or 3 levels minus 2; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
   cat('Comparing angular reach deviations during washout trials with aligned trials across targets and blocks, trained hand:\n')
   print(firstAOV[1:3]) #so that it doesn't print the aov object as well
+  
+}
+
+RAEUntrainedHandBayesANOVA <- function() {
+  
+  blockdefs <- list('first'=c(46, 3),'second'=c(49,3),'last'=c(64,3))
+  LC_aligned <- getAlignedBlockedLearningAOV(blockdefs=blockdefs, hand='untrained')
+  colnames(LC_aligned) <- c('target', 'participant','block','angdev','session')
+  
+  blockdefs <- list('first'=c(106,3),'second'=c(109,3),'last'=c(124,3))
+  LC_washout <- getWashoutBlockedLearningAOV(blockdefs=blockdefs, quadrant='1W')
+  colnames(LC_washout) <- c('target', 'participant','block','angdev','session')
+  
+  #but we only want to analyze participants with data in both
+  LC_aligned <- LC_aligned[which(LC_aligned$participant %in% LC_washout$participant),]
+  LC4aov <- rbind(LC_aligned, LC_washout)
+  LC4aov$session <- factor(LC4aov$session, levels = c('untrained','1W'))
+  
+  #looking into interaction below:
+  #interaction.plot(LC4aov$target, LC4aov$block, LC4aov$angdev)
+  
+  #learning curve ANOVA's
+  # for ez, case ID should be a factor:
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  cat('Comparing angular reach deviations during washout trials with aligned trials across targets and blocks, trained hand:\n')
+  bfLC<- anovaBF(angdev ~ target*block*session + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+  #compare interaction contribution, over the contribution of both main effects
+  #bfinteraction <- bfLC[4]/bfLC[3]
+  
+  #bfinclude to compare model with interactions against all other models
+  bfinteraction <- bayesfactor_inclusion(bfLC)
+  
+  print(bfLC)
+  print(bfinteraction)
   
 }
 
@@ -2645,6 +2880,48 @@ untrainedHandSessionComparisonsEffSize <- function(method = 'bonferroni'){
   print(effectsize)
 }
 
+untrainedHandSessionComparisonsBayesfollowup <- function() {
+  blockdefs <- list('first'=c(46, 3),'second'=c(49,3),'last'=c(64,3))
+  LC_aligned <- getAlignedBlockedLearningAOV(blockdefs=blockdefs, hand='untrained')
+  colnames(LC_aligned) <- c('target', 'participant','block','angdev','session')
+  
+  blockdefs <- list('first'=c(106,3),'second'=c(109,3),'last'=c(124,3))
+  LC_washout <- getWashoutBlockedLearningAOV(blockdefs=blockdefs, quadrant='1W')
+  colnames(LC_washout) <- c('target', 'participant','block','angdev','session')
+  
+  #but we only want to analyze participants with data in both
+  LC_aligned <- LC_aligned[which(LC_aligned$participant %in% LC_washout$participant),]
+  LC4aov <- rbind(LC_aligned, LC_washout)
+  LC4aov$session <- factor(LC4aov$session, levels = c('untrained','1W'))
+  
+  LC4aov$participant <- as.factor(LC4aov$participant) 
+  
+  LC4aov <- aggregate(angdev ~ block* session* participant, data=LC4aov, FUN=mean) #regardless of target, the mean for every block within each session
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  
+  
+  baselineb1 <- LC4aov[which(LC4aov$block == 'first' & LC4aov$session == 'untrained'),]
+  baselineb2 <- LC4aov[which(LC4aov$block == 'second' & LC4aov$session == 'untrained'),]
+  baselineb3 <- LC4aov[which(LC4aov$block == 'last' & LC4aov$session == 'untrained'),]
+  washoutb1 <- LC4aov[which(LC4aov$block == 'first' & LC4aov$session == '1W'),]
+  washoutb2 <- LC4aov[which(LC4aov$block == 'second' & LC4aov$session == '1W'),]
+  washoutb3 <- LC4aov[which(LC4aov$block == 'last' & LC4aov$session == '1W'),]
+  
+  
+  #Block 1: L vs W
+  cat('Bayesian t-test Untrained block 1 vs Washout block 1:\n')
+  print(ttestBF(baselineb1$angdev, washoutb1$angdev))
+  #Block 2: L vs W
+  cat('Bayesian t-test Untrained block 2 vs Washout block 2:\n')
+  print(ttestBF(baselineb2$angdev, washoutb2$angdev))
+  #Block last: L vs W
+  cat('Bayesian t-test Untrained last block vs Washout last block:\n')
+  print(ttestBF(baselineb3$angdev, washoutb3$angdev))
+  #last block L vs block 1 W
+  cat('Bayesian t-test Untrained last block vs Washout block 1:\n')
+  print(ttestBF(baselineb3$angdev, washoutb1$angdev))
+}
+
 #no significant effects, but probably due to high first block in washout
 
 #test for retention (difference between last block in part 1 and first block in part 2?)
@@ -2676,6 +2953,44 @@ retentionANOVA <- function() {
   firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=percentcomp, within= c(target, session), type=3, return_aov = TRUE) #df is k-2 or 3 levels minus 2; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
   cat('Comparing angular reach deviations between part 1 and part 2 of learning, trained hand:\n')
   print(firstAOV[1:3]) #so that it doesn't print the aov object as well
+  
+}
+
+retentionBayesANOVA <- function() {
+  
+  blockdefs <- list('first'=c(1,3), 'second'=c(4,3), 'last'=c(76,15))
+  LC_part1 <- getMirrorBlockedLearningAOV(blockdefs=blockdefs)
+  LC_part1$session <- as.factor('part1')
+  #get last block
+  LC_part1 <- LC_part1[which(LC_part1$block == 'last'),]
+  
+  blockdefs <- list('first'=c(1,3), 'second'=c(4,3), 'last'=c(19,3))
+  LC_part2 <- getBlockedLearningAOV(blockdefs=blockdefs, quadrant='1')
+  colnames(LC_part2) <- c('target', 'participant','block','percentcomp','session')
+  #get first block
+  LC_part2 <- LC_part2[which(LC_part2$block == 'first'),]
+  #but we only want to analyze participants with data in both
+  LC_part1 <- LC_part1[which(LC_part1$participant %in% LC_part2$participant),]
+  LC4aov <- rbind(LC_part1, LC_part2)
+  
+  #we can just compare sessions, since blocks are now reduced to one in each
+  LC4aov <- LC4aov[,-3]
+  #looking into interaction below:
+  #interaction.plot(LC4aov$target, LC4aov$block, LC4aov$percentcomp)
+  
+  #learning curve ANOVA's
+  # for ez, case ID should be a factor:
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  cat('Comparing angular reach deviations between part 1 and part 2 of learning, trained hand:\n')
+  bfLC<- anovaBF(percentcomp ~ target*session + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+  #compare interaction contribution, over the contribution of both main effects
+  #bfinteraction <- bfLC[4]/bfLC[3]
+  
+  #bfinclude to compare model with interactions against all other models
+  bfinteraction <- bayesfactor_inclusion(bfLC)
+  
+  print(bfLC)
+  print(bfinteraction)
   
 }
 
@@ -2719,7 +3034,7 @@ getBlockedMTAOV <- function(groups = c('far', 'mid', 'near'), blockdefs, quadran
   
   LCaov <- data.frame()
   for(group in groups){
-    curves <- read.csv(sprintf('data/controlmirgenonline-master/data/processed/%s_MovementTime.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
+    curves <- read.csv(sprintf('data/controlmirgenonline-master/raw/processed/%s_MovementTime.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
     curves <- curves[,-1] #remove trial rows
     participants <- colnames(curves)
     N <- length(participants)
@@ -2790,6 +3105,39 @@ movementtimeANOVA <- function(quadrants = c('1', '4', '2', '1A', '1L', '1W')) {
   }
 }
 
+movementtimeBayesANOVA <- function(quadrants = c('1', '4', '2', '1A', '1L', '1W')) {
+  for(quadrant in quadrants){
+    if(quadrant == '1'){
+      blockdefs <- list('first'=c(1,3),'second'=c(4,3),'last'=c(19,3))
+    } else if(quadrant == '4'){
+      blockdefs <- list('first'=c(22,3),'second'=c(25,3),'last'=c(40,3))
+    } else if(quadrant == '2'){
+      blockdefs <- list('first'=c(43,3),'second'=c(46,3),'last'=c(61,3))
+    } else if(quadrant == '1A'){
+      blockdefs <- list('first'=c(64,3),'second'=c(67,3),'last'=c(82,3))
+    } else if(quadrant == '1L'){
+      blockdefs <- list('first'=c(85,3),'second'=c(88,3),'last'=c(103,3))
+    } else if(quadrant == '1W'){
+      blockdefs <- list('first'=c(106,3),'second'=c(109,3),'last'=c(124,3))
+    }
+    
+    LC4aov <- getBlockedMTAOV(blockdefs=blockdefs, quadrant=quadrant)                      
+    #learning curve ANOVA's
+    # for ez, case ID should be a factor:
+    LC4aov$participant <- as.factor(LC4aov$participant)
+    cat(sprintf('Quadrant %s:\n', quadrant))
+    bfLC<- anovaBF(movementtime ~ target*block + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+    #compare interaction contribution, over the contribution of both main effects
+    #bfinteraction <- bfLC[4]/bfLC[3]
+    
+    #bfinclude to compare model with interactions against all other models
+    bfinteraction <- bayesfactor_inclusion(bfLC)
+    
+    print(bfLC)
+    print(bfinteraction)
+  }
+}
+
 # follow up Q1: significant main and interaction effects, look into interaction
 quadrant1MTComparisonMeans <- function(quadrant='1'){
   blockdefs <- list('first'=c(1,3),'second'=c(4,3),'last'=c(19,3))
@@ -2807,6 +3155,7 @@ quadrant1MTComparisonMeans <- function(quadrant='1'){
 #we know from the plot that movement time decreases across blocks, but interesting to see target differences within each block
 
 quadrant1MTComparisons <- function(quadrant='1', method='bonferroni'){
+  
   blockdefs <- list('first'=c(1,3),'second'=c(4,3),'last'=c(19,3))
   LC4aov <- getBlockedMTAOV(blockdefs=blockdefs, quadrant=quadrant)  
   
@@ -2853,6 +3202,58 @@ quadrant1MTComparisonsEffSize <- function(method = 'bonferroni'){
   colnames(effectsize) <- c('contrast', 'etasquared')
   #print(comparisons)
   print(effectsize)
+}
+
+quadrant1MTComparisonsBayesfollowup <- function(quadrant='1') {
+  
+  blockdefs <- list('first'=c(1,3),'second'=c(4,3),'last'=c(19,3))
+  LC4aov <- getBlockedMTAOV(blockdefs=blockdefs, quadrant=quadrant)  
+  
+  #LC4aov <- aggregate(percentcomp ~ target* participant, data=LC4aov, FUN=mean)
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  
+  
+  farb1 <- LC4aov[which(LC4aov$block == 'first' & LC4aov$target == 'far'),]
+  midb1 <- LC4aov[which(LC4aov$block == 'first' & LC4aov$target == 'mid'),]
+  nearb1 <- LC4aov[which(LC4aov$block == 'first' & LC4aov$target == 'near'),]
+  
+  farb2 <- LC4aov[which(LC4aov$block == 'second' & LC4aov$target == 'far'),]
+  midb2 <- LC4aov[which(LC4aov$block == 'second' & LC4aov$target == 'mid'),]
+  nearb2 <- LC4aov[which(LC4aov$block == 'second' & LC4aov$target == 'near'),]
+  
+  farb3 <- LC4aov[which(LC4aov$block == 'last' & LC4aov$target == 'far'),]
+  midb3 <- LC4aov[which(LC4aov$block == 'last' & LC4aov$target == 'mid'),]
+  nearb3 <- LC4aov[which(LC4aov$block == 'last' & LC4aov$target == 'near'),]
+  
+  #far vs mid
+  cat('Bayesian t-test block 1 far vs mid target:\n')
+  print(ttestBF(farb1$movementtime, midb1$movementtime))
+  #far vs near
+  cat('Bayesian t-test block 1 far vs near target:\n')
+  print(ttestBF(farb1$movementtime, nearb1$movementtime))
+  #mid vs near
+  cat('Bayesian t-test  block 1 mid vs near target:\n')
+  print(ttestBF(midb1$movementtime, nearb1$movementtime))
+  
+  #far vs mid
+  cat('Bayesian t-test block 2 far vs mid target:\n')
+  print(ttestBF(farb2$movementtime, midb2$movementtime))
+  #far vs near
+  cat('Bayesian t-test block 2 far vs near target:\n')
+  print(ttestBF(farb2$movementtime, nearb2$movementtime))
+  #mid vs near
+  cat('Bayesian t-test  block 2 mid vs near target:\n')
+  print(ttestBF(midb2$movementtime, nearb2$movementtime))
+  
+  #far vs mid
+  cat('Bayesian t-test last block far vs mid target:\n')
+  print(ttestBF(farb3$movementtime, midb3$movementtime))
+  #far vs near
+  cat('Bayesian t-test last block far vs near target:\n')
+  print(ttestBF(farb3$movementtime, nearb3$movementtime))
+  #mid vs near
+  cat('Bayesian t-test last block mid vs near target:\n')
+  print(ttestBF(midb3$movementtime, nearb3$movementtime))
 }
 
 # follow up Q4: significant main effects only
@@ -2908,6 +3309,29 @@ quadrant4MTComparisonsEffSizeTargetEffect <- function(method = 'bonferroni'){
   print(effectsize)
 }
 
+quadrant4MTComparisonsTargetEffectBayesfollowup <- function(quadrant='4') {
+  blockdefs <- list('first'=c(22,3),'second'=c(25,3),'last'=c(40,3))
+  LC4aov <- getBlockedMTAOV(blockdefs=blockdefs, quadrant=quadrant)  
+  
+  LC4aov <- aggregate(movementtime ~ target* participant, data=LC4aov, FUN=mean)
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  
+  
+  fartarget <- LC4aov[which(LC4aov$target == 'far'),]
+  midtarget <- LC4aov[which(LC4aov$target == 'mid'),]
+  neartarget <- LC4aov[which(LC4aov$target == 'near'),]
+  
+  #far vs mid
+  cat('Bayesian t-test far vs mid target:\n')
+  print(ttestBF(fartarget$movementtime, midtarget$movementtime))
+  #far vs near
+  cat('Bayesian t-test far vs near target:\n')
+  print(ttestBF(fartarget$movementtime, neartarget$movementtime))
+  #mid vs near
+  cat('Bayesian t-test mid vs near target:\n')
+  print(ttestBF(midtarget$movementtime, neartarget$movementtime))
+}
+
 #main effect of block
 quadrant4MTComparisonMeansBlockEffect <- function(quadrant='4'){
   blockdefs <- list('first'=c(22,3),'second'=c(25,3),'last'=c(40,3))
@@ -2958,6 +3382,29 @@ quadrant4MTComparisonsEffSizeBlockEffect <- function(method = 'bonferroni'){
   colnames(effectsize) <- c('contrast', 'etasquared')
   #print(comparisons)
   print(effectsize)
+}
+
+quadrant4MTComparisonsBlockEffectBayesfollowup <- function(quadrant='4') {
+  blockdefs <- list('first'=c(22,3),'second'=c(25,3),'last'=c(40,3))
+  LC4aov <- getBlockedMTAOV(blockdefs=blockdefs, quadrant=quadrant)  
+  
+  LC4aov <- aggregate(movementtime ~ block* participant, data=LC4aov, FUN=mean)
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  
+  
+  b1<- LC4aov[which(LC4aov$block == 'first'),]
+  b2 <- LC4aov[which(LC4aov$block == 'second'),]
+  b3 <- LC4aov[which(LC4aov$block == 'last'),]
+  
+  #far vs mid
+  cat('Bayesian t-test block 1 vs block 2:\n')
+  print(ttestBF(b1$movementtime, b2$movementtime))
+  #far vs near
+  cat('Bayesian t-test block 1 vs last block:\n')
+  print(ttestBF(b1$movementtime, b3$movementtime))
+  #mid vs near
+  cat('Bayesian t-test block 2 vs last block:\n')
+  print(ttestBF(b2$movementtime, b3$movementtime))
 }
 
 # follow up Q2: significant main effects only
@@ -3014,6 +3461,29 @@ quadrant2MTComparisonsEffSizeTargetEffect <- function(method = 'bonferroni'){
   print(effectsize)
 }
 
+quadrant2MTComparisonsTargetEffectBayesfollowup <- function(quadrant='2') {
+  blockdefs <- list('first'=c(43,3),'second'=c(46,3),'last'=c(61,3))
+  LC4aov <- getBlockedMTAOV(blockdefs=blockdefs, quadrant=quadrant)  
+  
+  LC4aov <- aggregate(movementtime ~ target* participant, data=LC4aov, FUN=mean)
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  
+  
+  fartarget <- LC4aov[which(LC4aov$target == 'far'),]
+  midtarget <- LC4aov[which(LC4aov$target == 'mid'),]
+  neartarget <- LC4aov[which(LC4aov$target == 'near'),]
+  
+  #far vs mid
+  cat('Bayesian t-test far vs mid target:\n')
+  print(ttestBF(fartarget$movementtime, midtarget$movementtime))
+  #far vs near
+  cat('Bayesian t-test far vs near target:\n')
+  print(ttestBF(fartarget$movementtime, neartarget$movementtime))
+  #mid vs near
+  cat('Bayesian t-test mid vs near target:\n')
+  print(ttestBF(midtarget$movementtime, neartarget$movementtime))
+}
+
 #main effect of block
 quadrant2MTComparisonMeansBlockEffect <- function(quadrant='2'){
   blockdefs <- list('first'=c(43,3),'second'=c(46,3),'last'=c(61,3))
@@ -3064,6 +3534,29 @@ quadrant2MTComparisonsEffSizeBlockEffect <- function(method = 'bonferroni'){
   colnames(effectsize) <- c('contrast', 'etasquared')
   #print(comparisons)
   print(effectsize)
+}
+
+quadrant2MTComparisonsBlockEffectBayesfollowup <- function(quadrant='2') {
+  blockdefs <- list('first'=c(43,3),'second'=c(46,3),'last'=c(61,3))
+  LC4aov <- getBlockedMTAOV(blockdefs=blockdefs, quadrant=quadrant)  
+  
+  LC4aov <- aggregate(movementtime ~ block* participant, data=LC4aov, FUN=mean)
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  
+  
+  b1<- LC4aov[which(LC4aov$block == 'first'),]
+  b2 <- LC4aov[which(LC4aov$block == 'second'),]
+  b3 <- LC4aov[which(LC4aov$block == 'last'),]
+  
+  #far vs mid
+  cat('Bayesian t-test block 1 vs block 2:\n')
+  print(ttestBF(b1$movementtime, b2$movementtime))
+  #far vs near
+  cat('Bayesian t-test block 1 vs last block:\n')
+  print(ttestBF(b1$movementtime, b3$movementtime))
+  #mid vs near
+  cat('Bayesian t-test block 2 vs last block:\n')
+  print(ttestBF(b2$movementtime, b3$movementtime))
 }
 
 # follow up Q1A: main effect of target
@@ -3120,6 +3613,29 @@ quadrant1AMTComparisonsEffSizeTargetEffect <- function(method = 'bonferroni'){
   print(effectsize)
 }
 
+quadrant1AMTComparisonsTargetEffectBayesfollowup <- function(quadrant='1A') {
+  blockdefs <- list('first'=c(64,3),'second'=c(67,3),'last'=c(82,3))
+  LC4aov <- getBlockedMTAOV(blockdefs=blockdefs, quadrant=quadrant)  
+  
+  LC4aov <- aggregate(movementtime ~ target* participant, data=LC4aov, FUN=mean)
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  
+  
+  fartarget <- LC4aov[which(LC4aov$target == 'far'),]
+  midtarget <- LC4aov[which(LC4aov$target == 'mid'),]
+  neartarget <- LC4aov[which(LC4aov$target == 'near'),]
+  
+  #far vs mid
+  cat('Bayesian t-test far vs mid target:\n')
+  print(ttestBF(fartarget$movementtime, midtarget$movementtime))
+  #far vs near
+  cat('Bayesian t-test far vs near target:\n')
+  print(ttestBF(fartarget$movementtime, neartarget$movementtime))
+  #mid vs near
+  cat('Bayesian t-test mid vs near target:\n')
+  print(ttestBF(midtarget$movementtime, neartarget$movementtime))
+}
+
 # follow up Q1L: significant main effects only (interaction not sig under GG)
 
 #main effect of target
@@ -3174,6 +3690,29 @@ quadrant1LMTComparisonsEffSizeTargetEffect <- function(method = 'bonferroni'){
   print(effectsize)
 }
 
+quadrant1LMTComparisonsTargetEffectBayesfollowup <- function(quadrant='1L') {
+  blockdefs <- list('first'=c(85,3),'second'=c(88,3),'last'=c(103,3))
+  LC4aov <- getBlockedMTAOV(blockdefs=blockdefs, quadrant=quadrant)  
+  
+  LC4aov <- aggregate(movementtime ~ target* participant, data=LC4aov, FUN=mean)
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  
+  
+  fartarget <- LC4aov[which(LC4aov$target == 'far'),]
+  midtarget <- LC4aov[which(LC4aov$target == 'mid'),]
+  neartarget <- LC4aov[which(LC4aov$target == 'near'),]
+  
+  #far vs mid
+  cat('Bayesian t-test far vs mid target:\n')
+  print(ttestBF(fartarget$movementtime, midtarget$movementtime))
+  #far vs near
+  cat('Bayesian t-test far vs near target:\n')
+  print(ttestBF(fartarget$movementtime, neartarget$movementtime))
+  #mid vs near
+  cat('Bayesian t-test mid vs near target:\n')
+  print(ttestBF(midtarget$movementtime, neartarget$movementtime))
+}
+
 #main effect of block
 quadrant1LMTComparisonMeansBlockEffect <- function(quadrant='1L'){
   blockdefs <- list('first'=c(85,3),'second'=c(88,3),'last'=c(103,3))
@@ -3224,6 +3763,29 @@ quadrant1LMTComparisonsEffSizeBlockEffect <- function(method = 'bonferroni'){
   colnames(effectsize) <- c('contrast', 'etasquared')
   #print(comparisons)
   print(effectsize)
+}
+
+quadrant1LMTComparisonsBlockEffectBayesfollowup <- function(quadrant='1L') {
+  blockdefs <- list('first'=c(85,3),'second'=c(88,3),'last'=c(103,3))
+  LC4aov <- getBlockedMTAOV(blockdefs=blockdefs, quadrant=quadrant)  
+  
+  LC4aov <- aggregate(movementtime ~ block* participant, data=LC4aov, FUN=mean)
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  
+  
+  b1<- LC4aov[which(LC4aov$block == 'first'),]
+  b2 <- LC4aov[which(LC4aov$block == 'second'),]
+  b3 <- LC4aov[which(LC4aov$block == 'last'),]
+  
+  #far vs mid
+  cat('Bayesian t-test block 1 vs block 2:\n')
+  print(ttestBF(b1$movementtime, b2$movementtime))
+  #far vs near
+  cat('Bayesian t-test block 1 vs last block:\n')
+  print(ttestBF(b1$movementtime, b3$movementtime))
+  #mid vs near
+  cat('Bayesian t-test block 2 vs last block:\n')
+  print(ttestBF(b2$movementtime, b3$movementtime))
 }
 
 # follow up Q1W: significant main and interaction effects, look into interaction
@@ -3291,6 +3853,58 @@ quadrant1WMTComparisonsEffSize <- function(method = 'bonferroni'){
   print(effectsize)
 }
 
+quadrant1WMTComparisonsBayesfollowup <- function(quadrant='1W') {
+  
+  blockdefs <- list('first'=c(106,3),'second'=c(109,3),'last'=c(124,3))
+  LC4aov <- getBlockedMTAOV(blockdefs=blockdefs, quadrant=quadrant)  
+  
+  #LC4aov <- aggregate(percentcomp ~ target* participant, data=LC4aov, FUN=mean)
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  
+  
+  farb1 <- LC4aov[which(LC4aov$block == 'first' & LC4aov$target == 'far'),]
+  midb1 <- LC4aov[which(LC4aov$block == 'first' & LC4aov$target == 'mid'),]
+  nearb1 <- LC4aov[which(LC4aov$block == 'first' & LC4aov$target == 'near'),]
+  
+  farb2 <- LC4aov[which(LC4aov$block == 'second' & LC4aov$target == 'far'),]
+  midb2 <- LC4aov[which(LC4aov$block == 'second' & LC4aov$target == 'mid'),]
+  nearb2 <- LC4aov[which(LC4aov$block == 'second' & LC4aov$target == 'near'),]
+  
+  farb3 <- LC4aov[which(LC4aov$block == 'last' & LC4aov$target == 'far'),]
+  midb3 <- LC4aov[which(LC4aov$block == 'last' & LC4aov$target == 'mid'),]
+  nearb3 <- LC4aov[which(LC4aov$block == 'last' & LC4aov$target == 'near'),]
+  
+  #far vs mid
+  cat('Bayesian t-test block 1 far vs mid target:\n')
+  print(ttestBF(farb1$movementtime, midb1$movementtime))
+  #far vs near
+  cat('Bayesian t-test block 1 far vs near target:\n')
+  print(ttestBF(farb1$movementtime, nearb1$movementtime))
+  #mid vs near
+  cat('Bayesian t-test  block 1 mid vs near target:\n')
+  print(ttestBF(midb1$movementtime, nearb1$movementtime))
+  
+  #far vs mid
+  cat('Bayesian t-test block 2 far vs mid target:\n')
+  print(ttestBF(farb2$movementtime, midb2$movementtime))
+  #far vs near
+  cat('Bayesian t-test block 2 far vs near target:\n')
+  print(ttestBF(farb2$movementtime, nearb2$movementtime))
+  #mid vs near
+  cat('Bayesian t-test  block 2 mid vs near target:\n')
+  print(ttestBF(midb2$movementtime, nearb2$movementtime))
+  
+  #far vs mid
+  cat('Bayesian t-test last block far vs mid target:\n')
+  print(ttestBF(farb3$movementtime, midb3$movementtime))
+  #far vs near
+  cat('Bayesian t-test last block far vs near target:\n')
+  print(ttestBF(farb3$movementtime, nearb3$movementtime))
+  #mid vs near
+  cat('Bayesian t-test last block mid vs near target:\n')
+  print(ttestBF(midb3$movementtime, nearb3$movementtime))
+}
+
 #Next, we want to compare 2 quadrants with each other (3X3X2)
 #add an identifier of which quadrant it is, regardless of block
 getBlockedMTAOV2Quads <- function(quadrantA, quadrantB){
@@ -3322,6 +3936,9 @@ getBlockedMTAOV2Quads <- function(quadrantA, quadrantB){
   return(LC4aov)
 }
 
+#compare: Q1 vs Q4; Q1 vs Q2; Q1L vs Q1; Q1L vs Q1W
+
+
 MTANOVA2Quads <- function(quadrantA, quadrantB) {
   
   LC4aov <- getBlockedMTAOV2Quads(quadrantA=quadrantA, quadrantB=quadrantB)                      
@@ -3336,6 +3953,26 @@ MTANOVA2Quads <- function(quadrantA, quadrantB) {
   firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=movementtime, within= c(target, block, quadrant), type=3, return_aov = TRUE) #df is k-2 or 3 levels minus 2; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
   cat(sprintf('Quadrants %s and %s:\n', quadrantA, quadrantB))
   print(firstAOV[1:3]) #so that it doesn't print the aov object as well
+  
+}
+
+MTBayesANOVA2Quads <- function(quadrantA, quadrantB) {
+  
+  LC4aov <- getBlockedMTAOV2Quads(quadrantA=quadrantA, quadrantB=quadrantB)                      
+
+  #learning curve ANOVA's
+  # for ez, case ID should be a factor:
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  cat(sprintf('Quadrants %s and %s:\n', quadrantA, quadrantB))
+  bfLC<- anovaBF(movementtime ~ target*block*quadrant + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+  #compare interaction contribution, over the contribution of both main effects
+  #bfinteraction <- bfLC[4]/bfLC[3]
+  
+  #bfinclude to compare model with interactions against all other models
+  bfinteraction <- bayesfactor_inclusion(bfLC)
+  
+  print(bfLC)
+  print(bfinteraction)
   
 }
 
@@ -3411,6 +4048,61 @@ Q1and4MTComparisonsEffSize <- function(method = 'bonferroni'){
   print(effectsize)
 }
 
+Q1and4MTComparisonsBayesfollowup <- function(quadrantA='1', quadrantB='4') {
+  
+  LC4aov <- getBlockedMTAOV2Quads(quadrantA=quadrantA, quadrantB=quadrantB)  
+  
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  
+  
+  farb1q1 <- LC4aov[which(LC4aov$block == 'first' & LC4aov$target == 'far' & LC4aov$quadrant == '1'),]
+  midb1q1 <- LC4aov[which(LC4aov$block == 'first' & LC4aov$target == 'mid' & LC4aov$quadrant == '1'),]
+  nearb1q1 <- LC4aov[which(LC4aov$block == 'first' & LC4aov$target == 'near' & LC4aov$quadrant == '1'),]
+  
+  farb2q1 <- LC4aov[which(LC4aov$block == 'second' & LC4aov$target == 'far' & LC4aov$quadrant == '1'),]
+  midb2q1 <- LC4aov[which(LC4aov$block == 'second' & LC4aov$target == 'mid' & LC4aov$quadrant == '1'),]
+  nearb2q1 <- LC4aov[which(LC4aov$block == 'second' & LC4aov$target == 'near' & LC4aov$quadrant == '1'),]
+  
+  farb3q1 <- LC4aov[which(LC4aov$block == 'last' & LC4aov$target == 'far' & LC4aov$quadrant == '1'),]
+  midb3q1 <- LC4aov[which(LC4aov$block == 'last' & LC4aov$target == 'mid' & LC4aov$quadrant == '1'),]
+  nearb3q1 <- LC4aov[which(LC4aov$block == 'last' & LC4aov$target == 'near' & LC4aov$quadrant == '1'),]
+  
+  farb1q4 <- LC4aov[which(LC4aov$block == 'first' & LC4aov$target == 'far' & LC4aov$quadrant == '4'),]
+  midb1q4 <- LC4aov[which(LC4aov$block == 'first' & LC4aov$target == 'mid' & LC4aov$quadrant == '4'),]
+  nearb1q4 <- LC4aov[which(LC4aov$block == 'first' & LC4aov$target == 'near' & LC4aov$quadrant == '4'),]
+  
+  farb2q4 <- LC4aov[which(LC4aov$block == 'second' & LC4aov$target == 'far' & LC4aov$quadrant == '4'),]
+  midb2q4 <- LC4aov[which(LC4aov$block == 'second' & LC4aov$target == 'mid' & LC4aov$quadrant == '4'),]
+  nearb2q4 <- LC4aov[which(LC4aov$block == 'second' & LC4aov$target == 'near' & LC4aov$quadrant == '4'),]
+  
+  farb3q4 <- LC4aov[which(LC4aov$block == 'last' & LC4aov$target == 'far' & LC4aov$quadrant == '4'),]
+  midb3q4 <- LC4aov[which(LC4aov$block == 'last' & LC4aov$target == 'mid' & LC4aov$quadrant == '4'),]
+  nearb3q4 <- LC4aov[which(LC4aov$block == 'last' & LC4aov$target == 'near' & LC4aov$quadrant == '4'),]
+  
+  #tests
+  cat('Bayesian t-test Quad 1 vs Quad 4, block 1, far target:\n')
+  print(ttestBF(farb1q1$movementtime, farb1q4$movementtime))
+  cat('Bayesian t-test Quad 1 vs Quad 4, block 2, far target:\n')
+  print(ttestBF(farb2q1$movementtime, farb2q4$movementtime))
+  cat('Bayesian t-test Quad 1 vs Quad 4, last block, far target:\n')
+  print(ttestBF(farb3q1$movementtime, farb3q4$movementtime))
+  
+  cat('Bayesian t-test Quad 1 vs Quad 4, block 1, mid target:\n')
+  print(ttestBF(midb1q1$movementtime, midb1q4$movementtime))
+  cat('Bayesian t-test Quad 1 vs Quad 4, block 2, mid target:\n')
+  print(ttestBF(midb2q1$movementtime, midb2q4$movementtime))
+  cat('Bayesian t-test Quad 1 vs Quad 4, last block, mid target:\n')
+  print(ttestBF(midb3q1$movementtime, midb3q4$movementtime))
+  
+  cat('Bayesian t-test Quad 1 vs Quad 4, block 1, near target:\n')
+  print(ttestBF(nearb1q1$movementtime, nearb1q4$movementtime))
+  cat('Bayesian t-test Quad 1 vs Quad 4, block 2, near target:\n')
+  print(ttestBF(nearb2q1$movementtime, nearb2q4$movementtime))
+  cat('Bayesian t-test Quad 1 vs Quad 4, last block, near target:\n')
+  print(ttestBF(nearb3q1$movementtime, nearb3q4$movementtime))
+  
+}
+
 #Follow up on Q1 and Q1A
 quadrant1and1AMTComparisonMeans <- function(quadrantA = '1', quadrantB = '1A'){
   LC4aov <- getBlockedMTAOV2Quads(quadrantA=quadrantA, quadrantB=quadrantB)  
@@ -3480,6 +4172,61 @@ Q1and1AMTComparisonsEffSize <- function(method = 'bonferroni'){
   print(effectsize)
 }
 
+Q1and1AMTComparisonsBayesfollowup <- function(quadrantA='1', quadrantB='1A') {
+  
+  LC4aov <- getBlockedMTAOV2Quads(quadrantA=quadrantA, quadrantB=quadrantB)  
+  
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  
+  
+  farb1q1 <- LC4aov[which(LC4aov$block == 'first' & LC4aov$target == 'far' & LC4aov$quadrant == '1'),]
+  midb1q1 <- LC4aov[which(LC4aov$block == 'first' & LC4aov$target == 'mid' & LC4aov$quadrant == '1'),]
+  nearb1q1 <- LC4aov[which(LC4aov$block == 'first' & LC4aov$target == 'near' & LC4aov$quadrant == '1'),]
+  
+  farb2q1 <- LC4aov[which(LC4aov$block == 'second' & LC4aov$target == 'far' & LC4aov$quadrant == '1'),]
+  midb2q1 <- LC4aov[which(LC4aov$block == 'second' & LC4aov$target == 'mid' & LC4aov$quadrant == '1'),]
+  nearb2q1 <- LC4aov[which(LC4aov$block == 'second' & LC4aov$target == 'near' & LC4aov$quadrant == '1'),]
+  
+  farb3q1 <- LC4aov[which(LC4aov$block == 'last' & LC4aov$target == 'far' & LC4aov$quadrant == '1'),]
+  midb3q1 <- LC4aov[which(LC4aov$block == 'last' & LC4aov$target == 'mid' & LC4aov$quadrant == '1'),]
+  nearb3q1 <- LC4aov[which(LC4aov$block == 'last' & LC4aov$target == 'near' & LC4aov$quadrant == '1'),]
+  
+  farb1q1A <- LC4aov[which(LC4aov$block == 'first' & LC4aov$target == 'far' & LC4aov$quadrant == '1A'),]
+  midb1q1A <- LC4aov[which(LC4aov$block == 'first' & LC4aov$target == 'mid' & LC4aov$quadrant == '1A'),]
+  nearb1q1A <- LC4aov[which(LC4aov$block == 'first' & LC4aov$target == 'near' & LC4aov$quadrant == '1A'),]
+  
+  farb2q1A <- LC4aov[which(LC4aov$block == 'second' & LC4aov$target == 'far' & LC4aov$quadrant == '1A'),]
+  midb2q1A <- LC4aov[which(LC4aov$block == 'second' & LC4aov$target == 'mid' & LC4aov$quadrant == '1A'),]
+  nearb2q1A <- LC4aov[which(LC4aov$block == 'second' & LC4aov$target == 'near' & LC4aov$quadrant == '1A'),]
+  
+  farb3q1A <- LC4aov[which(LC4aov$block == 'last' & LC4aov$target == 'far' & LC4aov$quadrant == '1A'),]
+  midb3q1A <- LC4aov[which(LC4aov$block == 'last' & LC4aov$target == 'mid' & LC4aov$quadrant == '1A'),]
+  nearb3q1A <- LC4aov[which(LC4aov$block == 'last' & LC4aov$target == 'near' & LC4aov$quadrant == '1A'),]
+  
+  #tests
+  cat('Bayesian t-test Quad 1 vs Quad 1A, block 1, far target:\n')
+  print(ttestBF(farb1q1$movementtime, farb1q1A$movementtime))
+  cat('Bayesian t-test Quad 1 vs Quad 1A, block 2, far target:\n')
+  print(ttestBF(farb2q1$movementtime, farb2q1A$movementtime))
+  cat('Bayesian t-test Quad 1 vs Quad 1A, last block, far target:\n')
+  print(ttestBF(farb3q1$movementtime, farb3q1A$movementtime))
+  
+  cat('Bayesian t-test Quad 1 vs Quad 1A, block 1, mid target:\n')
+  print(ttestBF(midb1q1$movementtime, midb1q1A$movementtime))
+  cat('Bayesian t-test Quad 1 vs Quad 1A, block 2, mid target:\n')
+  print(ttestBF(midb2q1$movementtime, midb2q1A$movementtime))
+  cat('Bayesian t-test Quad 1 vs Quad 1A, last block, mid target:\n')
+  print(ttestBF(midb3q1$movementtime, midb3q1A$movementtime))
+  
+  cat('Bayesian t-test Quad 1 vs Quad 1A, block 1, near target:\n')
+  print(ttestBF(nearb1q1$movementtime, nearb1q1A$movementtime))
+  cat('Bayesian t-test Quad 1 vs Quad 1A, block 2, near target:\n')
+  print(ttestBF(nearb2q1$movementtime, nearb2q1A$movementtime))
+  cat('Bayesian t-test Quad 1 vs Quad 1A, last block, near target:\n')
+  print(ttestBF(nearb3q1$movementtime, nearb3q1A$movementtime))
+  
+}
+
 #comparing MT washout of untrained hand with baseline of untrained hand
 RAEUntrainedHandMTANOVA <- function() {
   
@@ -3507,6 +4254,41 @@ RAEUntrainedHandMTANOVA <- function() {
   print(firstAOV[1:3]) #so that it doesn't print the aov object as well
   
 }
+
+RAEUntrainedHandMTBayesANOVA <- function() {
+  
+  blockdefs <- list('first'=c(46, 3),'second'=c(49,3),'last'=c(64,3))
+  LC_aligned <- getAlignedBlockedMTAOV(blockdefs=blockdefs, hand='untrained')
+  colnames(LC_aligned) <- c('target', 'participant','block','movementtime','session')
+  
+  blockdefs <- list('first'=c(106,3),'second'=c(109,3),'last'=c(124,3))
+  LC_washout <- getBlockedMTAOV(blockdefs=blockdefs, quadrant='1W') 
+  colnames(LC_washout) <- c('target', 'participant','block','movementtime','session')
+  
+  #but we only want to analyze participants with data in both
+  LC_aligned <- LC_aligned[which(LC_aligned$participant %in% LC_washout$participant),]
+  LC4aov <- rbind(LC_aligned, LC_washout)
+  LC4aov$session <- factor(LC4aov$session, levels = c('untrained','1W'))
+  
+  #looking into interaction below:
+  #interaction.plot(LC4aov$target, LC4aov$block, LC4aov$angdev)
+  
+  #learning curve ANOVA's
+  # for ez, case ID should be a factor:
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  cat('Comparing movement times during washout trials with aligned trials across targets and blocks, untrained hand:\n')
+  bfLC<- anovaBF(movementtime ~ target*block*session + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+  #compare interaction contribution, over the contribution of both main effects
+  #bfinteraction <- bfLC[4]/bfLC[3]
+  
+  #bfinclude to compare model with interactions against all other models
+  bfinteraction <- bayesfactor_inclusion(bfLC)
+  
+  print(bfLC)
+  print(bfinteraction)
+  
+}
+
 
 #no main effect of session, there are blockxsession and targetxsession interactions, suggesting that block and target effects may differ between sessions
 #but we already know these effects when analyzing baseline in untrained hand and washout after generalization
@@ -3540,6 +4322,43 @@ retentionMTANOVA <- function() {
   print(firstAOV[1:3]) #so that it doesn't print the aov object as well
   
 }
+
+retentionMTBayesANOVA <- function() {
+  
+  blockdefs <- list('first'=c(67,3),'second'=c(70,3),'last'=c(142,15))
+  LC_part1 <- getAlignedBlockedMTAOV(blockdefs=blockdefs, hand='trained') 
+  LC_part1 <- LC_part1[,-5]
+  LC_part1 <- LC_part1[which(LC_part1$block == 'last'),]
+  LC_part1$session <- as.factor('part1')
+  
+  blockdefs <- list('first'=c(1,3),'second'=c(4,3),'last'=c(19,3))
+  LC_part2 <- getBlockedMTAOV(blockdefs=blockdefs, quadrant='1') 
+  colnames(LC_part2) <- c('target', 'participant','block','movementtime','session')
+  LC_part2 <- LC_part2[which(LC_part2$block == 'first'),]
+  
+  #but we only want to analyze participants with data in both
+  LC_part1 <- LC_part1[which(LC_part1$participant %in% LC_part2$participant),]
+  LC4aov <- rbind(LC_part1, LC_part2)
+  LC4aov <- LC4aov[,-3]
+  #looking into interaction below:
+  #interaction.plot(LC4aov$target, LC4aov$block, LC4aov$percentcomp)
+  
+  #learning curve ANOVA's
+  # for ez, case ID should be a factor:
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  cat('Comparing movement times between part 1 and part 2 during learning, trained hand:\n')
+  bfLC<- anovaBF(movementtime ~ target*session + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+  #compare interaction contribution, over the contribution of both main effects
+  #bfinteraction <- bfLC[4]/bfLC[3]
+  
+  #bfinclude to compare model with interactions against all other models
+  bfinteraction <- bayesfactor_inclusion(bfLC)
+  
+  print(bfLC)
+  print(bfinteraction)
+  
+}
+
 #follow up on significant interaction
 part1and2MTComparisonMeans <- function(){
   blockdefs <- list('first'=c(67,3),'second'=c(70,3),'last'=c(142,15))
@@ -3625,6 +4444,50 @@ part1and2MTComparisonsEffSize <- function(method = 'bonferroni'){
   print(effectsize)
 }
 
+part1and2MTComparisonsBayesfollowup <- function() {
+  blockdefs <- list('first'=c(67,3),'second'=c(70,3),'last'=c(142,15))
+  LC_part1 <- getAlignedBlockedMTAOV(blockdefs=blockdefs, hand='trained') 
+  LC_part1 <- LC_part1[,-5]
+  LC_part1 <- LC_part1[which(LC_part1$block == 'last'),]
+  LC_part1$session <- as.factor('part1')
+  
+  blockdefs <- list('first'=c(1,3),'second'=c(4,3),'last'=c(19,3))
+  LC_part2 <- getBlockedMTAOV(blockdefs=blockdefs, quadrant='1') 
+  colnames(LC_part2) <- c('target', 'participant','block','movementtime','session')
+  LC_part2 <- LC_part2[which(LC_part2$block == 'first'),]
+  
+  #but we only want to analyze participants with data in both
+  LC_part1 <- LC_part1[which(LC_part1$participant %in% LC_part2$participant),]
+  LC4aov <- rbind(LC_part1, LC_part2)
+  LC4aov <- LC4aov[,-3]
+  #looking into interaction below:
+  #interaction.plot(LC4aov$target, LC4aov$session, LC4aov$movementtime)
+  
+  #learning curve ANOVA's
+  # for ez, case ID should be a factor:
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  
+  
+  farp1 <- LC4aov[which(LC4aov$target == 'far' & LC4aov$session == 'part1'),]
+  midp1 <- LC4aov[which(LC4aov$target == 'mid' & LC4aov$session == 'part1'),]
+  nearp1 <- LC4aov[which(LC4aov$target == 'near' & LC4aov$session == 'part1'),]
+  farp2 <- LC4aov[which(LC4aov$target == 'far' & LC4aov$session == '1'),]
+  midp2 <- LC4aov[which(LC4aov$target == 'mid' & LC4aov$session == '1'),]
+  nearp2 <- LC4aov[which(LC4aov$target == 'near' & LC4aov$session == '1'),]
+  
+  
+
+  cat('Bayesian t-test part 1 far vs block 1 far:\n')
+  print(ttestBF(farp1$movementtime, farp2$movementtime))
+
+  cat('Bayesian t-test part 1 mid vs block 1 mid:\n')
+  print(ttestBF(midp1$movementtime, midp2$movementtime))
+
+  cat('Bayesian t-test part 1 near vs block 1 near:\n')
+  print(ttestBF(nearp1$movementtime, nearp2$movementtime))
+
+}
+
 #Far and mid have longer MT's in part 2, but there no diff for Near
 
 
@@ -3633,7 +4496,7 @@ getBlockedPLAOV <- function(groups = c('far', 'mid', 'near'), blockdefs, quadran
   
   LCaov <- data.frame()
   for(group in groups){
-    curves <- read.csv(sprintf('data/controlmirgenonline-master/data/processed/%s_PathLength.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
+    curves <- read.csv(sprintf('data/controlmirgenonline-master/raw/processed/%s_PathLength.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
     curves <- curves[,-1] #remove trial rows
     participants <- colnames(curves)
     N <- length(participants)
@@ -3704,6 +4567,39 @@ pathlengthANOVA <- function(quadrants = c('1', '4', '2', '1A', '1L', '1W')) {
   }
 }
 
+pathlengthBayesANOVA <- function(quadrants = c('1', '4', '2', '1A', '1L', '1W')) {
+  for(quadrant in quadrants){
+    if(quadrant == '1'){
+      blockdefs <- list('first'=c(1,3),'second'=c(4,3),'last'=c(19,3))
+    } else if(quadrant == '4'){
+      blockdefs <- list('first'=c(22,3),'second'=c(25,3),'last'=c(40,3))
+    } else if(quadrant == '2'){
+      blockdefs <- list('first'=c(43,3),'second'=c(46,3),'last'=c(61,3))
+    } else if(quadrant == '1A'){
+      blockdefs <- list('first'=c(64,3),'second'=c(67,3),'last'=c(82,3))
+    } else if(quadrant == '1L'){
+      blockdefs <- list('first'=c(85,3),'second'=c(88,3),'last'=c(103,3))
+    } else if(quadrant == '1W'){
+      blockdefs <- list('first'=c(106,3),'second'=c(109,3),'last'=c(124,3))
+    }
+    
+    LC4aov <- getBlockedPLAOV(blockdefs=blockdefs, quadrant=quadrant)                      
+    #learning curve ANOVA's
+    # for ez, case ID should be a factor:
+    LC4aov$participant <- as.factor(LC4aov$participant)
+    cat(sprintf('Quadrant %s:\n', quadrant))
+    bfLC<- anovaBF(pathlength ~ target*block + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+    #compare interaction contribution, over the contribution of both main effects
+    #bfinteraction <- bfLC[4]/bfLC[3]
+    
+    #bfinclude to compare model with interactions against all other models
+    bfinteraction <- bayesfactor_inclusion(bfLC)
+    
+    print(bfLC)
+    print(bfinteraction)
+  }
+}
+
 # Quadrant 1: significant interaction block and target
 quadrant1PLComparisonMeans <- function(quadrant='1'){
   blockdefs <- list('first'=c(1,3),'second'=c(4,3),'last'=c(19,3))
@@ -3770,6 +4666,58 @@ quadrant1PLComparisonsEffSize <- function(method = 'bonferroni'){
 }
 #mostly difference between far and mid
 
+quadrant1PLComparisonsBayesfollowup <- function(quadrant='1') {
+  
+  blockdefs <- list('first'=c(1,3),'second'=c(4,3),'last'=c(19,3))
+  LC4aov <- getBlockedPLAOV(blockdefs=blockdefs, quadrant=quadrant)  
+  
+  #LC4aov <- aggregate(percentcomp ~ target* participant, data=LC4aov, FUN=mean)
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  
+  
+  farb1 <- LC4aov[which(LC4aov$block == 'first' & LC4aov$target == 'far'),]
+  midb1 <- LC4aov[which(LC4aov$block == 'first' & LC4aov$target == 'mid'),]
+  nearb1 <- LC4aov[which(LC4aov$block == 'first' & LC4aov$target == 'near'),]
+  
+  farb2 <- LC4aov[which(LC4aov$block == 'second' & LC4aov$target == 'far'),]
+  midb2 <- LC4aov[which(LC4aov$block == 'second' & LC4aov$target == 'mid'),]
+  nearb2 <- LC4aov[which(LC4aov$block == 'second' & LC4aov$target == 'near'),]
+  
+  farb3 <- LC4aov[which(LC4aov$block == 'last' & LC4aov$target == 'far'),]
+  midb3 <- LC4aov[which(LC4aov$block == 'last' & LC4aov$target == 'mid'),]
+  nearb3 <- LC4aov[which(LC4aov$block == 'last' & LC4aov$target == 'near'),]
+  
+  #far vs mid
+  cat('Bayesian t-test block 1 far vs mid target:\n')
+  print(ttestBF(farb1$pathlength, midb1$pathlength))
+  #far vs near
+  cat('Bayesian t-test block 1 far vs near target:\n')
+  print(ttestBF(farb1$pathlength, nearb1$pathlength))
+  #mid vs near
+  cat('Bayesian t-test  block 1 mid vs near target:\n')
+  print(ttestBF(midb1$pathlength, nearb1$pathlength))
+  
+  #far vs mid
+  cat('Bayesian t-test block 2 far vs mid target:\n')
+  print(ttestBF(farb2$pathlength, midb2$pathlength))
+  #far vs near
+  cat('Bayesian t-test block 2 far vs near target:\n')
+  print(ttestBF(farb2$pathlength, nearb2$pathlength))
+  #mid vs near
+  cat('Bayesian t-test  block 2 mid vs near target:\n')
+  print(ttestBF(midb2$pathlength, nearb2$pathlength))
+  
+  #far vs mid
+  cat('Bayesian t-test last block far vs mid target:\n')
+  print(ttestBF(farb3$pathlength, midb3$pathlength))
+  #far vs near
+  cat('Bayesian t-test last block far vs near target:\n')
+  print(ttestBF(farb3$pathlength, nearb3$pathlength))
+  #mid vs near
+  cat('Bayesian t-test last block mid vs near target:\n')
+  print(ttestBF(midb3$pathlength, nearb3$pathlength))
+}
+
 # Quadrant 4: significant main effects of block and target, no interaction
 #main effect of target
 quadrant4PLComparisonMeansTargetEffect <- function(quadrant='4'){
@@ -3825,6 +4773,30 @@ quadrant4PLComparisonsEffSizeTargetEffect <- function(method = 'bonferroni'){
 
 #all groups different from each other
 
+quadrant4PLComparisonsTargetEffectBayesfollowup <- function(quadrant='4') {
+  blockdefs <- list('first'=c(22,3),'second'=c(25,3),'last'=c(40,3))
+  LC4aov <- getBlockedPLAOV(blockdefs=blockdefs, quadrant=quadrant)  
+  
+  LC4aov <- aggregate(pathlength ~ target* participant, data=LC4aov, FUN=mean)
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  
+  
+  fartarget <- LC4aov[which(LC4aov$target == 'far'),]
+  midtarget <- LC4aov[which(LC4aov$target == 'mid'),]
+  neartarget <- LC4aov[which(LC4aov$target == 'near'),]
+  
+  #far vs mid
+  cat('Bayesian t-test far vs mid target:\n')
+  print(ttestBF(fartarget$pathlength, midtarget$pathlength))
+  #far vs near
+  cat('Bayesian t-test far vs near target:\n')
+  print(ttestBF(fartarget$pathlength, neartarget$pathlength))
+  #mid vs near
+  cat('Bayesian t-test mid vs near target:\n')
+  print(ttestBF(midtarget$pathlength, neartarget$pathlength))
+}
+
+
 #main effect of block
 quadrant4PLComparisonMeansBlockEffect <- function(quadrant='4'){
   blockdefs <- list('first'=c(22,3),'second'=c(25,3),'last'=c(40,3))
@@ -3879,6 +4851,29 @@ quadrant4PLComparisonsEffSizeBlockEffect <- function(method = 'bonferroni'){
 
 #driven by first vs last block difference
 
+quadrant4PLComparisonsBlockEffectBayesfollowup <- function(quadrant='4') {
+  blockdefs <- list('first'=c(22,3),'second'=c(25,3),'last'=c(40,3))
+  LC4aov <- getBlockedPLAOV(blockdefs=blockdefs, quadrant=quadrant)  
+  
+  LC4aov <- aggregate(pathlength ~ block* participant, data=LC4aov, FUN=mean)
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  
+  
+  b1<- LC4aov[which(LC4aov$block == 'first'),]
+  b2 <- LC4aov[which(LC4aov$block == 'second'),]
+  b3 <- LC4aov[which(LC4aov$block == 'last'),]
+  
+  #far vs mid
+  cat('Bayesian t-test block 1 vs block 2:\n')
+  print(ttestBF(b1$pathlength, b2$pathlength))
+  #far vs near
+  cat('Bayesian t-test block 1 vs last block:\n')
+  print(ttestBF(b1$pathlength, b3$pathlength))
+  #mid vs near
+  cat('Bayesian t-test block 2 vs last block:\n')
+  print(ttestBF(b2$pathlength, b3$pathlength))
+}
+
 # Quadrant 2: main effect of target
 quadrant2PLComparisonMeansTargetEffect <- function(quadrant='2'){
   blockdefs <- list('first'=c(43,3),'second'=c(46,3),'last'=c(61,3))
@@ -3932,6 +4927,28 @@ quadrant2PLComparisonsEffSizeTargetEffect <- function(method = 'bonferroni'){
 }
 # far and near both different from mid
 
+quadrant2PLComparisonsTargetEffectBayesfollowup <- function(quadrant='2') {
+  blockdefs <- list('first'=c(43,3),'second'=c(46,3),'last'=c(61,3))
+  LC4aov <- getBlockedPLAOV(blockdefs=blockdefs, quadrant=quadrant)  
+  
+  LC4aov <- aggregate(pathlength ~ target* participant, data=LC4aov, FUN=mean)
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  
+  
+  fartarget <- LC4aov[which(LC4aov$target == 'far'),]
+  midtarget <- LC4aov[which(LC4aov$target == 'mid'),]
+  neartarget <- LC4aov[which(LC4aov$target == 'near'),]
+  
+  #far vs mid
+  cat('Bayesian t-test far vs mid target:\n')
+  print(ttestBF(fartarget$pathlength, midtarget$pathlength))
+  #far vs near
+  cat('Bayesian t-test far vs near target:\n')
+  print(ttestBF(fartarget$pathlength, neartarget$pathlength))
+  #mid vs near
+  cat('Bayesian t-test mid vs near target:\n')
+  print(ttestBF(midtarget$pathlength, neartarget$pathlength))
+}
 
 # Quadrant 1A: significant interaction block and target
 quadrant1APLComparisonMeans <- function(quadrant='1A'){
@@ -3999,6 +5016,58 @@ quadrant1APLComparisonsEffSize <- function(method = 'bonferroni'){
 }
 #far and near diff from mid in block 1; far and mid diff in last block
 
+quadrant1APLComparisonsBayesfollowup <- function(quadrant='1A') {
+  
+  blockdefs <- list('first'=c(64,3),'second'=c(67,3),'last'=c(82,3))
+  LC4aov <- getBlockedPLAOV(blockdefs=blockdefs, quadrant=quadrant)  
+  
+  #LC4aov <- aggregate(percentcomp ~ target* participant, data=LC4aov, FUN=mean)
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  
+  
+  farb1 <- LC4aov[which(LC4aov$block == 'first' & LC4aov$target == 'far'),]
+  midb1 <- LC4aov[which(LC4aov$block == 'first' & LC4aov$target == 'mid'),]
+  nearb1 <- LC4aov[which(LC4aov$block == 'first' & LC4aov$target == 'near'),]
+  
+  farb2 <- LC4aov[which(LC4aov$block == 'second' & LC4aov$target == 'far'),]
+  midb2 <- LC4aov[which(LC4aov$block == 'second' & LC4aov$target == 'mid'),]
+  nearb2 <- LC4aov[which(LC4aov$block == 'second' & LC4aov$target == 'near'),]
+  
+  farb3 <- LC4aov[which(LC4aov$block == 'last' & LC4aov$target == 'far'),]
+  midb3 <- LC4aov[which(LC4aov$block == 'last' & LC4aov$target == 'mid'),]
+  nearb3 <- LC4aov[which(LC4aov$block == 'last' & LC4aov$target == 'near'),]
+  
+  #far vs mid
+  cat('Bayesian t-test block 1 far vs mid target:\n')
+  print(ttestBF(farb1$pathlength, midb1$pathlength))
+  #far vs near
+  cat('Bayesian t-test block 1 far vs near target:\n')
+  print(ttestBF(farb1$pathlength, nearb1$pathlength))
+  #mid vs near
+  cat('Bayesian t-test  block 1 mid vs near target:\n')
+  print(ttestBF(midb1$pathlength, nearb1$pathlength))
+  
+  #far vs mid
+  cat('Bayesian t-test block 2 far vs mid target:\n')
+  print(ttestBF(farb2$pathlength, midb2$pathlength))
+  #far vs near
+  cat('Bayesian t-test block 2 far vs near target:\n')
+  print(ttestBF(farb2$pathlength, nearb2$pathlength))
+  #mid vs near
+  cat('Bayesian t-test  block 2 mid vs near target:\n')
+  print(ttestBF(midb2$pathlength, nearb2$pathlength))
+  
+  #far vs mid
+  cat('Bayesian t-test last block far vs mid target:\n')
+  print(ttestBF(farb3$pathlength, midb3$pathlength))
+  #far vs near
+  cat('Bayesian t-test last block far vs near target:\n')
+  print(ttestBF(farb3$pathlength, nearb3$pathlength))
+  #mid vs near
+  cat('Bayesian t-test last block mid vs near target:\n')
+  print(ttestBF(midb3$pathlength, nearb3$pathlength))
+}
+
 # Quadrant 1L: significant interaction block and target
 quadrant1LPLComparisonMeans <- function(quadrant='1L'){
   blockdefs <- list('first'=c(85,3),'second'=c(88,3),'last'=c(103,3))
@@ -4064,6 +5133,58 @@ quadrant1LPLComparisonsEffSize <- function(method = 'bonferroni'){
   print(effectsize)
 }
 #far and near diff from mid in block 1; far and mid diff in last block
+
+quadrant1LPLComparisonsBayesfollowup <- function(quadrant='1L') {
+  
+  blockdefs <- list('first'=c(85,3),'second'=c(88,3),'last'=c(103,3))
+  LC4aov <- getBlockedPLAOV(blockdefs=blockdefs, quadrant=quadrant)  
+  
+  #LC4aov <- aggregate(percentcomp ~ target* participant, data=LC4aov, FUN=mean)
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  
+  
+  farb1 <- LC4aov[which(LC4aov$block == 'first' & LC4aov$target == 'far'),]
+  midb1 <- LC4aov[which(LC4aov$block == 'first' & LC4aov$target == 'mid'),]
+  nearb1 <- LC4aov[which(LC4aov$block == 'first' & LC4aov$target == 'near'),]
+  
+  farb2 <- LC4aov[which(LC4aov$block == 'second' & LC4aov$target == 'far'),]
+  midb2 <- LC4aov[which(LC4aov$block == 'second' & LC4aov$target == 'mid'),]
+  nearb2 <- LC4aov[which(LC4aov$block == 'second' & LC4aov$target == 'near'),]
+  
+  farb3 <- LC4aov[which(LC4aov$block == 'last' & LC4aov$target == 'far'),]
+  midb3 <- LC4aov[which(LC4aov$block == 'last' & LC4aov$target == 'mid'),]
+  nearb3 <- LC4aov[which(LC4aov$block == 'last' & LC4aov$target == 'near'),]
+  
+  #far vs mid
+  cat('Bayesian t-test block 1 far vs mid target:\n')
+  print(ttestBF(farb1$pathlength, midb1$pathlength))
+  #far vs near
+  cat('Bayesian t-test block 1 far vs near target:\n')
+  print(ttestBF(farb1$pathlength, nearb1$pathlength))
+  #mid vs near
+  cat('Bayesian t-test  block 1 mid vs near target:\n')
+  print(ttestBF(midb1$pathlength, nearb1$pathlength))
+  
+  #far vs mid
+  cat('Bayesian t-test block 2 far vs mid target:\n')
+  print(ttestBF(farb2$pathlength, midb2$pathlength))
+  #far vs near
+  cat('Bayesian t-test block 2 far vs near target:\n')
+  print(ttestBF(farb2$pathlength, nearb2$pathlength))
+  #mid vs near
+  cat('Bayesian t-test  block 2 mid vs near target:\n')
+  print(ttestBF(midb2$pathlength, nearb2$pathlength))
+  
+  #far vs mid
+  cat('Bayesian t-test last block far vs mid target:\n')
+  print(ttestBF(farb3$pathlength, midb3$pathlength))
+  #far vs near
+  cat('Bayesian t-test last block far vs near target:\n')
+  print(ttestBF(farb3$pathlength, nearb3$pathlength))
+  #mid vs near
+  cat('Bayesian t-test last block mid vs near target:\n')
+  print(ttestBF(midb3$pathlength, nearb3$pathlength))
+}
 
 # Quadrant 1W: significant interaction block and target
 quadrant1WPLComparisonMeans <- function(quadrant='1W'){
@@ -4132,6 +5253,59 @@ quadrant1WPLComparisonsEffSize <- function(method = 'bonferroni'){
 
 #no differences in targets, so this is driven by how different first block is from second and last blocks
 
+quadrant1WPLComparisonsBayesfollowup <- function(quadrant='1W') {
+  
+  blockdefs <- list('first'=c(106,3),'second'=c(109,3),'last'=c(124,3))
+  LC4aov <- getBlockedPLAOV(blockdefs=blockdefs, quadrant=quadrant)  
+  
+  #LC4aov <- aggregate(percentcomp ~ target* participant, data=LC4aov, FUN=mean)
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  
+  
+  farb1 <- LC4aov[which(LC4aov$block == 'first' & LC4aov$target == 'far'),]
+  midb1 <- LC4aov[which(LC4aov$block == 'first' & LC4aov$target == 'mid'),]
+  nearb1 <- LC4aov[which(LC4aov$block == 'first' & LC4aov$target == 'near'),]
+  
+  farb2 <- LC4aov[which(LC4aov$block == 'second' & LC4aov$target == 'far'),]
+  midb2 <- LC4aov[which(LC4aov$block == 'second' & LC4aov$target == 'mid'),]
+  nearb2 <- LC4aov[which(LC4aov$block == 'second' & LC4aov$target == 'near'),]
+  
+  farb3 <- LC4aov[which(LC4aov$block == 'last' & LC4aov$target == 'far'),]
+  midb3 <- LC4aov[which(LC4aov$block == 'last' & LC4aov$target == 'mid'),]
+  nearb3 <- LC4aov[which(LC4aov$block == 'last' & LC4aov$target == 'near'),]
+  
+  #far vs mid
+  cat('Bayesian t-test block 1 far vs mid target:\n')
+  print(ttestBF(farb1$pathlength, midb1$pathlength))
+  #far vs near
+  cat('Bayesian t-test block 1 far vs near target:\n')
+  print(ttestBF(farb1$pathlength, nearb1$pathlength))
+  #mid vs near
+  cat('Bayesian t-test  block 1 mid vs near target:\n')
+  print(ttestBF(midb1$pathlength, nearb1$pathlength))
+  
+  #far vs mid
+  cat('Bayesian t-test block 2 far vs mid target:\n')
+  print(ttestBF(farb2$pathlength, midb2$pathlength))
+  #far vs near
+  cat('Bayesian t-test block 2 far vs near target:\n')
+  print(ttestBF(farb2$pathlength, nearb2$pathlength))
+  #mid vs near
+  cat('Bayesian t-test  block 2 mid vs near target:\n')
+  print(ttestBF(midb2$pathlength, nearb2$pathlength))
+  
+  #far vs mid
+  cat('Bayesian t-test last block far vs mid target:\n')
+  print(ttestBF(farb3$pathlength, midb3$pathlength))
+  #far vs near
+  cat('Bayesian t-test last block far vs near target:\n')
+  print(ttestBF(farb3$pathlength, nearb3$pathlength))
+  #mid vs near
+  cat('Bayesian t-test last block mid vs near target:\n')
+  print(ttestBF(midb3$pathlength, nearb3$pathlength))
+}
+
+
 
 #Next, we want to compare 2 quadrants with each other (3X3X2)
 #add an identifier of which quadrant it is, regardless of block
@@ -4164,6 +5338,8 @@ getBlockedPLAOV2Quads <- function(quadrantA, quadrantB){
   return(LC4aov)
 }
 
+#compare: Q1 vs Q4; Q1 vs Q2; Q1L vs Q1; Q1L vs Q1W
+
 PLANOVA2Quads <- function(quadrantA, quadrantB) {
   
   LC4aov <- getBlockedPLAOV2Quads(quadrantA=quadrantA, quadrantB=quadrantB)                      
@@ -4178,6 +5354,26 @@ PLANOVA2Quads <- function(quadrantA, quadrantB) {
   firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=pathlength, within= c(target, block, quadrant), type=3, return_aov = TRUE) #df is k-2 or 3 levels minus 2; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
   cat(sprintf('Quadrants %s and %s:\n', quadrantA, quadrantB))
   print(firstAOV[1:3]) #so that it doesn't print the aov object as well
+  
+}
+
+PLBayesANOVA2Quads <- function(quadrantA, quadrantB) {
+  
+  LC4aov <- getBlockedPLAOV2Quads(quadrantA=quadrantA, quadrantB=quadrantB)                      
+  
+  #learning curve ANOVA's
+  # for ez, case ID should be a factor:
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  cat(sprintf('Quadrants %s and %s:\n', quadrantA, quadrantB))
+  bfLC<- anovaBF(pathlength ~ target*block*quadrant + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+  #compare interaction contribution, over the contribution of both main effects
+  #bfinteraction <- bfLC[4]/bfLC[3]
+  
+  #bfinclude to compare model with interactions against all other models
+  bfinteraction <- bayesfactor_inclusion(bfLC)
+  
+  print(bfLC)
+  print(bfinteraction)
   
 }
 
@@ -4254,6 +5450,63 @@ Q1and2PLComparisonsEffSize <- function(method = 'bonferroni'){
 }
 #difference between Q1 and Q2 in first block for mid target (high in Q1)
 
+Q1and2PLComparisonsBayesfollowup <- function(quadrantA='1', quadrantB='2') {
+  
+  LC4aov <- getBlockedPLAOV2Quads(quadrantA=quadrantA, quadrantB=quadrantB)  
+  
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  
+  
+  farb1q1 <- LC4aov[which(LC4aov$block == 'first' & LC4aov$target == 'far' & LC4aov$quadrant == '1'),]
+  midb1q1 <- LC4aov[which(LC4aov$block == 'first' & LC4aov$target == 'mid' & LC4aov$quadrant == '1'),]
+  nearb1q1 <- LC4aov[which(LC4aov$block == 'first' & LC4aov$target == 'near' & LC4aov$quadrant == '1'),]
+  
+  farb2q1 <- LC4aov[which(LC4aov$block == 'second' & LC4aov$target == 'far' & LC4aov$quadrant == '1'),]
+  midb2q1 <- LC4aov[which(LC4aov$block == 'second' & LC4aov$target == 'mid' & LC4aov$quadrant == '1'),]
+  nearb2q1 <- LC4aov[which(LC4aov$block == 'second' & LC4aov$target == 'near' & LC4aov$quadrant == '1'),]
+  
+  farb3q1 <- LC4aov[which(LC4aov$block == 'last' & LC4aov$target == 'far' & LC4aov$quadrant == '1'),]
+  midb3q1 <- LC4aov[which(LC4aov$block == 'last' & LC4aov$target == 'mid' & LC4aov$quadrant == '1'),]
+  nearb3q1 <- LC4aov[which(LC4aov$block == 'last' & LC4aov$target == 'near' & LC4aov$quadrant == '1'),]
+  
+  farb1q2 <- LC4aov[which(LC4aov$block == 'first' & LC4aov$target == 'far' & LC4aov$quadrant == '2'),]
+  midb1q2 <- LC4aov[which(LC4aov$block == 'first' & LC4aov$target == 'mid' & LC4aov$quadrant == '2'),]
+  nearb1q2 <- LC4aov[which(LC4aov$block == 'first' & LC4aov$target == 'near' & LC4aov$quadrant == '2'),]
+  
+  farb2q2 <- LC4aov[which(LC4aov$block == 'second' & LC4aov$target == 'far' & LC4aov$quadrant == '2'),]
+  midb2q2 <- LC4aov[which(LC4aov$block == 'second' & LC4aov$target == 'mid' & LC4aov$quadrant == '2'),]
+  nearb2q2 <- LC4aov[which(LC4aov$block == 'second' & LC4aov$target == 'near' & LC4aov$quadrant == '2'),]
+  
+  farb3q2 <- LC4aov[which(LC4aov$block == 'last' & LC4aov$target == 'far' & LC4aov$quadrant == '2'),]
+  midb3q2 <- LC4aov[which(LC4aov$block == 'last' & LC4aov$target == 'mid' & LC4aov$quadrant == '2'),]
+  nearb3q2 <- LC4aov[which(LC4aov$block == 'last' & LC4aov$target == 'near' & LC4aov$quadrant == '2'),]
+  
+  #tests
+  cat('Bayesian t-test Quad 1 vs Quad 2, block 1, far target:\n')
+  print(ttestBF(farb1q1$pathlength, farb1q2$pathlength))
+  cat('Bayesian t-test Quad 1 vs Quad 2, block 2, far target:\n')
+  print(ttestBF(farb2q1$pathlength, farb2q2$pathlength))
+  cat('Bayesian t-test Quad 1 vs Quad 2, last block, far target:\n')
+  print(ttestBF(farb3q1$pathlength, farb3q2$pathlength))
+  
+  cat('Bayesian t-test Quad 1 vs Quad 2, block 1, mid target:\n')
+  print(ttestBF(midb1q1$pathlength, midb1q2$pathlength))
+  cat('Bayesian t-test Quad 1 vs Quad 2, block 2, mid target:\n')
+  print(ttestBF(midb2q1$pathlength, midb2q2$pathlength))
+  cat('Bayesian t-test Quad 1 vs Quad 2, last block, mid target:\n')
+  print(ttestBF(midb3q1$pathlength, midb3q2$pathlength))
+  
+  cat('Bayesian t-test Quad 1 vs Quad 2, block 1, near target:\n')
+  print(ttestBF(nearb1q1$pathlength, nearb1q2$pathlength))
+  cat('Bayesian t-test Quad 1 vs Quad 2, block 2, near target:\n')
+  print(ttestBF(nearb2q1$pathlength, nearb2q2$pathlength))
+  cat('Bayesian t-test Quad 1 vs Quad 2, last block, near target:\n')
+  print(ttestBF(nearb3q1$pathlength, nearb3q2$pathlength))
+  
+}
+
+
+
 #Q1 and Q1L: main effect of quadrant, but no interactions
 # We see in interaction plot that 1L has larger path lengths
 
@@ -4310,6 +5563,32 @@ Q1Land1WPLComparisonsEffSize <- function(method = 'bonferroni'){
 }
 
 #Q1L has larger PL's than washout
+
+Q1Land1WPLComparisonsBayesfollowup <- function(quadrantA='1L', quadrantB='1W') {
+  
+  LC4aov <- getBlockedPLAOV2Quads(quadrantA=quadrantA, quadrantB=quadrantB)  
+  LC4aov <- aggregate(pathlength ~ target* quadrant* participant, data=LC4aov, FUN=mean) #regardless of target, the mean for every block within each quadrant
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  
+  farq1L <- LC4aov[which(LC4aov$target == 'far' & LC4aov$quadrant == '1L'),]
+  midq1L <- LC4aov[which(LC4aov$target == 'mid' & LC4aov$quadrant == '1L'),]
+  nearq1L <- LC4aov[which(LC4aov$target == 'near' & LC4aov$quadrant == '1L'),]
+
+  
+  farq1W <- LC4aov[which(LC4aov$target == 'far' & LC4aov$quadrant == '1W'),]
+  midq1W <- LC4aov[which(LC4aov$target == 'mid' & LC4aov$quadrant == '1W'),]
+  nearq1W <- LC4aov[which(LC4aov$target == 'near' & LC4aov$quadrant == '1W'),]
+  
+  
+  #tests
+  cat('Bayesian t-test untrained vs washout, far target:\n')
+  print(ttestBF(farq1L$pathlength, farq1W$pathlength))
+  cat('Bayesian t-test untrained vs washout, mid target:\n')
+  print(ttestBF(midq1L$pathlength, midq1W$pathlength))
+  cat('Bayesian t-test untrained vs washout, near target:\n')
+  print(ttestBF(nearq1L$pathlength, nearq1W$pathlength))
+  
+}
 
 #comparing PL washout of untrained hand with baseline of untrained hand
 RAEUntrainedHandPLANOVA <- function() {
@@ -4436,6 +5715,75 @@ untrainedHandSessionPLComparisonsEffSize <- function(method = 'bonferroni'){
 }
 #driven by a difference in middle targets between baseline and washout in the first block (it was high in washout)
 
+untrainedHandSessionPLComparisonsBayesfollowup <- function() {
+  
+  blockdefs <- list('first'=c(46, 3),'second'=c(49,3),'last'=c(64,3))
+  LC_aligned <- getAlignedBlockedPLAOV(blockdefs=blockdefs, hand='untrained')
+  colnames(LC_aligned) <- c('target', 'participant','block','pathlength','session')
+  
+  blockdefs <- list('first'=c(106,3),'second'=c(109,3),'last'=c(124,3))
+  LC_washout <- getBlockedPLAOV(blockdefs=blockdefs, quadrant='1W')
+  colnames(LC_washout) <- c('target', 'participant','block','pathlength','session')
+  
+  #but we only want to analyze participants with data in both
+  LC_aligned <- LC_aligned[which(LC_aligned$participant %in% LC_washout$participant),]
+  LC4aov <- rbind(LC_aligned, LC_washout)
+  LC4aov$session <- factor(LC4aov$session, levels = c('untrained','1W'))
+  
+  LC4aov$participant <- as.factor(LC4aov$participant) 
+  
+  
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  
+  
+  farb1s1 <- LC4aov[which(LC4aov$block == 'first' & LC4aov$target == 'far' & LC4aov$session == 'untrained'),]
+  midb1s1 <- LC4aov[which(LC4aov$block == 'first' & LC4aov$target == 'mid' & LC4aov$session == 'untrained'),]
+  nearb1s1 <- LC4aov[which(LC4aov$block == 'first' & LC4aov$target == 'near' & LC4aov$session == 'untrained'),]
+  
+  farb2s1 <- LC4aov[which(LC4aov$block == 'second' & LC4aov$target == 'far' & LC4aov$session == 'untrained'),]
+  midb2s1 <- LC4aov[which(LC4aov$block == 'second' & LC4aov$target == 'mid' & LC4aov$session == 'untrained'),]
+  nearb2s1 <- LC4aov[which(LC4aov$block == 'second' & LC4aov$target == 'near' & LC4aov$session == 'untrained'),]
+  
+  farb3s1 <- LC4aov[which(LC4aov$block == 'last' & LC4aov$target == 'far' & LC4aov$session == 'untrained'),]
+  midb3s1 <- LC4aov[which(LC4aov$block == 'last' & LC4aov$target == 'mid' & LC4aov$session == 'untrained'),]
+  nearb3s1 <- LC4aov[which(LC4aov$block == 'last' & LC4aov$target == 'near' & LC4aov$session == 'untrained'),]
+  
+  farb1q1W <- LC4aov[which(LC4aov$block == 'first' & LC4aov$target == 'far' & LC4aov$session == '1W'),]
+  midb1q1W <- LC4aov[which(LC4aov$block == 'first' & LC4aov$target == 'mid' & LC4aov$session == '1W'),]
+  nearb1q1W <- LC4aov[which(LC4aov$block == 'first' & LC4aov$target == 'near' & LC4aov$session == '1W'),]
+  
+  farb2q1W <- LC4aov[which(LC4aov$block == 'second' & LC4aov$target == 'far' & LC4aov$session == '1W'),]
+  midb2q1W <- LC4aov[which(LC4aov$block == 'second' & LC4aov$target == 'mid' & LC4aov$session == '1W'),]
+  nearb2q1W <- LC4aov[which(LC4aov$block == 'second' & LC4aov$target == 'near' & LC4aov$session == '1W'),]
+  
+  farb3q1W <- LC4aov[which(LC4aov$block == 'last' & LC4aov$target == 'far' & LC4aov$session == '1W'),]
+  midb3q1W <- LC4aov[which(LC4aov$block == 'last' & LC4aov$target == 'mid' & LC4aov$session == '1W'),]
+  nearb3q1W <- LC4aov[which(LC4aov$block == 'last' & LC4aov$target == 'near' & LC4aov$session == '1W'),]
+  
+  #tests
+  cat('Bayesian t-test baseline vs washout in part 2, block 1, far target:\n')
+  print(ttestBF(farb1s1$pathlength, farb1q1W$pathlength))
+  cat('Bayesian t-test baseline vs washout in part 2, block 2, far target:\n')
+  print(ttestBF(farb2s1$pathlength, farb2q1W$pathlength))
+  cat('Bayesian t-test baseline vs washout in part 2, last block, far target:\n')
+  print(ttestBF(farb3s1$pathlength, farb3q1W$pathlength))
+  
+  cat('Bayesian t-test baseline vs washout in part 2, block 1, mid target:\n')
+  print(ttestBF(midb1s1$pathlength, midb1q1W$pathlength))
+  cat('Bayesian t-test baseline vs washout in part 2, block 2, mid target:\n')
+  print(ttestBF(midb2s1$pathlength, midb2q1W$pathlength))
+  cat('Bayesian t-test baseline vs washout in part 2, last block, mid target:\n')
+  print(ttestBF(midb3s1$pathlength, midb3q1W$pathlength))
+  
+  cat('Bayesian t-test baseline vs washout in part 2, block 1, near target:\n')
+  print(ttestBF(nearb1s1$pathlength, nearb1q1W$pathlength))
+  cat('Bayesian t-test baseline vs washout in part 2, block 2, near target:\n')
+  print(ttestBF(nearb2s1$pathlength, nearb2q1W$pathlength))
+  cat('Bayesian t-test baseline vs washout in part 2, last block, near target:\n')
+  print(ttestBF(nearb3s1$pathlength, nearb3q1W$pathlength))
+  
+}
+
 # Retention PLs (compare last block of part 1 with first block of part 2)
 retentionPLANOVA <- function() {
   
@@ -4465,6 +5813,43 @@ retentionPLANOVA <- function() {
   print(firstAOV[1:3]) #so that it doesn't print the aov object as well
   
 }
+
+retentionPLBayesANOVA <- function() {
+  
+  blockdefs <- list('first'=c(67,3),'second'=c(70,3),'last'=c(142,15))
+  LC_part1 <- getAlignedBlockedPLAOV(blockdefs=blockdefs, hand='trained') 
+  LC_part1 <- LC_part1[,-5]
+  LC_part1 <- LC_part1[which(LC_part1$block == 'last'),]
+  LC_part1$session <- as.factor('part1')
+  
+  blockdefs <- list('first'=c(1,3),'second'=c(4,3),'last'=c(19,3))
+  LC_part2 <- getBlockedPLAOV(blockdefs=blockdefs, quadrant='1') 
+  colnames(LC_part2) <- c('target', 'participant','block','pathlength','session')
+  LC_part2 <- LC_part2[which(LC_part2$block == 'first'),]
+  
+  #but we only want to analyze participants with data in both
+  LC_part1 <- LC_part1[which(LC_part1$participant %in% LC_part2$participant),]
+  LC4aov <- rbind(LC_part1, LC_part2)
+  LC4aov <- LC4aov[,-3]
+  #looking into interaction below:
+  #interaction.plot(LC4aov$target, LC4aov$session, LC4aov$pathlength)
+  
+  #learning curve ANOVA's
+  # for ez, case ID should be a factor:
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  cat('Comparing path lengths between part 1 and part 2 during learning, trained hand:\n')
+  bfLC<- anovaBF(pathlength ~ target*session + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+  #compare interaction contribution, over the contribution of both main effects
+  #bfinteraction <- bfLC[4]/bfLC[3]
+  
+  #bfinclude to compare model with interactions against all other models
+  bfinteraction <- bayesfactor_inclusion(bfLC)
+  
+  print(bfLC)
+  print(bfinteraction)
+  
+}
+
 
 #follow up on significant interaction
 part1and2PLComparisonMeans <- function(){
@@ -4552,3 +5937,47 @@ part1and2PLComparisonsEffSize <- function(method = 'bonferroni'){
 }
 
 #far and mid have larger PL's in part 2, but no diff for near
+
+part1and2PLComparisonsBayesfollowup <- function() {
+  blockdefs <- list('first'=c(67,3),'second'=c(70,3),'last'=c(142,15))
+  LC_part1 <- getAlignedBlockedPLAOV(blockdefs=blockdefs, hand='trained') 
+  LC_part1 <- LC_part1[,-5]
+  LC_part1 <- LC_part1[which(LC_part1$block == 'last'),]
+  LC_part1$session <- as.factor('part1')
+  
+  blockdefs <- list('first'=c(1,3),'second'=c(4,3),'last'=c(19,3))
+  LC_part2 <- getBlockedPLAOV(blockdefs=blockdefs, quadrant='1') 
+  colnames(LC_part2) <- c('target', 'participant','block','pathlength','session')
+  LC_part2 <- LC_part2[which(LC_part2$block == 'first'),]
+  
+  #but we only want to analyze participants with data in both
+  LC_part1 <- LC_part1[which(LC_part1$participant %in% LC_part2$participant),]
+  LC4aov <- rbind(LC_part1, LC_part2)
+  LC4aov <- LC4aov[,-3]
+  #looking into interaction below:
+  #interaction.plot(LC4aov$target, LC4aov$session, LC4aov$movementtime)
+  
+  #learning curve ANOVA's
+  # for ez, case ID should be a factor:
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  
+  
+  farp1 <- LC4aov[which(LC4aov$target == 'far' & LC4aov$session == 'part1'),]
+  midp1 <- LC4aov[which(LC4aov$target == 'mid' & LC4aov$session == 'part1'),]
+  nearp1 <- LC4aov[which(LC4aov$target == 'near' & LC4aov$session == 'part1'),]
+  farp2 <- LC4aov[which(LC4aov$target == 'far' & LC4aov$session == '1'),]
+  midp2 <- LC4aov[which(LC4aov$target == 'mid' & LC4aov$session == '1'),]
+  nearp2 <- LC4aov[which(LC4aov$target == 'near' & LC4aov$session == '1'),]
+  
+  
+  
+  cat('Bayesian t-test part 1 far vs block 1 far:\n')
+  print(ttestBF(farp1$pathlength, farp2$pathlength))
+  
+  cat('Bayesian t-test part 1 mid vs block 1 mid:\n')
+  print(ttestBF(midp1$pathlength, midp2$pathlength))
+  
+  cat('Bayesian t-test part 1 near vs block 1 near:\n')
+  print(ttestBF(nearp1$pathlength, nearp2$pathlength))
+  
+}
