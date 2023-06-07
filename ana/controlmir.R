@@ -3662,6 +3662,44 @@ alignedLearningANOVA <- function(hands = c('trained', 'untrained')) {
   }
 }
 
+alignedLearningBayesANOVA <- function(hand) {
+  
+  #styles <- getStyle()
+  if(hand == 'trained'){
+    blockdefs <- list('first'=c(1,9),'second'=c(10,9),'last'=c(37,9))
+  } else if(hand == 'untrained'){
+    blockdefs <- list('first'=c(46,3),'second'=c(49,3),'last'=c(64,3))
+  }
+  
+  LC4aov <- getAlignedBlockedLearningAOV(blockdefs=blockdefs, hand=hand)                     
+  
+  #looking into interaction below:
+  #interaction.plot(LC4aov$diffgroup, LC4aov$block, LC4aov$reachdeviation)
+  
+  #Bayes ANOVA - can use long format
+  #will compare models to null (intercept) or no effect - this will be 1
+  #higher than 1 will be evidence for alternative hypothesis, lower will be evidence for null hypothesis
+  #compare models either if only main effects, interaction of effects
+  #use lmBF function for specific models
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  bfLC<- anovaBF(angdev ~ target*block + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+  #compare interaction contribution, over the contribution of both main effects
+  #bfinteraction <- bfLC[4]/bfLC[3]
+  
+  #bfinclude to compare model with interactions against all other models
+  bfinteraction <- bayesfactor_inclusion(bfLC)
+  
+  print(bfLC)
+  print(bfinteraction)
+  
+  #bfLC will give main effects of perturbtype, can test which perturbation has larger compensation with:
+  #LC4aov %>% group_by(perturbtype) %>% summarise(mean(compensation))
+  #can also test main effects of block:
+  #LC4aov %>% group_by(block) %>% summarise(mean(compensation))
+  #but since interaction has large bf (in frequentist, interaction was significant), we can just compare [3] and [4]
+}
+
+
 #target effect for trained hand, but no block effect nor interaction
 #follow up on main effect of target
 alignedTrainedComparisonMeans <- function(hand='trained'){
@@ -3715,38 +3753,6 @@ alignedTrainedComparisonsEffSize <- function(method = 'bonferroni'){
   print(effectsize)
 }
 
-alignedTrainedComparisonsBayesANOVA <- function(hand='trained') {
-  
-  #styles <- getStyle()
-  blockdefs <- list('first'=c(1,9),'second'=c(10,9),'last'=c(37,9))
-  
-  LC4aov <- getAlignedBlockedLearningAOV(blockdefs=blockdefs, hand=hand)                     
-  
-  #looking into interaction below:
-  #interaction.plot(LC4aov$diffgroup, LC4aov$block, LC4aov$reachdeviation)
-  
-  #Bayes ANOVA - can use long format
-  #will compare models to null (intercept) or no effect - this will be 1
-  #higher than 1 will be evidence for alternative hypothesis, lower will be evidence for null hypothesis
-  #compare models either if only main effects, interaction of effects
-  #use lmBF function for specific models
-  LC4aov$participant <- as.factor(LC4aov$participant)
-  bfLC<- anovaBF(angdev ~ target*block + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
-  #compare interaction contribution, over the contribution of both main effects
-  #bfinteraction <- bfLC[4]/bfLC[3]
-  
-  #bfinclude to compare model with interactions against all other models
-  bfinteraction <- bayesfactor_inclusion(bfLC)
-  
-  print(bfLC)
-  print(bfinteraction)
-  
-  #bfLC will give main effects of perturbtype, can test which perturbation has larger compensation with:
-  #LC4aov %>% group_by(perturbtype) %>% summarise(mean(compensation))
-  #can also test main effects of block:
-  #LC4aov %>% group_by(block) %>% summarise(mean(compensation))
-  #but since interaction has large bf (in frequentist, interaction was significant), we can just compare [3] and [4]
-}
 
 alignedTrainedComparisonsBayesfollowup <- function(hand='trained') {
   
@@ -6168,4 +6174,2237 @@ RAEPLTrainedTargetsBlockEffectBayesfollowup <- function() {
   #mid vs near
   cat('Bayesian t-test washout block 1 vs washout block 2:\n')
   print(ttestBF(b2$pathlength, b3$pathlength))
+}
+
+#Devices: Mouse vs Trackpad Statistics (LEARNING)----
+
+getDeviceAlignedBlockedLearningAOV <- function(groups = c('far', 'mid', 'near'), blockdefs, hand, deviceused = c('Mouse', 'Trackpad')) {
+  
+  LCaov <- data.frame()
+  for (d in deviceused){
+    for(group in groups){
+      #get qualtrics response to device used
+      qualtdat <- read.csv('data/controlmironline-master/qualtrics/CtrlMir_Qualtrics_ParticipantList.csv', stringsAsFactors = F)
+      #then get pplist according to device
+      devqualt <- qualtdat[which(qualtdat$Q6.4 == d),]
+      ppqualt <- devqualt$id
+      
+      curves <- read.csv(sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
+      trial <- curves$trial
+      ndat <- curves[,which(colnames(curves) %in% ppqualt)]
+      curves <- cbind(trial, ndat)
+      
+      curves <- curves[,-1] #remove trial rows
+      participants <- colnames(curves)
+      N <- length(participants)
+      
+      #blocked <- array(NA, dim=c(N,length(blockdefs)))
+      
+      target <- c()
+      participant <- c()
+      block <- c()
+      angdev <- c()
+      devices <- c()
+      
+      for (ppno in c(1:N)) {
+        
+        pp <- participants[ppno]
+        
+        for (blockno in c(1:length(blockdefs))) {
+          #for each participant, and every 9 trials, get the mean
+          blockdef <- blockdefs[[blockno]]
+          blockstart <- blockdef[1]
+          blockend <- blockstart + blockdef[2] - 1
+          samples <- curves[blockstart:blockend,ppno]
+          samples <- getAngularReachDevsStats(data=samples)
+          #samples <- samples[[2]]
+          
+          target <- c(target, group)
+          participant <- c(participant, pp)
+          block <- c(block, names(blockdefs)[blockno])
+          angdev <- c(angdev, samples)
+          devices <- c(devices, d)
+        }
+      }
+      LCBlocked <- data.frame(target, participant, block, angdev, devices)
+      LCaov <- rbind(LCaov, LCBlocked)
+    }
+  }
+  
+  #need to make some columns as factors for ANOVA
+  LCaov$target <- as.factor(LCaov$target)
+  LCaov$block <- as.factor(LCaov$block)
+  LCaov$block <- factor(LCaov$block, levels = c('first','second','last'))
+  LCaov$hand <- hand
+  LCaov$devices <- as.factor(LCaov$devices)
+  return(LCaov)
+  
+}
+
+#only care about effect of devices
+
+deviceAlignedLearningANOVA <- function(hands = c('trained', 'untrained')) {
+  for(hand in hands){
+    if(hand == 'trained'){
+      blockdefs <- list('first'=c(1,9),'second'=c(10,9),'last'=c(37,9))
+    } else if(hand == 'untrained'){
+      blockdefs <- list('first'=c(46,3),'second'=c(49,3),'last'=c(64,3))
+    }
+    
+    LC4aov <- getDeviceAlignedBlockedLearningAOV(blockdefs=blockdefs, hand=hand)                      
+    
+    #looking into interaction below:
+    #interaction.plot(LC4aov$target, LC4aov$block, LC4aov$angdev) 
+    
+    #learning curve ANOVA's
+    # for ez, case ID should be a factor:
+    LC4aov$participant <- as.factor(LC4aov$participant)
+    firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=angdev, within= c(block, target), between=c(devices), type=3, return_aov = TRUE) #df is k-2 or 3 levels minus 2; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
+    cat(sprintf('Angular reach deviations during aligned trials across targets, blocks, and devices, %s hand:\n', hand))
+    print(firstAOV[1:3]) #so that it doesn't print the aov object as well
+  }
+}
+
+deviceAlignedLearningBayesANOVA <- function(hand) {
+  
+  #styles <- getStyle()
+  if(hand == 'trained'){
+    blockdefs <- list('first'=c(1,9),'second'=c(10,9),'last'=c(37,9))
+  } else if(hand == 'untrained'){
+    blockdefs <- list('first'=c(46,3),'second'=c(49,3),'last'=c(64,3))
+  }
+  
+  LC4aov <- getDeviceAlignedBlockedLearningAOV(blockdefs=blockdefs, hand=hand)                     
+  
+  #looking into interaction below:
+  #interaction.plot(LC4aov$diffgroup, LC4aov$block, LC4aov$reachdeviation)
+  
+  #Bayes ANOVA - can use long format
+  #will compare models to null (intercept) or no effect - this will be 1
+  #higher than 1 will be evidence for alternative hypothesis, lower will be evidence for null hypothesis
+  #compare models either if only main effects, interaction of effects
+  #use lmBF function for specific models
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  bfLC<- anovaBF(angdev ~ target*block*devices + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+  #compare interaction contribution, over the contribution of both main effects
+  #bfinteraction <- bfLC[4]/bfLC[3]
+  
+  #bfinclude to compare model with interactions against all other models
+  bfinteraction <- bayesfactor_inclusion(bfLC)
+  
+  print(bfLC)
+  print(bfinteraction)
+  
+}
+
+#no effect of device on aligned (both hands)
+
+getDeviceMirrorBlockedLearningAOV <- function(groups = c('far', 'mid', 'near'), blockdefs, deviceused = c('Mouse', 'Trackpad')) {
+  
+  LCaov <- data.frame()
+  for(d in deviceused){
+    for(group in groups){
+      #get qualtrics response to device used
+      qualtdat <- read.csv('data/controlmironline-master/qualtrics/CtrlMir_Qualtrics_ParticipantList.csv', stringsAsFactors = F)
+      #then get pplist according to device
+      devqualt <- qualtdat[which(qualtdat$Q6.4 == d),]
+      ppqualt <- devqualt$id
+      
+      curves <- read.csv(sprintf('data/controlmironline-master/raw/processed/%s_Mirror_PercentCompensation.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
+      trial <- curves$trial
+      ndat <- curves[,which(colnames(curves) %in% ppqualt)]
+      curves <- cbind(trial, ndat)
+      
+      curves <- curves[,-1] #remove trial rows
+      participants <- colnames(curves)
+      N <- length(participants)
+      
+      #blocked <- array(NA, dim=c(N,length(blockdefs)))
+      
+      target <- c()
+      participant <- c()
+      block <- c()
+      percentcomp <- c()
+      devices <- c()
+      
+      for (ppno in c(1:N)) {
+        
+        pp <- participants[ppno]
+        
+        for (blockno in c(1:length(blockdefs))) {
+          #for each participant, and every three trials, get the mean
+          blockdef <- blockdefs[[blockno]]
+          blockstart <- blockdef[1]
+          blockend <- blockstart + blockdef[2] - 1
+          samples <- curves[blockstart:blockend,ppno]
+          samples <- mean(samples, na.rm=TRUE)
+          
+          target <- c(target, group)
+          participant <- c(participant, pp)
+          block <- c(block, names(blockdefs)[blockno])
+          percentcomp <- c(percentcomp, samples)
+          devices <- c(devices, d)
+        }
+      }
+      LCBlocked <- data.frame(target, participant, block, percentcomp, devices)
+      LCaov <- rbind(LCaov, LCBlocked)
+    }
+  }
+  
+  #need to make some columns as factors for ANOVA
+  LCaov$target <- as.factor(LCaov$target)
+  LCaov$block <- as.factor(LCaov$block)
+  LCaov$block <- factor(LCaov$block, levels = c('first','second','last'))
+  LCaov$devices <- as.factor(LCaov$devices)
+  return(LCaov)
+  
+}
+
+#3x3 anova (target x block)
+devicemirrorANOVA <- function() {
+  
+  
+  blockdefs <- list('first'=c(1,3),'second'=c(4,3),'last'=c(76,15))
+  
+  
+  LC4aov <- getDeviceMirrorBlockedLearningAOV(blockdefs=blockdefs)                  
+  
+  #looking into interaction below:
+  #interaction.plot(LC4aov$target, LC4aov$block, LC4aov$percentcomp)
+  
+  #learning curve ANOVA's
+  # for ez, case ID should be a factor:
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=percentcomp, within= c(target, block), between = c(devices), type=3, return_aov = TRUE) #df is k-2 or 3 levels minus 2; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
+  #cat(sprintf('Quadrant %s:\n', quadrant))
+  print(firstAOV[1:3]) #so that it doesn't print the aov object as well
+  
+}
+
+devicemirrorBayesANOVA <- function() {
+  
+  blockdefs <- list('first'=c(1,3),'second'=c(4,3),'last'=c(76,15))
+  
+  
+  LC4aov <- getDeviceMirrorBlockedLearningAOV(blockdefs=blockdefs)                      
+  #Bayes ANOVA - can use long format
+  #will compare models to null (intercept) or no effect - this will be 1
+  #higher than 1 will be evidence for alternative hypothesis, lower will be evidence for null hypothesis
+  #compare models either if only main effects, interaction of effects
+  #use lmBF function for specific models
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  bfLC<- anovaBF(percentcomp ~ target*block*devices + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+  #compare interaction contribution, over the contribution of both main effects
+  #bfinteraction <- bfLC[4]/bfLC[3]
+  
+  #bfinclude to compare model with interactions against all other models
+  bfinteraction <- bayesfactor_inclusion(bfLC)
+  
+  print(bfLC)
+  print(bfinteraction)
+}
+
+getDeviceRAEBlockedLearningAOV <- function(groups = c('far', 'mid', 'near'), blockdefs, deviceused = c('Mouse', 'Trackpad')) {
+  
+  LCaov <- data.frame()
+  for(d in deviceused){
+    for(group in groups){
+      #get qualtrics response to device used
+      qualtdat <- read.csv('data/controlmironline-master/qualtrics/CtrlMir_Qualtrics_ParticipantList.csv', stringsAsFactors = F)
+      #then get pplist according to device
+      devqualt <- qualtdat[which(qualtdat$Q6.4 == d),]
+      ppqualt <- devqualt$id
+      
+      curves <- read.csv(sprintf('data/controlmironline-master/raw/processed/%s_RAECtrl.csv',group), stringsAsFactors=FALSE, check.names = FALSE)
+      trial <- curves$trial
+      ndat <- curves[,which(colnames(curves) %in% ppqualt)]
+      curves <- cbind(trial, ndat)
+      
+      curves <- curves[,-1] #remove trial rows
+      participants <- colnames(curves)
+      N <- length(participants)
+      
+      #blocked <- array(NA, dim=c(N,length(blockdefs)))
+      
+      target <- c()
+      participant <- c()
+      block <- c()
+      angdev <- c()
+      devices <- c()
+      
+      for (ppno in c(1:N)) {
+        
+        pp <- participants[ppno]
+        
+        for (blockno in c(1:length(blockdefs))) {
+          #for each participant, and every 9 trials, get the mean
+          blockdef <- blockdefs[[blockno]]
+          blockstart <- blockdef[1]
+          blockend <- blockstart + blockdef[2] - 1
+          samples <- curves[blockstart:blockend,ppno]
+          samples <- getAngularReachDevsStats(data=samples)
+          #samples <- samples[[2]]
+          
+          target <- c(target, group)
+          participant <- c(participant, pp)
+          block <- c(block, names(blockdefs)[blockno])
+          angdev <- c(angdev, samples)
+          devices <- c(devices, d)
+        }
+      }
+      LCBlocked <- data.frame(target, participant, block, angdev, devices)
+      LCaov <- rbind(LCaov, LCBlocked)
+    }
+  }
+  
+  #need to make some columns as factors for ANOVA
+  LCaov$target <- as.factor(LCaov$target)
+  LCaov$block <- as.factor(LCaov$block)
+  LCaov$block <- factor(LCaov$block, levels = c('first','second'))
+  LCaov$devices <- as.factor(LCaov$devices)
+  return(LCaov)
+  
+}
+
+#check target by block within washout period
+RAEDeviceLearningANOVA <- function() {
+  
+  blockdefs <- list('first'=c(1,3),'second'=c(4,3))
+  
+  
+  LC4aov <- getDeviceRAEBlockedLearningAOV(blockdefs=blockdefs)                      
+  
+  #looking into interaction below:
+  #interaction.plot(LC4aov$target, LC4aov$block, LC4aov$angdev)
+  
+  #learning curve ANOVA's
+  # for ez, case ID should be a factor:
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=angdev, within= c(block, target), between = c(devices), type=3, return_aov = TRUE) #df is k-2 or 3 levels minus 2; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
+  cat('Angular reach deviations during washout trials across targets, blocks, and devices, trained hand:\n')
+  print(firstAOV[1:3]) #so that it doesn't print the aov object as well
+  
+}
+
+RAEDeviceLearningBayesANOVA <- function() {
+  
+  blockdefs <- list('first'=c(1,3),'second'=c(4,3))
+  
+  
+  LC4aov <- getDeviceRAEBlockedLearningAOV(blockdefs=blockdefs)                       
+  #Bayes ANOVA - can use long format
+  #will compare models to null (intercept) or no effect - this will be 1
+  #higher than 1 will be evidence for alternative hypothesis, lower will be evidence for null hypothesis
+  #compare models either if only main effects, interaction of effects
+  #use lmBF function for specific models
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  bfLC<- anovaBF(angdev ~ target*block*devices + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+  #compare interaction contribution, over the contribution of both main effects
+  #bfinteraction <- bfLC[4]/bfLC[3]
+  
+  #bfinclude to compare model with interactions against all other models
+  bfinteraction <- bayesfactor_inclusion(bfLC)
+  
+  print(bfLC)
+  print(bfinteraction)
+}
+
+getDeviceAlignedBlockedTrainedTargets <- function(groups = c('far', 'mid', 'near'), blockdefs, deviceused = c('Mouse', 'Trackpad')) {
+  
+  LCaov <- data.frame()
+  for(d in deviceused){
+    for(group in groups){
+      #get qualtrics response to device used
+      qualtdat <- read.csv('data/controlmironline-master/qualtrics/CtrlMir_Qualtrics_ParticipantList.csv', stringsAsFactors = F)
+      #then get pplist according to device
+      devqualt <- qualtdat[which(qualtdat$Q6.4 == d),]
+      ppqualt <- devqualt$id
+      
+      curves <- read.csv(sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl_Q1target.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
+      trial <- curves$trial
+      ndat <- curves[,which(colnames(curves) %in% ppqualt)]
+      curves <- cbind(trial, ndat)
+      
+      
+      curves <- curves[,-1] #remove trial rows
+      participants <- colnames(curves)
+      N <- length(participants)
+      
+      #blocked <- array(NA, dim=c(N,length(blockdefs)))
+      
+      target <- c()
+      participant <- c()
+      block <- c()
+      angdev <- c()
+      devices <- c()
+      
+      for (ppno in c(1:N)) {
+        
+        pp <- participants[ppno]
+        
+        for (blockno in c(1:length(blockdefs))) {
+          #for each participant, and every 9 trials, get the mean
+          blockdef <- blockdefs[[blockno]]
+          blockstart <- blockdef[1]
+          blockend <- blockstart + blockdef[2] - 1
+          samples <- curves[blockstart:blockend,ppno]
+          samples <- getAngularReachDevsStats(data=samples)
+          #samples <- samples[[2]]
+          
+          target <- c(target, group)
+          participant <- c(participant, pp)
+          block <- c(block, names(blockdefs)[blockno])
+          angdev <- c(angdev, samples)
+          devices <- c(devices, d)
+        }
+      }
+      LCBlocked <- data.frame(target, participant, block, angdev, devices)
+      LCaov <- rbind(LCaov, LCBlocked)
+    }
+  }
+  
+  #need to make some columns as factors for ANOVA
+  LCaov$target <- as.factor(LCaov$target)
+  LCaov$block <- as.factor(LCaov$block)
+  LCaov$block <- factor(LCaov$block, levels = c('baseline'))
+  LCaov$devices <- as.factor(LCaov$devices)
+  return(LCaov)
+  
+}
+
+deviceRAETrainedTargetsANOVA <- function() {
+  
+  blockdefs <- list('baseline'=c(1,45))
+  LC_aligned <- getDeviceAlignedBlockedTrainedTargets(blockdefs=blockdefs)
+  
+  blockdefs <- list('first'=c(1,3),'second'=c(4,3))
+  LC_washout <- getDeviceRAEBlockedLearningAOV(blockdefs=blockdefs)                      
+  
+  LC4aov <- rbind(LC_aligned, LC_washout)
+  LC4aov$block <- factor(LC4aov$block, levels = c('baseline', 'first', 'second'))
+  #looking into interaction below:
+  #interaction.plot(LC4aov$target, LC4aov$block, LC4aov$angdev)
+  
+  #learning curve ANOVA's
+  # for ez, case ID should be a factor:
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=angdev, within= c(block, target), between = c(devices), type=3, return_aov = TRUE) #df is k-2 or 3 levels minus 2; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
+  cat('Comparing angular reach deviations during washout trials with aligned trials across targets and blocks, trained hand:\n')
+  print(firstAOV[1:3]) #so that it doesn't print the aov object as well
+  
+}
+
+deviceRAETrainedTargetsBayesANOVA <- function() {
+  
+  blockdefs <- list('baseline'=c(1,45))
+  LC_aligned <- getDeviceAlignedBlockedTrainedTargets(blockdefs=blockdefs)
+  
+  blockdefs <- list('first'=c(1,3),'second'=c(4,3))
+  LC_washout <- getDeviceRAEBlockedLearningAOV(blockdefs=blockdefs)                      
+  
+  LC4aov <- rbind(LC_aligned, LC_washout)
+  LC4aov$block <- factor(LC4aov$block, levels = c('baseline', 'first', 'second'))
+  
+  #Bayes ANOVA - can use long format
+  #will compare models to null (intercept) or no effect - this will be 1
+  #higher than 1 will be evidence for alternative hypothesis, lower will be evidence for null hypothesis
+  #compare models either if only main effects, interaction of effects
+  #use lmBF function for specific models
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  bfLC<- anovaBF(angdev ~ target*block*devices + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+  #compare interaction contribution, over the contribution of both main effects
+  #bfinteraction <- bfLC[4]/bfLC[3]
+  
+  #bfinclude to compare model with interactions against all other models
+  bfinteraction <- bayesfactor_inclusion(bfLC)
+  
+  print(bfLC)
+  print(bfinteraction)
+}
+
+#Devices: Mouse vs Trackpad Statistics (MOVEMENT TIME)----
+getDeviceAlignedBlockedMTAOV <- function(groups = c('far', 'mid', 'near'), blockdefs, hand, deviceused = c('Mouse', 'Trackpad')) {
+  
+  LCaov <- data.frame()
+  for(d in deviceused){
+    for(group in groups){
+      #get qualtrics response to device used
+      qualtdat <- read.csv('data/controlmironline-master/qualtrics/CtrlMir_Qualtrics_ParticipantList.csv', stringsAsFactors = F)
+      #then get pplist according to device
+      devqualt <- qualtdat[which(qualtdat$Q6.4 == d),]
+      ppqualt <- devqualt$id
+      
+      curves <- read.csv(sprintf('data/controlmironline-master/raw/processed/%s_MovementTime.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
+      trial <- curves$trial
+      ndat <- curves[,which(colnames(curves) %in% ppqualt)]
+      curves <- cbind(trial, ndat)
+      
+      
+      curves <- curves[,-1] #remove trial rows
+      participants <- colnames(curves)
+      N <- length(participants)
+      
+      #blocked <- array(NA, dim=c(N,length(blockdefs)))
+      
+      target <- c()
+      participant <- c()
+      block <- c()
+      movementtime <- c()
+      devices <- c()
+      
+      for (ppno in c(1:N)) {
+        
+        pp <- participants[ppno]
+        
+        for (blockno in c(1:length(blockdefs))) {
+          #for each participant, and every 9 trials, get the mean
+          blockdef <- blockdefs[[blockno]]
+          blockstart <- blockdef[1]
+          blockend <- blockstart + blockdef[2] - 1
+          samples <- curves[blockstart:blockend,ppno]
+          samples <- mean(samples, na.rm=TRUE)
+          
+          target <- c(target, group)
+          participant <- c(participant, pp)
+          block <- c(block, names(blockdefs)[blockno])
+          movementtime <- c(movementtime, samples)
+          devices <- c(devices, d)
+        }
+      }
+      LCBlocked <- data.frame(target, participant, block, movementtime, devices)
+      LCaov <- rbind(LCaov, LCBlocked)
+    }
+  }
+  
+  #need to make some columns as factors for ANOVA
+  LCaov$target <- as.factor(LCaov$target)
+  LCaov$block <- as.factor(LCaov$block)
+  LCaov$block <- factor(LCaov$block, levels = c('first','second','last'))
+  LCaov$devices <- as.factor(LCaov$devices)
+  LCaov$hand <- hand
+  return(LCaov)
+  
+}
+
+#check target by block within each aligned period for each hand
+deviceAlignedMTANOVA <- function(hands = c('trained', 'untrained')) {
+  for(hand in hands){
+    if(hand == 'trained'){
+      blockdefs <- list('first'=c(1,9),'second'=c(10,9),'last'=c(37,9))
+    } else if(hand == 'untrained'){
+      blockdefs <- list('first'=c(46,3),'second'=c(49,3),'last'=c(64,3))
+    }
+    
+    LC4aov <- getDeviceAlignedBlockedMTAOV(blockdefs=blockdefs, hand=hand)                      
+    
+    #looking into interaction below:
+    #interaction.plot(LC4aov$target, LC4aov$block, LC4aov$movementtime)
+    
+    #learning curve ANOVA's
+    # for ez, case ID should be a factor:
+    LC4aov$participant <- as.factor(LC4aov$participant)
+    firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=movementtime, within= c(block, target), between = c(devices), type=3, return_aov = TRUE) #df is k-2 or 3 levels minus 2; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
+    cat(sprintf('Movement time during aligned trials across targets, blocks, and devices, %s hand:\n', hand))
+    print(firstAOV[1:3]) #so that it doesn't print the aov object as well
+  }
+}
+
+deviceAlignedMTBayesANOVA <- function(hands = c('trained', 'untrained')) {
+  
+  for(hand in hands){
+    if(hand == 'trained'){
+      blockdefs <- list('first'=c(1,9),'second'=c(10,9),'last'=c(37,9))
+    } else if(hand == 'untrained'){
+      blockdefs <- list('first'=c(46,3),'second'=c(49,3),'last'=c(64,3))
+    }
+    
+    LC4aov <- getDeviceAlignedBlockedMTAOV(blockdefs=blockdefs, hand=hand)                      
+    LC4aov$participant <- as.factor(LC4aov$participant)
+    bfLC<- anovaBF(movementtime ~ target*block*devices + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+    #compare interaction contribution, over the contribution of both main effects
+    #bfinteraction <- bfLC[4]/bfLC[3]
+    
+    #bfinclude to compare model with interactions against all other models
+    bfinteraction <- bayesfactor_inclusion(bfLC)
+    
+    print(bfLC)
+    print(bfinteraction)
+  }
+}
+
+deviceMirrorMTANOVA <- function() {
+  
+  #can still use alignedMT function as it has all trials
+  blockdefs <- list('first'=c(67,3),'second'=c(70,3),'last'=c(142,15))
+  
+  
+  LC4aov <- getDeviceAlignedBlockedMTAOV(blockdefs=blockdefs, hand='trained')               
+  
+  #looking into interaction below:
+  #interaction.plot(LC4aov$target, LC4aov$block, LC4aov$movementtime)
+  
+  #learning curve ANOVA's
+  # for ez, case ID should be a factor:
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=movementtime, within= c(target, block), between = c(devices), type=3, return_aov = TRUE) #df is k-2 or 3 levels minus 2; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
+  #cat(sprintf('Quadrant %s:\n', quadrant))
+  print(firstAOV[1:3]) #so that it doesn't print the aov object as well
+  
+}
+
+deviceMirrorMTBayesANOVA <- function() {
+  
+  #can still use alignedMT function as it has all trials
+  blockdefs <- list('first'=c(67,3),'second'=c(70,3),'last'=c(142,15))
+  
+  LC4aov <- getDeviceAlignedBlockedMTAOV(blockdefs=blockdefs, hand='trained')               
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  bfLC<- anovaBF(movementtime ~ target*block*devices + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+  #compare interaction contribution, over the contribution of both main effects
+  #bfinteraction <- bfLC[4]/bfLC[3]
+  
+  #bfinclude to compare model with interactions against all other models
+  bfinteraction <- bayesfactor_inclusion(bfLC)
+  
+  print(bfLC)
+  print(bfinteraction)
+}
+
+deviceRAEMTANOVA <- function() {
+  
+  blockdefs <- list('first'=c(157,3),'second'=c(160,3))
+  
+  
+  LC4aov <- getDeviceAlignedBlockedMTAOV(blockdefs=blockdefs, hand='trained')                      
+  
+  #looking into interaction below:
+  #interaction.plot(LC4aov$target, LC4aov$block, LC4aov$movementtime)
+  
+  #learning curve ANOVA's
+  # for ez, case ID should be a factor:
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=movementtime, within= c(block, target), between=c(devices), type=3, return_aov = TRUE) #df is k-2 or 3 levels minus 2; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
+  cat('Movement time during washout trials across targets, blocks, and devices, trained hand:\n')
+  print(firstAOV[1:3]) #so that it doesn't print the aov object as well
+  
+}
+
+deviceRAEMTBayesANOVA <- function() {
+  
+  blockdefs <- list('first'=c(157,3),'second'=c(160,3))
+  
+  
+  LC4aov <- getDeviceAlignedBlockedMTAOV(blockdefs=blockdefs, hand='trained')                      
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  bfLC<- anovaBF(movementtime ~ target*block*devices + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+  #compare interaction contribution, over the contribution of both main effects
+  #bfinteraction <- bfLC[4]/bfLC[3]
+  
+  #bfinclude to compare model with interactions against all other models
+  bfinteraction <- bayesfactor_inclusion(bfLC)
+  
+  print(bfLC)
+  print(bfinteraction)
+}
+
+#no effect of device, but there is a device by block interaction (did not hold up in BF incl though)
+
+getDeviceAlignedBlockedMTTrainedTargets <- function(groups = c('far', 'mid', 'near'), blockdefs, deviceused = c('Mouse', 'Trackpad')) {
+  
+  LCaov <- data.frame()
+  for(d in deviceused){
+    for(group in groups){
+      #get qualtrics response to device used
+      qualtdat <- read.csv('data/controlmironline-master/qualtrics/CtrlMir_Qualtrics_ParticipantList.csv', stringsAsFactors = F)
+      #then get pplist according to device
+      devqualt <- qualtdat[which(qualtdat$Q6.4 == d),]
+      ppqualt <- devqualt$id
+      
+      curves <- read.csv(sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl_MT_Q1target.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
+      trial <- curves$trial
+      ndat <- curves[,which(colnames(curves) %in% ppqualt)]
+      curves <- cbind(trial, ndat)
+      
+      curves <- curves[,-1] #remove trial rows
+      participants <- colnames(curves)
+      N <- length(participants)
+      
+      #blocked <- array(NA, dim=c(N,length(blockdefs)))
+      
+      target <- c()
+      participant <- c()
+      block <- c()
+      movementtime <- c()
+      devices <- c()
+      
+      for (ppno in c(1:N)) {
+        
+        pp <- participants[ppno]
+        
+        for (blockno in c(1:length(blockdefs))) {
+          #for each participant, and every 9 trials, get the mean
+          blockdef <- blockdefs[[blockno]]
+          blockstart <- blockdef[1]
+          blockend <- blockstart + blockdef[2] - 1
+          samples <- curves[blockstart:blockend,ppno]
+          samples <- mean(samples, na.rm=TRUE)
+          
+          target <- c(target, group)
+          participant <- c(participant, pp)
+          block <- c(block, names(blockdefs)[blockno])
+          movementtime <- c(movementtime, samples)
+          devices <- c(devices, d)
+        }
+      }
+      LCBlocked <- data.frame(target, participant, block, movementtime, devices)
+      LCaov <- rbind(LCaov, LCBlocked)
+    }
+  }
+  
+  #need to make some columns as factors for ANOVA
+  LCaov$target <- as.factor(LCaov$target)
+  LCaov$block <- as.factor(LCaov$block)
+  LCaov$block <- factor(LCaov$block, levels = c('baseline'))
+  LCaov$devices <- as.factor(LCaov$devices)
+  return(LCaov)
+  
+}
+
+deviceRAEMTTrainedTargetsANOVA <- function() {
+  
+  blockdefs <- list('baseline'=c(1,45))
+  LC_aligned <- getDeviceAlignedBlockedMTTrainedTargets(blockdefs=blockdefs)
+  
+  blockdefs <- list('first'=c(157,3),'second'=c(160,3))
+  LC_washout<- getDeviceAlignedBlockedMTAOV(blockdefs=blockdefs, hand='trained')
+  LC_washout <- LC_washout[,-6]
+  
+  LC4aov <- rbind(LC_aligned, LC_washout)
+  LC4aov$block <- factor(LC4aov$block, levels = c('baseline', 'first', 'second'))
+  #looking into interaction below:
+  #interaction.plot(LC4aov$target, LC4aov$block, LC4aov$movementtime)
+  
+  #learning curve ANOVA's
+  # for ez, case ID should be a factor:
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=movementtime, within= c(block, target), between = c(devices), type=3, return_aov = TRUE) #df is k-2 or 3 levels minus 2; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
+  cat('Comparing movement times during washout trials with aligned trials across targets, blocks, and devices, trained hand:\n')
+  print(firstAOV[1:3]) #so that it doesn't print the aov object as well
+  
+}
+
+deviceRAEMTTrainedTargetsBayesANOVA <- function() {
+  
+  blockdefs <- list('baseline'=c(1,45))
+  LC_aligned <- getDeviceAlignedBlockedMTTrainedTargets(blockdefs=blockdefs)
+  
+  blockdefs <- list('first'=c(157,3),'second'=c(160,3))
+  LC_washout<- getDeviceAlignedBlockedMTAOV(blockdefs=blockdefs, hand='trained')
+  LC_washout <- LC_washout[,-6]
+  
+  LC4aov <- rbind(LC_aligned, LC_washout)
+  LC4aov$block <- factor(LC4aov$block, levels = c('baseline', 'first', 'second'))
+  
+  #learning curve ANOVA's
+  # for ez, case ID should be a factor:
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  bfLC<- anovaBF(movementtime ~ target*block*devices + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+  #compare interaction contribution, over the contribution of both main effects
+  #bfinteraction <- bfLC[4]/bfLC[3]
+  
+  #bfinclude to compare model with interactions against all other models
+  bfinteraction <- bayesfactor_inclusion(bfLC)
+  
+  print(bfLC)
+  print(bfinteraction)
+}
+
+#Devices: Mouse vs Trackpad Statistics (PATH LENGTH)----
+getDeviceAlignedBlockedPLAOV <- function(groups = c('far', 'mid', 'near'), blockdefs, hand, deviceused = c('Mouse', 'Trackpad')) {
+  
+  LCaov <- data.frame()
+  for(d in deviceused){
+    for(group in groups){
+      #get qualtrics response to device used
+      qualtdat <- read.csv('data/controlmironline-master/qualtrics/CtrlMir_Qualtrics_ParticipantList.csv', stringsAsFactors = F)
+      #then get pplist according to device
+      devqualt <- qualtdat[which(qualtdat$Q6.4 == d),]
+      ppqualt <- devqualt$id
+      
+      curves <- read.csv(sprintf('data/controlmironline-master/raw/processed/%s_PathLength.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
+      trial <- curves$trial
+      ndat <- curves[,which(colnames(curves) %in% ppqualt)]
+      curves <- cbind(trial, ndat)
+      
+      
+      curves <- curves[,-1] #remove trial rows
+      participants <- colnames(curves)
+      N <- length(participants)
+      
+      #blocked <- array(NA, dim=c(N,length(blockdefs)))
+      
+      target <- c()
+      participant <- c()
+      block <- c()
+      pathlength <- c()
+      devices <- c()
+      
+      for (ppno in c(1:N)) {
+        
+        pp <- participants[ppno]
+        
+        for (blockno in c(1:length(blockdefs))) {
+          #for each participant, and every 9 trials, get the mean
+          blockdef <- blockdefs[[blockno]]
+          blockstart <- blockdef[1]
+          blockend <- blockstart + blockdef[2] - 1
+          samples <- curves[blockstart:blockend,ppno]
+          samples <- mean(samples, na.rm=TRUE)
+          
+          target <- c(target, group)
+          participant <- c(participant, pp)
+          block <- c(block, names(blockdefs)[blockno])
+          pathlength <- c(pathlength, samples)
+          devices <- c(devices, d)
+        }
+      }
+      LCBlocked <- data.frame(target, participant, block, pathlength, devices)
+      LCaov <- rbind(LCaov, LCBlocked)
+    }
+  }
+  
+  #need to make some columns as factors for ANOVA
+  LCaov$target <- as.factor(LCaov$target)
+  LCaov$block <- as.factor(LCaov$block)
+  LCaov$block <- factor(LCaov$block, levels = c('first','second','last'))
+  LCaov$devices <- as.factor(LCaov$devices)
+  LCaov$hand <- hand
+  return(LCaov)
+  
+}
+
+#check target by block within each aligned period for each hand
+deviceAlignedPLANOVA <- function(hands = c('trained', 'untrained')) {
+  for(hand in hands){
+    if(hand == 'trained'){
+      blockdefs <- list('first'=c(1,9),'second'=c(10,9),'last'=c(37,9))
+    } else if(hand == 'untrained'){
+      blockdefs <- list('first'=c(46,3),'second'=c(49,3),'last'=c(64,3))
+    }
+    
+    LC4aov <- getDeviceAlignedBlockedPLAOV(blockdefs=blockdefs, hand=hand)                      
+    
+    #looking into interaction below:
+    #interaction.plot(LC4aov$target, LC4aov$block, LC4aov$movementtime)
+    
+    #learning curve ANOVA's
+    # for ez, case ID should be a factor:
+    LC4aov$participant <- as.factor(LC4aov$participant)
+    firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=pathlength, within= c(block, target), between = c(devices), type=3, return_aov = TRUE) #df is k-2 or 3 levels minus 2; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
+    cat(sprintf('Path length during aligned trials across targets, blocks, and devices, %s hand:\n', hand))
+    print(firstAOV[1:3]) #so that it doesn't print the aov object as well
+  }
+}
+
+deviceAlignedPLBayesANOVA <- function(hands = c('trained', 'untrained')) {
+  
+  for(hand in hands){
+    if(hand == 'trained'){
+      blockdefs <- list('first'=c(1,9),'second'=c(10,9),'last'=c(37,9))
+    } else if(hand == 'untrained'){
+      blockdefs <- list('first'=c(46,3),'second'=c(49,3),'last'=c(64,3))
+    }
+    
+    LC4aov <- getDeviceAlignedBlockedPLAOV(blockdefs=blockdefs, hand=hand)                      
+    LC4aov$participant <- as.factor(LC4aov$participant)
+    bfLC<- anovaBF(pathlength ~ target*block*devices + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+    #compare interaction contribution, over the contribution of both main effects
+    #bfinteraction <- bfLC[4]/bfLC[3]
+    
+    #bfinclude to compare model with interactions against all other models
+    bfinteraction <- bayesfactor_inclusion(bfLC)
+    
+    print(bfLC)
+    print(bfinteraction)
+  }
+}
+
+#device has main effect for untrained hand; a blockxtargetxdevice interaction, but in BF incl only main effect of device is seen
+#follow up on main effect of device, regardless of target or block
+#main effect of target for trained hand
+deviceAlignedPLComparisons<- function(hand='untrained'){
+  blockdefs <- list('first'=c(46,3),'second'=c(49,3),'last'=c(64,3))
+  LC4aov <- getDeviceAlignedBlockedPLAOV(blockdefs=blockdefs, hand=hand)   
+  
+  LC4aov <- aggregate(pathlength ~ devices* participant, data=LC4aov, FUN=mean)
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  
+  mousedat <- LC4aov[which(LC4aov$devices == 'Mouse'),]
+  trackdat <- LC4aov[which(LC4aov$devices == 'Trackpad'),]
+  #print(t.test(mousedat$pathlength, trackdat$pathlength, alternative = 'less'))
+  print(t.test(mousedat$pathlength, trackdat$pathlength))
+  cat('Bayesian t-test (mouse vs. trackpad): \n')
+  #have to do it differently for paired t-tests, when we know what the alternative is
+  #bfInterval <- ttestBF(mousedat$pathlength, trackdat$pathlength, nullInterval=c(-Inf, 0))
+  #print(bfInterval[1]/bfInterval[2])
+  print(ttestBF(mousedat$pathlength, trackdat$pathlength))
+}
+
+# a difference in path length for mouse vs trackpad, looking at means mouse has larger PLs
+
+deviceMirrorPLANOVA <- function() {
+  
+  #can still use alignedMT function as it has all trials
+  blockdefs <- list('first'=c(67,3),'second'=c(70,3),'last'=c(142,15))
+  
+  
+  LC4aov <- getDeviceAlignedBlockedPLAOV(blockdefs=blockdefs, hand='trained')               
+  
+  #looking into interaction below:
+  #interaction.plot(LC4aov$target, LC4aov$block, LC4aov$movementtime)
+  
+  #learning curve ANOVA's
+  # for ez, case ID should be a factor:
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=pathlength, within= c(target, block), between = c(devices), type=3, return_aov = TRUE) #df is k-2 or 3 levels minus 2; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
+  #cat(sprintf('Quadrant %s:\n', quadrant))
+  print(firstAOV[1:3]) #so that it doesn't print the aov object as well
+  
+}
+
+deviceMirrorPLBayesANOVA <- function() {
+  
+  #can still use alignedMT function as it has all trials
+  blockdefs <- list('first'=c(67,3),'second'=c(70,3),'last'=c(142,15))
+  
+  LC4aov <- getDeviceAlignedBlockedPLAOV(blockdefs=blockdefs, hand='trained')               
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  bfLC<- anovaBF(pathlength ~ target*block*devices + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+  #compare interaction contribution, over the contribution of both main effects
+  #bfinteraction <- bfLC[4]/bfLC[3]
+  
+  #bfinclude to compare model with interactions against all other models
+  bfinteraction <- bayesfactor_inclusion(bfLC)
+  
+  print(bfLC)
+  print(bfinteraction)
+}
+
+deviceRAEPLANOVA <- function() {
+  
+  blockdefs <- list('first'=c(157,3),'second'=c(160,3))
+  
+  
+  LC4aov <- getDeviceAlignedBlockedPLAOV(blockdefs=blockdefs, hand='trained')                      
+  
+  #looking into interaction below:
+  #interaction.plot(LC4aov$target, LC4aov$block, LC4aov$movementtime)
+  
+  #learning curve ANOVA's
+  # for ez, case ID should be a factor:
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=pathlength, within= c(block, target), between=c(devices), type=3, return_aov = TRUE) #df is k-2 or 3 levels minus 2; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
+  cat('Path length during washout trials across targets, blocks, and devices, trained hand:\n')
+  print(firstAOV[1:3]) #so that it doesn't print the aov object as well
+  
+}
+
+deviceRAEPLBayesANOVA <- function() {
+  
+  blockdefs <- list('first'=c(157,3),'second'=c(160,3))
+  
+  
+  LC4aov <- getDeviceAlignedBlockedPLAOV(blockdefs=blockdefs, hand='trained')                      
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  bfLC<- anovaBF(pathlength ~ target*block*devices + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+  #compare interaction contribution, over the contribution of both main effects
+  #bfinteraction <- bfLC[4]/bfLC[3]
+  
+  #bfinclude to compare model with interactions against all other models
+  bfinteraction <- bayesfactor_inclusion(bfLC)
+  
+  print(bfLC)
+  print(bfinteraction)
+}
+
+getDeviceAlignedBlockedPLTrainedTargets <- function(groups = c('far', 'mid', 'near'), blockdefs, deviceused = c('Mouse', 'Trackpad')) {
+  
+  LCaov <- data.frame()
+  for(d in deviceused){
+    for(group in groups){
+      #get qualtrics response to device used
+      qualtdat <- read.csv('data/controlmironline-master/qualtrics/CtrlMir_Qualtrics_ParticipantList.csv', stringsAsFactors = F)
+      #then get pplist according to device
+      devqualt <- qualtdat[which(qualtdat$Q6.4 == d),]
+      ppqualt <- devqualt$id
+      
+      curves <- read.csv(sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl_PL_Q1target.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
+      trial <- curves$trial
+      ndat <- curves[,which(colnames(curves) %in% ppqualt)]
+      curves <- cbind(trial, ndat)
+      
+      curves <- curves[,-1] #remove trial rows
+      participants <- colnames(curves)
+      N <- length(participants)
+      
+      #blocked <- array(NA, dim=c(N,length(blockdefs)))
+      
+      target <- c()
+      participant <- c()
+      block <- c()
+      pathlength <- c()
+      devices <- c()
+      
+      for (ppno in c(1:N)) {
+        
+        pp <- participants[ppno]
+        
+        for (blockno in c(1:length(blockdefs))) {
+          #for each participant, and every 9 trials, get the mean
+          blockdef <- blockdefs[[blockno]]
+          blockstart <- blockdef[1]
+          blockend <- blockstart + blockdef[2] - 1
+          samples <- curves[blockstart:blockend,ppno]
+          samples <- mean(samples, na.rm=TRUE)
+          
+          target <- c(target, group)
+          participant <- c(participant, pp)
+          block <- c(block, names(blockdefs)[blockno])
+          pathlength <- c(pathlength, samples)
+          devices <- c(devices, d)
+        }
+      }
+      LCBlocked <- data.frame(target, participant, block, pathlength, devices)
+      LCaov <- rbind(LCaov, LCBlocked)
+    }
+  }
+  
+  #need to make some columns as factors for ANOVA
+  LCaov$target <- as.factor(LCaov$target)
+  LCaov$block <- as.factor(LCaov$block)
+  LCaov$block <- factor(LCaov$block, levels = c('baseline'))
+  LCaov$devices <- as.factor(LCaov$devices)
+  return(LCaov)
+  
+}
+
+deviceRAEPLTrainedTargetsANOVA <- function() {
+  
+  blockdefs <- list('baseline'=c(1,45))
+  LC_aligned <- getDeviceAlignedBlockedPLTrainedTargets(blockdefs=blockdefs)
+  
+  blockdefs <- list('first'=c(157,3),'second'=c(160,3))
+  LC_washout<- getDeviceAlignedBlockedPLAOV(blockdefs=blockdefs, hand='trained')
+  LC_washout <- LC_washout[,-6]
+  
+  LC4aov <- rbind(LC_aligned, LC_washout)
+  LC4aov$block <- factor(LC4aov$block, levels = c('baseline', 'first', 'second'))
+  #looking into interaction below:
+  #interaction.plot(LC4aov$target, LC4aov$block, LC4aov$movementtime)
+  
+  #learning curve ANOVA's
+  # for ez, case ID should be a factor:
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=pathlength, within= c(block, target), between = c(devices), type=3, return_aov = TRUE) #df is k-2 or 3 levels minus 2; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
+  cat('Comparing path lengths during washout trials with aligned trials across targets, blocks, and devices, trained hand:\n')
+  print(firstAOV[1:3]) #so that it doesn't print the aov object as well
+  
+}
+
+deviceRAEPLTrainedTargetsBayesANOVA <- function() {
+  
+  blockdefs <- list('baseline'=c(1,45))
+  LC_aligned <- getDeviceAlignedBlockedPLTrainedTargets(blockdefs=blockdefs)
+  
+  blockdefs <- list('first'=c(157,3),'second'=c(160,3))
+  LC_washout<- getDeviceAlignedBlockedPLAOV(blockdefs=blockdefs, hand='trained')
+  LC_washout <- LC_washout[,-6]
+  
+  LC4aov <- rbind(LC_aligned, LC_washout)
+  LC4aov$block <- factor(LC4aov$block, levels = c('baseline', 'first', 'second'))
+  
+  #learning curve ANOVA's
+  # for ez, case ID should be a factor:
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  bfLC<- anovaBF(pathlength ~ target*block*devices + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+  #compare interaction contribution, over the contribution of both main effects
+  #bfinteraction <- bfLC[4]/bfLC[3]
+  
+  #bfinclude to compare model with interactions against all other models
+  bfinteraction <- bayesfactor_inclusion(bfLC)
+  
+  print(bfLC)
+  print(bfinteraction)
+}
+
+
+
+#Sex: Male vs Female Statistics (LEARNING)----
+
+getSexAlignedBlockedLearningAOV <- function(groups = c('far', 'mid', 'near'), blockdefs, hand, sexes = c('Male', 'Female')) {
+  
+  LCaov <- data.frame()
+  for (s in sexes){
+    for(group in groups){
+      #get qualtrics response to device used
+      qualtdat <- read.csv('data/controlmironline-master/qualtrics/CtrlMir_Qualtrics_ParticipantList.csv', stringsAsFactors = F)
+      #then get pplist according to device
+      devqualt <- qualtdat[which(qualtdat$Q2.2 == s),]
+      ppqualt <- devqualt$id
+      
+      curves <- read.csv(sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
+      trial <- curves$trial
+      ndat <- curves[,which(colnames(curves) %in% ppqualt)]
+      curves <- cbind(trial, ndat)
+      
+      curves <- curves[,-1] #remove trial rows
+      participants <- colnames(curves)
+      N <- length(participants)
+      
+      #blocked <- array(NA, dim=c(N,length(blockdefs)))
+      
+      target <- c()
+      participant <- c()
+      block <- c()
+      angdev <- c()
+      sex <- c()
+      
+      for (ppno in c(1:N)) {
+        
+        pp <- participants[ppno]
+        
+        for (blockno in c(1:length(blockdefs))) {
+          #for each participant, and every 9 trials, get the mean
+          blockdef <- blockdefs[[blockno]]
+          blockstart <- blockdef[1]
+          blockend <- blockstart + blockdef[2] - 1
+          samples <- curves[blockstart:blockend,ppno]
+          samples <- getAngularReachDevsStats(data=samples)
+          #samples <- samples[[2]]
+          
+          target <- c(target, group)
+          participant <- c(participant, pp)
+          block <- c(block, names(blockdefs)[blockno])
+          angdev <- c(angdev, samples)
+          sex <- c(sex, s)
+        }
+      }
+      LCBlocked <- data.frame(target, participant, block, angdev, sex)
+      LCaov <- rbind(LCaov, LCBlocked)
+    }
+  }
+  
+  #need to make some columns as factors for ANOVA
+  LCaov$target <- as.factor(LCaov$target)
+  LCaov$block <- as.factor(LCaov$block)
+  LCaov$block <- factor(LCaov$block, levels = c('first','second','last'))
+  LCaov$hand <- hand
+  LCaov$sex <- as.factor(LCaov$sex)
+  return(LCaov)
+  
+}
+
+#only care about effect of devices
+
+sexAlignedLearningANOVA <- function(hands = c('trained', 'untrained')) {
+  for(hand in hands){
+    if(hand == 'trained'){
+      blockdefs <- list('first'=c(1,9),'second'=c(10,9),'last'=c(37,9))
+    } else if(hand == 'untrained'){
+      blockdefs <- list('first'=c(46,3),'second'=c(49,3),'last'=c(64,3))
+    }
+    
+    LC4aov <- getSexAlignedBlockedLearningAOV(blockdefs=blockdefs, hand=hand)                      
+    
+    #looking into interaction below:
+    #interaction.plot(LC4aov$target, LC4aov$block, LC4aov$angdev) 
+    
+    #learning curve ANOVA's
+    # for ez, case ID should be a factor:
+    LC4aov$participant <- as.factor(LC4aov$participant)
+    firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=angdev, within= c(block, target), between=c(sex), type=3, return_aov = TRUE) #df is k-2 or 3 levels minus 2; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
+    cat(sprintf('Angular reach deviations during aligned trials across targets, blocks, and sexes, %s hand:\n', hand))
+    print(firstAOV[1:3]) #so that it doesn't print the aov object as well
+  }
+}
+
+sexAlignedLearningBayesANOVA <- function(hand) {
+  
+  #styles <- getStyle()
+  if(hand == 'trained'){
+    blockdefs <- list('first'=c(1,9),'second'=c(10,9),'last'=c(37,9))
+  } else if(hand == 'untrained'){
+    blockdefs <- list('first'=c(46,3),'second'=c(49,3),'last'=c(64,3))
+  }
+  
+  LC4aov <- getSexAlignedBlockedLearningAOV(blockdefs=blockdefs, hand=hand)                     
+  
+  #looking into interaction below:
+  #interaction.plot(LC4aov$diffgroup, LC4aov$block, LC4aov$reachdeviation)
+  
+  #Bayes ANOVA - can use long format
+  #will compare models to null (intercept) or no effect - this will be 1
+  #higher than 1 will be evidence for alternative hypothesis, lower will be evidence for null hypothesis
+  #compare models either if only main effects, interaction of effects
+  #use lmBF function for specific models
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  bfLC<- anovaBF(angdev ~ target*block*sex + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+  #compare interaction contribution, over the contribution of both main effects
+  #bfinteraction <- bfLC[4]/bfLC[3]
+  
+  #bfinclude to compare model with interactions against all other models
+  bfinteraction <- bayesfactor_inclusion(bfLC)
+  
+  print(bfLC)
+  print(bfinteraction)
+  
+}
+
+#no effect of device on aligned (both hands)
+
+getSexMirrorBlockedLearningAOV <- function(groups = c('far', 'mid', 'near'), blockdefs, sexes = c('Male', 'Female')) {
+  
+  LCaov <- data.frame()
+  for(s in sexes){
+    for(group in groups){
+      #get qualtrics response to device used
+      qualtdat <- read.csv('data/controlmironline-master/qualtrics/CtrlMir_Qualtrics_ParticipantList.csv', stringsAsFactors = F)
+      #then get pplist according to device
+      devqualt <- qualtdat[which(qualtdat$Q2.2 == s),]
+      ppqualt <- devqualt$id
+      
+      curves <- read.csv(sprintf('data/controlmironline-master/raw/processed/%s_Mirror_PercentCompensation.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
+      trial <- curves$trial
+      ndat <- curves[,which(colnames(curves) %in% ppqualt)]
+      curves <- cbind(trial, ndat)
+      
+      curves <- curves[,-1] #remove trial rows
+      participants <- colnames(curves)
+      N <- length(participants)
+      
+      #blocked <- array(NA, dim=c(N,length(blockdefs)))
+      
+      target <- c()
+      participant <- c()
+      block <- c()
+      percentcomp <- c()
+      sex <- c()
+      
+      for (ppno in c(1:N)) {
+        
+        pp <- participants[ppno]
+        
+        for (blockno in c(1:length(blockdefs))) {
+          #for each participant, and every three trials, get the mean
+          blockdef <- blockdefs[[blockno]]
+          blockstart <- blockdef[1]
+          blockend <- blockstart + blockdef[2] - 1
+          samples <- curves[blockstart:blockend,ppno]
+          samples <- mean(samples, na.rm=TRUE)
+          
+          target <- c(target, group)
+          participant <- c(participant, pp)
+          block <- c(block, names(blockdefs)[blockno])
+          percentcomp <- c(percentcomp, samples)
+          sex <- c(sex, s)
+        }
+      }
+      LCBlocked <- data.frame(target, participant, block, percentcomp, sex)
+      LCaov <- rbind(LCaov, LCBlocked)
+    }
+  }
+  
+  #need to make some columns as factors for ANOVA
+  LCaov$target <- as.factor(LCaov$target)
+  LCaov$block <- as.factor(LCaov$block)
+  LCaov$block <- factor(LCaov$block, levels = c('first','second','last'))
+  LCaov$sex <- as.factor(LCaov$sex)
+  return(LCaov)
+  
+}
+
+#3x3 anova (target x block)
+sexmirrorANOVA <- function() {
+  
+  
+  blockdefs <- list('first'=c(1,3),'second'=c(4,3),'last'=c(76,15))
+  
+  
+  LC4aov <- getSexMirrorBlockedLearningAOV(blockdefs=blockdefs)                  
+  
+  #looking into interaction below:
+  #interaction.plot(LC4aov$target, LC4aov$block, LC4aov$percentcomp)
+  
+  #learning curve ANOVA's
+  # for ez, case ID should be a factor:
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=percentcomp, within= c(target, block), between = c(sex), type=3, return_aov = TRUE) #df is k-2 or 3 levels minus 2; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
+  #cat(sprintf('Quadrant %s:\n', quadrant))
+  print(firstAOV[1:3]) #so that it doesn't print the aov object as well
+  
+}
+
+sexmirrorBayesANOVA <- function() {
+  
+  blockdefs <- list('first'=c(1,3),'second'=c(4,3),'last'=c(76,15))
+  
+  
+  LC4aov <- getSexMirrorBlockedLearningAOV(blockdefs=blockdefs)                      
+  #Bayes ANOVA - can use long format
+  #will compare models to null (intercept) or no effect - this will be 1
+  #higher than 1 will be evidence for alternative hypothesis, lower will be evidence for null hypothesis
+  #compare models either if only main effects, interaction of effects
+  #use lmBF function for specific models
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  bfLC<- anovaBF(percentcomp ~ target*block*sex + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+  #compare interaction contribution, over the contribution of both main effects
+  #bfinteraction <- bfLC[4]/bfLC[3]
+  
+  #bfinclude to compare model with interactions against all other models
+  bfinteraction <- bayesfactor_inclusion(bfLC)
+  
+  print(bfLC)
+  print(bfinteraction)
+}
+
+getSexRAEBlockedLearningAOV <- function(groups = c('far', 'mid', 'near'), blockdefs, sexes = c('Male', 'Female')) {
+  
+  LCaov <- data.frame()
+  for(s in sexes){
+    for(group in groups){
+      #get qualtrics response to device used
+      qualtdat <- read.csv('data/controlmironline-master/qualtrics/CtrlMir_Qualtrics_ParticipantList.csv', stringsAsFactors = F)
+      #then get pplist according to device
+      devqualt <- qualtdat[which(qualtdat$Q2.2 == s),]
+      ppqualt <- devqualt$id
+      
+      curves <- read.csv(sprintf('data/controlmironline-master/raw/processed/%s_RAECtrl.csv',group), stringsAsFactors=FALSE, check.names = FALSE)
+      trial <- curves$trial
+      ndat <- curves[,which(colnames(curves) %in% ppqualt)]
+      curves <- cbind(trial, ndat)
+      
+      curves <- curves[,-1] #remove trial rows
+      participants <- colnames(curves)
+      N <- length(participants)
+      
+      #blocked <- array(NA, dim=c(N,length(blockdefs)))
+      
+      target <- c()
+      participant <- c()
+      block <- c()
+      angdev <- c()
+      sex <- c()
+      
+      for (ppno in c(1:N)) {
+        
+        pp <- participants[ppno]
+        
+        for (blockno in c(1:length(blockdefs))) {
+          #for each participant, and every 9 trials, get the mean
+          blockdef <- blockdefs[[blockno]]
+          blockstart <- blockdef[1]
+          blockend <- blockstart + blockdef[2] - 1
+          samples <- curves[blockstart:blockend,ppno]
+          samples <- getAngularReachDevsStats(data=samples)
+          #samples <- samples[[2]]
+          
+          target <- c(target, group)
+          participant <- c(participant, pp)
+          block <- c(block, names(blockdefs)[blockno])
+          angdev <- c(angdev, samples)
+          sex <- c(sex, s)
+        }
+      }
+      LCBlocked <- data.frame(target, participant, block, angdev, sex)
+      LCaov <- rbind(LCaov, LCBlocked)
+    }
+  }
+  
+  #need to make some columns as factors for ANOVA
+  LCaov$target <- as.factor(LCaov$target)
+  LCaov$block <- as.factor(LCaov$block)
+  LCaov$block <- factor(LCaov$block, levels = c('first','second'))
+  LCaov$sex <- as.factor(LCaov$sex)
+  return(LCaov)
+  
+}
+
+#check target by block within washout period
+RAESexLearningANOVA <- function() {
+  
+  blockdefs <- list('first'=c(1,3),'second'=c(4,3))
+  
+  
+  LC4aov <- getSexRAEBlockedLearningAOV(blockdefs=blockdefs)                      
+  
+  #looking into interaction below:
+  #interaction.plot(LC4aov$target, LC4aov$block, LC4aov$angdev)
+  
+  #learning curve ANOVA's
+  # for ez, case ID should be a factor:
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=angdev, within= c(block, target), between = c(sex), type=3, return_aov = TRUE) #df is k-2 or 3 levels minus 2; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
+  cat('Angular reach deviations during washout trials across targets, blocks, and sexes, trained hand:\n')
+  print(firstAOV[1:3]) #so that it doesn't print the aov object as well
+  
+}
+
+RAESexLearningBayesANOVA <- function() {
+  
+  blockdefs <- list('first'=c(1,3),'second'=c(4,3))
+  
+  
+  LC4aov <- getSexRAEBlockedLearningAOV(blockdefs=blockdefs)                       
+  #Bayes ANOVA - can use long format
+  #will compare models to null (intercept) or no effect - this will be 1
+  #higher than 1 will be evidence for alternative hypothesis, lower will be evidence for null hypothesis
+  #compare models either if only main effects, interaction of effects
+  #use lmBF function for specific models
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  bfLC<- anovaBF(angdev ~ target*block*sex + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+  #compare interaction contribution, over the contribution of both main effects
+  #bfinteraction <- bfLC[4]/bfLC[3]
+  
+  #bfinclude to compare model with interactions against all other models
+  bfinteraction <- bayesfactor_inclusion(bfLC)
+  
+  print(bfLC)
+  print(bfinteraction)
+}
+
+getSexAlignedBlockedTrainedTargets <- function(groups = c('far', 'mid', 'near'), blockdefs, sexes = c('Male', 'Female')) {
+  
+  LCaov <- data.frame()
+  for(s in sexes){
+    for(group in groups){
+      #get qualtrics response to device used
+      qualtdat <- read.csv('data/controlmironline-master/qualtrics/CtrlMir_Qualtrics_ParticipantList.csv', stringsAsFactors = F)
+      #then get pplist according to device
+      devqualt <- qualtdat[which(qualtdat$Q2.2 == s),]
+      ppqualt <- devqualt$id
+      
+      curves <- read.csv(sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl_Q1target.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
+      trial <- curves$trial
+      ndat <- curves[,which(colnames(curves) %in% ppqualt)]
+      curves <- cbind(trial, ndat)
+      
+      
+      curves <- curves[,-1] #remove trial rows
+      participants <- colnames(curves)
+      N <- length(participants)
+      
+      #blocked <- array(NA, dim=c(N,length(blockdefs)))
+      
+      target <- c()
+      participant <- c()
+      block <- c()
+      angdev <- c()
+      sex <- c()
+      
+      for (ppno in c(1:N)) {
+        
+        pp <- participants[ppno]
+        
+        for (blockno in c(1:length(blockdefs))) {
+          #for each participant, and every 9 trials, get the mean
+          blockdef <- blockdefs[[blockno]]
+          blockstart <- blockdef[1]
+          blockend <- blockstart + blockdef[2] - 1
+          samples <- curves[blockstart:blockend,ppno]
+          samples <- getAngularReachDevsStats(data=samples)
+          #samples <- samples[[2]]
+          
+          target <- c(target, group)
+          participant <- c(participant, pp)
+          block <- c(block, names(blockdefs)[blockno])
+          angdev <- c(angdev, samples)
+          sex <- c(sex, s)
+        }
+      }
+      LCBlocked <- data.frame(target, participant, block, angdev, sex)
+      LCaov <- rbind(LCaov, LCBlocked)
+    }
+  }
+  
+  #need to make some columns as factors for ANOVA
+  LCaov$target <- as.factor(LCaov$target)
+  LCaov$block <- as.factor(LCaov$block)
+  LCaov$block <- factor(LCaov$block, levels = c('baseline'))
+  LCaov$sex <- as.factor(LCaov$sex)
+  return(LCaov)
+  
+}
+
+sexRAETrainedTargetsANOVA <- function() {
+  
+  blockdefs <- list('baseline'=c(1,45))
+  LC_aligned <- getSexAlignedBlockedTrainedTargets(blockdefs=blockdefs)
+  
+  blockdefs <- list('first'=c(1,3),'second'=c(4,3))
+  LC_washout <- getSexRAEBlockedLearningAOV(blockdefs=blockdefs)                      
+  
+  LC4aov <- rbind(LC_aligned, LC_washout)
+  LC4aov$block <- factor(LC4aov$block, levels = c('baseline', 'first', 'second'))
+  #looking into interaction below:
+  #interaction.plot(LC4aov$target, LC4aov$block, LC4aov$angdev)
+  
+  #learning curve ANOVA's
+  # for ez, case ID should be a factor:
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=angdev, within= c(block, target), between = c(sex), type=3, return_aov = TRUE) #df is k-2 or 3 levels minus 2; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
+  cat('Comparing angular reach deviations during washout trials with aligned trials across targets, blocks, and sexes, trained hand:\n')
+  print(firstAOV[1:3]) #so that it doesn't print the aov object as well
+  
+}
+
+sexRAETrainedTargetsBayesANOVA <- function() {
+  
+  blockdefs <- list('baseline'=c(1,45))
+  LC_aligned <- getSexAlignedBlockedTrainedTargets(blockdefs=blockdefs)
+  
+  blockdefs <- list('first'=c(1,3),'second'=c(4,3))
+  LC_washout <- getSexRAEBlockedLearningAOV(blockdefs=blockdefs)                      
+  
+  LC4aov <- rbind(LC_aligned, LC_washout)
+  LC4aov$block <- factor(LC4aov$block, levels = c('baseline', 'first', 'second'))
+  
+  #Bayes ANOVA - can use long format
+  #will compare models to null (intercept) or no effect - this will be 1
+  #higher than 1 will be evidence for alternative hypothesis, lower will be evidence for null hypothesis
+  #compare models either if only main effects, interaction of effects
+  #use lmBF function for specific models
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  bfLC<- anovaBF(angdev ~ target*block*sex + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+  #compare interaction contribution, over the contribution of both main effects
+  #bfinteraction <- bfLC[4]/bfLC[3]
+  
+  #bfinclude to compare model with interactions against all other models
+  bfinteraction <- bayesfactor_inclusion(bfLC)
+  
+  print(bfLC)
+  print(bfinteraction)
+}
+
+#Sex: Male vs Female Statistics (MOVEMENT TIME)----
+getSexAlignedBlockedMTAOV <- function(groups = c('far', 'mid', 'near'), blockdefs, hand, sexes = c('Male', 'Female')) {
+  
+  LCaov <- data.frame()
+  for(s in sexes){
+    for(group in groups){
+      #get qualtrics response to device used
+      qualtdat <- read.csv('data/controlmironline-master/qualtrics/CtrlMir_Qualtrics_ParticipantList.csv', stringsAsFactors = F)
+      #then get pplist according to device
+      devqualt <- qualtdat[which(qualtdat$Q2.2 == s),]
+      ppqualt <- devqualt$id
+      
+      curves <- read.csv(sprintf('data/controlmironline-master/raw/processed/%s_MovementTime.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
+      trial <- curves$trial
+      ndat <- curves[,which(colnames(curves) %in% ppqualt)]
+      curves <- cbind(trial, ndat)
+      
+      
+      curves <- curves[,-1] #remove trial rows
+      participants <- colnames(curves)
+      N <- length(participants)
+      
+      #blocked <- array(NA, dim=c(N,length(blockdefs)))
+      
+      target <- c()
+      participant <- c()
+      block <- c()
+      movementtime <- c()
+      sex <- c()
+      
+      for (ppno in c(1:N)) {
+        
+        pp <- participants[ppno]
+        
+        for (blockno in c(1:length(blockdefs))) {
+          #for each participant, and every 9 trials, get the mean
+          blockdef <- blockdefs[[blockno]]
+          blockstart <- blockdef[1]
+          blockend <- blockstart + blockdef[2] - 1
+          samples <- curves[blockstart:blockend,ppno]
+          samples <- mean(samples, na.rm=TRUE)
+          
+          target <- c(target, group)
+          participant <- c(participant, pp)
+          block <- c(block, names(blockdefs)[blockno])
+          movementtime <- c(movementtime, samples)
+          sex <- c(sex, s)
+        }
+      }
+      LCBlocked <- data.frame(target, participant, block, movementtime, sex)
+      LCaov <- rbind(LCaov, LCBlocked)
+    }
+  }
+  
+  #need to make some columns as factors for ANOVA
+  LCaov$target <- as.factor(LCaov$target)
+  LCaov$block <- as.factor(LCaov$block)
+  LCaov$block <- factor(LCaov$block, levels = c('first','second','last'))
+  LCaov$sex <- as.factor(LCaov$sex)
+  LCaov$hand <- hand
+  return(LCaov)
+  
+}
+
+#check target by block within each aligned period for each hand
+sexAlignedMTANOVA <- function(hands = c('trained', 'untrained')) {
+  for(hand in hands){
+    if(hand == 'trained'){
+      blockdefs <- list('first'=c(1,9),'second'=c(10,9),'last'=c(37,9))
+    } else if(hand == 'untrained'){
+      blockdefs <- list('first'=c(46,3),'second'=c(49,3),'last'=c(64,3))
+    }
+    
+    LC4aov <- getSexAlignedBlockedMTAOV(blockdefs=blockdefs, hand=hand)                      
+    
+    #looking into interaction below:
+    #interaction.plot(LC4aov$target, LC4aov$block, LC4aov$movementtime)
+    
+    #learning curve ANOVA's
+    # for ez, case ID should be a factor:
+    LC4aov$participant <- as.factor(LC4aov$participant)
+    firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=movementtime, within= c(block, target), between = c(sex), type=3, return_aov = TRUE) #df is k-2 or 3 levels minus 2; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
+    cat(sprintf('Movement time during aligned trials across targets, blocks, and sexes, %s hand:\n', hand))
+    print(firstAOV[1:3]) #so that it doesn't print the aov object as well
+  }
+}
+
+sexAlignedMTBayesANOVA <- function(hands = c('trained', 'untrained')) {
+  
+  for(hand in hands){
+    if(hand == 'trained'){
+      blockdefs <- list('first'=c(1,9),'second'=c(10,9),'last'=c(37,9))
+    } else if(hand == 'untrained'){
+      blockdefs <- list('first'=c(46,3),'second'=c(49,3),'last'=c(64,3))
+    }
+    
+    LC4aov <- getSexAlignedBlockedMTAOV(blockdefs=blockdefs, hand=hand)                      
+    LC4aov$participant <- as.factor(LC4aov$participant)
+    bfLC<- anovaBF(movementtime ~ target*block*sex + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+    #compare interaction contribution, over the contribution of both main effects
+    #bfinteraction <- bfLC[4]/bfLC[3]
+    
+    #bfinclude to compare model with interactions against all other models
+    bfinteraction <- bayesfactor_inclusion(bfLC)
+    
+    print(bfLC)
+    print(bfinteraction)
+  }
+}
+
+sexMirrorMTANOVA <- function() {
+  
+  #can still use alignedMT function as it has all trials
+  blockdefs <- list('first'=c(67,3),'second'=c(70,3),'last'=c(142,15))
+  
+  
+  LC4aov <- getSexAlignedBlockedMTAOV(blockdefs=blockdefs, hand='trained')               
+  
+  #looking into interaction below:
+  #interaction.plot(LC4aov$target, LC4aov$block, LC4aov$movementtime)
+  
+  #learning curve ANOVA's
+  # for ez, case ID should be a factor:
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=movementtime, within= c(target, block), between = c(sex), type=3, return_aov = TRUE) #df is k-2 or 3 levels minus 2; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
+  #cat(sprintf('Quadrant %s:\n', quadrant))
+  print(firstAOV[1:3]) #so that it doesn't print the aov object as well
+  
+}
+
+sexMirrorMTBayesANOVA <- function() {
+  
+  #can still use alignedMT function as it has all trials
+  blockdefs <- list('first'=c(67,3),'second'=c(70,3),'last'=c(142,15))
+  
+  LC4aov <- getSexAlignedBlockedMTAOV(blockdefs=blockdefs, hand='trained')               
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  bfLC<- anovaBF(movementtime ~ target*block*sex + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+  #compare interaction contribution, over the contribution of both main effects
+  #bfinteraction <- bfLC[4]/bfLC[3]
+  
+  #bfinclude to compare model with interactions against all other models
+  bfinteraction <- bayesfactor_inclusion(bfLC)
+  
+  print(bfLC)
+  print(bfinteraction)
+}
+
+#main effect of sex, follow up with sex, regardless of target ir block
+sexMirrorMTComparisons<- function(){
+  blockdefs <- list('first'=c(67,3),'second'=c(70,3),'last'=c(142,15))
+  LC4aov <- getSexAlignedBlockedMTAOV(blockdefs=blockdefs, hand='trained')   
+  
+  LC4aov <- aggregate(movementtime ~ sex* participant, data=LC4aov, FUN=mean)
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  
+  maledat <- LC4aov[which(LC4aov$sex == 'Male'),]
+  femaledat <- LC4aov[which(LC4aov$sex == 'Female'),]
+  
+  print(t.test(maledat$movementtime, femaledat$movementtime))
+  cat('Bayesian t-test (males vs. females): \n')
+  print(ttestBF(maledat$movementtime, femaledat$movementtime))
+}
+
+#males are faster based on means
+
+sexRAEMTANOVA <- function() {
+  
+  blockdefs <- list('first'=c(157,3),'second'=c(160,3))
+  
+  
+  LC4aov <- getSexAlignedBlockedMTAOV(blockdefs=blockdefs, hand='trained')                      
+  
+  #looking into interaction below:
+  #interaction.plot(LC4aov$target, LC4aov$block, LC4aov$movementtime)
+  
+  #learning curve ANOVA's
+  # for ez, case ID should be a factor:
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=movementtime, within= c(block, target), between=c(sex), type=3, return_aov = TRUE) #df is k-2 or 3 levels minus 2; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
+  cat('Movement time during washout trials across targets, blocks, and sexes, trained hand:\n')
+  print(firstAOV[1:3]) #so that it doesn't print the aov object as well
+  
+}
+
+sexRAEMTBayesANOVA <- function() {
+  
+  blockdefs <- list('first'=c(157,3),'second'=c(160,3))
+  
+  
+  LC4aov <- getSexAlignedBlockedMTAOV(blockdefs=blockdefs, hand='trained')                      
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  bfLC<- anovaBF(movementtime ~ target*block*sex + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+  #compare interaction contribution, over the contribution of both main effects
+  #bfinteraction <- bfLC[4]/bfLC[3]
+  
+  #bfinclude to compare model with interactions against all other models
+  bfinteraction <- bayesfactor_inclusion(bfLC)
+  
+  print(bfLC)
+  print(bfinteraction)
+}
+
+#sexxblock interaction and main effect of sex, but Bayes test shows interaction does not hold up for BF incl
+#but interesting to see how sex differs across blocks
+#follow up on significant interaction
+sexRAEMTComparisonMeans <- function(){
+  blockdefs <- list('first'=c(157,3),'second'=c(160,3),'last'=c(175,3))
+  LC4aov <- getSexAlignedBlockedMTAOV(blockdefs=blockdefs, hand='trained') 
+  
+  LC4aov <- aggregate(movementtime ~ sex+block* participant, data=LC4aov, FUN=mean)
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  secondAOV <- aov_ez("participant","movementtime",LC4aov,within=c("block"),between=c('sex'))
+  
+  cellmeans <- emmeans(secondAOV,specs=c('sex', 'block'))
+  print(cellmeans)
+  
+}
+
+
+sexRAEMTComparisons <- function(method='bonferroni'){
+  blockdefs <- list('first'=c(157,3),'second'=c(160,3),'last'=c(175,3))
+  LC4aov <- getSexAlignedBlockedMTAOV(blockdefs=blockdefs, hand='trained') 
+  
+  LC4aov <- aggregate(movementtime ~ sex+block* participant, data=LC4aov, FUN=mean)
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  secondAOV <- aov_ez("participant","movementtime",LC4aov,within=c("block"),between=c('sex'))
+  
+  #specify contrasts
+  #levels of target are: far, mid, near
+  #first block
+  mf_b1 <- c(-1,1,0,0,0,0)
+  mf_b2 <- c(0,0,-1,1,0,0)
+  mf_b3 <- c(0,0,0,0,-1,1)
+
+  
+  contrastList <- list('1st block: Males vs Females'=mf_b1, '2nd block: Males vs Females'=mf_b2, 'Last block: Males vs Females'=mf_b3)
+  
+  comparisons<- contrast(emmeans(secondAOV,specs=c('sex', 'block')), contrastList, adjust=method)
+  
+  print(comparisons)
+  
+}
+
+#effect size
+sexRAEMTComparisonsEffSize <- function(method = 'bonferroni'){
+  comparisons <- sexRAEMTComparisons(method=method)
+  #we can use eta-squared as effect size
+  #% of variance in DV(percentcomp) accounted for 
+  #by the difference between target1 and target2
+  comparisonsdf <- as.data.frame(comparisons)
+  etasq <- ((comparisonsdf$t.ratio)^2)/(((comparisonsdf$t.ratio)^2)+(comparisonsdf$df))
+  comparisons1 <- cbind(comparisonsdf,etasq)
+  
+  effectsize <- data.frame(comparisons1$contrast, comparisons1$etasq)
+  colnames(effectsize) <- c('contrast', 'etasquared')
+  #print(comparisons)
+  print(effectsize)
+}
+
+sexRAEMTBayesfollowup <- function() {
+  
+  
+  blockdefs <- list('first'=c(157,3),'second'=c(160,3),'last'=c(175,3))
+  LC4aov <- getSexAlignedBlockedMTAOV(blockdefs=blockdefs, hand='trained') 
+  
+  LC4aov <- aggregate(movementtime ~ sex+block* participant, data=LC4aov, FUN=mean)
+  LC4aov$participant <- as.factor(LC4aov$participant)                  
+  
+  #first block
+  mb1 <- LC4aov[which(LC4aov$block == 'first' & LC4aov$sex == 'Male'),]
+  mb2 <- LC4aov[which(LC4aov$block == 'second' & LC4aov$sex == 'Male'),]
+  mb3 <- LC4aov[which(LC4aov$block == 'last' & LC4aov$sex == 'Male'),]
+  #second
+  fb1 <- LC4aov[which(LC4aov$block == 'first' & LC4aov$sex == 'Female'),]
+  fb2 <- LC4aov[which(LC4aov$block == 'second' & LC4aov$sex == 'Female'),]
+  fb3 <- LC4aov[which(LC4aov$block == 'last' & LC4aov$sex == 'Female'),]
+
+  
+
+  cat('Bayesian t-test block 1, males vs females:\n')
+  print(ttestBF(mb1$movementtime, fb1$movementtime))
+
+  cat('Bayesian t-test block 2, males vs females:\n')
+  print(ttestBF(mb2$movementtime, fb2$movementtime))
+
+  cat('Bayesian t-test last block, males vs females:\n')
+  print(ttestBF(mb3$movementtime, fb3$movementtime))
+  
+}
+
+#males continue to move faster after training
+
+
+getSexAlignedBlockedMTTrainedTargets <- function(groups = c('far', 'mid', 'near'), blockdefs, sexes = c('Male', 'Female')) {
+  
+  LCaov <- data.frame()
+  for(s in sexes){
+    for(group in groups){
+      #get qualtrics response to device used
+      qualtdat <- read.csv('data/controlmironline-master/qualtrics/CtrlMir_Qualtrics_ParticipantList.csv', stringsAsFactors = F)
+      #then get pplist according to device
+      devqualt <- qualtdat[which(qualtdat$Q2.2 == s),]
+      ppqualt <- devqualt$id
+      
+      curves <- read.csv(sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl_MT_Q1target.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
+      trial <- curves$trial
+      ndat <- curves[,which(colnames(curves) %in% ppqualt)]
+      curves <- cbind(trial, ndat)
+      
+      curves <- curves[,-1] #remove trial rows
+      participants <- colnames(curves)
+      N <- length(participants)
+      
+      #blocked <- array(NA, dim=c(N,length(blockdefs)))
+      
+      target <- c()
+      participant <- c()
+      block <- c()
+      movementtime <- c()
+      sex <- c()
+      
+      for (ppno in c(1:N)) {
+        
+        pp <- participants[ppno]
+        
+        for (blockno in c(1:length(blockdefs))) {
+          #for each participant, and every 9 trials, get the mean
+          blockdef <- blockdefs[[blockno]]
+          blockstart <- blockdef[1]
+          blockend <- blockstart + blockdef[2] - 1
+          samples <- curves[blockstart:blockend,ppno]
+          samples <- mean(samples, na.rm=TRUE)
+          
+          target <- c(target, group)
+          participant <- c(participant, pp)
+          block <- c(block, names(blockdefs)[blockno])
+          movementtime <- c(movementtime, samples)
+          sex <- c(sex, s)
+        }
+      }
+      LCBlocked <- data.frame(target, participant, block, movementtime, sex)
+      LCaov <- rbind(LCaov, LCBlocked)
+    }
+  }
+  
+  #need to make some columns as factors for ANOVA
+  LCaov$target <- as.factor(LCaov$target)
+  LCaov$block <- as.factor(LCaov$block)
+  LCaov$block <- factor(LCaov$block, levels = c('baseline'))
+  LCaov$sex <- as.factor(LCaov$sex)
+  return(LCaov)
+  
+}
+
+sexRAEMTTrainedTargetsANOVA <- function() {
+  
+  blockdefs <- list('baseline'=c(1,45))
+  LC_aligned <- getSexAlignedBlockedMTTrainedTargets(blockdefs=blockdefs)
+  
+  blockdefs <- list('first'=c(157,3),'second'=c(160,3))
+  LC_washout<- getSexAlignedBlockedMTAOV(blockdefs=blockdefs, hand='trained')
+  LC_washout <- LC_washout[,-6]
+  
+  LC4aov <- rbind(LC_aligned, LC_washout)
+  LC4aov$block <- factor(LC4aov$block, levels = c('baseline', 'first', 'second'))
+  #looking into interaction below:
+  #interaction.plot(LC4aov$target, LC4aov$block, LC4aov$movementtime)
+  
+  #learning curve ANOVA's
+  # for ez, case ID should be a factor:
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=movementtime, within= c(block, target), between = c(sex), type=3, return_aov = TRUE) #df is k-2 or 3 levels minus 2; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
+  cat('Comparing movement times during washout trials with aligned trials across targets, blocks, and sexes, trained hand:\n')
+  print(firstAOV[1:3]) #so that it doesn't print the aov object as well
+  
+}
+
+sexRAEMTTrainedTargetsBayesANOVA <- function() {
+  
+  blockdefs <- list('baseline'=c(1,45))
+  LC_aligned <- getSexAlignedBlockedMTTrainedTargets(blockdefs=blockdefs)
+  
+  blockdefs <- list('first'=c(157,3),'second'=c(160,3))
+  LC_washout<- getSexAlignedBlockedMTAOV(blockdefs=blockdefs, hand='trained')
+  LC_washout <- LC_washout[,-6]
+  
+  LC4aov <- rbind(LC_aligned, LC_washout)
+  LC4aov$block <- factor(LC4aov$block, levels = c('baseline', 'first', 'second'))
+  
+  #learning curve ANOVA's
+  # for ez, case ID should be a factor:
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  bfLC<- anovaBF(movementtime ~ target*block*sex + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+  #compare interaction contribution, over the contribution of both main effects
+  #bfinteraction <- bfLC[4]/bfLC[3]
+  
+  #bfinclude to compare model with interactions against all other models
+  bfinteraction <- bayesfactor_inclusion(bfLC)
+  
+  print(bfLC)
+  print(bfinteraction)
+}
+
+#main effect of sex, but not above 1 for sex Bf incl
+sexRAEMTTrainedTargetsComparisons<- function(){
+  blockdefs <- list('baseline'=c(1,45))
+  LC_aligned <- getSexAlignedBlockedMTTrainedTargets(blockdefs=blockdefs)
+  
+  blockdefs <- list('first'=c(157,3),'second'=c(160,3))
+  LC_washout<- getSexAlignedBlockedMTAOV(blockdefs=blockdefs, hand='trained')
+  LC_washout <- LC_washout[,-6]
+  
+  LC4aov <- rbind(LC_aligned, LC_washout)
+  LC4aov$block <- factor(LC4aov$block, levels = c('baseline', 'first', 'second'))
+  
+  LC4aov <- aggregate(movementtime ~ sex* participant, data=LC4aov, FUN=mean)
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  
+  maledat <- LC4aov[which(LC4aov$sex == 'Male'),]
+  femaledat <- LC4aov[which(LC4aov$sex == 'Female'),]
+  
+  print(t.test(maledat$movementtime, femaledat$movementtime))
+  cat('Bayesian t-test (males vs. females): \n')
+  print(ttestBF(maledat$movementtime, femaledat$movementtime))
+}
+
+#males faster movements overall
+
+#Sex: Males vs Females Statistics (PATH LENGTH)----
+getSexAlignedBlockedPLAOV <- function(groups = c('far', 'mid', 'near'), blockdefs, hand, sexes= c('Male', 'Female')) {
+  
+  LCaov <- data.frame()
+  for(s in sexes){
+    for(group in groups){
+      #get qualtrics response to device used
+      qualtdat <- read.csv('data/controlmironline-master/qualtrics/CtrlMir_Qualtrics_ParticipantList.csv', stringsAsFactors = F)
+      #then get pplist according to device
+      devqualt <- qualtdat[which(qualtdat$Q2.2 == s),]
+      ppqualt <- devqualt$id
+      
+      curves <- read.csv(sprintf('data/controlmironline-master/raw/processed/%s_PathLength.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
+      trial <- curves$trial
+      ndat <- curves[,which(colnames(curves) %in% ppqualt)]
+      curves <- cbind(trial, ndat)
+      
+      
+      curves <- curves[,-1] #remove trial rows
+      participants <- colnames(curves)
+      N <- length(participants)
+      
+      #blocked <- array(NA, dim=c(N,length(blockdefs)))
+      
+      target <- c()
+      participant <- c()
+      block <- c()
+      pathlength <- c()
+      sex <- c()
+      
+      for (ppno in c(1:N)) {
+        
+        pp <- participants[ppno]
+        
+        for (blockno in c(1:length(blockdefs))) {
+          #for each participant, and every 9 trials, get the mean
+          blockdef <- blockdefs[[blockno]]
+          blockstart <- blockdef[1]
+          blockend <- blockstart + blockdef[2] - 1
+          samples <- curves[blockstart:blockend,ppno]
+          samples <- mean(samples, na.rm=TRUE)
+          
+          target <- c(target, group)
+          participant <- c(participant, pp)
+          block <- c(block, names(blockdefs)[blockno])
+          pathlength <- c(pathlength, samples)
+          sex <- c(sex, s)
+        }
+      }
+      LCBlocked <- data.frame(target, participant, block, pathlength, sex)
+      LCaov <- rbind(LCaov, LCBlocked)
+    }
+  }
+  
+  #need to make some columns as factors for ANOVA
+  LCaov$target <- as.factor(LCaov$target)
+  LCaov$block <- as.factor(LCaov$block)
+  LCaov$block <- factor(LCaov$block, levels = c('first','second','last'))
+  LCaov$sex <- as.factor(LCaov$sex)
+  LCaov$hand <- hand
+  return(LCaov)
+  
+}
+
+#check target by block within each aligned period for each hand
+sexAlignedPLANOVA <- function(hands = c('trained', 'untrained')) {
+  for(hand in hands){
+    if(hand == 'trained'){
+      blockdefs <- list('first'=c(1,9),'second'=c(10,9),'last'=c(37,9))
+    } else if(hand == 'untrained'){
+      blockdefs <- list('first'=c(46,3),'second'=c(49,3),'last'=c(64,3))
+    }
+    
+    LC4aov <- getSexAlignedBlockedPLAOV(blockdefs=blockdefs, hand=hand)                      
+    
+    #looking into interaction below:
+    #interaction.plot(LC4aov$target, LC4aov$block, LC4aov$movementtime)
+    
+    #learning curve ANOVA's
+    # for ez, case ID should be a factor:
+    LC4aov$participant <- as.factor(LC4aov$participant)
+    firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=pathlength, within= c(block, target), between = c(sex), type=3, return_aov = TRUE) #df is k-2 or 3 levels minus 2; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
+    cat(sprintf('Path length during aligned trials across targets, blocks, and sexes, %s hand:\n', hand))
+    print(firstAOV[1:3]) #so that it doesn't print the aov object as well
+  }
+}
+
+sexAlignedPLBayesANOVA <- function(hands = c('trained', 'untrained')) {
+  
+  for(hand in hands){
+    if(hand == 'trained'){
+      blockdefs <- list('first'=c(1,9),'second'=c(10,9),'last'=c(37,9))
+    } else if(hand == 'untrained'){
+      blockdefs <- list('first'=c(46,3),'second'=c(49,3),'last'=c(64,3))
+    }
+    
+    LC4aov <- getSexAlignedBlockedPLAOV(blockdefs=blockdefs, hand=hand)                      
+    LC4aov$participant <- as.factor(LC4aov$participant)
+    bfLC<- anovaBF(pathlength ~ target*block*sex + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+    #compare interaction contribution, over the contribution of both main effects
+    #bfinteraction <- bfLC[4]/bfLC[3]
+    
+    #bfinclude to compare model with interactions against all other models
+    bfinteraction <- bayesfactor_inclusion(bfLC)
+    
+    print(bfLC)
+    print(bfinteraction)
+  }
+}
+
+sexMirrorPLANOVA <- function() {
+  
+  #can still use alignedMT function as it has all trials
+  blockdefs <- list('first'=c(67,3),'second'=c(70,3),'last'=c(142,15))
+  
+  
+  LC4aov <- getSexAlignedBlockedPLAOV(blockdefs=blockdefs, hand='trained')               
+  
+  #looking into interaction below:
+  #interaction.plot(LC4aov$target, LC4aov$block, LC4aov$movementtime)
+  
+  #learning curve ANOVA's
+  # for ez, case ID should be a factor:
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=pathlength, within= c(target, block), between = c(sex), type=3, return_aov = TRUE) #df is k-2 or 3 levels minus 2; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
+  #cat(sprintf('Quadrant %s:\n', quadrant))
+  print(firstAOV[1:3]) #so that it doesn't print the aov object as well
+  
+}
+
+sexMirrorPLBayesANOVA <- function() {
+  
+  #can still use alignedMT function as it has all trials
+  blockdefs <- list('first'=c(67,3),'second'=c(70,3),'last'=c(142,15))
+  
+  LC4aov <- getSexAlignedBlockedPLAOV(blockdefs=blockdefs, hand='trained')               
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  bfLC<- anovaBF(pathlength ~ target*block*sex + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+  #compare interaction contribution, over the contribution of both main effects
+  #bfinteraction <- bfLC[4]/bfLC[3]
+  
+  #bfinclude to compare model with interactions against all other models
+  bfinteraction <- bayesfactor_inclusion(bfLC)
+  
+  print(bfLC)
+  print(bfinteraction)
+}
+
+sexRAEPLANOVA <- function() {
+  
+  blockdefs <- list('first'=c(157,3),'second'=c(160,3))
+  
+  
+  LC4aov <- getSexAlignedBlockedPLAOV(blockdefs=blockdefs, hand='trained')                      
+  
+  #looking into interaction below:
+  #interaction.plot(LC4aov$target, LC4aov$block, LC4aov$movementtime)
+  
+  #learning curve ANOVA's
+  # for ez, case ID should be a factor:
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=pathlength, within= c(block, target), between=c(sex), type=3, return_aov = TRUE) #df is k-2 or 3 levels minus 2; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
+  cat('Path length during washout trials across targets, blocks, and sexes, trained hand:\n')
+  print(firstAOV[1:3]) #so that it doesn't print the aov object as well
+  
+}
+
+sexRAEPLBayesANOVA <- function() {
+  
+  blockdefs <- list('first'=c(157,3),'second'=c(160,3))
+  
+  
+  LC4aov <- getSexAlignedBlockedPLAOV(blockdefs=blockdefs, hand='trained')                      
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  bfLC<- anovaBF(pathlength ~ target*block*sex + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+  #compare interaction contribution, over the contribution of both main effects
+  #bfinteraction <- bfLC[4]/bfLC[3]
+  
+  #bfinclude to compare model with interactions against all other models
+  bfinteraction <- bayesfactor_inclusion(bfLC)
+  
+  print(bfLC)
+  print(bfinteraction)
+}
+
+getSexAlignedBlockedPLTrainedTargets <- function(groups = c('far', 'mid', 'near'), blockdefs, sexes = c('Male', 'Female')) {
+  
+  LCaov <- data.frame()
+  for(s in sexes){
+    for(group in groups){
+      #get qualtrics response to device used
+      qualtdat <- read.csv('data/controlmironline-master/qualtrics/CtrlMir_Qualtrics_ParticipantList.csv', stringsAsFactors = F)
+      #then get pplist according to device
+      devqualt <- qualtdat[which(qualtdat$Q2.2 == s),]
+      ppqualt <- devqualt$id
+      
+      curves <- read.csv(sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl_PL_Q1target.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
+      trial <- curves$trial
+      ndat <- curves[,which(colnames(curves) %in% ppqualt)]
+      curves <- cbind(trial, ndat)
+      
+      curves <- curves[,-1] #remove trial rows
+      participants <- colnames(curves)
+      N <- length(participants)
+      
+      #blocked <- array(NA, dim=c(N,length(blockdefs)))
+      
+      target <- c()
+      participant <- c()
+      block <- c()
+      pathlength <- c()
+      sex <- c()
+      
+      for (ppno in c(1:N)) {
+        
+        pp <- participants[ppno]
+        
+        for (blockno in c(1:length(blockdefs))) {
+          #for each participant, and every 9 trials, get the mean
+          blockdef <- blockdefs[[blockno]]
+          blockstart <- blockdef[1]
+          blockend <- blockstart + blockdef[2] - 1
+          samples <- curves[blockstart:blockend,ppno]
+          samples <- mean(samples, na.rm=TRUE)
+          
+          target <- c(target, group)
+          participant <- c(participant, pp)
+          block <- c(block, names(blockdefs)[blockno])
+          pathlength <- c(pathlength, samples)
+          sex <- c(sex, s)
+        }
+      }
+      LCBlocked <- data.frame(target, participant, block, pathlength, sex)
+      LCaov <- rbind(LCaov, LCBlocked)
+    }
+  }
+  
+  #need to make some columns as factors for ANOVA
+  LCaov$target <- as.factor(LCaov$target)
+  LCaov$block <- as.factor(LCaov$block)
+  LCaov$block <- factor(LCaov$block, levels = c('baseline'))
+  LCaov$sex <- as.factor(LCaov$sex)
+  return(LCaov)
+  
+}
+
+sexRAEPLTrainedTargetsANOVA <- function() {
+  
+  blockdefs <- list('baseline'=c(1,45))
+  LC_aligned <- getSexAlignedBlockedPLTrainedTargets(blockdefs=blockdefs)
+  
+  blockdefs <- list('first'=c(157,3),'second'=c(160,3))
+  LC_washout<- getSexAlignedBlockedPLAOV(blockdefs=blockdefs, hand='trained')
+  LC_washout <- LC_washout[,-6]
+  
+  LC4aov <- rbind(LC_aligned, LC_washout)
+  LC4aov$block <- factor(LC4aov$block, levels = c('baseline', 'first', 'second'))
+  #looking into interaction below:
+  #interaction.plot(LC4aov$target, LC4aov$block, LC4aov$movementtime)
+  
+  #learning curve ANOVA's
+  # for ez, case ID should be a factor:
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=pathlength, within= c(block, target), between = c(sex), type=3, return_aov = TRUE) #df is k-2 or 3 levels minus 2; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
+  cat('Comparing path lengths during washout trials with aligned trials across targets, blocks, and sexes, trained hand:\n')
+  print(firstAOV[1:3]) #so that it doesn't print the aov object as well
+  
+}
+
+sexRAEPLTrainedTargetsBayesANOVA <- function() {
+  
+  blockdefs <- list('baseline'=c(1,45))
+  LC_aligned <- getSexAlignedBlockedPLTrainedTargets(blockdefs=blockdefs)
+  
+  blockdefs <- list('first'=c(157,3),'second'=c(160,3))
+  LC_washout<- getSexAlignedBlockedPLAOV(blockdefs=blockdefs, hand='trained')
+  LC_washout <- LC_washout[,-6]
+  
+  LC4aov <- rbind(LC_aligned, LC_washout)
+  LC4aov$block <- factor(LC4aov$block, levels = c('baseline', 'first', 'second'))
+  
+  #learning curve ANOVA's
+  # for ez, case ID should be a factor:
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  bfLC<- anovaBF(pathlength ~ target*block*sex + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+  #compare interaction contribution, over the contribution of both main effects
+  #bfinteraction <- bfLC[4]/bfLC[3]
+  
+  #bfinclude to compare model with interactions against all other models
+  bfinteraction <- bayesfactor_inclusion(bfLC)
+  
+  print(bfLC)
+  print(bfinteraction)
 }
