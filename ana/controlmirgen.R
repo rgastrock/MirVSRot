@@ -69,6 +69,25 @@ getCtrlMirGenQualtricsData <- function(){
   write.csv(alldat, file='data/controlmirgenonline-master/qualtrics/CtrlMirGen_Qualtrics_ParticipantList.csv', row.names = F)
   
 }
+#run this one after to get sex info as well
+getCtrlMirGenParticipantSex <- function(){
+  
+  part1dat <- read.csv('data/controlmironline-master/qualtrics/CtrlMir_Qualtrics_ParticipantList.csv', stringsAsFactors = F)
+  part2dat <- read.csv('data/controlmirgenonline-master/qualtrics/CtrlMirGen_Qualtrics_ParticipantList.csv', stringsAsFactors = F)
+  
+  part1subdat <- part1dat[,c('Q2.2', 'id')]
+  part1subdat <- part1subdat[-c(1),]
+  
+  part2id <- part2dat[,'id']
+  part2id <- part2id[-1]
+  
+  part1subdat$prt2id <- part2id[match(part1subdat$id, part2id)]
+  part2subdat <- na.omit(part1subdat)
+  part2subdat <- part2subdat[,-3]
+  
+  ndat <- merge(part2dat, part2subdat, by='id')
+  write.csv(ndat, file='data/controlmirgenonline-master/qualtrics/CtrlMirGen_Qualtrics_ParticipantList.csv', row.names = F)
+}
 
 getCtrlGenHandMatches <- function(){
   #check hand matches both within and across sessions
@@ -170,6 +189,8 @@ getAngularReachDevsCIGen <- function(data, group, space, resamples = 1000){
   
   return(quantile(BS, probs = c(0.025, 0.50, 0.975)))
 }
+
+
 
 # Time between Part 1 and Part 2----
 getCtrlDateOneFile <- function(filename){
@@ -5980,4 +6001,131 @@ part1and2PLComparisonsBayesfollowup <- function() {
   cat('Bayesian t-test part 1 near vs block 1 near:\n')
   print(ttestBF(nearp1$pathlength, nearp2$pathlength))
   
+}
+
+#Device: Mouse vs Trackpad Statistics (LEARNING)----
+getDeviceGenBlockedLearningAOV <- function(groups = c('far', 'mid', 'near'), blockdefs, quadrant, deviceused = c('Mouse', 'Trackpad')) {
+  
+  LCaov <- data.frame()
+  for(d in deviceused){
+    for(group in groups){
+      #get qualtrics response to device used
+      qualtdat <- read.csv('data/controlmirgenonline-master/qualtrics/CtrlMirGen_Qualtrics_ParticipantList.csv', stringsAsFactors = F)
+      #then get pplist according to device
+      devqualt <- qualtdat[which(qualtdat$Q3.4 == d),]
+      ppqualt <- devqualt$id
+      
+      curves <- read.csv(sprintf('data/controlmirgenonline-master/raw/processed/%s_PercentCompensation.csv',group), stringsAsFactors=FALSE, check.names = FALSE)    
+      trial <- curves$trial
+      ndat <- curves[,which(colnames(curves) %in% ppqualt)]
+      curves <- cbind(trial, ndat)
+      
+      
+      curves <- curves[,-1] #remove trial rows
+      participants <- colnames(curves)
+      N <- length(participants)
+      
+      #blocked <- array(NA, dim=c(N,length(blockdefs)))
+      
+      target <- c()
+      participant <- c()
+      block <- c()
+      percentcomp <- c()
+      devices <- c()
+      
+      for (ppno in c(1:N)) {
+        
+        pp <- participants[ppno]
+        
+        for (blockno in c(1:length(blockdefs))) {
+          #for each participant, and every three trials, get the mean
+          blockdef <- blockdefs[[blockno]]
+          blockstart <- blockdef[1]
+          blockend <- blockstart + blockdef[2] - 1
+          samples <- curves[blockstart:blockend,ppno]
+          samples <- mean(samples, na.rm=TRUE)
+          
+          target <- c(target, group)
+          participant <- c(participant, pp)
+          block <- c(block, names(blockdefs)[blockno])
+          percentcomp <- c(percentcomp, samples)
+          devices <- c(devices, d)
+        }
+      }
+      LCBlocked <- data.frame(target, participant, block, percentcomp, devices)
+      LCaov <- rbind(LCaov, LCBlocked)
+    }
+  }
+  
+  #need to make some columns as factors for ANOVA
+  LCaov$target <- as.factor(LCaov$target)
+  LCaov$block <- as.factor(LCaov$block)
+  LCaov$block <- factor(LCaov$block, levels = c('first','second','last'))
+  LCaov$devices <- as.factor(LCaov$devices)
+  LCaov$quadrant <- quadrant
+  return(LCaov)
+  
+}
+
+deviceLearningGenANOVA <- function(quadrants = c('1', '4', '2', '1A', '1L')) {
+  for(quadrant in quadrants){
+    if(quadrant == '1'){
+      blockdefs <- list('first'=c(1,3),'second'=c(4,3),'last'=c(19,3))
+    } else if(quadrant == '4'){
+      blockdefs <- list('first'=c(22,3),'second'=c(25,3),'last'=c(40,3))
+    } else if(quadrant == '2'){
+      blockdefs <- list('first'=c(43,3),'second'=c(46,3),'last'=c(61,3))
+    } else if(quadrant == '1A'){
+      blockdefs <- list('first'=c(64,3),'second'=c(67,3),'last'=c(82,3))
+    } else if(quadrant == '1L'){
+      blockdefs <- list('first'=c(85,3),'second'=c(88,3),'last'=c(103,3))
+    }
+    
+    LC4aov <- getDeviceGenBlockedLearningAOV(blockdefs=blockdefs, quadrant=quadrant)                      
+    
+    #looking into interaction below:
+    #interaction.plot(LC4aov$target, LC4aov$block, LC4aov$percentcomp)
+    
+    #learning curve ANOVA's
+    # for ez, case ID should be a factor:
+    LC4aov$participant <- as.factor(LC4aov$participant)
+    firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=percentcomp, within= c(block, target), between=c(devices), type=3, return_aov = TRUE) #df is k-2 or 3 levels minus 2; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
+    cat(sprintf('Quadrant %s:\n', quadrant))
+    print(firstAOV[1:3]) #so that it doesn't print the aov object as well
+  }
+}
+
+deviceLearningGenBayesANOVA <- function(quadrants = c('1', '4', '2', '1A', '1L')) {
+  for(quadrant in quadrants){
+    if(quadrant == '1'){
+      blockdefs <- list('first'=c(1,3),'second'=c(4,3),'last'=c(19,3))
+    } else if(quadrant == '4'){
+      blockdefs <- list('first'=c(22,3),'second'=c(25,3),'last'=c(40,3))
+    } else if(quadrant == '2'){
+      blockdefs <- list('first'=c(43,3),'second'=c(46,3),'last'=c(61,3))
+    } else if(quadrant == '1A'){
+      blockdefs <- list('first'=c(64,3),'second'=c(67,3),'last'=c(82,3))
+    } else if(quadrant == '1L'){
+      blockdefs <- list('first'=c(85,3),'second'=c(88,3),'last'=c(103,3))
+    }
+    
+    LC4aov <- getDeviceGenBlockedLearningAOV(blockdefs=blockdefs, quadrant=quadrant)                      
+    
+    #looking into interaction below:
+    #interaction.plot(LC4aov$target, LC4aov$block, LC4aov$percentcomp)
+    
+    #learning curve ANOVA's
+    # for ez, case ID should be a factor:
+    LC4aov$participant <- as.factor(LC4aov$participant)
+    cat(sprintf('Quadrant %s:\n', quadrant))
+    bfLC<- anovaBF(percentcomp ~ target*block*devices + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+    #compare interaction contribution, over the contribution of both main effects
+    #bfinteraction <- bfLC[4]/bfLC[3]
+    
+    #bfinclude to compare model with interactions against all other models
+    bfinteraction <- bayesfactor_inclusion(bfLC)
+    
+    print(bfLC)
+    print(bfinteraction)
+  }
 }
