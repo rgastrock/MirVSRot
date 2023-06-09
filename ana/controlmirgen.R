@@ -2001,6 +2001,1652 @@ plotCtrlGenHeatmaps <- function(groups = c('far', 'mid', 'near'), target = 'inli
   }
 }
 
+# Comparing devices used: Mouse vs trackpad----
+
+getDeviceCtrlGenCI<- function(groups = c('far', 'mid', 'near'), device){
+  
+  for(group in groups){
+    #get qualtrics response to device used
+    qualtdat <- read.csv('data/controlmirgenonline-master/qualtrics/CtrlMirGen_Qualtrics_ParticipantList.csv', stringsAsFactors = F)
+    #then get pplist according to device
+    devqualt <- qualtdat[which(qualtdat$Q3.4 == device),]
+    ppqualt <- devqualt$id
+    
+    
+    #Mirror
+    dat_MR <- read.csv(file=sprintf('data/controlmirgenonline-master/raw/processed/%s_MirCtrlGen.csv', group), check.names = FALSE)
+    trial <- dat_MR$trial
+    ndat <- dat_MR[,which(colnames(dat_MR) %in% ppqualt)]
+    data <- cbind(trial, ndat)
+    
+    
+    #get CIs
+    trialno <- data$trial
+    postrials <- c(1:21, 64:126) #these are where corrections in workspace are positive or zero
+    confidence <- data.frame()
+    
+    for(trial in trialno){
+      subdat <- as.numeric(data[trial, 2:length(data)]) #get just the values, then make the circular again
+      if(length(unique(subdat)) <= 2){ #for Device and Sex, if there is only ONE value, we set it to NA
+        citrial <- as.numeric(c(NA,NA,NA))
+      } else {
+        if(trial %in% postrials){
+          citrial <- getAngularReachDevsCIGen(data = subdat, group = group, space = 'pos')
+        } else {
+          citrial <- getAngularReachDevsCIGen(data = subdat, group = group, space = 'neg')
+        }
+      }
+      
+
+      
+      if (prod(dim(confidence)) == 0){
+        confidence <- citrial
+      } else {
+        confidence <- rbind(confidence, citrial)
+      }
+      
+      write.csv(confidence, file=sprintf('data/controlmirgenonline-master/raw/processed/%s_MirCtrlGen_CI_%s.csv', group, device), row.names = F)
+      
+    }
+  }
+}
+
+plotDeviceCtrlGen <- function(groups = c('far', 'mid', 'near'), devices = c('Mouse','Trackpad'), target='inline') {
+  for (group in groups){
+    #but we can save plot as svg file
+    if (target=='svg'){
+      svglite(file=sprintf('doc/fig/controlmirgenonline-master/Fig4_%s_DeviceCtrl.svg', group), width=14, height=8, pointsize=14, system_fonts=list(sans="Arial"))
+    }
+    
+    plot(NA, NA, xlim = c(0,127), ylim = c(-70,265), 
+         xlab = "Trial", ylab = "Angular reach deviation (°)", frame.plot = FALSE, #frame.plot takes away borders
+         main = "", xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
+    
+    lim <- par('usr')
+    rect(85, lim[3]-1, 126, lim[4]+1, border = "#ededed", col = "#ededed") #xleft, ybottom, x right, ytop; light grey hex code
+    #abline(h = c(0), v = c(21, 42, 63, 84, 105), col = 8, lty = 2) #creates horizontal dashed lines through y =  0 and 30
+    
+    #we could color code the dashed lines at perfect compensation, but washout needs to be grey
+    perfnear <- rep(10, 105) #add 5 points to either side to extend the line
+    lines(x = c(1:105), y = perfnear, col = '#ff8200ff', lty = 2)
+    
+    perfmid <- rep(90, 105) #add 5 points to either side to extend the line
+    lines(x = c(1:105), y = perfmid, col = '#e51636ff', lty = 2)
+    
+    perffar <- rep(170, 105) #add 5 points to either side to extend the line
+    lines(x = c(1:105), y = perffar, col = '#c400c4ff', lty = 2) 
+    #then add grey lines before trials
+    greynear <- rep(10, 7) #7 is however many the x axis values are
+    lines(x = c(-5:1), y = greynear, col = 8, lty = 2) #5 x values before 0
+    greymid <- rep(90, 7) #7 is however many the x axis values are
+    lines(x = c(-5:1), y = greymid, col = 8, lty = 2) #5 x values before 0
+    greyfar <- rep(170, 7) #7 is however many the x axis values are
+    lines(x = c(-5:1), y = greyfar, col = 8, lty = 2)
+    #grey lines at washout
+    greynear <- rep(10, 27) 
+    lines(x = c(105:131), y = greynear, col = 8, lty = 2) 
+    greymid <- rep(90, 27) 
+    lines(x = c(105:131), y = greymid, col = 8, lty = 2) 
+    greyfar <- rep(170, 27) 
+    lines(x = c(105:131), y = greyfar, col = 8, lty = 2) 
+    
+    #axis(1, at = c(1, 22, 43, 64, 85, 106, 126)) #tick marks for x axis
+    abline(h = c(0), col = 8, lty = 2)
+    axis(side=1, at=c(1,21), labels=c('1',''))
+    axis(side=1, at=c(22,42), labels=c('22',''))
+    axis(side=1, at=c(43,63), labels=c('43',''))
+    axis(side=1, at=c(64,84), labels=c('64',''))
+    axis(side=1, at=c(85,105), labels=c('85',''))
+    axis(side=1, at=c(106,126), labels=c('106','126'))
+    axis(2, at = c(-50, -10, 0, 10, 50, 90, 130, 170), las = 2) #tick marks for y axis
+    
+    for(device in devices){
+      #read in files created by getGroupConfidenceInterval in filehandling.R
+      groupconfidence <- read.csv(file=sprintf('data/controlmirgenonline-master/raw/processed/%s_MirCtrlGen_CI_%s.csv', group, device))
+      
+      #split up data set for plotting purposes
+      groupconfidenceQ1 <- groupconfidence[1:21,]
+      groupconfidenceQ4 <- (groupconfidence[22:42,])*-1 #sign flip because correction is in negative direction
+      groupconfidenceQ2 <- (groupconfidence[43:63,])*-1 #sign flip
+      groupconfidenceQ1A <- groupconfidence[64:84,]
+      groupconfidenceSQ1 <- groupconfidence[85:105,]
+      groupconfidenceWQ1 <- groupconfidence[106:126,]
+      
+      colourscheme <- getDeviceColourScheme(devices = device)
+      
+      #plot Q1 Data
+      #take only first, last and middle columns of file
+      lower <- groupconfidenceQ1[,1]
+      upper <- groupconfidenceQ1[,3]
+      mid <- groupconfidenceQ1[,2]
+      
+      col <- colourscheme[[device]][['T']] #use colour scheme according to group
+      
+      #upper and lower bounds create a polygon
+      #polygon creates it from low left to low right, then up right to up left -> use rev
+      #x is just trial nnumber, y depends on values of bounds
+      #device and sex may have missing data for specific trials
+      #need to skip these in plotting
+      skipidx <- which(mid %in% NA)
+      xval <- c(1:21)
+      xblock <- c()
+      for(val in c(1:length(xval))){
+        if(val %in% skipidx){
+          next
+        } else {
+          xblock <- c(xblock, xval[val])
+        }
+      }
+      
+      polygon(x = c(xblock, rev(xblock)), y = c(na.omit(lower), rev(na.omit(upper))), border=NA, col=col)
+      col <- colourscheme[[device]][['S']]
+      lines(x = xblock, y = na.omit(mid),col=col,lty=1)
+      
+      #plot Q4 Data
+      #take only first, last and middle columns of file
+      lower <- groupconfidenceQ4[,1]
+      upper <- groupconfidenceQ4[,3]
+      mid <- groupconfidenceQ4[,2]
+      
+      col <- colourscheme[[device]][['T']] #use colour scheme according to group
+      
+      #upper and lower bounds create a polygon
+      #polygon creates it from low left to low right, then up right to up left -> use rev
+      #x is just trial nnumber, y depends on values of bounds
+      #device and sex may have missing data for specific trials
+      #need to skip these in plotting
+      skipidx <- which(mid %in% NA)
+      xval <- c(22:42)
+      xblock <- c()
+      for(val in c(1:length(xval))){
+        if(val %in% skipidx){
+          next
+        } else {
+          xblock <- c(xblock, xval[val])
+        }
+      }
+      
+      polygon(x = c(xblock, rev(xblock)), y = c(na.omit(lower), rev(na.omit(upper))), border=NA, col=col)
+      col <- colourscheme[[device]][['S']]
+      lines(x = xblock, y = na.omit(mid),col=col,lty=1)
+      
+      #plot Q2 Data
+      lower <- groupconfidenceQ2[,1]
+      upper <- groupconfidenceQ2[,3]
+      mid <- groupconfidenceQ2[,2]
+      
+      col <- colourscheme[[device]][['T']] #use colour scheme according to group
+      
+      #upper and lower bounds create a polygon
+      #polygon creates it from low left to low right, then up right to up left -> use rev
+      #x is just trial nnumber, y depends on values of bounds
+      #device and sex may have missing data for specific trials
+      #need to skip these in plotting
+      skipidx <- which(mid %in% NA)
+      xval <- c(43:63)
+      xblock <- c()
+      for(val in c(1:length(xval))){
+        if(val %in% skipidx){
+          next
+        } else {
+          xblock <- c(xblock, xval[val])
+        }
+      }
+      
+      polygon(x = c(xblock, rev(xblock)), y = c(na.omit(lower), rev(na.omit(upper))), border=NA, col=col)
+      col <- colourscheme[[device]][['S']]
+      lines(x = xblock, y = na.omit(mid),col=col,lty=1)
+      
+      #plot Q1A Data
+      #take only first, last and middle columns of file
+      lower <- groupconfidenceQ1A[,1]
+      upper <- groupconfidenceQ1A[,3]
+      mid <- groupconfidenceQ1A[,2]
+      
+      col <- colourscheme[[device]][['T']] #use colour scheme according to group
+      
+      #upper and lower bounds create a polygon
+      #polygon creates it from low left to low right, then up right to up left -> use rev
+      #x is just trial nnumber, y depends on values of bounds
+      #device and sex may have missing data for specific trials
+      #need to skip these in plotting
+      skipidx <- which(mid %in% NA)
+      xval <- c(64:84)
+      xblock <- c()
+      for(val in c(1:length(xval))){
+        if(val %in% skipidx){
+          next
+        } else {
+          xblock <- c(xblock, xval[val])
+        }
+      }
+      
+      polygon(x = c(xblock, rev(xblock)), y = c(na.omit(lower), rev(na.omit(upper))), border=NA, col=col)
+      col <- colourscheme[[device]][['S']]
+      lines(x = xblock, y = na.omit(mid),col=col,lty=1)
+      
+      #plot SQ1 Data
+      #take only first, last and middle columns of file
+      lower <- groupconfidenceSQ1[,1]
+      upper <- groupconfidenceSQ1[,3]
+      mid <- groupconfidenceSQ1[,2]
+      
+      col <- colourscheme[[device]][['T']] #use colour scheme according to group
+      
+      #upper and lower bounds create a polygon
+      #polygon creates it from low left to low right, then up right to up left -> use rev
+      #x is just trial nnumber, y depends on values of bounds
+      #device and sex may have missing data for specific trials
+      #need to skip these in plotting
+      skipidx <- which(mid %in% NA)
+      xval <- c(85:105)
+      xblock <- c()
+      for(val in c(1:length(xval))){
+        if(val %in% skipidx){
+          next
+        } else {
+          xblock <- c(xblock, xval[val])
+        }
+      }
+      
+      polygon(x = c(xblock, rev(xblock)), y = c(na.omit(lower), rev(na.omit(upper))), border=NA, col=col)
+      col <- colourscheme[[device]][['S']]
+      lines(x = xblock, y = na.omit(mid),col=col,lty=1)
+      
+      #plot WQ1 Data
+      #take only first, last and middle columns of file
+      lower <- groupconfidenceWQ1[,1]
+      upper <- groupconfidenceWQ1[,3]
+      mid <- groupconfidenceWQ1[,2]
+      
+      col <- colourscheme[[device]][['T']] #use colour scheme according to group
+      
+      #upper and lower bounds create a polygon
+      #polygon creates it from low left to low right, then up right to up left -> use rev
+      #x is just trial nnumber, y depends on values of bounds
+      #device and sex may have missing data for specific trials
+      #need to skip these in plotting
+      skipidx <- which(mid %in% NA)
+      xval <- c(106:126)
+      xblock <- c()
+      for(val in c(1:length(xval))){
+        if(val %in% skipidx){
+          next
+        } else {
+          xblock <- c(xblock, xval[val])
+        }
+      }
+      
+      polygon(x = c(xblock, rev(xblock)), y = c(na.omit(lower), rev(na.omit(upper))), border=NA, col=col)
+      col <- colourscheme[[device]][['S']]
+      lines(x = xblock, y = na.omit(mid),col=col,lty=1)
+    }
+    
+    #add legend
+    legend(106,220,legend=c('Mouse','Trackpad'),
+           col=c(colourscheme[['Mouse']][['S']],colourscheme[['Trackpad']][['S']]),
+           lty=1,bty='n',lwd=2, cex=1)
+    #close everything if you saved plot as svg
+    if (target=='svg') {
+      dev.off()
+    }
+    
+  }
+}
+
+getDeviceCtrlGenMTCI<- function(groups = c('far', 'mid', 'near'), device, type = 't'){
+  
+  for(group in groups){
+    #get qualtrics response to device used
+    qualtdat <- read.csv('data/controlmirgenonline-master/qualtrics/CtrlMirGen_Qualtrics_ParticipantList.csv', stringsAsFactors = F)
+    #then get pplist according to device
+    devqualt <- qualtdat[which(qualtdat$Q3.4 == device),]
+    ppqualt <- devqualt$id
+    
+    
+    data <- read.csv(file=sprintf('data/controlmirgenonline-master/raw/processed/%s_MovementTime.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+    trial <- data$trial
+    ndat <- data[,which(colnames(data) %in% ppqualt)]
+    dat <- cbind(trial, ndat)
+    
+    
+    trialno <- dat$trial
+    data1 <- as.matrix(dat[,2:dim(dat)[2]])
+    confidence <- data.frame()
+    
+    
+    for (trial in trialno){
+      
+      cireaches <- data1[which(data$trial == trial), ]
+      
+      if(length(unique(cireaches)) <= 2){ #for Device and Sex, if there is only ONE value, we set it to NA
+        citrial <- as.numeric(c(NA,NA,NA))
+      } else{
+        if (type == "t"){
+          cireaches <- cireaches[!is.na(cireaches)]
+          citrial <- t.interval(data = cireaches, variance = var(cireaches), conf.level = 0.95)
+        } else if(type == "b"){
+          citrial <- getBSConfidenceInterval(data = cireaches, resamples = 1000)
+        }
+      }
+      
+      if (prod(dim(confidence)) == 0){
+        confidence <- citrial
+      } else {
+        confidence <- rbind(confidence, citrial)
+      }
+      write.csv(confidence, file=sprintf('data/controlmirgenonline-master/raw/processed/%s_MovementTime_CI_%s.csv', group, device), row.names = F) 
+    }
+  }
+}
+
+plotDeviceCtrlGenMT <- function(groups = c('far', 'mid', 'near'), devices = c('Mouse','Trackpad'), target='inline') {
+  for (group in groups){
+    #but we can save plot as svg file
+    if (target=='svg'){
+      svglite(file=sprintf('doc/fig/controlmirgenonline-master/Fig4A_%s_DeviceCtrlMT.svg', group), width=14, height=8, pointsize=14, system_fonts=list(sans="Arial"))
+    }
+    
+    plot(NA, NA, xlim = c(0,127), ylim = c(-0.2, 11), 
+         xlab = "Trial", ylab = "Movement time (s)", frame.plot = FALSE, #frame.plot takes away borders
+         main = "", xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
+    
+    lim <- par('usr')
+    rect(85, lim[3]-1, 126, lim[4]+1, border = "#ededed", col = "#ededed") #xleft, ybottom, x right, ytop; light grey hex code
+    #abline(h = c(0, 1), v = c(21, 42, 63, 84, 105), col = 8, lty = 2)
+    abline(h = c(0, 1), col = 8, lty = 2)
+    #axis(1, at = c(1, 22, 43, 64, 85, 106, 126)) #tick marks for x axis
+    axis(side=1, at=c(1,21), labels=c('1',''))
+    axis(side=1, at=c(22,42), labels=c('22',''))
+    axis(side=1, at=c(43,63), labels=c('43',''))
+    axis(side=1, at=c(64,84), labels=c('64',''))
+    axis(side=1, at=c(85,105), labels=c('85',''))
+    axis(side=1, at=c(106,126), labels=c('106','126'))
+    axis(2, at = c(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10), las = 2) #tick marks for y axis
+    #axis(3, at = c(10, 32, 53, 74, 95, 116), labels = c('Q1', 'Q4', 'Q2', 'Q1', 'Q1', 'Q1'), line = -2, tick = FALSE) #tick marks for x axis
+    
+    for(device in devices){
+      groupconfidence <- read.csv(file=sprintf('data/controlmirgenonline-master/raw/processed/%s_MovementTime_CI_%s.csv', group, device))
+      
+      
+      #split up data set for plotting purposes
+      groupconfidenceQ1<- groupconfidence[1:21,]
+      groupconfidenceQ4 <- groupconfidence[22:42,]
+      groupconfidenceQ2 <- groupconfidence[43:63,]
+      groupconfidenceQ1A <- groupconfidence[64:84,]
+      groupconfidenceSQ1 <- groupconfidence[85:105,]
+      groupconfidenceWQ1 <- groupconfidence[106:126,]
+      
+      colourscheme <- getDeviceColourScheme(devices = device)
+      
+      #Q1
+      #take only first, last and middle columns of file
+      lower <- groupconfidenceQ1[,1]
+      upper <- groupconfidenceQ1[,3]
+      mid <- groupconfidenceQ1[,2]
+      
+      col <- colourscheme[[device]][['T']] #use colour scheme according to group
+      
+      #upper and lower bounds create a polygon
+      #polygon creates it from low left to low right, then up right to up left -> use rev
+      #x is just trial nnumber, y depends on values of bounds
+      #device and sex may have missing data for specific trials
+      #need to skip these in plotting
+      skipidx <- which(mid %in% NA)
+      xval <- c(1:21)
+      xblock <- c()
+      for(val in c(1:length(xval))){
+        if(val %in% skipidx){
+          next
+        } else {
+          xblock <- c(xblock, xval[val])
+        }
+      }
+      
+      polygon(x = c(xblock, rev(xblock)), y = c(na.omit(lower), rev(na.omit(upper))), border=NA, col=col)
+      col <- colourscheme[[device]][['S']]
+      lines(x = xblock, y = na.omit(mid),col=col,lty=1)
+      
+      #Q4
+      #take only first, last and middle columns of file
+      lower <- groupconfidenceQ4[,1]
+      upper <- groupconfidenceQ4[,3]
+      mid <- groupconfidenceQ4[,2]
+      
+      col <- colourscheme[[device]][['T']] #use colour scheme according to group
+      
+      #upper and lower bounds create a polygon
+      #polygon creates it from low left to low right, then up right to up left -> use rev
+      #x is just trial nnumber, y depends on values of bounds
+      #device and sex may have missing data for specific trials
+      #need to skip these in plotting
+      skipidx <- which(mid %in% NA)
+      xval <- c(22:42)
+      xblock <- c()
+      for(val in c(1:length(xval))){
+        if(val %in% skipidx){
+          next
+        } else {
+          xblock <- c(xblock, xval[val])
+        }
+      }
+      
+      polygon(x = c(xblock, rev(xblock)), y = c(na.omit(lower), rev(na.omit(upper))), border=NA, col=col)
+      col <- colourscheme[[device]][['S']]
+      lines(x = xblock, y = na.omit(mid),col=col,lty=1)
+      
+      #plot Q2
+      lower <- groupconfidenceQ2[,1]
+      upper <- groupconfidenceQ2[,3]
+      mid <- groupconfidenceQ2[,2]
+      
+      col <- colourscheme[[device]][['T']] #use colour scheme according to group
+      
+      #upper and lower bounds create a polygon
+      #polygon creates it from low left to low right, then up right to up left -> use rev
+      #x is just trial nnumber, y depends on values of bounds
+      #device and sex may have missing data for specific trials
+      #need to skip these in plotting
+      skipidx <- which(mid %in% NA)
+      xval <- c(43:63)
+      xblock <- c()
+      for(val in c(1:length(xval))){
+        if(val %in% skipidx){
+          next
+        } else {
+          xblock <- c(xblock, xval[val])
+        }
+      }
+
+      polygon(x = c(xblock, rev(xblock)), y = c(na.omit(lower), rev(na.omit(upper))), border=NA, col=col)
+      col <- colourscheme[[device]][['S']]
+      lines(x = xblock, y = na.omit(mid),col=col,lty=1)
+      
+      #Q1A
+      #take only first, last and middle columns of file
+      lower <- groupconfidenceQ1A[,1]
+      upper <- groupconfidenceQ1A[,3]
+      mid <- groupconfidenceQ1A[,2]
+      
+      col <- colourscheme[[device]][['T']] #use colour scheme according to group
+      
+      #upper and lower bounds create a polygon
+      #polygon creates it from low left to low right, then up right to up left -> use rev
+      #x is just trial number, y depends on values of bounds
+      #device and sex may have missing data for specific trials
+      #need to skip these in plotting
+      skipidx <- which(mid %in% NA)
+      xval <- c(64:84)
+      xblock <- c()
+      for(val in c(1:length(xval))){
+        if(val %in% skipidx){
+          next
+        } else {
+          xblock <- c(xblock, xval[val])
+        }
+      }
+      
+      polygon(x = c(xblock, rev(xblock)), y = c(na.omit(lower), rev(na.omit(upper))), border=NA, col=col)
+      col <- colourscheme[[device]][['S']]
+      lines(x = xblock, y = na.omit(mid),col=col,lty=1)
+      
+      #SQ1
+      #take only first, last and middle columns of file
+      lower <- groupconfidenceSQ1[,1]
+      upper <- groupconfidenceSQ1[,3]
+      mid <- groupconfidenceSQ1[,2]
+      
+      col <- colourscheme[[device]][['T']] #use colour scheme according to group
+      
+      #upper and lower bounds create a polygon
+      #polygon creates it from low left to low right, then up right to up left -> use rev
+      #x is just trial number, y depends on values of bounds
+      #device and sex may have missing data for specific trials
+      #need to skip these in plotting
+      skipidx <- which(mid %in% NA)
+      xval <- c(85:105)
+      xblock <- c()
+      for(val in c(1:length(xval))){
+        if(val %in% skipidx){
+          next
+        } else {
+          xblock <- c(xblock, xval[val])
+        }
+      }
+      
+      polygon(x = c(xblock, rev(xblock)), y = c(na.omit(lower), rev(na.omit(upper))), border=NA, col=col)
+      col <- colourscheme[[device]][['S']]
+      lines(x = xblock, y = na.omit(mid),col=col,lty=1)
+      
+      #WQ1
+      #take only first, last and middle columns of file
+      lower <- groupconfidenceWQ1[,1]
+      upper <- groupconfidenceWQ1[,3]
+      mid <- groupconfidenceWQ1[,2]
+      
+      col <- colourscheme[[device]][['T']] #use colour scheme according to group
+      
+      #upper and lower bounds create a polygon
+      #polygon creates it from low left to low right, then up right to up left -> use rev
+      #x is just trial number, y depends on values of bounds
+      #device and sex may have missing data for specific trials
+      #need to skip these in plotting
+      skipidx <- which(mid %in% NA)
+      xval <- c(106:126)
+      xblock <- c()
+      for(val in c(1:length(xval))){
+        if(val %in% skipidx){
+          next
+        } else {
+          xblock <- c(xblock, xval[val])
+        }
+      }
+      
+      polygon(x = c(xblock, rev(xblock)), y = c(na.omit(lower), rev(na.omit(upper))), border=NA, col=col)
+      col <- colourscheme[[device]][['S']]
+      lines(x = xblock, y = na.omit(mid),col=col,lty=1)
+    }
+    
+    #add legend
+    legend(106,10,legend=c('Mouse','Trackpad'),
+           col=c(colourscheme[['Mouse']][['S']],colourscheme[['Trackpad']][['S']]),
+           lty=1,bty='n',lwd=2, cex=1)
+    #close everything if you saved plot as svg
+    if (target=='svg') {
+      dev.off()
+    }
+    
+  }
+}
+
+getDeviceCtrlGenPLCI<- function(groups = c('far', 'mid', 'near'), device, type = 't'){
+  
+  for(group in groups){
+    #get qualtrics response to device used
+    qualtdat <- read.csv('data/controlmirgenonline-master/qualtrics/CtrlMirGen_Qualtrics_ParticipantList.csv', stringsAsFactors = F)
+    #then get pplist according to device
+    devqualt <- qualtdat[which(qualtdat$Q3.4 == device),]
+    ppqualt <- devqualt$id
+    
+    
+    data <- read.csv(file=sprintf('data/controlmirgenonline-master/raw/processed/%s_PathLength.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+    trial <- data$trial
+    ndat <- data[,which(colnames(data) %in% ppqualt)]
+    dat <- cbind(trial, ndat)
+    
+    
+    trialno <- dat$trial
+    data1 <- as.matrix(dat[,2:dim(dat)[2]])
+    confidence <- data.frame()
+    
+    
+    for (trial in trialno){
+      
+      cireaches <- data1[which(data$trial == trial), ]
+      
+      if(length(unique(cireaches)) <= 2){ #for Device and Sex, if there is only ONE value, we set it to NA
+        citrial <- as.numeric(c(NA,NA,NA))
+      } else{
+        if (type == "t"){
+          cireaches <- cireaches[!is.na(cireaches)]
+          citrial <- t.interval(data = cireaches, variance = var(cireaches), conf.level = 0.95)
+        } else if(type == "b"){
+          citrial <- getBSConfidenceInterval(data = cireaches, resamples = 1000)
+        }
+      }
+      
+      if (prod(dim(confidence)) == 0){
+        confidence <- citrial
+      } else {
+        confidence <- rbind(confidence, citrial)
+      }
+      write.csv(confidence, file=sprintf('data/controlmirgenonline-master/raw/processed/%s_PathLength_CI_%s.csv', group, device), row.names = F) 
+    }
+  }
+}
+
+plotDeviceCtrlGenPL <- function(groups = c('far', 'mid', 'near'), devices = c('Mouse','Trackpad'), target='inline') {
+  for (group in groups){
+    #but we can save plot as svg file
+    if (target=='svg'){
+      svglite(file=sprintf('doc/fig/controlmirgenonline-master/Fig4B_%s_DeviceCtrlPL.svg', group), width=14, height=8, pointsize=14, system_fonts=list(sans="Arial"))
+    }
+    
+    plot(NA, NA, xlim = c(0,127), ylim = c(-0.2,4), 
+         xlab = "Trial", ylab = "Path length (monitor scale)", frame.plot = FALSE, #frame.plot takes away borders
+         main = "", xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
+    
+    lim <- par('usr')
+    rect(85, lim[3]-1, 126, lim[4]+1, border = "#ededed", col = "#ededed") #xleft, ybottom, x right, ytop; light grey hex code
+    #abline(h = c(0, 1), v = c(21, 42, 63, 84, 105), col = 8, lty = 2)
+    abline(h = c(0, 1), col = 8, lty = 2)
+    #axis(1, at = c(1, 22, 43, 64, 85, 106, 126)) #tick marks for x axis
+    axis(side=1, at=c(1,21), labels=c('1',''))
+    axis(side=1, at=c(22,42), labels=c('22',''))
+    axis(side=1, at=c(43,63), labels=c('43',''))
+    axis(side=1, at=c(64,84), labels=c('64',''))
+    axis(side=1, at=c(85,105), labels=c('85',''))
+    axis(side=1, at=c(106,126), labels=c('106','126'))
+    axis(2, at = c(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10), las = 2) #tick marks for y axis
+    #axis(3, at = c(10, 32, 53, 74, 95, 116), labels = c('Q1', 'Q4', 'Q2', 'Q1', 'Q1', 'Q1'), line = -2, tick = FALSE) #tick marks for x axis
+    
+    for(device in devices){
+      groupconfidence <- read.csv(file=sprintf('data/controlmirgenonline-master/raw/processed/%s_PathLength_CI_%s.csv', group, device))
+      
+      
+      #split up data set for plotting purposes
+      groupconfidenceQ1<- groupconfidence[1:21,]
+      groupconfidenceQ4 <- groupconfidence[22:42,]
+      groupconfidenceQ2 <- groupconfidence[43:63,]
+      groupconfidenceQ1A <- groupconfidence[64:84,]
+      groupconfidenceSQ1 <- groupconfidence[85:105,]
+      groupconfidenceWQ1 <- groupconfidence[106:126,]
+      
+      colourscheme <- getDeviceColourScheme(devices = device)
+      
+      #Q1
+      #take only first, last and middle columns of file
+      lower <- groupconfidenceQ1[,1]
+      upper <- groupconfidenceQ1[,3]
+      mid <- groupconfidenceQ1[,2]
+      
+      col <- colourscheme[[device]][['T']] #use colour scheme according to group
+      
+      #upper and lower bounds create a polygon
+      #polygon creates it from low left to low right, then up right to up left -> use rev
+      #x is just trial nnumber, y depends on values of bounds
+      #device and sex may have missing data for specific trials
+      #need to skip these in plotting
+      skipidx <- which(mid %in% NA)
+      xval <- c(1:21)
+      xblock <- c()
+      for(val in c(1:length(xval))){
+        if(val %in% skipidx){
+          next
+        } else {
+          xblock <- c(xblock, xval[val])
+        }
+      }
+      
+      polygon(x = c(xblock, rev(xblock)), y = c(na.omit(lower), rev(na.omit(upper))), border=NA, col=col)
+      col <- colourscheme[[device]][['S']]
+      lines(x = xblock, y = na.omit(mid),col=col,lty=1)
+      
+      #Q4
+      #take only first, last and middle columns of file
+      lower <- groupconfidenceQ4[,1]
+      upper <- groupconfidenceQ4[,3]
+      mid <- groupconfidenceQ4[,2]
+      
+      col <- colourscheme[[device]][['T']] #use colour scheme according to group
+      
+      #upper and lower bounds create a polygon
+      #polygon creates it from low left to low right, then up right to up left -> use rev
+      #x is just trial nnumber, y depends on values of bounds
+      #device and sex may have missing data for specific trials
+      #need to skip these in plotting
+      skipidx <- which(mid %in% NA)
+      xval <- c(22:42)
+      xblock <- c()
+      for(val in c(1:length(xval))){
+        if(val %in% skipidx){
+          next
+        } else {
+          xblock <- c(xblock, xval[val])
+        }
+      }
+      
+      polygon(x = c(xblock, rev(xblock)), y = c(na.omit(lower), rev(na.omit(upper))), border=NA, col=col)
+      col <- colourscheme[[device]][['S']]
+      lines(x = xblock, y = na.omit(mid),col=col,lty=1)
+      
+      #plot Q2
+      lower <- groupconfidenceQ2[,1]
+      upper <- groupconfidenceQ2[,3]
+      mid <- groupconfidenceQ2[,2]
+      
+      col <- colourscheme[[device]][['T']] #use colour scheme according to group
+      
+      #upper and lower bounds create a polygon
+      #polygon creates it from low left to low right, then up right to up left -> use rev
+      #x is just trial nnumber, y depends on values of bounds
+      #device and sex may have missing data for specific trials
+      #need to skip these in plotting
+      skipidx <- which(mid %in% NA)
+      xval <- c(43:63)
+      xblock <- c()
+      for(val in c(1:length(xval))){
+        if(val %in% skipidx){
+          next
+        } else {
+          xblock <- c(xblock, xval[val])
+        }
+      }
+      
+      polygon(x = c(xblock, rev(xblock)), y = c(na.omit(lower), rev(na.omit(upper))), border=NA, col=col)
+      col <- colourscheme[[device]][['S']]
+      lines(x = xblock, y = na.omit(mid),col=col,lty=1)
+      
+      #Q1A
+      #take only first, last and middle columns of file
+      lower <- groupconfidenceQ1A[,1]
+      upper <- groupconfidenceQ1A[,3]
+      mid <- groupconfidenceQ1A[,2]
+      
+      col <- colourscheme[[device]][['T']] #use colour scheme according to group
+      
+      #upper and lower bounds create a polygon
+      #polygon creates it from low left to low right, then up right to up left -> use rev
+      #x is just trial number, y depends on values of bounds
+      #device and sex may have missing data for specific trials
+      #need to skip these in plotting
+      skipidx <- which(mid %in% NA)
+      xval <- c(64:84)
+      xblock <- c()
+      for(val in c(1:length(xval))){
+        if(val %in% skipidx){
+          next
+        } else {
+          xblock <- c(xblock, xval[val])
+        }
+      }
+      
+      polygon(x = c(xblock, rev(xblock)), y = c(na.omit(lower), rev(na.omit(upper))), border=NA, col=col)
+      col <- colourscheme[[device]][['S']]
+      lines(x = xblock, y = na.omit(mid),col=col,lty=1)
+      
+      #SQ1
+      #take only first, last and middle columns of file
+      lower <- groupconfidenceSQ1[,1]
+      upper <- groupconfidenceSQ1[,3]
+      mid <- groupconfidenceSQ1[,2]
+      
+      col <- colourscheme[[device]][['T']] #use colour scheme according to group
+      
+      #upper and lower bounds create a polygon
+      #polygon creates it from low left to low right, then up right to up left -> use rev
+      #x is just trial number, y depends on values of bounds
+      #device and sex may have missing data for specific trials
+      #need to skip these in plotting
+      skipidx <- which(mid %in% NA)
+      xval <- c(85:105)
+      xblock <- c()
+      for(val in c(1:length(xval))){
+        if(val %in% skipidx){
+          next
+        } else {
+          xblock <- c(xblock, xval[val])
+        }
+      }
+      
+      polygon(x = c(xblock, rev(xblock)), y = c(na.omit(lower), rev(na.omit(upper))), border=NA, col=col)
+      col <- colourscheme[[device]][['S']]
+      lines(x = xblock, y = na.omit(mid),col=col,lty=1)
+      
+      #WQ1
+      #take only first, last and middle columns of file
+      lower <- groupconfidenceWQ1[,1]
+      upper <- groupconfidenceWQ1[,3]
+      mid <- groupconfidenceWQ1[,2]
+      
+      col <- colourscheme[[device]][['T']] #use colour scheme according to group
+      
+      #upper and lower bounds create a polygon
+      #polygon creates it from low left to low right, then up right to up left -> use rev
+      #x is just trial number, y depends on values of bounds
+      #device and sex may have missing data for specific trials
+      #need to skip these in plotting
+      skipidx <- which(mid %in% NA)
+      xval <- c(106:126)
+      xblock <- c()
+      for(val in c(1:length(xval))){
+        if(val %in% skipidx){
+          next
+        } else {
+          xblock <- c(xblock, xval[val])
+        }
+      }
+      
+      polygon(x = c(xblock, rev(xblock)), y = c(na.omit(lower), rev(na.omit(upper))), border=NA, col=col)
+      col <- colourscheme[[device]][['S']]
+      lines(x = xblock, y = na.omit(mid),col=col,lty=1)
+    }
+    
+    #add legend
+    legend(106,10,legend=c('Mouse','Trackpad'),
+           col=c(colourscheme[['Mouse']][['S']],colourscheme[['Trackpad']][['S']]),
+           lty=1,bty='n',lwd=2, cex=1)
+    #close everything if you saved plot as svg
+    if (target=='svg') {
+      dev.off()
+    }
+    
+  }
+}
+
+# Comparing Sex: Male vs Female----
+
+getSexCtrlGenCI<- function(groups = c('far', 'mid', 'near'), sex){
+  
+  for(group in groups){
+    #get qualtrics response to device used
+    qualtdat <- read.csv('data/controlmirgenonline-master/qualtrics/CtrlMirGen_Qualtrics_ParticipantList.csv', stringsAsFactors = F)
+    #then get pplist according to device
+    devqualt <- qualtdat[which(qualtdat$Q2.2 == sex),]
+    ppqualt <- devqualt$id
+    
+    
+    #Mirror
+    dat_MR <- read.csv(file=sprintf('data/controlmirgenonline-master/raw/processed/%s_MirCtrlGen.csv', group), check.names = FALSE)
+    trial <- dat_MR$trial
+    ndat <- dat_MR[,which(colnames(dat_MR) %in% ppqualt)]
+    data <- cbind(trial, ndat)
+    
+    
+    #get CIs
+    trialno <- data$trial
+    postrials <- c(1:21, 64:126) #these are where corrections in workspace are positive or zero
+    confidence <- data.frame()
+    
+    for(trial in trialno){
+      subdat <- as.numeric(data[trial, 2:length(data)]) #get just the values, then make the circular again
+      if(length(unique(subdat)) <= 2){ #for Device and Sex, if there is only ONE value, we set it to NA
+        citrial <- as.numeric(c(NA,NA,NA))
+      } else {
+        if(trial %in% postrials){
+          citrial <- getAngularReachDevsCIGen(data = subdat, group = group, space = 'pos')
+        } else {
+          citrial <- getAngularReachDevsCIGen(data = subdat, group = group, space = 'neg')
+        }
+      }
+      
+      
+      
+      if (prod(dim(confidence)) == 0){
+        confidence <- citrial
+      } else {
+        confidence <- rbind(confidence, citrial)
+      }
+      
+      write.csv(confidence, file=sprintf('data/controlmirgenonline-master/raw/processed/%s_MirCtrlGen_CI_%s.csv', group, sex), row.names = F)
+      
+    }
+  }
+}
+
+plotSexCtrlGen <- function(groups = c('far', 'mid', 'near'), sexes = c('Male','Female'), target='inline') {
+  for (group in groups){
+    #but we can save plot as svg file
+    if (target=='svg'){
+      svglite(file=sprintf('doc/fig/controlmirgenonline-master/Fig5_%s_SexCtrl.svg', group), width=14, height=8, pointsize=14, system_fonts=list(sans="Arial"))
+    }
+    
+    plot(NA, NA, xlim = c(0,127), ylim = c(-70,265), 
+         xlab = "Trial", ylab = "Angular reach deviation (°)", frame.plot = FALSE, #frame.plot takes away borders
+         main = "", xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
+    
+    lim <- par('usr')
+    rect(85, lim[3]-1, 126, lim[4]+1, border = "#ededed", col = "#ededed") #xleft, ybottom, x right, ytop; light grey hex code
+    #abline(h = c(0), v = c(21, 42, 63, 84, 105), col = 8, lty = 2) #creates horizontal dashed lines through y =  0 and 30
+    
+    #we could color code the dashed lines at perfect compensation, but washout needs to be grey
+    perfnear <- rep(10, 105) #add 5 points to either side to extend the line
+    lines(x = c(1:105), y = perfnear, col = '#ff8200ff', lty = 2)
+    
+    perfmid <- rep(90, 105) #add 5 points to either side to extend the line
+    lines(x = c(1:105), y = perfmid, col = '#e51636ff', lty = 2)
+    
+    perffar <- rep(170, 105) #add 5 points to either side to extend the line
+    lines(x = c(1:105), y = perffar, col = '#c400c4ff', lty = 2) 
+    #then add grey lines before trials
+    greynear <- rep(10, 7) #7 is however many the x axis values are
+    lines(x = c(-5:1), y = greynear, col = 8, lty = 2) #5 x values before 0
+    greymid <- rep(90, 7) #7 is however many the x axis values are
+    lines(x = c(-5:1), y = greymid, col = 8, lty = 2) #5 x values before 0
+    greyfar <- rep(170, 7) #7 is however many the x axis values are
+    lines(x = c(-5:1), y = greyfar, col = 8, lty = 2)
+    #grey lines at washout
+    greynear <- rep(10, 27) 
+    lines(x = c(105:131), y = greynear, col = 8, lty = 2) 
+    greymid <- rep(90, 27) 
+    lines(x = c(105:131), y = greymid, col = 8, lty = 2) 
+    greyfar <- rep(170, 27) 
+    lines(x = c(105:131), y = greyfar, col = 8, lty = 2) 
+    
+    #axis(1, at = c(1, 22, 43, 64, 85, 106, 126)) #tick marks for x axis
+    abline(h = c(0), col = 8, lty = 2)
+    axis(side=1, at=c(1,21), labels=c('1',''))
+    axis(side=1, at=c(22,42), labels=c('22',''))
+    axis(side=1, at=c(43,63), labels=c('43',''))
+    axis(side=1, at=c(64,84), labels=c('64',''))
+    axis(side=1, at=c(85,105), labels=c('85',''))
+    axis(side=1, at=c(106,126), labels=c('106','126'))
+    axis(2, at = c(-50, -10, 0, 10, 50, 90, 130, 170), las = 2) #tick marks for y axis
+    
+    for(sex in sexes){
+      #read in files created by getGroupConfidenceInterval in filehandling.R
+      groupconfidence <- read.csv(file=sprintf('data/controlmirgenonline-master/raw/processed/%s_MirCtrlGen_CI_%s.csv', group, sex))
+      
+      #split up data set for plotting purposes
+      groupconfidenceQ1 <- groupconfidence[1:21,]
+      groupconfidenceQ4 <- (groupconfidence[22:42,])*-1 #sign flip because correction is in negative direction
+      groupconfidenceQ2 <- (groupconfidence[43:63,])*-1 #sign flip
+      groupconfidenceQ1A <- groupconfidence[64:84,]
+      groupconfidenceSQ1 <- groupconfidence[85:105,]
+      groupconfidenceWQ1 <- groupconfidence[106:126,]
+      
+      colourscheme <- getSexColourScheme(sexes = sex)
+      
+      #plot Q1 Data
+      #take only first, last and middle columns of file
+      lower <- groupconfidenceQ1[,1]
+      upper <- groupconfidenceQ1[,3]
+      mid <- groupconfidenceQ1[,2]
+      
+      col <- colourscheme[[sex]][['T']] #use colour scheme according to group
+      
+      #upper and lower bounds create a polygon
+      #polygon creates it from low left to low right, then up right to up left -> use rev
+      #x is just trial nnumber, y depends on values of bounds
+      #device and sex may have missing data for specific trials
+      #need to skip these in plotting
+      skipidx <- which(mid %in% NA)
+      xval <- c(1:21)
+      xblock <- c()
+      for(val in c(1:length(xval))){
+        if(val %in% skipidx){
+          next
+        } else {
+          xblock <- c(xblock, xval[val])
+        }
+      }
+      
+      polygon(x = c(xblock, rev(xblock)), y = c(na.omit(lower), rev(na.omit(upper))), border=NA, col=col)
+      col <- colourscheme[[sex]][['S']]
+      lines(x = xblock, y = na.omit(mid),col=col,lty=1)
+      
+      #plot Q4 Data
+      #take only first, last and middle columns of file
+      lower <- groupconfidenceQ4[,1]
+      upper <- groupconfidenceQ4[,3]
+      mid <- groupconfidenceQ4[,2]
+      
+      col <- colourscheme[[sex]][['T']] #use colour scheme according to group
+      
+      #upper and lower bounds create a polygon
+      #polygon creates it from low left to low right, then up right to up left -> use rev
+      #x is just trial nnumber, y depends on values of bounds
+      #device and sex may have missing data for specific trials
+      #need to skip these in plotting
+      skipidx <- which(mid %in% NA)
+      xval <- c(22:42)
+      xblock <- c()
+      for(val in c(1:length(xval))){
+        if(val %in% skipidx){
+          next
+        } else {
+          xblock <- c(xblock, xval[val])
+        }
+      }
+      
+      polygon(x = c(xblock, rev(xblock)), y = c(na.omit(lower), rev(na.omit(upper))), border=NA, col=col)
+      col <- colourscheme[[sex]][['S']]
+      lines(x = xblock, y = na.omit(mid),col=col,lty=1)
+      
+      #plot Q2 Data
+      lower <- groupconfidenceQ2[,1]
+      upper <- groupconfidenceQ2[,3]
+      mid <- groupconfidenceQ2[,2]
+      
+      col <- colourscheme[[sex]][['T']] #use colour scheme according to group
+      
+      #upper and lower bounds create a polygon
+      #polygon creates it from low left to low right, then up right to up left -> use rev
+      #x is just trial nnumber, y depends on values of bounds
+      #device and sex may have missing data for specific trials
+      #need to skip these in plotting
+      skipidx <- which(mid %in% NA)
+      xval <- c(43:63)
+      xblock <- c()
+      for(val in c(1:length(xval))){
+        if(val %in% skipidx){
+          next
+        } else {
+          xblock <- c(xblock, xval[val])
+        }
+      }
+      
+      polygon(x = c(xblock, rev(xblock)), y = c(na.omit(lower), rev(na.omit(upper))), border=NA, col=col)
+      col <- colourscheme[[sex]][['S']]
+      lines(x = xblock, y = na.omit(mid),col=col,lty=1)
+      
+      #plot Q1A Data
+      #take only first, last and middle columns of file
+      lower <- groupconfidenceQ1A[,1]
+      upper <- groupconfidenceQ1A[,3]
+      mid <- groupconfidenceQ1A[,2]
+      
+      col <- colourscheme[[sex]][['T']] #use colour scheme according to group
+      
+      #upper and lower bounds create a polygon
+      #polygon creates it from low left to low right, then up right to up left -> use rev
+      #x is just trial nnumber, y depends on values of bounds
+      #device and sex may have missing data for specific trials
+      #need to skip these in plotting
+      skipidx <- which(mid %in% NA)
+      xval <- c(64:84)
+      xblock <- c()
+      for(val in c(1:length(xval))){
+        if(val %in% skipidx){
+          next
+        } else {
+          xblock <- c(xblock, xval[val])
+        }
+      }
+      
+      polygon(x = c(xblock, rev(xblock)), y = c(na.omit(lower), rev(na.omit(upper))), border=NA, col=col)
+      col <- colourscheme[[sex]][['S']]
+      lines(x = xblock, y = na.omit(mid),col=col,lty=1)
+      
+      #plot SQ1 Data
+      #take only first, last and middle columns of file
+      lower <- groupconfidenceSQ1[,1]
+      upper <- groupconfidenceSQ1[,3]
+      mid <- groupconfidenceSQ1[,2]
+      
+      col <- colourscheme[[sex]][['T']] #use colour scheme according to group
+      
+      #upper and lower bounds create a polygon
+      #polygon creates it from low left to low right, then up right to up left -> use rev
+      #x is just trial nnumber, y depends on values of bounds
+      #device and sex may have missing data for specific trials
+      #need to skip these in plotting
+      skipidx <- which(mid %in% NA)
+      xval <- c(85:105)
+      xblock <- c()
+      for(val in c(1:length(xval))){
+        if(val %in% skipidx){
+          next
+        } else {
+          xblock <- c(xblock, xval[val])
+        }
+      }
+      
+      polygon(x = c(xblock, rev(xblock)), y = c(na.omit(lower), rev(na.omit(upper))), border=NA, col=col)
+      col <- colourscheme[[sex]][['S']]
+      lines(x = xblock, y = na.omit(mid),col=col,lty=1)
+      
+      #plot WQ1 Data
+      #take only first, last and middle columns of file
+      lower <- groupconfidenceWQ1[,1]
+      upper <- groupconfidenceWQ1[,3]
+      mid <- groupconfidenceWQ1[,2]
+      
+      col <- colourscheme[[sex]][['T']] #use colour scheme according to group
+      
+      #upper and lower bounds create a polygon
+      #polygon creates it from low left to low right, then up right to up left -> use rev
+      #x is just trial nnumber, y depends on values of bounds
+      #device and sex may have missing data for specific trials
+      #need to skip these in plotting
+      skipidx <- which(mid %in% NA)
+      xval <- c(106:126)
+      xblock <- c()
+      for(val in c(1:length(xval))){
+        if(val %in% skipidx){
+          next
+        } else {
+          xblock <- c(xblock, xval[val])
+        }
+      }
+      
+      polygon(x = c(xblock, rev(xblock)), y = c(na.omit(lower), rev(na.omit(upper))), border=NA, col=col)
+      col <- colourscheme[[sex]][['S']]
+      lines(x = xblock, y = na.omit(mid),col=col,lty=1)
+    }
+    
+    #add legend
+    legend(106,220,legend=c('Male','Female'),
+           col=c(colourscheme[['Male']][['S']],colourscheme[['Female']][['S']]),
+           lty=1,bty='n',lwd=2, cex=1)
+    #close everything if you saved plot as svg
+    if (target=='svg') {
+      dev.off()
+    }
+    
+  }
+}
+
+getSexCtrlGenMTCI<- function(groups = c('far', 'mid', 'near'), sex, type = 't'){
+  
+  for(group in groups){
+    #get qualtrics response to device used
+    qualtdat <- read.csv('data/controlmirgenonline-master/qualtrics/CtrlMirGen_Qualtrics_ParticipantList.csv', stringsAsFactors = F)
+    #then get pplist according to device
+    devqualt <- qualtdat[which(qualtdat$Q2.2 == sex),]
+    ppqualt <- devqualt$id
+    
+    
+    data <- read.csv(file=sprintf('data/controlmirgenonline-master/raw/processed/%s_MovementTime.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+    trial <- data$trial
+    ndat <- data[,which(colnames(data) %in% ppqualt)]
+    dat <- cbind(trial, ndat)
+    
+    
+    trialno <- dat$trial
+    data1 <- as.matrix(dat[,2:dim(dat)[2]])
+    confidence <- data.frame()
+    
+    
+    for (trial in trialno){
+      
+      cireaches <- data1[which(data$trial == trial), ]
+      
+      if(length(unique(cireaches)) <= 2){ #for Device and Sex, if there is only ONE value, we set it to NA
+        citrial <- as.numeric(c(NA,NA,NA))
+      } else{
+        if (type == "t"){
+          cireaches <- cireaches[!is.na(cireaches)]
+          citrial <- t.interval(data = cireaches, variance = var(cireaches), conf.level = 0.95)
+        } else if(type == "b"){
+          citrial <- getBSConfidenceInterval(data = cireaches, resamples = 1000)
+        }
+      }
+      
+      if (prod(dim(confidence)) == 0){
+        confidence <- citrial
+      } else {
+        confidence <- rbind(confidence, citrial)
+      }
+      write.csv(confidence, file=sprintf('data/controlmirgenonline-master/raw/processed/%s_MovementTime_CI_%s.csv', group, sex), row.names = F) 
+    }
+  }
+}
+
+plotSexCtrlGenMT <- function(groups = c('far', 'mid', 'near'), sexes = c('Male','Female'), target='inline') {
+  for (group in groups){
+    #but we can save plot as svg file
+    if (target=='svg'){
+      svglite(file=sprintf('doc/fig/controlmirgenonline-master/Fig5A_%s_SexCtrlMT.svg', group), width=14, height=8, pointsize=14, system_fonts=list(sans="Arial"))
+    }
+    
+    plot(NA, NA, xlim = c(0,127), ylim = c(-0.2, 11), 
+         xlab = "Trial", ylab = "Movement time (s)", frame.plot = FALSE, #frame.plot takes away borders
+         main = "", xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
+    
+    lim <- par('usr')
+    rect(85, lim[3]-1, 126, lim[4]+1, border = "#ededed", col = "#ededed") #xleft, ybottom, x right, ytop; light grey hex code
+    #abline(h = c(0, 1), v = c(21, 42, 63, 84, 105), col = 8, lty = 2)
+    abline(h = c(0, 1), col = 8, lty = 2)
+    #axis(1, at = c(1, 22, 43, 64, 85, 106, 126)) #tick marks for x axis
+    axis(side=1, at=c(1,21), labels=c('1',''))
+    axis(side=1, at=c(22,42), labels=c('22',''))
+    axis(side=1, at=c(43,63), labels=c('43',''))
+    axis(side=1, at=c(64,84), labels=c('64',''))
+    axis(side=1, at=c(85,105), labels=c('85',''))
+    axis(side=1, at=c(106,126), labels=c('106','126'))
+    axis(2, at = c(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10), las = 2) #tick marks for y axis
+    #axis(3, at = c(10, 32, 53, 74, 95, 116), labels = c('Q1', 'Q4', 'Q2', 'Q1', 'Q1', 'Q1'), line = -2, tick = FALSE) #tick marks for x axis
+    
+    for(sex in sexes){
+      groupconfidence <- read.csv(file=sprintf('data/controlmirgenonline-master/raw/processed/%s_MovementTime_CI_%s.csv', group, sex))
+      
+      
+      #split up data set for plotting purposes
+      groupconfidenceQ1<- groupconfidence[1:21,]
+      groupconfidenceQ4 <- groupconfidence[22:42,]
+      groupconfidenceQ2 <- groupconfidence[43:63,]
+      groupconfidenceQ1A <- groupconfidence[64:84,]
+      groupconfidenceSQ1 <- groupconfidence[85:105,]
+      groupconfidenceWQ1 <- groupconfidence[106:126,]
+      
+      colourscheme <- getSexColourScheme(sexes = sex)
+      
+      #Q1
+      #take only first, last and middle columns of file
+      lower <- groupconfidenceQ1[,1]
+      upper <- groupconfidenceQ1[,3]
+      mid <- groupconfidenceQ1[,2]
+      
+      col <- colourscheme[[sex]][['T']] #use colour scheme according to group
+      
+      #upper and lower bounds create a polygon
+      #polygon creates it from low left to low right, then up right to up left -> use rev
+      #x is just trial nnumber, y depends on values of bounds
+      #device and sex may have missing data for specific trials
+      #need to skip these in plotting
+      skipidx <- which(mid %in% NA)
+      xval <- c(1:21)
+      xblock <- c()
+      for(val in c(1:length(xval))){
+        if(val %in% skipidx){
+          next
+        } else {
+          xblock <- c(xblock, xval[val])
+        }
+      }
+      
+      polygon(x = c(xblock, rev(xblock)), y = c(na.omit(lower), rev(na.omit(upper))), border=NA, col=col)
+      col <- colourscheme[[sex]][['S']]
+      lines(x = xblock, y = na.omit(mid),col=col,lty=1)
+      
+      #Q4
+      #take only first, last and middle columns of file
+      lower <- groupconfidenceQ4[,1]
+      upper <- groupconfidenceQ4[,3]
+      mid <- groupconfidenceQ4[,2]
+      
+      col <- colourscheme[[sex]][['T']] #use colour scheme according to group
+      
+      #upper and lower bounds create a polygon
+      #polygon creates it from low left to low right, then up right to up left -> use rev
+      #x is just trial nnumber, y depends on values of bounds
+      #device and sex may have missing data for specific trials
+      #need to skip these in plotting
+      skipidx <- which(mid %in% NA)
+      xval <- c(22:42)
+      xblock <- c()
+      for(val in c(1:length(xval))){
+        if(val %in% skipidx){
+          next
+        } else {
+          xblock <- c(xblock, xval[val])
+        }
+      }
+      
+      polygon(x = c(xblock, rev(xblock)), y = c(na.omit(lower), rev(na.omit(upper))), border=NA, col=col)
+      col <- colourscheme[[sex]][['S']]
+      lines(x = xblock, y = na.omit(mid),col=col,lty=1)
+      
+      #plot Q2
+      lower <- groupconfidenceQ2[,1]
+      upper <- groupconfidenceQ2[,3]
+      mid <- groupconfidenceQ2[,2]
+      
+      col <- colourscheme[[sex]][['T']] #use colour scheme according to group
+      
+      #upper and lower bounds create a polygon
+      #polygon creates it from low left to low right, then up right to up left -> use rev
+      #x is just trial nnumber, y depends on values of bounds
+      #device and sex may have missing data for specific trials
+      #need to skip these in plotting
+      skipidx <- which(mid %in% NA)
+      xval <- c(43:63)
+      xblock <- c()
+      for(val in c(1:length(xval))){
+        if(val %in% skipidx){
+          next
+        } else {
+          xblock <- c(xblock, xval[val])
+        }
+      }
+      
+      polygon(x = c(xblock, rev(xblock)), y = c(na.omit(lower), rev(na.omit(upper))), border=NA, col=col)
+      col <- colourscheme[[sex]][['S']]
+      lines(x = xblock, y = na.omit(mid),col=col,lty=1)
+      
+      #Q1A
+      #take only first, last and middle columns of file
+      lower <- groupconfidenceQ1A[,1]
+      upper <- groupconfidenceQ1A[,3]
+      mid <- groupconfidenceQ1A[,2]
+      
+      col <- colourscheme[[sex]][['T']] #use colour scheme according to group
+      
+      #upper and lower bounds create a polygon
+      #polygon creates it from low left to low right, then up right to up left -> use rev
+      #x is just trial number, y depends on values of bounds
+      #device and sex may have missing data for specific trials
+      #need to skip these in plotting
+      skipidx <- which(mid %in% NA)
+      xval <- c(64:84)
+      xblock <- c()
+      for(val in c(1:length(xval))){
+        if(val %in% skipidx){
+          next
+        } else {
+          xblock <- c(xblock, xval[val])
+        }
+      }
+      
+      polygon(x = c(xblock, rev(xblock)), y = c(na.omit(lower), rev(na.omit(upper))), border=NA, col=col)
+      col <- colourscheme[[sex]][['S']]
+      lines(x = xblock, y = na.omit(mid),col=col,lty=1)
+      
+      #SQ1
+      #take only first, last and middle columns of file
+      lower <- groupconfidenceSQ1[,1]
+      upper <- groupconfidenceSQ1[,3]
+      mid <- groupconfidenceSQ1[,2]
+      
+      col <- colourscheme[[sex]][['T']] #use colour scheme according to group
+      
+      #upper and lower bounds create a polygon
+      #polygon creates it from low left to low right, then up right to up left -> use rev
+      #x is just trial number, y depends on values of bounds
+      #device and sex may have missing data for specific trials
+      #need to skip these in plotting
+      skipidx <- which(mid %in% NA)
+      xval <- c(85:105)
+      xblock <- c()
+      for(val in c(1:length(xval))){
+        if(val %in% skipidx){
+          next
+        } else {
+          xblock <- c(xblock, xval[val])
+        }
+      }
+      
+      polygon(x = c(xblock, rev(xblock)), y = c(na.omit(lower), rev(na.omit(upper))), border=NA, col=col)
+      col <- colourscheme[[sex]][['S']]
+      lines(x = xblock, y = na.omit(mid),col=col,lty=1)
+      
+      #WQ1
+      #take only first, last and middle columns of file
+      lower <- groupconfidenceWQ1[,1]
+      upper <- groupconfidenceWQ1[,3]
+      mid <- groupconfidenceWQ1[,2]
+      
+      col <- colourscheme[[sex]][['T']] #use colour scheme according to group
+      
+      #upper and lower bounds create a polygon
+      #polygon creates it from low left to low right, then up right to up left -> use rev
+      #x is just trial number, y depends on values of bounds
+      #device and sex may have missing data for specific trials
+      #need to skip these in plotting
+      skipidx <- which(mid %in% NA)
+      xval <- c(106:126)
+      xblock <- c()
+      for(val in c(1:length(xval))){
+        if(val %in% skipidx){
+          next
+        } else {
+          xblock <- c(xblock, xval[val])
+        }
+      }
+      
+      polygon(x = c(xblock, rev(xblock)), y = c(na.omit(lower), rev(na.omit(upper))), border=NA, col=col)
+      col <- colourscheme[[sex]][['S']]
+      lines(x = xblock, y = na.omit(mid),col=col,lty=1)
+    }
+    
+    #add legend
+    legend(106,10,legend=c('Male','Female'),
+           col=c(colourscheme[['Male']][['S']],colourscheme[['Female']][['S']]),
+           lty=1,bty='n',lwd=2, cex=1)
+    #close everything if you saved plot as svg
+    if (target=='svg') {
+      dev.off()
+    }
+    
+  }
+}
+
+getSexCtrlGenPLCI<- function(groups = c('far', 'mid', 'near'), sex, type = 't'){
+  
+  for(group in groups){
+    #get qualtrics response to device used
+    qualtdat <- read.csv('data/controlmirgenonline-master/qualtrics/CtrlMirGen_Qualtrics_ParticipantList.csv', stringsAsFactors = F)
+    #then get pplist according to device
+    devqualt <- qualtdat[which(qualtdat$Q2.2 == sex),]
+    ppqualt <- devqualt$id
+    
+    
+    data <- read.csv(file=sprintf('data/controlmirgenonline-master/raw/processed/%s_PathLength.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+    trial <- data$trial
+    ndat <- data[,which(colnames(data) %in% ppqualt)]
+    dat <- cbind(trial, ndat)
+    
+    
+    trialno <- dat$trial
+    data1 <- as.matrix(dat[,2:dim(dat)[2]])
+    confidence <- data.frame()
+    
+    
+    for (trial in trialno){
+      
+      cireaches <- data1[which(data$trial == trial), ]
+      
+      if(length(unique(cireaches)) <= 2){ #for Device and Sex, if there is only ONE value, we set it to NA
+        citrial <- as.numeric(c(NA,NA,NA))
+      } else{
+        if (type == "t"){
+          cireaches <- cireaches[!is.na(cireaches)]
+          citrial <- t.interval(data = cireaches, variance = var(cireaches), conf.level = 0.95)
+        } else if(type == "b"){
+          citrial <- getBSConfidenceInterval(data = cireaches, resamples = 1000)
+        }
+      }
+      
+      if (prod(dim(confidence)) == 0){
+        confidence <- citrial
+      } else {
+        confidence <- rbind(confidence, citrial)
+      }
+      write.csv(confidence, file=sprintf('data/controlmirgenonline-master/raw/processed/%s_PathLength_CI_%s.csv', group, sex), row.names = F) 
+    }
+  }
+}
+
+plotSexCtrlGenPL <- function(groups = c('far', 'mid', 'near'), sexes = c('Male','Female'), target='inline') {
+  for (group in groups){
+    #but we can save plot as svg file
+    if (target=='svg'){
+      svglite(file=sprintf('doc/fig/controlmirgenonline-master/Fig5B_%s_SexCtrlPL.svg', group), width=14, height=8, pointsize=14, system_fonts=list(sans="Arial"))
+    }
+    
+    plot(NA, NA, xlim = c(0,127), ylim = c(-0.2,4), 
+         xlab = "Trial", ylab = "Path length (monitor scale)", frame.plot = FALSE, #frame.plot takes away borders
+         main = "", xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
+    
+    lim <- par('usr')
+    rect(85, lim[3]-1, 126, lim[4]+1, border = "#ededed", col = "#ededed") #xleft, ybottom, x right, ytop; light grey hex code
+    #abline(h = c(0, 1), v = c(21, 42, 63, 84, 105), col = 8, lty = 2)
+    abline(h = c(0, 1), col = 8, lty = 2)
+    #axis(1, at = c(1, 22, 43, 64, 85, 106, 126)) #tick marks for x axis
+    axis(side=1, at=c(1,21), labels=c('1',''))
+    axis(side=1, at=c(22,42), labels=c('22',''))
+    axis(side=1, at=c(43,63), labels=c('43',''))
+    axis(side=1, at=c(64,84), labels=c('64',''))
+    axis(side=1, at=c(85,105), labels=c('85',''))
+    axis(side=1, at=c(106,126), labels=c('106','126'))
+    axis(2, at = c(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10), las = 2) #tick marks for y axis
+    #axis(3, at = c(10, 32, 53, 74, 95, 116), labels = c('Q1', 'Q4', 'Q2', 'Q1', 'Q1', 'Q1'), line = -2, tick = FALSE) #tick marks for x axis
+    
+    for(sex in sexes){
+      groupconfidence <- read.csv(file=sprintf('data/controlmirgenonline-master/raw/processed/%s_PathLength_CI_%s.csv', group, sex))
+      
+      
+      #split up data set for plotting purposes
+      groupconfidenceQ1<- groupconfidence[1:21,]
+      groupconfidenceQ4 <- groupconfidence[22:42,]
+      groupconfidenceQ2 <- groupconfidence[43:63,]
+      groupconfidenceQ1A <- groupconfidence[64:84,]
+      groupconfidenceSQ1 <- groupconfidence[85:105,]
+      groupconfidenceWQ1 <- groupconfidence[106:126,]
+      
+      colourscheme <- getSexColourScheme(sexes = sex)
+      
+      #Q1
+      #take only first, last and middle columns of file
+      lower <- groupconfidenceQ1[,1]
+      upper <- groupconfidenceQ1[,3]
+      mid <- groupconfidenceQ1[,2]
+      
+      col <- colourscheme[[sex]][['T']] #use colour scheme according to group
+      
+      #upper and lower bounds create a polygon
+      #polygon creates it from low left to low right, then up right to up left -> use rev
+      #x is just trial nnumber, y depends on values of bounds
+      #device and sex may have missing data for specific trials
+      #need to skip these in plotting
+      skipidx <- which(mid %in% NA)
+      xval <- c(1:21)
+      xblock <- c()
+      for(val in c(1:length(xval))){
+        if(val %in% skipidx){
+          next
+        } else {
+          xblock <- c(xblock, xval[val])
+        }
+      }
+      
+      polygon(x = c(xblock, rev(xblock)), y = c(na.omit(lower), rev(na.omit(upper))), border=NA, col=col)
+      col <- colourscheme[[sex]][['S']]
+      lines(x = xblock, y = na.omit(mid),col=col,lty=1)
+      
+      #Q4
+      #take only first, last and middle columns of file
+      lower <- groupconfidenceQ4[,1]
+      upper <- groupconfidenceQ4[,3]
+      mid <- groupconfidenceQ4[,2]
+      
+      col <- colourscheme[[sex]][['T']] #use colour scheme according to group
+      
+      #upper and lower bounds create a polygon
+      #polygon creates it from low left to low right, then up right to up left -> use rev
+      #x is just trial nnumber, y depends on values of bounds
+      #device and sex may have missing data for specific trials
+      #need to skip these in plotting
+      skipidx <- which(mid %in% NA)
+      xval <- c(22:42)
+      xblock <- c()
+      for(val in c(1:length(xval))){
+        if(val %in% skipidx){
+          next
+        } else {
+          xblock <- c(xblock, xval[val])
+        }
+      }
+      
+      polygon(x = c(xblock, rev(xblock)), y = c(na.omit(lower), rev(na.omit(upper))), border=NA, col=col)
+      col <- colourscheme[[sex]][['S']]
+      lines(x = xblock, y = na.omit(mid),col=col,lty=1)
+      
+      #plot Q2
+      lower <- groupconfidenceQ2[,1]
+      upper <- groupconfidenceQ2[,3]
+      mid <- groupconfidenceQ2[,2]
+      
+      col <- colourscheme[[sex]][['T']] #use colour scheme according to group
+      
+      #upper and lower bounds create a polygon
+      #polygon creates it from low left to low right, then up right to up left -> use rev
+      #x is just trial nnumber, y depends on values of bounds
+      #device and sex may have missing data for specific trials
+      #need to skip these in plotting
+      skipidx <- which(mid %in% NA)
+      xval <- c(43:63)
+      xblock <- c()
+      for(val in c(1:length(xval))){
+        if(val %in% skipidx){
+          next
+        } else {
+          xblock <- c(xblock, xval[val])
+        }
+      }
+      
+      polygon(x = c(xblock, rev(xblock)), y = c(na.omit(lower), rev(na.omit(upper))), border=NA, col=col)
+      col <- colourscheme[[sex]][['S']]
+      lines(x = xblock, y = na.omit(mid),col=col,lty=1)
+      
+      #Q1A
+      #take only first, last and middle columns of file
+      lower <- groupconfidenceQ1A[,1]
+      upper <- groupconfidenceQ1A[,3]
+      mid <- groupconfidenceQ1A[,2]
+      
+      col <- colourscheme[[sex]][['T']] #use colour scheme according to group
+      
+      #upper and lower bounds create a polygon
+      #polygon creates it from low left to low right, then up right to up left -> use rev
+      #x is just trial number, y depends on values of bounds
+      #device and sex may have missing data for specific trials
+      #need to skip these in plotting
+      skipidx <- which(mid %in% NA)
+      xval <- c(64:84)
+      xblock <- c()
+      for(val in c(1:length(xval))){
+        if(val %in% skipidx){
+          next
+        } else {
+          xblock <- c(xblock, xval[val])
+        }
+      }
+      
+      polygon(x = c(xblock, rev(xblock)), y = c(na.omit(lower), rev(na.omit(upper))), border=NA, col=col)
+      col <- colourscheme[[sex]][['S']]
+      lines(x = xblock, y = na.omit(mid),col=col,lty=1)
+      
+      #SQ1
+      #take only first, last and middle columns of file
+      lower <- groupconfidenceSQ1[,1]
+      upper <- groupconfidenceSQ1[,3]
+      mid <- groupconfidenceSQ1[,2]
+      
+      col <- colourscheme[[sex]][['T']] #use colour scheme according to group
+      
+      #upper and lower bounds create a polygon
+      #polygon creates it from low left to low right, then up right to up left -> use rev
+      #x is just trial number, y depends on values of bounds
+      #device and sex may have missing data for specific trials
+      #need to skip these in plotting
+      skipidx <- which(mid %in% NA)
+      xval <- c(85:105)
+      xblock <- c()
+      for(val in c(1:length(xval))){
+        if(val %in% skipidx){
+          next
+        } else {
+          xblock <- c(xblock, xval[val])
+        }
+      }
+      
+      polygon(x = c(xblock, rev(xblock)), y = c(na.omit(lower), rev(na.omit(upper))), border=NA, col=col)
+      col <- colourscheme[[sex]][['S']]
+      lines(x = xblock, y = na.omit(mid),col=col,lty=1)
+      
+      #WQ1
+      #take only first, last and middle columns of file
+      lower <- groupconfidenceWQ1[,1]
+      upper <- groupconfidenceWQ1[,3]
+      mid <- groupconfidenceWQ1[,2]
+      
+      col <- colourscheme[[sex]][['T']] #use colour scheme according to group
+      
+      #upper and lower bounds create a polygon
+      #polygon creates it from low left to low right, then up right to up left -> use rev
+      #x is just trial number, y depends on values of bounds
+      #device and sex may have missing data for specific trials
+      #need to skip these in plotting
+      skipidx <- which(mid %in% NA)
+      xval <- c(106:126)
+      xblock <- c()
+      for(val in c(1:length(xval))){
+        if(val %in% skipidx){
+          next
+        } else {
+          xblock <- c(xblock, xval[val])
+        }
+      }
+      
+      polygon(x = c(xblock, rev(xblock)), y = c(na.omit(lower), rev(na.omit(upper))), border=NA, col=col)
+      col <- colourscheme[[sex]][['S']]
+      lines(x = xblock, y = na.omit(mid),col=col,lty=1)
+    }
+    
+    #add legend
+    legend(106,4,legend=c('Male','Female'),
+           col=c(colourscheme[['Male']][['S']],colourscheme[['Female']][['S']]),
+           lty=1,bty='n',lwd=2, cex=1)
+    #close everything if you saved plot as svg
+    if (target=='svg') {
+      dev.off()
+    }
+    
+  }
+}
+
 # Statistics (Learning)----
 # Angular reach devs are not comparable across target locations
 # We can use percentage of compensation instead
