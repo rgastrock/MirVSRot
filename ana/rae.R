@@ -5,7 +5,6 @@ source('ana/exponentialandstepModel.R')
 #Aligned data----
 getAlignedParticipant <- function(group, id, location) {
   
-  #for RAE we can compare angular deviations directly (no need for percentages)
   
   alignedTraining <- getParticipantTaskData(group, id, taskno = 1, task = 'aligned') #these values will change if need nocursor or localization
   AT<- getReachAngles(alignedTraining, starttrial = 0, endtrial = 47) #aligned is first 48 trials
