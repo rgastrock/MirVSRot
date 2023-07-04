@@ -5,25 +5,10 @@ source('ana/exponentialandstepModel.R')
 #Aligned data----
 getAlignedParticipant <- function(group, id, location) {
   
-  #take learnive curve for both aligned and perturbed (rot, mir, rand) sessions
-  #rotation should show percentage of compensation (not angular deviation of hand)
-  #because this makes it comparable to mirror reversal where angular deviation will differ depending on location of target relative to mirror
-  #measure where hand should be minus where it is: if this is spot on then percentage is 0%
+  #for RAE we can compare angular deviations directly (no need for percentages)
   
   alignedTraining <- getParticipantTaskData(group, id, taskno = 1, task = 'aligned') #these values will change if need nocursor or localization
-  
-  biases <- getAlignedTrainingBiases(alignedTraining, location = location) #use function to get biases
   AT<- getReachAngles(alignedTraining, starttrial = 0, endtrial = 47) #aligned is first 48 trials
-  #WT<- getReachAngles(washoutTrials, starttrial=0, endtrial=47, location = location) #washout is same length as aligned
-  
-  for (biasno in c(1: dim(biases)[1])){ #from 1 to however many biases there are in data
-    
-    target<- biases[biasno, 'targetangle'] #get corresponding target angle
-    bias<- biases[biasno, 'reachdev'] #get corresponding reachdev or bias
-    
-    #subtract bias from reach deviation for rotated session only
-    AT$reachdev[which(AT$targetangle == target)] <- AT$reachdev[which(AT$targetangle == target)] - bias
-  }
   
   #then for this study we want a measure of percentage of compensation, not angular hand deviation
   #perturbation is constant here (always 30deg), so the (reachdev/30)*100
@@ -35,10 +20,10 @@ getAlignedParticipant <- function(group, id, location) {
   alltargets30aft <- c(15, 105, 195, 285)
   alltargets45bef <- c(67.5, 157.5, 247.5, 337.5) #45 degrees
   alltargets45aft <- c(22.5, 112.5, 202.5, 292.5)
-  
+
   angles <- unique(AT$targetangle)
   AT['compensate'] <- NA
-  
+
   #we want percentage of compensation
   #we multily by -1 so that getting positive values mean that the hand went to the correct direction
   #above 100 values would mean an overcompensation, 0 is going directly to target, negative values are undercompensation
