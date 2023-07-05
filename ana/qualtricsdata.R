@@ -2319,13 +2319,6 @@ getMeanAndStdevMT <- function(set, step = 2){
   
   dfmt <- data.frame(participant, meanMT, sdMT)
   
-  #IMPORTANT: Summer data - These participants have mirror data but no qualtrics data:
-  # 215797, Tiffany, Victoria, Yue Hu
-  # dfmt <- dfmt[-which(dfmt$participant == '215797'),]
-  # dfmt <- dfmt[-which(dfmt$participant == 'Tiffany'),]
-  # dfmt <- dfmt[-which(dfmt$participant == 'Victoria'),]
-  # dfmt <- dfmt[-which(dfmt$participant == 'Yue Hu'),]
-  
   return(dfmt)
   
 }
@@ -2367,13 +2360,6 @@ getMeanAndStdevPL <- function(set, step = 2){
   }
   
   dfpl <- data.frame(participant, meanPL, sdPL)
-  
-  #IMPORTANT: Summer data - These participants have mirror data but no qualtrics data:
-  # 215797, Tiffany, Victoria, Yue Hu
-  # dfpl <- dfpl[-which(dfpl$participant == '215797'),]
-  # dfpl <- dfpl[-which(dfpl$participant == 'Tiffany'),]
-  # dfpl <- dfpl[-which(dfpl$participant == 'Victoria'),]
-  # dfpl <- dfpl[-which(dfpl$participant == 'Yue Hu'),]
   
   return(dfpl)
   
