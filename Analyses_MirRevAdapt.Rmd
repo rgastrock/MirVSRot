@@ -1,0 +1,199 @@
+---
+title: "Mirror reversal VS Rotation: Comparing motor adaptation and de novo learning"
+author: "Raphael Gastrock"
+output:
+  html_document:
+    toc: TRUE
+    toc_depth: 4
+    toc_float: true
+---
+
+
+# Overview
+
+This document discusses results for the tablet and online experiments. We also provide a more in depth analysis of the date here, and show additional figures and statistics.
+
+# Set up the R enviornment
+
+We have written code that pre-processes the data, plots figures, and runs statistical tests. Import the sources below:
+
+```{r message=FALSE, warning=FALSE}
+source('ana/shared.R')
+#tablet experiment scripts
+source('ana/ordereffects.R')
+source('ana/learningRates.R')
+source('ana/exponentialandstepModel.R')
+source('ana/individualDataCheck.R')
+source('ana/rae.R')
+source('ana/RTandMT.R')
+source('ana/pathlength.R')
+#online experiment scripts
+source('ana/controlmir.R')
+source('ana/controlmirgen.R')
+source('ana/su&fa2020online.R')
+source('ana/qualtricsdata.R')
+source('ana/mironline_fa2020.R')
+source('ana/mirgeneralization_fa2020.R')
+```
+
+# Study 1: Tablet experiment results
+
+For the tablet experiment, half of the participants (N = 16) were simply told to compensate for the cursor moving differently during perturbed reaches, and the other half (N = 16) were instructed about the nature of each perturbation and was given a strategy to counter for it. We focus on the non-instructed participants for most of the analyses, as we only wanted to observe the effects of instructions on initial learning in each perturbation for the instructed participants.
+
+## Order Effects
+
+Given that we implemented a within-subjects design for the tablet experiment, we first test whether learning one perturbation has an effect on learning the other. We also test for any effects in learning, depending on which axis each perturbation was experienced and the target locations relative to the perturbation axis.
+
+### Perturbation order
+#### Rotation
+
+For perturbation order, we expect that learning in each perturbation should not affect the other, regardless of which perturbation the participant experienced first.
+
+```{r}
+plotNIROTOrderEffects()
+```
+
+For non-instructed participants, the percentage of compensation did not differ regardless of whether the rotation perturbation was experienced before or after mirror reversed perturbed reaches.
+
+To quantify these comparisons between conditions better, we fit an exponential decay function that allowed us to measure learning rates and learning asymptotes. For perturbation order, we fit the exponential function to participants that either experienced the rotation before or after mirror reversed reaches.
+
+```{r, warning=FALSE}
+plotROTOrderEffectsModel(group='noninstructed')
+```
+
+We then conducted t-tests to compare the learning rates and asymptotes between the two order conditions. Both frequentist and Bayesian tests are reported below.
+
+```{r}
+getLambdaOrderEffectsTTest(perturbation='ROT')
+getAsymptoteOrderEffectsTTest(perturbation='ROT')
+```
+
+The tests confirmed that learning rates and learning asymptote did not differ regardless of whether the rotation was experienced before or after the other perturbation.
+
+#### Mirror reversal
+
+```{r}
+plotNIMIROrderEffects()
+```
+
+For the mirror reversed perturbed reaches, we also do not find differences depending on the order that they experienced the perturbation. However, note that the percentages of compensation have larger variability compared to those in the rotation perturbation.
+
+We fit the same exponential decay function to both conditions and conducted t-tests to compare learning rates and asymptotes between perturbation order conditions.
+
+```{r, warning=FALSE}
+plotMIROrderEffectsModel(groups='noninstructed')
+
+```
+
+We did not find any differences in learning rates and asymptotes between the mirror perturbation order conditions.
+
+```{r}
+getLambdaOrderEffectsTTest(perturbation='MIR')
+getAsymptoteOrderEffectsTTest(perturbation='MIR')
+```
+
+##### Model comparisons
+
+Since the mirror reversal data had more variability, we wanted to investigate whether different functions will fit the data better. For some participants, compensation seemed to immediately become better after a few trials. That is, it seemed like they figured things out after a certain trial, and suddenly started to perform better. The nature of such a performance resembled a logistic or step function. Therefore, in addition to the exponential decay function, we also fit both step and logistic functions to the rotation and mirror reversed data for each participant. 
+
+For the exponential decay function we get two parameters: lambda for the learning rate, and N0 for the asymptote.
+For the step function, instead of a learning rate, we get a step parameter to indicate where the change occurs. We also get an asymptote parameter.
+For the logistic function we get three parameters: x0 (the steepest part of the logistic function), k (the inverse of the steepness of the logistic function), and L (the scale of the function, which starts at 0 (at -infinity) and reaches L at infinity).
+
+After fitting each function to each participant's data, we also calculate mean squared errors (MSE) between each function and the data. The parameters and MSEs for the rotation perturbation are shown below. Each row will correspond to one participant.
+
+```{r}
+read.csv('data/pilot/ROT_noninstructed_MSE_ordereffects.csv')
+```
+
+The parameters and MSEs for the mirror reversed perturbation are shown below:
+
+```{r}
+read.csv('data/pilot/MIR_noninstructed_MSE_ordereffects.csv')
+```
+
+We then use the MSEs to calculate AIC values and generate relative log-likelihoods for each participant. This produces values that we can compare across the three functions for each participant. The likelihoods are shown below. A value of 1 indicates the function with the best fit.
+
+```{r}
+read.csv('data/pilot/participant_model_likelihoods.csv')
+```
+
+We observe that for majority of participants, the exponential function fits their data best. While we have some participants that show that the step function fits their data best, these likelihoods are not significantly far off from likelihoods in the exponential function. Furthermore, when we pool data across participants and just compare likelihoods for each perturbation type, we observe that the exponential function is the best fit for the data.
+
+```{r}
+read.csv('data/pilot/all_model_likelihoods.csv')
+```
+
+Thus, we use the exponential function to compare learning rates and asymptotes between order effects conditions, and to compare rotation and mirror reversal perturbations.
+
+### Perturbation Axis
+
+Next, we tested for any effects depending on which axis each perturbation was experienced. That is, we compared learning rates and asymptotes between half of the participants that experienced the rotation/mirror reversal on the vertical midline axis, with the other half that experienced the rotation/mirror reversal on the horizontal axis.
+
+#### Rotation
+
+```{r}
+plotNIROTAxisEffects()
+```
+
+```{r}
+getLambdaAxisEffectsTTest(perturbation = 'ROT')
+getAsymptoteAxisEffectsTTest(perturbation = 'ROT')
+```
+
+There are no axis effects, regardless of whether the perturbation is experienced on the horizontal or vertical axis of the workspace.
+
+#### Mirror reversal
+
+We also test for axis effects with the mirror reversed perturbation.
+
+```{r}
+plotNIMIRAxisEffects()
+```
+
+```{r}
+getLambdaAxisEffectsTTest(perturbation = 'MIR')
+getAsymptoteAxisEffectsTTest(perturbation = 'MIR')
+```
+
+We also do not find axis effects for the mirror reversal perturbation.
+
+### Target location relative to axis
+
+There were six targets for each axis. Three of the six targets were on either end of the axis, but could be on its negative (before axis) or positive (after axis) side.
+
+#### Rotation
+
+```{r}
+plotNIROTTargetEffects()
+```
+
+For the statistical tests, we calculated a sign flip for targets that required a negative amount of compensation, such that we only compared the magnitude of the compensation. These values were then used to generate the exponential function fit parameters.
+
+```{r}
+getLambdaTargetEffectsTTest(perturbation = 'ROT')
+getAsymptoteTargetEffectsTTest(perturbation = 'ROT')
+```
+
+We do not find any differences between learning rates and asymptotes, suggesting that there are no target locations effects.
+
+#### Mirror
+
+```{r}
+plotNIMIRTargetEffects()
+```
+
+We again calculated a sign flip for targets that required a negative amount of compensation, then used these values to generate the exponential function fit parameters.
+
+```{r}
+getLambdaTargetEffectsTTest(perturbation = 'MIR')
+getAsymptoteTargetEffectsTTest(perturbation = 'MIR')
+```
+
+We do not find any differences between learning rates and asymptotes in frequentist tests, suggesting that there are no target locations effects. However, the Bayesian t-test comparing learning rates between target locations suggests anecdotal evidence for a target location effect. This is likely due to the variability in compensations during initial trials of learning.
+
+## Learning Rates
+
+We then compare the progression of learning across trials between the rotation and mirror tasks. For the plots below, the y-axis will be the amount of compensation in percentage. This is because while the rotation magnitude is consistently 30-degrees, angular reach deviations for the mirror will differ depending on the target distance from the mirror axis. The mirror task will require reach deviations of 15, 30, or 45 degrees. Here, 100% would mean perfect compensation, 0% would be no compensation or reaching directly to the target, and negative values are compensations in the wrong direction relative to the target.
+
+

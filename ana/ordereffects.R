@@ -116,7 +116,7 @@ plotNIROTOrderEffects <- function(group = 'noninstructed', conditions = c(1,2), 
   # could maybe use plot.new() ?
   plot(NA, NA, xlim = c(0,91), ylim = c(-200,200), 
        xlab = "Trial", ylab = "Amount of Compensation (%)", frame.plot = FALSE, #frame.plot takes away borders
-       main = "Order Effects: ROT", xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
+       main = "Perturbation order: Non-instructed, Rotation", xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
   abline(h = c(-100,0, 100), col = 8, lty = 2) #creates horizontal dashed lines through y =  0 and 30
   axis(1, at = c(1, 30, 60, 90)) #tick marks for x axis
   axis(2, at = c(-200, -100, 0, 100, 200)) #tick marks for y axis
@@ -418,7 +418,7 @@ plotNIMIROrderEffects <- function(group = 'noninstructed', conditions = c(1,2), 
   # could maybe use plot.new() ?
   plot(NA, NA, xlim = c(0,91), ylim = c(-200,200), 
        xlab = "Trial", ylab = "Amount of Compensation (%)", frame.plot = FALSE, #frame.plot takes away borders
-       main = "Order Effects: MIR", xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
+       main = "Perturbation order: Non-instructed, Mirror reversal", xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
   abline(h = c(-100,0, 100), col = 8, lty = 2) #creates horizontal dashed lines through y =  0 and 30
   axis(1, at = c(1, 30, 60, 90)) #tick marks for x axis
   axis(2, at = c(-200, -100, 0, 100, 200)) #tick marks for y axis
@@ -710,9 +710,9 @@ plotROTOrderEffectsModel <- function(groups = c('noninstructed', 'instructed'), 
       lines(xcoords, y_mid,col=col,lty=1,lwd=2)
       
       #add legend
-      legend(20,-100,legend=c('reaches','model (rate of change)','learning asymptote 95% CI'),
+      legend(0,-100,legend=c('reaches','model (rate of change)','learning asymptote 95% CI'),
              col=c('#A9A9A9ff',colourscheme[[condition]][['S']],colourscheme[[condition]][['T']]),
-             lty=c(1,1,2),bty='n',cex=1,lwd=2)
+             lty=c(1,1,2),bty='n',cex=.65,lwd=2)
       
     }
 
@@ -822,9 +822,9 @@ plotMIROrderEffectsModel <- function(groups = c('noninstructed', 'instructed'), 
       lines(xcoords, y_mid,col=col,lty=1,lwd=2)
         
       #add legend
-      legend(20,-100,legend=c('reaches','model (rate of change)','learning asymptote 95% CI'),
+      legend(0,-100,legend=c('reaches','model (rate of change)','learning asymptote 95% CI'),
               col=c('#A9A9A9ff',colourscheme[[condition]][['S']],colourscheme[[condition]][['T']]),
-              lty=c(1,1,2),bty='n',cex=1,lwd=2)
+              lty=c(1,1,2),bty='n',cex=.65,lwd=2)
         
     }
     
@@ -1048,7 +1048,7 @@ plotMIROrderEffectsStepModel <- function(groups = c('noninstructed', 'instructed
       lines(xcoords, y_mid,col=col,lty=1,lwd=2)
         
       #add legend
-      legend(20,-100,legend=c('reaches','model (rate of change)','learning asymptote 95% CI'),
+      legend(0,-100,legend=c('reaches','model (rate of change)','learning asymptote 95% CI'),
               col=c('#A9A9A9ff',colourscheme[[condition]][['S']],colourscheme[[condition]][['T']]),
               lty=c(1,1,2),bty='n',cex=1,lwd=2)
         
