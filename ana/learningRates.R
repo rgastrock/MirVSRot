@@ -204,7 +204,7 @@ plotPTypeLearningCurves <- function(perturb = c('ROT', 'MIR'), group = 'noninstr
   }
   
   #add legend
-  legend(60,-150,legend=c('Visuomotor rotation','Mirror reversal'),
+  legend(60,-100,legend=c('Visuomotor rotation','Mirror reversal'),
          col=c(colourscheme[['ROT']][['S']],colourscheme[['MIR']][['S']]),
          lty=1,bty='n',cex=1,lwd=2)
   
@@ -1407,7 +1407,7 @@ plotPTypeLearningCurvesWONear <- function(perturb = c('ROT', 'MIR'), group = 'no
   }
   
   #add legend
-  legend(40,-150,legend=c('Rotation','Mirror Reversal'),
+  legend(40,-100,legend=c('Rotation','Mirror Reversal'),
          col=c(colourscheme[['ROT']][['S']],colourscheme[['MIR']][['S']]),
          lty=1,bty='n',cex=1,lwd=2)
   

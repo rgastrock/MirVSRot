@@ -175,7 +175,7 @@ getLambdaTargetEffectsTTest(perturbation = 'ROT')
 getAsymptoteTargetEffectsTTest(perturbation = 'ROT')
 ```
 
-We do not find any differences between learning rates and asymptotes, suggesting that there are no target locations effects.
+We do not find any differences between learning rates and asymptotes, suggesting that there are no target location effects.
 
 #### Mirror
 
@@ -194,6 +194,339 @@ We do not find any differences between learning rates and asymptotes in frequent
 
 ## Learning Rates
 
-We then compare the progression of learning across trials between the rotation and mirror tasks. For the plots below, the y-axis will be the amount of compensation in percentage. This is because while the rotation magnitude is consistently 30-degrees, angular reach deviations for the mirror will differ depending on the target distance from the mirror axis. The mirror task will require reach deviations of 15, 30, or 45 degrees. Here, 100% would mean perfect compensation, 0% would be no compensation or reaching directly to the target, and negative values are compensations in the wrong direction relative to the target.
+As learning in the two perturbation types is independent of one another, we can then compare the progression of learning across trials between the rotation and mirror tasks. For the plots below, the y-axis will be the amount of compensation in percentage. This is because while the rotation magnitude is consistently 30-degrees, angular reach deviations for the mirror will differ depending on the target distance from the mirror axis. The mirror task will require reach deviations of 15, 30, or 45 degrees. Here, 100% would mean perfect compensation, 0% would be no compensation or reaching directly to the target, and negative values are compensations in the wrong direction relative to the target.
+
+```{r}
+plotPTypeLearningCurves(group='noninstructed')
+```
+
+We observe that although participants learned to compensate for both perturbation types, learning in the mirror reversed perturbation had a larger variability. We look into this further and show individual performance across blocks of six trials each.
+
+```{r}
+plotCollapsedBlockedIndLC(group = 'noninstructed')
+```
+
+To compare learning between the two perturbation types, we fit the exponential decay function to data for each perturbation type. The function produced two measures, a rate of change and asymptote of learning. We then conducted a t-test to compare both measures between the two perturbation types.
+
+```{r}
+getLambdaLearningCurvesTTest()
+getAsymptoteLearningCurvesTTest()
+```
+
+We do not find an effect for the rate of change in learning, suggesting no difference in the progression of learning between the two perturbation types. However, we do find an effect in the asymptote of learning, suggesting that learning asymptote for the mirror reversal was higher than in the rotation.
+
+### Supplementary: Learning across three mirror target locations
+
+Given the variability in learning for the mirror reversed perturbation, we investigated whether learning was dependent on the three different target locations. 
+
+First, we looked into the overall distribution of percentages of compensation per target location.
+
+```{r}
+getTargetCurveVioplots(group='noninstructed', maxppid=15, location='maxvel')
+```
+
+The distributions are overall as expected, i.e. there were no bimodal distributions. We then plot angular reach deviations per target location.
+
+```{r}
+plotNIMIRTargetCurve()
+```
+
+Although participants learned to compensate for all three target locations, it seems that variability for the target near the mirror axis (15 degrees) is larger. Therefore, we conducted the same analyses as in the previous section but removed all targets where participants had to deviate by 15 degrees.
+
+```{r}
+plotPTypeLearningCurvesWONear()
+```
+
+Removing the 15 degree targets produced less variability, but learning in the mirror reversal still had a larger variability than the rotation.
+
+```{r}
+getLambdaLearningCurvesWONearTTest()
+getAsymptoteLearningCurvesWONearTTest()
+```
+
+We conducted the same t-tests to compare learning rates and asymptotes between the two perturbation types. We found that after removing the 15 degree target, there are no effects in rate and asymptote, suggesting that the 15 degree target contributed to higher asymptotes in learning the mirror reversed perturbation. 
+
+## Reach aftereffects
+
+We then use washout trials following perturbation training to investigate whether reach aftereffects are observed. We expected to observe reach aftereffects following rotation training, but not mirror reversal training.
+
+```{r}
+plotPTypeAftereffects()
+```
+
+We can also show individual performance across blocks of six trials each.
+
+```{r}
+plotCollapsedBlockedIndRAE()
+```
+
+We observe aftereffects following rotation training but not after mirror reversal training. This is supported by looking into the individual targets for the mirror reversal. Angular reach deviations show that the rate of de-adaptation is around zero across washout trials.
+
+```{r}
+plotNIRAETargetCurve()
+```
+
+It is possible to fit an exponential decay function to the washout data, where it starts at the asymptote and approaches zero over time. The exponential function can be fit into washout trials following rotation training. However, given that the washout trials after mirror reversal training are around zero, it would not make sense to fit the function to this data. 
+
+```{r}
+plotROTRAEModel(groups='noninstructed')
+plotMIRRAEModel(groups='noninstructed')
+```
+
+We therefore confirmed the presence of reach aftereffects by comparing the percentages of compensation during the last block of aligned reaches with the first block of each of the corresponding washout trials after rotated and mirror reversed training.
+
+```{r}
+RAEt.test(group='noninstructed')
+```
+
+We find an effect between aligned and rotated blocks, but not between aligned and mirror reversed blocks, confirming our expectations that aftereffects are only observed following rotation training. Moreover, we find an effect between the first washout blocks following rotation and mirror reversed training. We then compared the corresponding washout trials of rotation and mirror reversed training during the first, second, and last blocks of trials (trials 1-6, 7-12, 43-48). 
+
+```{r}
+reachaftereffectsANOVA(group='noninstructed')
+reachaftereffectsBayesANOVA(group='noninstructed')
+```
+
+We find a significant perturbation type by block interaction. 
+
+```{r}
+RAEComparisonsAllBlocksEffSize(group='noninstructed')
+reachaftereffectsBayesfollowup(group='noninstructed')
+```
+
+Follow up tests confirm that the first and second rotation washout blocks are different from the first and second mirror washout blocks.
+
+### Supplementary: Training rate of learning and its association with aftereffects
+
+We also wanted to test whether learning rates during training correlate to the aftereffects, or lack thereof, during washout trials. To do this, we conducted correlation tests that compared the rate of change during learning with the compensation percentages during the first block of washout trials.
+
+```{r}
+getLambdaRAECorrelations(group='noninstructed')
+```
+
+We do not find significant relationships between learning rates and corresponding aftereffects.
+
+## Movement analyses
+
+We compared other behavioral measures associated with reaching movements in both perturbation types.
+
+### Reaction time
+
+We defined reaction time (RT) as the time elapsed between the go signal onset and when the hand-cursor has moved 0.5 cm away from the start position.
+
+```{r}
+plotNIBlockedRT()
+```
+
+To quantify changes in RT across rotation and mirror reversed training, we conducted t-tests to compare RTs in the last block of aligned reaches with the RTs in the first and last blocks of rotation or mirror reversed reaches. We also conducted t-tests to compare RTs in the last block of aligned reaches with the RTs in the first blocks of washout reaches following each perturbation training.
+
+```{r}
+RTt.test(group='noninstructed')
+```
+
+As expected, participants were slower in initiating movements in the first block of perturbation training, regardless of the perturbation type. However, we do see in the plot that participants were slower to initiate movements in mirror reversed reaches compared to rotated reaches. RTs taper off and go back to baseline levels for rotated reaches, but is still significantly slower than baseline levels for mirror reversed reaches at the end of training. There are no effects between aligned and washout reaches.
+
+We also compared RTs between rotation and mirror reversed reaches across training trials.
+
+```{r}
+reactiontimeANOVA(group='noninstructed')
+RTBayesANOVA(group='noninstructed')
+```
+
+We find a significant perturbation type by block interaction.
+
+```{r}
+RTComparisonsAllBlocksEffSize(group='noninstructed')
+RTBayesfollowup(group='noninstructed')
+```
+
+Follow up tests show that rotation and mirror reversed RTs differed during the first and second blocks of training, and Bayesian tests showed anecdotal evidence of an effect between perturbation RTs in the last block of training. Overall, this shows that movement initiation is slower during mirror reversed perturbed reaches, compared to rotation perturbation reaches.
+
+
+### Movement time
+
+We defined movement time (MT) as the time elapsed between the first sample when the hand-cursor is >0.5 cm away from the start position and the first sample when the hand-cursor is greater than the start-to-target distance
+
+```{r}
+plotNIBlockedMT()
+```
+
+To quantify changes in MT across rotation and mirror reversed training, we conducted the same t-tests as in the reaction time analysis. We compared MTs in the last block of aligned reaches with the MTs in the first and last blocks of rotation or mirror reversed reaches. We also conducted t-tests to compare MTs in the last block of aligned reaches with the MTs in the first blocks of washout reaches following each perturbation training.
+
+```{r}
+MTt.test(group='noninstructed')
+```
+
+Participants were faster in executing movements during rotated reaches, compared to aligned baseline reaches. Interestingly, faster MTs were also observed in the first block of washout trials following rotation training. In contrast, MTs do not differ between aligned reaches and the first block of mirror reversed reaches or its corresponding washout trials. However, we do find faster MTs during the last block of mirror reversed reaches, when compared to aligned reaches.
+
+We also compared MTs between rotation and mirror reversed reaches across training trials.
+
+```{r}
+movementtimePerturbANOVA(group='noninstructed')
+MTBayesANOVA(group='noninstructed')
+```
+
+We do not find any main or interaction effects for perturbation type and block. Therefore, even though movement initiation was slower for both perturbed reaches, movement execution was faster for the rotated reaches. Mirror reversed movement times eventually became faster than aligned reaches by the end of perturbation training. This supports the idea that more explicit processes contribute to learning the mirror reversal, as both movement initiation and execution are slower for these reaches compared to rotation pertubation reaches.
+
+### Path length
+
+We defined path length (PL) as the total distance, given x and y coordinates of the reach trajectory, traveled between movement onset and offset. Movement onset and offset are the start and end movement times defined in the previous section. The shortest path length to the target is a straight line spanning the start-to-target distance. However, movements are not perfectly straight and may travel in different directions, depending on the perturbation. 
+
+```{r}
+plotPTypePathLength(group='noninstructed')
+```
+
+Similar to the other measures above, we conducted t-tests to compare PLs between the last block of aligned trials with the first and last blocks of rotation and mirror reversed training. We then compared PLs between the two perturbation types.
+
+```{r}
+PLt.test(group='noninstructed')
+pathlengthPerturbANOVA(group='noninstructed')
+PLBayesANOVA(group='noninstructed')
+```
+
+We do not find any effects across all comparisons, suggesting that the path of reach trajectories did not differ regardless of trial type or perturbation type.
+
+## Instructed participants
+
+For the instructed participants, we told them about the nature of each perturbation. We let them know that the rotation will be 30-degree rotation (CW or CCW depending on their ID), and that the mirror reversal will be dependent on which axis the mirror is placed. We also showed them animations of how to compensate for each perturbation type, and tested their understanding of the strategy by having them draw on a clock-face the location that they should move to bring a cursor to the target. For example, if the target is at 2 o'clock, then they had to draw an arrow to 1 o'clock to correct for a 30 degree CW rotation. In contrast, for a mirror placed along the vertical midline, a target at 2 o'clock would mean that they had to draw an arrow to the 10 position. We know from previous work that such instructions provide an advantage in early learning for rotation perturbations, and we wanted to test whether the same advantage will be observed for the mirror reversal.
+
+```{r}
+plotPTypeLearningCurves(group='instructed')
+plotCollapsedBlockedIndLC(group='instructed', maxppid=31)
+```
+
+We find that instructions did provide an advantage during the first few trials of training for both perturbation types, and that participants were immediately performing around perfect compensation. There was no change in learning across training, but we do find that mirror reversed reaches showed more variability.
+
+### Reach aftereffects
+
+We then investigated the corresponding washout trials for the instructed participants.
+
+```{r}
+plotPTypeAftereffects(group='instructed')
+plotCollapsedBlockedIndRAE(group='instructed', maxppid=31)
+```
+
+We repeated the reach aftereffects analyses we conducted for non-instructed participants with the instructed participants.
+
+```{r}
+RAEt.test(group='instructed')
+```
+
+The first block of washout trials following rotation training differed from the last block of aligned baseline reaches, suggesting the presence of aftereffects. Interestingly, we also find an effect when comparing the first block of washout trials following mirror reversed reaches with aligned reaches. However, aftereffects were larger for washout trials following rotation training, than those following mirror reversed training. The presence of very small aftereffects in the mirror reversal washout trials is unexpected, but could be due to being able to know how to compensate for the perturbation from the beginning of training. That is, they were exposed to training with the mirror reversal longer than the non-instructed participants.
+
+We compare rotation and mirror reversed washout trials further.
+
+```{r}
+reachaftereffectsANOVA(group='instructed')
+reachaftereffectsBayesANOVA(group='instructed')
+```
+
+We find a significant perturbation type by block interaction.
+
+```{r}
+RAEComparisonsAllBlocksEffSize(group='instructed')
+reachaftereffectsBayesfollowup(group='instructed')
+```
+
+Follow up tests show that washout trials following rotation training show aftereffects that go back down near zero. Washout trials following mirror reversed trials, however, did not differ across blocks of trials. Thus, the small aftereffects for mirror reversed trials in the previous set of tests did not hold up here. Finally compensation in rotation washout trials were larger in the first and second blocks, compared to mirror reversed washout trials. Overall, it is clear that aftereffects are observed following rotation training only.
+
+### Movement analyses
+
+We also compared other behavioral measures associated with reaching movements in both perturbation types for the instructed participants.
+
+#### Reaction time
+
+We defined reaction time (RT) as the time elapsed between the go signal onset and when the hand-cursor has moved 0.5 cm away from the start position.
+
+```{r}
+plotIBlockedRT()
+```
+
+To quantify changes in RT across rotation and mirror reversed training, we conducted t-tests to compare RTs in the last block of aligned reaches with the RTs in the first and last blocks of rotation or mirror reversed reaches. We also conducted t-tests to compare RTs in the last block of aligned reaches with the RTs in the first blocks of washout reaches following each perturbation training.
+
+```{r}
+RTt.test(group='instructed')
+```
+
+The results are similar to those with the noninstructed participants. Participants were slower in initiating movements in the first block of perturbation training, regardless of the perturbation type. However, we do see in the plot that participants were slower to initiate movements in mirror reversed reaches compared to rotated reaches. RTs taper off and go back to baseline levels for rotated reaches, but is still significantly slower than baseline levels for mirror reversed reaches at the end of training. There are no effects between aligned and washout reaches.
+
+We also compared RTs between rotation and mirror reversed reaches across training trials.
+
+```{r}
+reactiontimeANOVA(group='instructed')
+RTBayesANOVA(group='instructed')
+```
+
+We find main effects for perturbation type and block.
+
+```{r}
+RTComparisonsAllBlocksEffSize(group='instructed')
+RTBayesfollowup(group='instructed')
+```
+
+Follow up tests show that rotation and mirror reversed RTs differed across block of training. Overall, this confirms that movement initiation is slower during mirror reversed perturbed reaches, compared to rotation perturbation reaches.
+
+
+#### Movement time
+
+We defined movement time (MT) as the time elapsed between the first sample when the hand-cursor is >0.5 cm away from the start position and the first sample when the hand-cursor is greater than the start-to-target distance
+
+```{r}
+plotIBlockedMT()
+```
+
+To quantify changes in MT across rotation and mirror reversed training, we conducted the same t-tests as in the reaction time analysis. We compared MTs in the last block of aligned reaches with the MTs in the first and last blocks of rotation or mirror reversed reaches. We also conducted t-tests to compare MTs in the last block of aligned reaches with the MTs in the first blocks of washout reaches following each perturbation training.
+
+```{r}
+MTt.test(group='instructed')
+```
+
+COontrary to our findings with noninstructed participants, we found no effects for movement times across the different trial types for instructed participants.
+
+We also compared MTs between rotation and mirror reversed reaches across training trials.
+
+```{r}
+movementtimePerturbANOVA(group='instructed')
+MTBayesANOVA(group='instructed')
+```
+
+We find a main effect of block.
+
+```{r}
+MTPerturbComparisonsAllBlocksEffSize(group='instructed')
+MTBayesfollowup(group='instructed')
+```
+
+Follow up tests show that the block effect is driven by changes within rotation MTs across blocks of trials. However, this is not supported with Bayesian tests. Thus, there are no differences in MTs between the two perturbation types.
+
+#### Path length
+
+We defined path length (PL) as the total distance, given x and y coordinates of the reach trajectory, traveled between movement onset and offset. Movement onset and offset are the start and end movement times defined in the previous section. The shortest path length to the target is a straight line spanning the start-to-target distance. However, movements are not perfectly straight and may travel in different directions, depending on the perturbation. 
+
+```{r}
+plotPTypePathLength(group='instructed')
+```
+
+Interestingly, we find that there is less PL variability in mirror reversed reaches for instructed participants compared to those observed with noninstructed participants. This suggests that they used the instructions to move in an optimal manner towards the target. Similar to the other measures above, we conducted t-tests to compare PLs between the last block of aligned trials with the first and last blocks of rotation and mirror reversed training. We then compared PLs between the two perturbation types.
+
+```{r}
+PLt.test(group='instructed')
+pathlengthPerturbANOVA(group='instructed')
+PLBayesANOVA(group='instructed')
+```
+
+We find a significant perturbation type by block interaction, but only in the frequentist test.
+
+```{r}
+PLPerturbComparisonsAllBlocksEffSize(group='instructed')
+```
+
+Following up on the frequentist test does not reveal any effects. Thus, we conclude that path lengths do not differ across trial types and between perturbation types.
+
+
+# Study 2: Online experiment results
+
+
+
+
 
 

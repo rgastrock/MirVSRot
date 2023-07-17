@@ -571,7 +571,7 @@ plotPTypeAftereffects <- function(perturb = c('ROT', 'MIR'), group = 'noninstruc
   }
   
   #add legend
-  legend(20,-150,legend=c('Visuomotor rotation','Mirror reversal'),
+  legend(20,-100,legend=c('Visuomotor rotation','Mirror reversal'),
          col=c(colourscheme[['ROT']][['S']],colourscheme[['MIR']][['S']]),
          lty=1,bty='n',cex=1,lwd=2)
   
@@ -1924,9 +1924,9 @@ getLambdaRAECorrelations <- function(group){
   #plot(MIRfirst$lambda, MIRfirst$compensation)
   #plot(ROTfirst$lambda, ROTfirst$compensation)
   
-  cor.test(MIRfirst$lambda, MIRfirst$compensation)
-  cor.test(ROTfirst$lambda, ROTfirst$compensation)
+  print(cor.test(MIRfirst$lambda, MIRfirst$compensation))
+  print(cor.test(ROTfirst$lambda, ROTfirst$compensation))
   
-  correlationBF(MIRfirst$lambda, MIRfirst$compensation)
-  correlationBF(ROTfirst$lambda, ROTfirst$compensation)
+  print(correlationBF(MIRfirst$lambda, MIRfirst$compensation))
+  print(correlationBF(ROTfirst$lambda, ROTfirst$compensation))
 }
