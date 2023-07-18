@@ -1763,7 +1763,7 @@ plotCtrlMT <- function(groups = c('far', 'mid', 'near'), target='inline') {
   }
   
   plot(NA, NA, xlim = c(0,178), ylim = c(-0.2,11), 
-       xlab = "Trial", ylab = "Movement time (s)", frame.plot = FALSE, #frame.plot takes away borders
+       xlab = "Trial", ylab = "Completion time (s)", frame.plot = FALSE, #frame.plot takes away borders
        main = "", xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
   
   #abline(h = c(0, 1), v = c(45, 66, 156), col = 8, lty = 2)
@@ -3809,8 +3809,8 @@ alignedLearningANOVA2Hands <- function(handA='trained', handB='untrained') {
   LC4aov <- getAlignedBlockedLearningAOV2Hands(handA=handA, handB=handB)                      
   
   #looking into interaction below:
-  interaction.plot(LC4aov$target, LC4aov$hand, LC4aov$angdev)
-  interaction.plot(LC4aov$block, LC4aov$hand, LC4aov$angdev)
+  #interaction.plot(LC4aov$target, LC4aov$hand, LC4aov$angdev)
+  #interaction.plot(LC4aov$block, LC4aov$hand, LC4aov$angdev)
   
   #learning curve ANOVA's
   # for ez, case ID should be a factor:
@@ -3900,7 +3900,7 @@ mirrorANOVA <- function() {
   LC4aov <- getMirrorBlockedLearningAOV(blockdefs=blockdefs)                  
   
   #looking into interaction below:
-  interaction.plot(LC4aov$target, LC4aov$block, LC4aov$percentcomp)
+  #interaction.plot(LC4aov$target, LC4aov$block, LC4aov$percentcomp)
   
   #learning curve ANOVA's
   # for ez, case ID should be a factor:
@@ -4159,7 +4159,7 @@ RAETrainedTargetsANOVA <- function() {
   LC4aov <- rbind(LC_aligned, LC_washout)
   LC4aov$block <- factor(LC4aov$block, levels = c('baseline', 'first', 'second'))
   #looking into interaction below:
-  interaction.plot(LC4aov$target, LC4aov$block, LC4aov$angdev)
+  #interaction.plot(LC4aov$target, LC4aov$block, LC4aov$angdev)
   
   #learning curve ANOVA's
   # for ez, case ID should be a factor:
@@ -4350,7 +4350,7 @@ alignedMTANOVA <- function(hands = c('trained', 'untrained')) {
     LC4aov <- getAlignedBlockedMTAOV(blockdefs=blockdefs, hand=hand)                      
     
     #looking into interaction below:
-    interaction.plot(LC4aov$target, LC4aov$block, LC4aov$movementtime)
+    #interaction.plot(LC4aov$target, LC4aov$block, LC4aov$movementtime)
     
     #learning curve ANOVA's
     # for ez, case ID should be a factor:
@@ -4707,7 +4707,7 @@ mirrorMTANOVA <- function() {
   LC4aov <- getAlignedBlockedMTAOV(blockdefs=blockdefs, hand='trained')               
   
   #looking into interaction below:
-  interaction.plot(LC4aov$target, LC4aov$block, LC4aov$movementtime)
+  #interaction.plot(LC4aov$target, LC4aov$block, LC4aov$movementtime)
   
   #learning curve ANOVA's
   # for ez, case ID should be a factor:
@@ -4869,7 +4869,7 @@ RAEMTANOVA <- function() {
   LC4aov <- getAlignedBlockedMTAOV(blockdefs=blockdefs, hand='trained')                      
   
   #looking into interaction below:
-  interaction.plot(LC4aov$target, LC4aov$block, LC4aov$movementtime)
+  #interaction.plot(LC4aov$target, LC4aov$block, LC4aov$movementtime)
   
   #learning curve ANOVA's
   # for ez, case ID should be a factor:
@@ -5108,7 +5108,7 @@ RAEMTTrainedTargetsANOVA <- function() {
   LC4aov <- rbind(LC_aligned, LC_washout)
   LC4aov$block <- factor(LC4aov$block, levels = c('baseline', 'first', 'second'))
   #looking into interaction below:
-  interaction.plot(LC4aov$target, LC4aov$block, LC4aov$movementtime)
+  #interaction.plot(LC4aov$target, LC4aov$block, LC4aov$movementtime)
   
   #learning curve ANOVA's
   # for ez, case ID should be a factor:
@@ -5400,7 +5400,7 @@ alignedPLANOVA <- function(hands = c('trained', 'untrained')) {
     LC4aov <- getAlignedBlockedPLAOV(blockdefs=blockdefs, hand=hand)                      
     
     #looking into interaction below:
-    interaction.plot(LC4aov$target, LC4aov$block, LC4aov$pathlength)
+    #interaction.plot(LC4aov$target, LC4aov$block, LC4aov$pathlength)
     
     #learning curve ANOVA's
     # for ez, case ID should be a factor:
@@ -5686,7 +5686,7 @@ mirrorPLANOVA <- function() {
   LC4aov <- getAlignedBlockedPLAOV(blockdefs=blockdefs, hand='trained')               
   
   #looking into interaction below:
-  interaction.plot(LC4aov$target, LC4aov$block, LC4aov$pathlength)
+  #interaction.plot(LC4aov$target, LC4aov$block, LC4aov$pathlength)
   
   #learning curve ANOVA's
   # for ez, case ID should be a factor:
@@ -5849,7 +5849,7 @@ RAEPLANOVA <- function() {
   LC4aov <- getAlignedBlockedPLAOV(blockdefs=blockdefs, hand='trained')                      
   
   #looking into interaction below:
-  interaction.plot(LC4aov$target, LC4aov$block, LC4aov$pathlength)
+  #interaction.plot(LC4aov$target, LC4aov$block, LC4aov$pathlength)
   
   #learning curve ANOVA's
   # for ez, case ID should be a factor:
@@ -6041,7 +6041,7 @@ RAEPLTrainedTargetsANOVA <- function() {
   LC4aov <- rbind(LC_aligned, LC_washout)
   LC4aov$block <- factor(LC4aov$block, levels = c('baseline', 'first', 'second'))
   #looking into interaction below:
-  interaction.plot(LC4aov$target, LC4aov$block, LC4aov$pathlength)
+  #interaction.plot(LC4aov$target, LC4aov$block, LC4aov$pathlength)
   
   #learning curve ANOVA's
   # for ez, case ID should be a factor:
