@@ -757,13 +757,401 @@ However, follow-up tests show that the block effect is driven by the first block
 
 ## Session 2
 
-In session 2, we tested for retention and generalization across the workspace or hands. As such, the three possible target locations (far, middle, near) were positioned in either quadrant 1 (5°, 45°, or 85° in polar coordinates), quadrant 2 (95°, 135°, or 175° in polar coordinates), or quadrant 4 (275°, 315°, or 355° in polar coordinates). 
+In session 2, we tested for retention and generalization across the workspace and hands. As such, the three possible target locations (far, middle, near) were positioned in either quadrant 1 (5°, 45°, or 85° in polar coordinates), quadrant 2 (95°, 135°, or 175° in polar coordinates), or quadrant 4 (275°, 315°, or 355° in polar coordinates), relative to the mirror axis along the vertical midline. 
 
-Participants returned on a different day, and immediately performed 21 trials of mirror reversed reaches to quadrant 1 targets using their dominant or trained hand. They then completed 21 trials of perturbed reaches to quadrant 4 targets followed by 21 trials to quadrant 2 targets. To prevent any possible decay in learning, we had them perform another 21 trials of perturbed reaches to quadrant 1 targets. Finally, we instructed them to switch to their non-dominant hand, and perform 21 trials of perturbed reaches to quadrant 1 targets. The session ended with participants completing a 21 washout trials with their non-dominant/ untrained hand.
+Participants returned on a different day, and immediately performed 21 trials of mirror reversed reaches to quadrant 1 targets using their dominant or trained hand. They then completed 21 trials of perturbed reaches to quadrant 4 targets followed by 21 trials to quadrant 2 targets. To prevent any possible decay in learning, we had them perform another 21 trials of perturbed reaches to quadrant 1 targets. Finally, we instructed them to switch to their non-dominant hand, and perform 21 trials of perturbed reaches to quadrant 1 targets. The session ended with participants completing 21 washout trials with their non-dominant/ untrained hand.
 
-### Learning
+### Performance for the three targets across quadrants
+
+First, we plot a distribution for when participants returned for the second session.
+
+```{r}
+plotCtrlDaysApart()
+```
+
+Majority of participants returned after 3 to 4 days (mean = 4.77, SD = 2.52, median = 4 days apart), with a few returning after more than two weeks.
+
+At the start of the session, we observe that participants are able to compensate for the mirror reversed perturbation quickly. This learned performance also seems to transfer well to the targets in other quadrants, as well as to the untrained hand.
+
+```{r, fig.width = 16, fig.height = 10}
+plotBlockedLearningCtrlGen()
+```
+
+#### Learned performance
+
+Before testing for retention and generalization, we first tested for target or block effects for reaches within each quadrant. Thus, we conducted 3x3 (target x block) within-subjects ANOVA for quadrants 1, 4, 2, top-up trials in quadrant 1 (Quadrant 1A in tests below), and quadrant 1 after switching hands (Quadrant 1L in tests below).
+
+```{r}
+learningANOVA()
+learningBayesANOVA()
+```
+
+In all tests, we only find a main effect of target for reaches in quadrant 4. 
+
+```{r}
+quadrant4ComparisonsEffSize()
+quadrant4ComparisonsBayesfollowup()
+```
+
+Follow-up tests show that the effect is driven by the difference between middle and near targets, regardless of block. This confirms what we observe in the plot above, where compensation percentages for the near target are easily overcompensated.
+
+#### Retention
+
+To quantify retention, we compare the learned performance between the last block of mirror reversed reaches in session 1, with the first block of mirror reversed reaches in session 2.
+
+```{r}
+retentionANOVA()
+retentionBayesANOVA()
+```
+
+We find no effects of target and session, suggesting that reaching performance did not differ from the end of session 1 to the beginning of session 2, which is evidence of offline gains. We note however, that participants were not compensating for the very first trial, but were immediately able to compensate for the perturbation by the next trial. Thus, we are unable to disentangle whether we are observing retention or fast learning as we did in session 1 (but see movement analysis below).
+
+#### Generalization across the workspace and hands
+
+To quantify generalization, we compare reaching performance across quadrants. We conduct a 3x3x2 (target x block x quadrant) within-subjects ANOVA to compare the first set of reaches to quadrant 1 with reaches in quadrant 4. We repeat this test but instead compare quadrant 1 with quadrant 2, quadrant 1 and reaches to quadrant 1 after switching hands (Quadrant 1L).
+
+```{r}
+#Quadrant 1 vs Quadrant 4
+learningANOVA2Quads(quadrantA= '1', quadrantB = '4')
+learningBayesANOVA2Quads(quadrantA= '1', quadrantB = '4')
+
+#Quadrant 1 vs Quadrant 2
+learningANOVA2Quads(quadrantA= '1', quadrantB = '2')
+learningBayesANOVA2Quads(quadrantA= '1', quadrantB = '2')
+
+#Quadrant 1 vs Switch hands, Quadrant 1
+learningANOVA2Quads(quadrantA= '1', quadrantB = '1L')
+learningBayesANOVA2Quads(quadrantA= '1', quadrantB = '1L')
+```
+
+We find no effects of quadrant, suggesting that overall reaching performance did not differ between each comparison of quadrants. This is evidence that participants are able to transfer learning to other target locations and to their untrained hand.
+
+We did find a target effect when comparing quadrant 1 and quadrant 4, which is likely driven by the target effect we observed for the analysis within quadrant 4 above.
+
+```{r}
+Q1and4ComparisonsEffSize()
+Q1and4ComparisonsBayesfollowup()
+```
+
+Follow-up tests confirm that this is the case. The effect is driven by the difference in compensation between middle and near targets, regardless of block or session.
+
+#### Reach aftereffects for the untrained/ nondominant hand
+
+First, we test for target or block effects within washout trials using the nondominant or untrained hand.
+
+```{r}
+washoutLearningANOVA()
+washoutLearningBayesANOVA()
+```
+
+We find main effects of block and target, but no interaction. In the Bayesian test, we only find the effect of block.
+
+```{r}
+washoutComparisonsEffSize()
+washoutComparisonsBayesfollowup()
+```
+
+Follow-up tests show that the effect of block is driven by the difference of the first block of washout trials with the other blocks. This confirms what we see in the plot, where initially participants are compensating in the first washout trial. However, this is likely due to task switching rather than aftereffects, as participants were not instructed that the perturbation has been turned off.
+
+```{r}
+washoutTargetEffectComparisonsEffSize()
+washoutTargetEffectComparisonsBayesfollowup()
+```
+
+Follow-up tests on the target effect show that the middle target differs from the near target.
+
+To test for reach aftereffects, we can compare reaching performance between perturbed reaches with the nondominant hand (Quadrant 1L) and washout trials (Quadrant 1W). We conduct a 3x3x2 (target x block x quadrant) within-subjects ANOVA.
+
+```{r}
+learningANOVA2Quads(quadrantA='1L', quadrantB='1W')
+learningBayesANOVA2Quads(quadrantA='1L', quadrantB='1W')
+```
+
+We find a main effect of quadrant and a block by quadrant interaction in the frequentist test, but only find the main effect of quadrant in the Bayesian test. The main effect of quadrant is seen in the plot, where washout trials are near zero in compensation.
+
+```{r}
+Q1Land1WComparisonsEffSize()
+Q1Land1WComparisonsBayesfollowup()
+```
+
+Follow-up tests on the block by quadrant interaction show that the last block of mirror reversed training differs from the second and last blocks of washout trials. The lack of a difference between the first washout block from the training block is likely due to task switching rather than aftereffects, as participants were not instructed that the perturbation has been turned off.
+
+Finally, we compare the washout trials with the aligned baseline trials using the nondominant hand from the first session. We conduct a 3x3x2 (target x block x session) within-subjects ANOVA.
+
+```{r}
+RAEUntrainedHandANOVA()
+RAEUntrainedHandBayesANOVA()
+```
+
+We find a main effect of block and a block by session interaction in the frequentist test, but only a main effect of block in the Bayesian test. We look into the interaction further.
+
+```{r}
+untrainedHandSessionComparisonsEffSize()
+untrainedHandSessionComparisonsBayesfollowup()
+```
+
+We find no significant effects, but Bayesian follow-up tests show that the effect is driven by a difference between the last block of aligned reaches and the first block of washout trials. Again, this is likely due to higher compensation percentages during the first washout trial. Overall, the data suggest that we do not observe reach aftereffects, given that the compensation percentages ion the first block immediately go back down to zero.
+
+### Movement analysis
+
+We then repeat the same set of tests but instead use completion time and path length as the dependent variables.
+
+#### Completion time
+
+```{r}
+plotCtrlGenMT()
+```
+
+##### Learned performance
+
+We first tested for target or block effects for completion time within each quadrant. Thus, we conducted 3x3 (target x block) within-subjects ANOVA for quadrants 1, 4, 2, top-up trials in quadrant 1 (Quadrant 1A in tests below), quadrant 1 after switching hands (Quadrant 1L in tests below), and washout (Quadrant 1W).
+
+```{r}
+movementtimeANOVA()
+movementtimeBayesANOVA()
+```
+
+In quadrant 1, we find a significant target x block interaction. We know from the plot that completion time decreases across blocks. Thus, it is more interesting to test for target differences across the blocks of trials.
+
+```{r}
+quadrant1MTComparisonsEffSize()
+quadrant1MTComparisonsBayesfollowup()
+```
+
+Follow-up tests show that the completion time for the far target is faster compared to the middle target in all blocks, and faster compared to the near target in the second and last blocks. Completion time was also faster for the near target compared to the middle target in the first block. This suggests that movement initiation and execution was fastest for the far target  and slowest for the middle target.
+
+For quadrants 4, 2 and top-up trials to quadrant 1 (Quadrant 1A), we observe main effects of target. We also observe main effects of block for quadrant 4 and 2, but this is seen with the decrease of completion time from the plot.
+
+```{r}
+#quadrant 4
+quadrant4MTComparisonsEffSizeTargetEffect()
+quadrant4MTComparisonsTargetEffectBayesfollowup()
+#quadrant 2
+quadrant2MTComparisonsEffSizeTargetEffect()
+quadrant2MTComparisonsTargetEffectBayesfollowup()
+#quadrant 1 (top-up trials)
+quadrant1AMTComparisonsEffSizeTargetEffect()
+quadrant1AMTComparisonsTargetEffectBayesfollowup()
+```
+
+In all three quadrants, the target effect is accounted for by faster completion times for the far target, compared to the middle and near targets.
+
+For completion times for reaches with the nondominant hand (Quadrant 1L), we find main effects of block and target. We follow up on the target effect.
+
+```{r}
+quadrant1LMTComparisonsEffSizeTargetEffect()
+quadrant1LMTComparisonsTargetEffectBayesfollowup()
+```
+
+As in the other quadrants, we find that the far target had faster completion times that the middle or near targets.
+
+Finally, for washout trials, we find a significant target x block interaction.
+
+```{r}
+quadrant1WMTComparisonsEffSize()
+quadrant1WMTComparisonsBayesfollowup()
+```
+
+Follow-up tests show faster completion times for the far target than the middle target in the first block, and faster completion times for the far target than the near target in the last block. Overall, these findings show that movement initiation and execution is faster for far targets.
+
+##### Retention
+
+To quantify retention, we compare the completion times between the last block of mirror reversed reaches in session 1, with the first block of mirror reversed reaches in session 2.
+
+```{r}
+retentionMTANOVA()
+retentionMTBayesANOVA()
+```
+
+We find a significant target x session interaction.
+
+```{r}
+part1and2MTComparisonsEffSize()
+part1and2MTComparisonsBayesfollowup()
+```
+
+Follow-up tests show that the far and middle targets had slightly slower completion times for the first block in session 2, compared to the last block in session 1. However, in comparing completion time plots, we see that the starting completion times in session 2 are faster than how participants started in session 1, suggesting that there was retention of learning.
+
+##### Generalization across the workspace and hands
+
+To quantify generalization, we compare completion time across quadrants. We conduct a 3x3x2 (target x block x quadrant) within-subjects ANOVA to compare the first set of reaches to quadrant 1 with reaches in quadrant 4. We repeat this test but instead compare quadrant 1 with quadrant 2, quadrant 1 and reaches to quadrant 1 after switching hands (Quadrant 1L).
+
+```{r}
+#Quadrant 1 vs Quadrant 4
+MTANOVA2Quads(quadrantA= '1', quadrantB = '4')
+MTBayesANOVA2Quads(quadrantA= '1', quadrantB = '4')
+
+#Quadrant 1 vs Quadrant 2
+MTANOVA2Quads(quadrantA= '1', quadrantB = '2')
+MTBayesANOVA2Quads(quadrantA= '1', quadrantB = '2')
+
+#Quadrant 1 vs Switch hands, Quadrant 1
+MTANOVA2Quads(quadrantA= '1', quadrantB = '1L')
+MTBayesANOVA2Quads(quadrantA= '1', quadrantB = '1L')
+```
+
+In comparing quadrants 1 and 4, We find a significant target x block x quadrant interaction.
+
+```{r}
+Q1and4MTComparisonsEffSize()
+Q1and4MTComparisonsBayesfollowup()
+```
+
+Follow-up tests show that the interaction is driven by a difference between quadrants for the far target in the first block, and a difference between quadrants for the near target in the second block. This is expected, given that we see slower completion times in the first few trials in quadrant 1 reaches.
+
+In comparing quadrants 1 and 2, We find a significant block x quadrant interaction.
+
+```{r}
+Q1and2MTComparisonsEffSize()
+Q1and2MTComparisonsBayesfollowup()
+```
+
+Follow-up tests show that completion times in quadrant 1 are slower for the first two blocks than in quadrant 2. Finally, we do not find any quadrant main or interaction effects when comparing completion times after switching to the nondominant hand and those in quadrant 1. The shorter completion times for quadrants 4 and 2, compared to quadrant 1, is evidence that learning for reaches in the target locations has transferred to these new locations. Moreover, this learning is dependent on target distance from the mirror axis, where far targets showed faster completion times.
+
+##### Completion times during washout trials
+
+We have already shown that far targets have faster completion times for some blocks of washout trials, compared to the other targets. We can now compare these completion times with those during the aligned reaches. We conduct a 3x3x2 (target x block x session) within-subjects ANOVA.
+
+```{r}
+RAEUntrainedHandMTANOVA()
+RAEUntrainedHandMTBayesANOVA()
+```
+
+We do not find a session effect, but do find a block x session interaction. From the plots, we see that this is likely driven by how completion times in both sessions taper off a bit differently. However, the lack of a main effect suggests that completion times are not different between sessions.
 
 
+#### Path Length
+
+```{r}
+plotCtrlGenPL()
+```
+
+##### Learned performance
+
+We first tested for target or block effects for path length within each quadrant. Thus, we conducted 3x3 (target x block) within-subjects ANOVA for quadrants 1, 4, 2, top-up trials in quadrant 1 (Quadrant 1A in tests below), quadrant 1 after switching hands (Quadrant 1L in tests below), and washout (Quadrant 1W).
+
+```{r}
+pathlengthANOVA()
+pathlengthBayesANOVA()
+```
+
+In quadrants 1, top-up trials to quadrant 1 (1A), reaches to quadrant 1 after switching hands (1L), and washout (1W), we find significant target x block interactions. We know from the plot that path length decreases across blocks. Thus, it is more interesting to test for target differences across the blocks of trials.
+
+```{r}
+#Quadrant 1
+quadrant1PLComparisonsEffSize()
+quadrant1PLComparisonsBayesfollowup()
+#Quadrant 1A
+quadrant1APLComparisonsEffSize()
+quadrant1APLComparisonsBayesfollowup()
+#Quadrant 1L
+quadrant1LPLComparisonsEffSize()
+quadrant1LPLComparisonsBayesfollowup()
+#Quadrant 1W
+quadrant1WPLComparisonsEffSize()
+quadrant1WPLComparisonsBayesfollowup()
+```
+
+In quadrant 1, follow-up tests show that the path length for the far target is shorter compared to the middle target in all blocks, and that the middle target has a longer path length than near target in the first block. 
+
+In quadrant 1A (top-up trials), we find shorter path lengths for the far target compared to the middle target in the first and last block, while the path lengths for the middle target were longer that the near target in the first block.
+
+In quadrant 1L (switch to nondominant hand), we find similar results as in quadrant 1A.
+
+In quadrant 1W (washout trials), follow up frequentist tests did not show any significant results. But, Bayesian tests show that the middle target is different than the near target in the first block.
+
+Taken together, it seems that movement trajectories were shortest for the far target and longest for the middle target.
+
+For quadrant 4, we observe main effects of target and block. For quadrant 2, we observe a main effect of target. We conduct follow-up tests on the target effect.
+
+```{r}
+#quadrant 4
+quadrant4PLComparisonsEffSizeTargetEffect()
+quadrant4PLComparisonsTargetEffectBayesfollowup()
+#quadrant 2
+quadrant2PLComparisonsEffSizeTargetEffect()
+quadrant2PLComparisonsTargetEffectBayesfollowup()
+```
+
+In both quadrants, the target effect is accounted for by shorter path lengths for the far and near targets, compared to the middle target. Thus, path lengths support findings for completion times, where movements are faster and shorter for the far target, and slower and longer for the middle target.
+
+
+##### Retention
+
+To quantify retention, we compare the path lengths between the last block of mirror reversed reaches in session 1, with the first block of mirror reversed reaches in session 2.
+
+```{r}
+retentionPLANOVA()
+retentionPLBayesANOVA()
+```
+
+We find a significant target x session interaction.
+
+```{r}
+part1and2PLComparisonsEffSize()
+part1and2PLComparisonsBayesfollowup()
+```
+
+Follow-up tests show that the far and middle targets had slightly longer path lengths for the first block in session 2, compared to the last block in session 1. However, in comparing path length plots, we see that the starting path lengths in session 2 are shorter than how participants started in session 1, suggesting that there was retention of learning.
+
+##### Generalization across the workspace and hands
+
+To quantify generalization, we compare path length across quadrants. We conduct a 3x3x2 (target x block x quadrant) within-subjects ANOVA to compare the first set of reaches to quadrant 1 with reaches in quadrant 4. We repeat this test but instead compare quadrant 1 with quadrant 2, quadrant 1 and reaches to quadrant 1 after switching hands (Quadrant 1L).
+
+```{r}
+#Quadrant 1 vs Quadrant 4
+PLANOVA2Quads(quadrantA= '1', quadrantB = '4')
+PLBayesANOVA2Quads(quadrantA= '1', quadrantB = '4')
+
+#Quadrant 1 vs Quadrant 2
+PLANOVA2Quads(quadrantA= '1', quadrantB = '2')
+PLBayesANOVA2Quads(quadrantA= '1', quadrantB = '2')
+
+#Quadrant 1 vs Switch hands, Quadrant 1
+PLANOVA2Quads(quadrantA= '1', quadrantB = '1L')
+PLBayesANOVA2Quads(quadrantA= '1', quadrantB = '1L')
+```
+
+In comparing quadrants 1 and 4, We find a significant block x quadrant interaction.
+
+```{r}
+Q1and4PLComparisonsEffSize()
+Q1and4PLComparisonsBayesfollowup()
+```
+
+Follow-up tests show that the interaction is driven by a difference between quadrants in the first block. This is expected, given that we see longer path lengths in the first few trials in quadrant 1 reaches.
+
+In comparing quadrants 1 and 2, We find a significant target x block x quadrant interaction.
+
+```{r}
+Q1and2PLComparisonsEffSize()
+Q1and2PLComparisonsBayesfollowup()
+```
+
+Follow-up tests show that path lengths differ for the middle target between the two quadrants. We see in the plot that path lengths are longer in the first few trials of reaches in quadrant 1. 
+
+Finally, in comparing quadrant 1 with reaches using the nondominant hand, we find a main effect of quadrant but no interactions. From the plot it is evident that path lengths for the nondominant hand are longer on average, compared to those in quadrant 1.
+
+##### Path lengths during washout trials
+
+We have already shown that in washout trials, theere are longer path lengths to the middle target than the near target during the first block. We now compare path lengths with those during the aligned reaches. We conduct a 3x3x2 (target x block x session) within-subjects ANOVA.
+
+```{r}
+RAEUntrainedHandPLANOVA()
+RAEUntrainedHandPLBayesANOVA()
+```
+
+We find a main effect of session, and a significant target x block x session interaction. We conduct follow-up tests on the interaction.
+
+```{r}
+untrainedHandSessionPLComparisonsEffSize()
+untrainedHandSessionPLComparisonsBayesfollowup()
+```
+
+Follow-up tests show that the interaction is driven by the longer path lengths for the middle target during the first block of washout compared to the first block of aligned reaches. This confirms what we observe with the plots that path lengths for the middle target are longer during the first few trials of washout.
+
+
+# Study 2: Supplementary analyses for the online experiment
 
 
 
