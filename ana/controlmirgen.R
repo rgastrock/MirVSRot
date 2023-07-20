@@ -2061,7 +2061,7 @@ plotDeviceCtrlGen <- function(groups = c('far', 'mid', 'near'), devices = c('Mou
     
     plot(NA, NA, xlim = c(0,127), ylim = c(-70,265), 
          xlab = "Trial", ylab = "Angular reach deviation (°)", frame.plot = FALSE, #frame.plot takes away borders
-         main = "", xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
+         main = sprintf("%s target", group), xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
     
     lim <- par('usr')
     rect(85, lim[3]-1, 126, lim[4]+1, border = "#ededed", col = "#ededed") #xleft, ybottom, x right, ytop; light grey hex code
@@ -2284,7 +2284,7 @@ plotDeviceCtrlGen <- function(groups = c('far', 'mid', 'near'), devices = c('Mou
     }
     
     #add legend
-    legend(106,220,legend=c('Mouse','Trackpad'),
+    legend(85,220,legend=c('Mouse','Trackpad'),
            col=c(colourscheme[['Mouse']][['S']],colourscheme[['Trackpad']][['S']]),
            lty=1,bty='n',lwd=2, cex=1)
     #close everything if you saved plot as svg
@@ -2349,8 +2349,8 @@ plotDeviceCtrlGenMT <- function(groups = c('far', 'mid', 'near'), devices = c('M
     }
     
     plot(NA, NA, xlim = c(0,127), ylim = c(-0.2, 11), 
-         xlab = "Trial", ylab = "Movement time (s)", frame.plot = FALSE, #frame.plot takes away borders
-         main = "", xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
+         xlab = "Trial", ylab = "Completion time (s)", frame.plot = FALSE, #frame.plot takes away borders
+         main = sprintf("%s target", group), xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
     
     lim <- par('usr')
     rect(85, lim[3]-1, 126, lim[4]+1, border = "#ededed", col = "#ededed") #xleft, ybottom, x right, ytop; light grey hex code
@@ -2549,7 +2549,7 @@ plotDeviceCtrlGenMT <- function(groups = c('far', 'mid', 'near'), devices = c('M
     }
     
     #add legend
-    legend(106,10,legend=c('Mouse','Trackpad'),
+    legend(85,10,legend=c('Mouse','Trackpad'),
            col=c(colourscheme[['Mouse']][['S']],colourscheme[['Trackpad']][['S']]),
            lty=1,bty='n',lwd=2, cex=1)
     #close everything if you saved plot as svg
@@ -2615,12 +2615,12 @@ plotDeviceCtrlGenPL <- function(groups = c('far', 'mid', 'near'), devices = c('M
     
     plot(NA, NA, xlim = c(0,127), ylim = c(-0.2,4), 
          xlab = "Trial", ylab = "Path length (monitor scale)", frame.plot = FALSE, #frame.plot takes away borders
-         main = "", xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
+         main = sprintf("%s target", group), xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
     
     lim <- par('usr')
     rect(85, lim[3]-1, 126, lim[4]+1, border = "#ededed", col = "#ededed") #xleft, ybottom, x right, ytop; light grey hex code
     #abline(h = c(0, 1), v = c(21, 42, 63, 84, 105), col = 8, lty = 2)
-    abline(h = c(0, 1), col = 8, lty = 2)
+    abline(h = c(0,0.4), col = 8, lty = 2)
     #axis(1, at = c(1, 22, 43, 64, 85, 106, 126)) #tick marks for x axis
     axis(side=1, at=c(1,21), labels=c('1',''))
     axis(side=1, at=c(22,42), labels=c('22',''))
@@ -2814,7 +2814,7 @@ plotDeviceCtrlGenPL <- function(groups = c('far', 'mid', 'near'), devices = c('M
     }
     
     #add legend
-    legend(106,10,legend=c('Mouse','Trackpad'),
+    legend(85,10,legend=c('Mouse','Trackpad'),
            col=c(colourscheme[['Mouse']][['S']],colourscheme[['Trackpad']][['S']]),
            lty=1,bty='n',lwd=2, cex=1)
     #close everything if you saved plot as svg
@@ -2884,7 +2884,7 @@ plotSexCtrlGen <- function(groups = c('far', 'mid', 'near'), sexes = c('Male','F
     
     plot(NA, NA, xlim = c(0,127), ylim = c(-70,265), 
          xlab = "Trial", ylab = "Angular reach deviation (°)", frame.plot = FALSE, #frame.plot takes away borders
-         main = "", xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
+         main = sprintf("%s target", group), xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
     
     lim <- par('usr')
     rect(85, lim[3]-1, 126, lim[4]+1, border = "#ededed", col = "#ededed") #xleft, ybottom, x right, ytop; light grey hex code
@@ -3107,7 +3107,7 @@ plotSexCtrlGen <- function(groups = c('far', 'mid', 'near'), sexes = c('Male','F
     }
     
     #add legend
-    legend(106,220,legend=c('Male','Female'),
+    legend(85,220,legend=c('Male','Female'),
            col=c(colourscheme[['Male']][['S']],colourscheme[['Female']][['S']]),
            lty=1,bty='n',lwd=2, cex=1)
     #close everything if you saved plot as svg
@@ -3172,8 +3172,8 @@ plotSexCtrlGenMT <- function(groups = c('far', 'mid', 'near'), sexes = c('Male',
     }
     
     plot(NA, NA, xlim = c(0,127), ylim = c(-0.2, 11), 
-         xlab = "Trial", ylab = "Movement time (s)", frame.plot = FALSE, #frame.plot takes away borders
-         main = "", xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
+         xlab = "Trial", ylab = "Completion time (s)", frame.plot = FALSE, #frame.plot takes away borders
+         main = sprintf("%s target", group), xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
     
     lim <- par('usr')
     rect(85, lim[3]-1, 126, lim[4]+1, border = "#ededed", col = "#ededed") #xleft, ybottom, x right, ytop; light grey hex code
@@ -3372,7 +3372,7 @@ plotSexCtrlGenMT <- function(groups = c('far', 'mid', 'near'), sexes = c('Male',
     }
     
     #add legend
-    legend(106,10,legend=c('Male','Female'),
+    legend(85,10,legend=c('Male','Female'),
            col=c(colourscheme[['Male']][['S']],colourscheme[['Female']][['S']]),
            lty=1,bty='n',lwd=2, cex=1)
     #close everything if you saved plot as svg
@@ -3438,12 +3438,12 @@ plotSexCtrlGenPL <- function(groups = c('far', 'mid', 'near'), sexes = c('Male',
     
     plot(NA, NA, xlim = c(0,127), ylim = c(-0.2,4), 
          xlab = "Trial", ylab = "Path length (monitor scale)", frame.plot = FALSE, #frame.plot takes away borders
-         main = "", xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
+         main = sprintf("%s target", group), xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
     
     lim <- par('usr')
     rect(85, lim[3]-1, 126, lim[4]+1, border = "#ededed", col = "#ededed") #xleft, ybottom, x right, ytop; light grey hex code
     #abline(h = c(0, 1), v = c(21, 42, 63, 84, 105), col = 8, lty = 2)
-    abline(h = c(0, 1), col = 8, lty = 2)
+    abline(h = c(0, 0.4), col = 8, lty = 2)
     #axis(1, at = c(1, 22, 43, 64, 85, 106, 126)) #tick marks for x axis
     axis(side=1, at=c(1,21), labels=c('1',''))
     axis(side=1, at=c(22,42), labels=c('22',''))
@@ -3637,7 +3637,7 @@ plotSexCtrlGenPL <- function(groups = c('far', 'mid', 'near'), sexes = c('Male',
     }
     
     #add legend
-    legend(106,4,legend=c('Male','Female'),
+    legend(85,4,legend=c('Male','Female'),
            col=c(colourscheme[['Male']][['S']],colourscheme[['Female']][['S']]),
            lty=1,bty='n',lwd=2, cex=1)
     #close everything if you saved plot as svg

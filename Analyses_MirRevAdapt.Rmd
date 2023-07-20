@@ -1153,20 +1153,374 @@ Follow-up tests show that the interaction is driven by the longer path lengths f
 
 # Study 2: Supplementary analyses for the online experiment
 
+Given the large sample we were able to collect for the online study, we also investigate for any effects related to the device they used to control the cursor (either a mouse or trackpad), and for any effects related to the participants' sex. Therefore, we split the data into mouse and trackpad users, and into males and females.
+
+## Session 1
+
+### Device used: Mouse vs. trackpad
+
+#### Learning
+
+```{r}
+plotDeviceCtrl()
+```
+
+We first plot angular reach deviations across trial types for each of the target locations. We observe large variability for the mouse users due to their sample being disproportionately lower than trackpad users (Mouse N = 19, Trackpad N = 44). However, we do not really see much of a difference in learning rates and asymptotes.
+
+First, we test for an effect of device used in the two sets of aligned trials where participants either used their dominant or nondominant hand. We conduct a 3x3x2 mixed design ANOVA, with target and block as within-subjects factors and device as a between-subjects factor.
+
+```{r}
+deviceAlignedLearningANOVA()
+deviceAlignedLearningBayesANOVA()
+```
+
+We find no effects related to device used, suggestting that aligned reaches for both hands did not differ between mouse or trackpad users.
+
+We then conducted the same 3x3x2 mixed design ANOVA during the mirror reversed trials.
+
+```{r}
+devicemirrorANOVA()
+devicemirrorBayesANOVA()
+```
+
+We do not find any effects related to device used. Finally, we run the same 3x3x2 mixed design ANOVA for the washout trials.
+
+```{r}
+RAEDeviceLearningANOVA()
+RAEDeviceLearningBayesANOVA()
+```
+
+We find no effects related to device used. Taken together, our results suggest that using either a mouse or trackpad to control the cursor does not lead to any differences in learning to compensate for the mirror reversed perturbation.
+
+#### Completion time
+
+Next, we looked into completion time between the two devices.
+
+```{r}
+plotDeviceCtrlMT()
+```
+
+We conduct the same 3x3x2 (target x block x device) mixed design ANOVA as in learning, but we now have completion time as the dependent variable.
+
+```{r}
+deviceAlignedMTANOVA()
+deviceAlignedMTBayesANOVA()
+```
+
+We find no device-related effects. We repeat the test for the mirror reversed trials.
+
+```{r}
+deviceMirrorMTANOVA()
+deviceMirrorMTBayesANOVA()
+```
+
+We find no device-related effects. Finally, we conduct the test for washout trials.
+
+```{r}
+deviceRAEMTANOVA()
+deviceRAEMTBayesANOVA()
+```
+
+We find a device x block interaction in the frequentist test, which did not hold up in the Bayesian test. Overall, completion time did not differ between mouse and trackpad users.
+
+#### Path length
+
+We also looked into path lengths for the two devices.
+
+```{r}
+plotDeviceCtrlPL()
+```
+
+We then repeat the same set of ANOVAs as in the section above, but use path length as the dependent variable. We first look into the aligned trials.
+
+```{r}
+deviceAlignedPLANOVA()
+deviceAlignedPLBayesANOVA()
+```
+
+We find no device-related effects for the dominant hand, but find a main effect of device and a target x block x device interaction for the nondominant hand. We conduct follow-up tests on the main effect of device, regardless of target or block.
+
+```{r}
+deviceAlignedPLComparisons()
+```
+
+We find longer path lengths for mouse users, than trackpad users.
+
+Next, we test for effects in the mirror reversed trials.
+
+```{r}
+deviceMirrorPLANOVA()
+deviceMirrorPLBayesANOVA()
+```
+
+We find no device-related effects. We then test for an effect during washout trials.
+
+```{r}
+deviceRAEPLANOVA()
+deviceRAEPLBayesANOVA()
+```
+
+We find no device-related effects. Overall, we only found path length differences between mouse and trackpad users in the aligned trials using the nondominant hand. This difference could be due to participants not being used to controlling the mouse with their nondominant hand, while it is easier to use the trackpad with both hands.
+
+### Sex differences: Males vs. females
+
+We repeat the same set of analyses but now split the data according to males (N =18) and females (N = 44). Note that one participant did not identify as either male or female, so they are not included in the comparisons below.
+
+#### Learning
+
+```{r}
+plotSexCtrl()
+```
+
+The disproportionately smaller sample for males contribute to the variability we observe in their data. We first conduct a 3x3x2 (trackpad x block x sex) mixed design ANOVA, with trackpad and block as within-subjects factors and sex as a between-subjects factor, for the aligned trials for both hands.
+
+```{r}
+sexAlignedLearningANOVA()
+sexAlignedLearningBayesANOVA()
+```
+
+We do not find any sex-related effects. Next, we conduct the same test for mirror reversed reaches.
+
+```{r}
+sexmirrorANOVA()
+sexmirrorBayesANOVA()
+```
+
+There are no sex-related effects. Finally, we test washout trials.
+
+```{r}
+RAESexLearningANOVA()
+RAESexLearningBayesANOVA()
+```
+
+We do not find sex-related effects. Overall, learning the mirror reversal did not differ between males and females.
+
+#### Completion time
+
+```{r}
+plotSexCtrlMT()
+```
 
 
+Next, we test for sex-related effects with completion times across the different trial types. First, we test aligned trials.
 
+```{r}
+sexAlignedMTANOVA()
+sexAlignedMTBayesANOVA()
+```
 
+We do not find any effects of sex. We then look into the mirror reversed trials.
 
+```{r}
+sexMirrorMTANOVA()
+sexMirrorMTBayesANOVA()
+```
 
+We find a main effect of sex. 
 
+```{r}
+sexMirrorMTComparisons()
+```
 
+Follow up tests show that regardless of target or block, males have faster completion times on average during perturbed reaches.
 
+Finally, we test for washout trials.
 
+```{r}
+sexRAEMTANOVA()
+sexRAEMTBayesANOVA()
+```
 
+We find a main effect of sex and a sex x block interaction.
 
+```{r}
+sexRAEMTComparisonsEffSize()
+sexRAEMTBayesfollowup()
+```
 
+Follow-up frequentist tests do not show any significant effects. But Bayesian tests show anecdotal evidence that males continue to move faster after perturbation training. These results suggest that males initiate and execute movements faster than females during perturbed and washout trials, even though no sex differences were observed in aligned baseline reaches.
 
+#### Path length
 
+```{r}
+plotSexCtrlPL()
+```
 
+We repeat the same tests and use path length as the dependent variable.
+
+```{r}
+sexAlignedPLANOVA()
+sexAlignedPLBayesANOVA()
+```
+
+We do not find sex-related effects in the aligned trials. Next, we test for mirror reversed trials.
+
+```{r}
+sexMirrorPLANOVA()
+sexMirrorPLBayesANOVA()
+```
+
+There are no sex-related effects. Finally, we test for washout trials.
+
+```{r}
+sexRAEPLANOVA()
+sexRAEPLBayesANOVA()
+```
+
+We do not find any sex effects. Thus, although males move faster than females, the overall trajectory of their reaches do not differ.
+
+## Session 2
+
+We also conducted tests that compared device used and sex for reaches in the second session.
+
+### Device used: Mouse vs. trackpad
+
+In session 2, there were less mouse users (N = 9) than trackpad users (n = 39), which is probably contributing to the large variability observed in the plots.
+
+#### Learning
+
+```{r}
+plotDeviceCtrlGen()
+```
+
+We test for device effects for reaches within each quadrant. We conduct a 3x3x2 (target x block x device) mixed design ANOVA, with target and block as within-subjects factors and device as a between-subjects factor. We repeat this test for quadrants 1, 4, 2, top up quadrant 1 trials, and quadrant 1 trials after switching hands.
+
+```{r}
+deviceLearningGenANOVA()
+deviceLearningGenBayesANOVA()
+```
+
+We find a significant target x block x device interaction in quadrant 1, and a significant device x target interaction in quadrant 2. However, both interactions did not hold up in the Bayesian tests.
+
+```{r}
+deviceLearningGenQ1ComparisonsEffSize()
+deviceLearningGenQ1Bayesfollowup()
+```
+
+Follow-up tests in quadrant 1 show that there are no differences between devices across blocks and targets. However, Bayesian test comparing devices in the near target during the last block show anecdotal evidence for a difference. In the plot, this is seen with how mouse users were over compensating during the last block.
+
+```{r}
+deviceLearningGenQ2ComparisonsEffSize()
+deviceLearningGenQ2Bayesfollowup()
+```
+
+Follow-up tests for quadrant 2 show no effects. But, Bayesian follow-up test on the near target show anecdotal evidence of a difference between devices. In the plot, this is again observed with how mouse users are overcompensating.
+
+Next, we check washout trials.
+
+```{r}
+deviceWashoutLearningANOVA()
+deviceWashoutLearningBayesANOVA()
+```
+
+We do not find any device effects. Thus, it seems that overall learning between mouse and trackpad users are the same, but mouse users tend to overcompensate for the near target.
+
+#### Completion time
+
+```{r}
+plotDeviceCtrlGenMT()
+```
+
+We conduct the same 3x3x2 mixed design ANOVA with completion time as the dependent variable. We conduct this test for reaches to quadrants 1, 4, 2, top-up quadrant 1 trials, quadrant 1 trials after switching hands, and washout trials.
+
+```{r}
+deviceGenmovementtimeANOVA()
+deviceGenmovementtimeBayesANOVA()
+```
+
+We find a device x target interaction for quadrants 2 and quadrant 1 after switching hands (1L). We also find a target x block x device interaction for quadrant 1 top-up trials (1A).
+
+```{r}
+deviceMTGenQ2ComparisonsEffSize()
+deviceMTGenQ2Bayesfollowup()
+```
+
+Quadrant 2 follow-up tests only show anecdotal evidence of a device effect for the near target.
+
+```{r}
+deviceMTGenQ1LComparisonsEffSize()
+deviceMTGenQ1LBayesfollowup()
+```
+
+Follow-up tests for Quadrant 1 after switching hands did not reveal any device effects.
+
+```{r}
+deviceMTGenQ1AComparisonsEffSize()
+deviceMTGenQ1ABayesfollowup()
+```
+
+Follow-up tests on quadrant 1 top-up trials only show anecdotal evidence of a device effect for the far target in the second block, and the near target in the second block. In both cases, we see in the plot that these are when mouse users were moving a bit faster than trackpad users. Thus, there is only a small amount of evidence showing that mouse users initiate and execute movements faster than trackpad users.
+
+#### Path length
+
+```{r}
+plotDeviceCtrlGenPL()
+```
+
+We repeat the same tests and have path length as the dependent variable.
+
+```{r}
+deviceGenpathlengthANOVA()
+deviceGenpathlengthBayesANOVA()
+```
+
+We do not find any device effects for path length in reaches to all quadrants.
+
+### Sex: Males vs. females
+
+In session 2 the sample for males (N = 11) was smaller than the sample for females (N = 36). One participant identified as neither and was excluded from the comparisons below.
+
+#### Learning
+
+```{r}
+plotSexCtrlGen()
+```
+
+We conduct the same 3x3x2 mixed design ANOVA as in previous sections, but now we are testing for an effect of sex.
+
+```{r}
+sexLearningGenANOVA()
+sexLearningGenBayesANOVA()
+```
+
+We do not find any sex effects. We then test washout trials.
+
+```{r}
+sexWashoutLearningANOVA()
+sexWashoutLearningBayesANOVA()
+```
+
+We also do not find any effect of sex.
+
+#### Completion time
+
+```{r}
+plotSexCtrlGenMT()
+```
+
+Next we repeat the same tests but now have completion time as the dependent variable.
+
+```{r}
+sexGenmovementtimeANOVA()
+sexGenmovementtimeBayesANOVA()
+```
+
+We find no sex effects for completion time.
+
+#### Path length
+
+```{r}
+plotSexCtrlGenPL()
+```
+
+Then we conduct tests with path length as the dependent variable.
+
+```{r}
+sexGenpathlengthANOVA()
+sexGenpathlengthBayesANOVA()
+```
+
+We do not find any sex effects for path length.
+
+Overall, in considering all analyses for device and sex comparisons, we find some differences but these are not consistent. These are likely due to the uneven sample sizes, where we have less mouse users and males in our data. Some of the differences we find involve mouse users overcompensating for the near target, and males having faster completion times than females. However, these differences were small and are likely not meaningful effects.
 

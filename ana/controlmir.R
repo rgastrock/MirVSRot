@@ -2455,7 +2455,7 @@ plotDeviceCtrl <- function(groups = c('far', 'mid', 'near'), devices = c('Mouse'
     
     plot(NA, NA, xlim = c(0,178), ylim = c(-200,200), 
          xlab = "Trial", ylab = "Angular reach deviation (°)", frame.plot = FALSE, #frame.plot takes away borders
-         main = "Reaches across trials", xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
+         main = sprintf("Reaches across trials: %s target", group), xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
     if(group == 'far'){
       abline(h = c(0, 170), v = c(45, 66, 156), col = 8, lty = 2)
     } else if(group == 'mid'){
@@ -2717,7 +2717,7 @@ plotDeviceCtrlMT <- function(groups = c('far', 'mid', 'near'), devices = c('Mous
     }
     
     plot(NA, NA, xlim = c(0,178), ylim = c(-0.2,11), 
-         xlab = "Trial", ylab = "Movement time (s)", frame.plot = FALSE, #frame.plot takes away borders
+         xlab = "Trial", ylab = "Completion time (s)", frame.plot = FALSE, #frame.plot takes away borders
          main = sprintf('%s target', group), xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
     
     abline(h = c(0, 1), v = c(45, 66, 156), col = 8, lty = 2)
@@ -3341,7 +3341,7 @@ plotSexCtrlMT <- function(groups = c('far', 'mid', 'near'), sexes = c('Male','Fe
     }
     
     plot(NA, NA, xlim = c(0,178), ylim = c(-0.2,11), 
-         xlab = "Trial", ylab = "Movement time (s)", frame.plot = FALSE, #frame.plot takes away borders
+         xlab = "Trial", ylab = "Completion time (s)", frame.plot = FALSE, #frame.plot takes away borders
          main = sprintf('%s target', group), xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
     
     abline(h = c(0, 1), v = c(45, 66, 156), col = 8, lty = 2)
@@ -6265,36 +6265,37 @@ deviceAlignedLearningANOVA <- function(hands = c('trained', 'untrained')) {
   }
 }
 
-deviceAlignedLearningBayesANOVA <- function(hand) {
-  
-  #styles <- getStyle()
-  if(hand == 'trained'){
-    blockdefs <- list('first'=c(1,9),'second'=c(10,9),'last'=c(37,9))
-  } else if(hand == 'untrained'){
-    blockdefs <- list('first'=c(46,3),'second'=c(49,3),'last'=c(64,3))
+deviceAlignedLearningBayesANOVA <- function(hands = c('trained', 'untrained')) {
+  for(hand in hands){
+    #styles <- getStyle()
+    if(hand == 'trained'){
+      blockdefs <- list('first'=c(1,9),'second'=c(10,9),'last'=c(37,9))
+    } else if(hand == 'untrained'){
+      blockdefs <- list('first'=c(46,3),'second'=c(49,3),'last'=c(64,3))
+    }
+    
+    LC4aov <- getDeviceAlignedBlockedLearningAOV(blockdefs=blockdefs, hand=hand)                     
+    
+    #looking into interaction below:
+    #interaction.plot(LC4aov$diffgroup, LC4aov$block, LC4aov$reachdeviation)
+    
+    #Bayes ANOVA - can use long format
+    #will compare models to null (intercept) or no effect - this will be 1
+    #higher than 1 will be evidence for alternative hypothesis, lower will be evidence for null hypothesis
+    #compare models either if only main effects, interaction of effects
+    #use lmBF function for specific models
+    LC4aov$participant <- as.factor(LC4aov$participant)
+    bfLC<- anovaBF(angdev ~ target*block*devices + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+    #compare interaction contribution, over the contribution of both main effects
+    #bfinteraction <- bfLC[4]/bfLC[3]
+    
+    #bfinclude to compare model with interactions against all other models
+    bfinteraction <- bayesfactor_inclusion(bfLC)
+    
+    print(bfLC)
+    print(bfinteraction)
+    
   }
-  
-  LC4aov <- getDeviceAlignedBlockedLearningAOV(blockdefs=blockdefs, hand=hand)                     
-  
-  #looking into interaction below:
-  #interaction.plot(LC4aov$diffgroup, LC4aov$block, LC4aov$reachdeviation)
-  
-  #Bayes ANOVA - can use long format
-  #will compare models to null (intercept) or no effect - this will be 1
-  #higher than 1 will be evidence for alternative hypothesis, lower will be evidence for null hypothesis
-  #compare models either if only main effects, interaction of effects
-  #use lmBF function for specific models
-  LC4aov$participant <- as.factor(LC4aov$participant)
-  bfLC<- anovaBF(angdev ~ target*block*devices + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
-  #compare interaction contribution, over the contribution of both main effects
-  #bfinteraction <- bfLC[4]/bfLC[3]
-  
-  #bfinclude to compare model with interactions against all other models
-  bfinteraction <- bayesfactor_inclusion(bfLC)
-  
-  print(bfLC)
-  print(bfinteraction)
-  
 }
 
 #no effect of device on aligned (both hands)
@@ -7328,36 +7329,37 @@ sexAlignedLearningANOVA <- function(hands = c('trained', 'untrained')) {
   }
 }
 
-sexAlignedLearningBayesANOVA <- function(hand) {
-  
-  #styles <- getStyle()
-  if(hand == 'trained'){
-    blockdefs <- list('first'=c(1,9),'second'=c(10,9),'last'=c(37,9))
-  } else if(hand == 'untrained'){
-    blockdefs <- list('first'=c(46,3),'second'=c(49,3),'last'=c(64,3))
+sexAlignedLearningBayesANOVA <- function(hands = c('trained', 'untrained')) {
+  for(hand in hands){
+    #styles <- getStyle()
+    if(hand == 'trained'){
+      blockdefs <- list('first'=c(1,9),'second'=c(10,9),'last'=c(37,9))
+    } else if(hand == 'untrained'){
+      blockdefs <- list('first'=c(46,3),'second'=c(49,3),'last'=c(64,3))
+    }
+    
+    LC4aov <- getSexAlignedBlockedLearningAOV(blockdefs=blockdefs, hand=hand)                     
+    
+    #looking into interaction below:
+    #interaction.plot(LC4aov$diffgroup, LC4aov$block, LC4aov$reachdeviation)
+    
+    #Bayes ANOVA - can use long format
+    #will compare models to null (intercept) or no effect - this will be 1
+    #higher than 1 will be evidence for alternative hypothesis, lower will be evidence for null hypothesis
+    #compare models either if only main effects, interaction of effects
+    #use lmBF function for specific models
+    LC4aov$participant <- as.factor(LC4aov$participant)
+    bfLC<- anovaBF(angdev ~ target*block*sex + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+    #compare interaction contribution, over the contribution of both main effects
+    #bfinteraction <- bfLC[4]/bfLC[3]
+    
+    #bfinclude to compare model with interactions against all other models
+    bfinteraction <- bayesfactor_inclusion(bfLC)
+    
+    print(bfLC)
+    print(bfinteraction)
+    
   }
-  
-  LC4aov <- getSexAlignedBlockedLearningAOV(blockdefs=blockdefs, hand=hand)                     
-  
-  #looking into interaction below:
-  #interaction.plot(LC4aov$diffgroup, LC4aov$block, LC4aov$reachdeviation)
-  
-  #Bayes ANOVA - can use long format
-  #will compare models to null (intercept) or no effect - this will be 1
-  #higher than 1 will be evidence for alternative hypothesis, lower will be evidence for null hypothesis
-  #compare models either if only main effects, interaction of effects
-  #use lmBF function for specific models
-  LC4aov$participant <- as.factor(LC4aov$participant)
-  bfLC<- anovaBF(angdev ~ target*block*sex + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
-  #compare interaction contribution, over the contribution of both main effects
-  #bfinteraction <- bfLC[4]/bfLC[3]
-  
-  #bfinclude to compare model with interactions against all other models
-  bfinteraction <- bayesfactor_inclusion(bfLC)
-  
-  print(bfLC)
-  print(bfinteraction)
-  
 }
 
 #no effect of device on aligned (both hands)
