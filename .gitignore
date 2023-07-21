@@ -3,6 +3,6 @@
 .RData
 .Ruserdata
 data
-doc
+doc/fig
 extra
 ana/addplots.R

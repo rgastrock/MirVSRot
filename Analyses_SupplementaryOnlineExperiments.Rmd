@@ -72,7 +72,7 @@ Here, we see that the mean for the data when treated as numeric is at 0 degrees,
 plotCircularAllTasks(set='fa2020')
 ```
 
-![30 degree Target](doc/fig/mirrorreversal-fall/SuppFig1_Distribution_30Circular.svg)
+![30 degree Target](doc/fig_Rntbk/mirrorreversal-fall/SuppFig1_Distribution_30Circular.svg)
 
 Let's consider the Fall 2020 (non-instructed) data set. We observe with the learning curve plot that by the second trial, participants are already at perfect compensation (120 degrees) for the 30 degree target, then this dips down to around 90 degrees. However, when we look at the circular plot for trial 2, the peak of the density distribution (blue curve around plot) is at a higher value than perfect compensation. It is important to note that the peak of this density is not equivalent to the mean, given that the values are distributed all around. While the mean values for every trial are equivalent to those shown in the 2-D plot, the density distribution peaks are higher at a different value than the mean depending on how many participants have reaches within a particular location. In other words, the peak is representing the mode of the distribution. Note, however, that the peak may not always be the mode, as different locations can have the same frequency values (multiple modes).
 
@@ -189,9 +189,9 @@ To get a complete picture of how participants are performing, we can plot the di
 
 ## Non - instructed group
 
-![30 degree Target](doc/fig/mirrorreversal-fall/SuppFig2_Distribution_30Circular.gif)
+![30 degree Target](doc/fig_Rntbk/mirrorreversal-fall/SuppFig2_Distribution_30Circular.gif)
 
-![60 degree Target](doc/fig/mirrorreversal-fall/SuppFig3_Distribution_60Circular.gif)
+![60 degree Target](doc/fig_Rntbk/mirrorreversal-fall/SuppFig3_Distribution_60Circular.gif)
 
 For both targets, we see a somewhat bimodal distribution in trial 1. We also see a general shift of responses towards the correct reach direction almost immediately in the following trials (i.e. highest peak in distribution moves towards perfect compensation location for each target).
 
@@ -373,9 +373,9 @@ Follow-up tests show that the first block differs from the second and last block
 
 The following analyses just repeat the ones in the previous section for the instructed group.
 
-![30 degree Target](doc/fig/mReversalNewAlpha3-master/SuppFig1_Distribution_30Circular.gif)
+![30 degree Target](doc/fig_Rntbk/mReversalNewAlpha3-master/SuppFig1_Distribution_30Circular.gif)
 
-![60 degree Target](doc/fig/mReversalNewAlpha3-master/SuppFig2_Distribution_60Circular.gif)
+![60 degree Target](doc/fig_Rntbk/mReversalNewAlpha3-master/SuppFig2_Distribution_60Circular.gif)
 
 Trial 1 (only for 30 degree location) shows distributed responses. We also see an almost immediate general shift of responses towards the correct reach direction (i.e. highest peak of distribution moves towards perfect compensation location for each target).
 
