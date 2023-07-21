@@ -376,7 +376,7 @@ plotMirOnlineAllTasks <- function(groups = c('30', '60'), target='inline') {
   }
   
   #add legend
-  legend(80,0,legend=c('30° target','60° target'),
+  legend(80,30,legend=c('30° target','60° target'),
          col=c(colourscheme[['30']][['S']],colourscheme[['60']][['S']]),
          lty=1,bty='n',cex=1,lwd=2)
   
@@ -623,7 +623,7 @@ alignedMirOnlineANOVA <- function() {
     LC4aov <- getAlignedBlockedMirOnlineAOV(blockdefs=blockdefs)                      
     
     #looking into interaction below:
-    interaction.plot(LC4aov$target, LC4aov$block, LC4aov$angdev)
+    #interaction.plot(LC4aov$target, LC4aov$block, LC4aov$angdev)
     
     #learning curve ANOVA's
     # for ez, case ID should be a factor:
@@ -690,7 +690,7 @@ mirOnlineANOVA <- function() {
   LC4aov <- getMirrorBlockedMirOnlineAOV(blockdefs=blockdefs)                  
   
   #looking into interaction below:
-  interaction.plot(LC4aov$target, LC4aov$block, LC4aov$percentcomp)
+  #interaction.plot(LC4aov$target, LC4aov$block, LC4aov$percentcomp)
   
   #learning curve ANOVA's
   # for ez, case ID should be a factor:
@@ -813,7 +813,7 @@ RAEMirOnlineANOVA <- function() {
   LC4aov <- getRAEBlockedMirOnlineAOV(blockdefs=blockdefs)                      
   
   #looking into interaction below:
-  interaction.plot(LC4aov$target, LC4aov$block, LC4aov$angdev)
+  #interaction.plot(LC4aov$target, LC4aov$block, LC4aov$angdev)
   
   #learning curve ANOVA's
   # for ez, case ID should be a factor:
@@ -974,7 +974,7 @@ alignedMTMirOnlineANOVA <- function() {
   LC4aov <- getAlignedBlockedMTMirOnlineAOV(blockdefs=blockdefs)                      
   
   #looking into interaction below:
-  interaction.plot(LC4aov$target, LC4aov$block, LC4aov$movementtime)
+  #interaction.plot(LC4aov$target, LC4aov$block, LC4aov$movementtime)
   
   #learning curve ANOVA's
   # for ez, case ID should be a factor:
@@ -1048,7 +1048,7 @@ mirrorMTMirOnlineANOVA <- function() {
   LC4aov <- getAlignedBlockedMTMirOnlineAOV(blockdefs=blockdefs)               
   
   #looking into interaction below:
-  interaction.plot(LC4aov$target, LC4aov$block, LC4aov$movementtime)
+  #interaction.plot(LC4aov$target, LC4aov$block, LC4aov$movementtime)
   
   #learning curve ANOVA's
   # for ez, case ID should be a factor:
@@ -1126,7 +1126,7 @@ RAEMTMirOnlineANOVA <- function() {
   LC4aov <- getAlignedBlockedMTMirOnlineAOV(blockdefs=blockdefs)                   
   
   #looking into interaction below:
-  interaction.plot(LC4aov$target, LC4aov$block, LC4aov$movementtime)
+  #interaction.plot(LC4aov$target, LC4aov$block, LC4aov$movementtime)
   
   #learning curve ANOVA's
   # for ez, case ID should be a factor:
@@ -1275,7 +1275,7 @@ alignedPLMirOnlineANOVA <- function() {
   LC4aov <- getAlignedBlockedPLMirOnlineAOV(blockdefs=blockdefs)                      
   
   #looking into interaction below:
-  interaction.plot(LC4aov$target, LC4aov$block, LC4aov$pathlength)
+  #interaction.plot(LC4aov$target, LC4aov$block, LC4aov$pathlength)
   
   #learning curve ANOVA's
   # for ez, case ID should be a factor:
@@ -1298,7 +1298,7 @@ mirrorPLMirOnlineANOVA <- function() {
   LC4aov <- getAlignedBlockedPLMirOnlineAOV(blockdefs=blockdefs)               
   
   #looking into interaction below:
-  interaction.plot(LC4aov$target, LC4aov$block, LC4aov$pathlength)
+  #interaction.plot(LC4aov$target, LC4aov$block, LC4aov$pathlength)
   
   #learning curve ANOVA's
   # for ez, case ID should be a factor:
@@ -1372,7 +1372,7 @@ RAEPLMirOnlineANOVA <- function() {
   LC4aov <- getAlignedBlockedPLMirOnlineAOV(blockdefs=blockdefs)                   
   
   #looking into interaction below:
-  interaction.plot(LC4aov$target, LC4aov$block, LC4aov$pathlength)
+  #interaction.plot(LC4aov$target, LC4aov$block, LC4aov$pathlength)
   
   #learning curve ANOVA's
   # for ez, case ID should be a factor:
@@ -1778,7 +1778,7 @@ deviceAlignedMirOnlineANOVA <- function(groups = c('30','60')) {
     LC4aov <- getDeviceAlignedBlockedMirOnlineAOV(blockdefs=blockdefs)                      
     LC4aov <- LC4aov[which(LC4aov$target == group),]
     #looking into interaction below:
-    interaction.plot(LC4aov$device, LC4aov$block, LC4aov$angdev)
+    #interaction.plot(LC4aov$device, LC4aov$block, LC4aov$angdev)
     
     #learning curve ANOVA's
     # for ez, case ID should be a factor:
@@ -1923,7 +1923,7 @@ deviceMirrorMirOnlineANOVA <- function(groups = c('30','60')) {
     LC4aov <- getDeviceMirrorBlockedMirOnlineAOV(blockdefs=blockdefs)                      
     LC4aov <- LC4aov[which(LC4aov$target == group),]
     #looking into interaction below:
-    interaction.plot(LC4aov$device, LC4aov$block, LC4aov$percentcomp)
+    #interaction.plot(LC4aov$device, LC4aov$block, LC4aov$percentcomp)
     
     #learning curve ANOVA's
     # for ez, case ID should be a factor:
@@ -2107,7 +2107,7 @@ deviceRAEMirOnlineANOVA <- function(groups = c('30','60')) {
     LC4aov <- getDeviceRAEBlockedMirOnlineAOV(blockdefs=blockdefs)                      
     LC4aov <- LC4aov[which(LC4aov$target == group),]
     #looking into interaction below:
-    interaction.plot(LC4aov$device, LC4aov$block, LC4aov$angdev)
+    #interaction.plot(LC4aov$device, LC4aov$block, LC4aov$angdev)
     
     #learning curve ANOVA's
     # for ez, case ID should be a factor:
@@ -2186,7 +2186,7 @@ plotDeviceMirOnlineMT <- function(groups = c('30', '60'), devices = c('Mouse','T
     #NA to create empty plot
     # could maybe use plot.new() ?
     plot(NA, NA, xlim = c(0,131), ylim = c(-1,11), 
-         xlab = "Trial", ylab = "Movement time (s)", frame.plot = FALSE, #frame.plot takes away borders
+         xlab = "Trial", ylab = "Completion time (s)", frame.plot = FALSE, #frame.plot takes away borders
          main = sprintf("%s degree target location", group), xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
     abline(h = c(1), col = 8, lty = 2) #creates horizontal dashed lines through y =  0 and 30
     abline(v= c(20, 110), col = 8, lty = 2)
@@ -2326,7 +2326,7 @@ deviceAlignedMirOnlineMTANOVA <- function(groups = c('30','60')) {
     LC4aov <- getDeviceAlignedBlockedMirOnlineMTAOV(blockdefs=blockdefs)                      
     LC4aov <- LC4aov[which(LC4aov$target == group),]
     #looking into interaction below:
-    interaction.plot(LC4aov$device, LC4aov$block, LC4aov$movementtime)
+    #interaction.plot(LC4aov$device, LC4aov$block, LC4aov$movementtime)
     
     #learning curve ANOVA's
     # for ez, case ID should be a factor:
@@ -2403,7 +2403,7 @@ deviceMirrorMirOnlineMTANOVA <- function(groups = c('30','60')) {
     LC4aov <- getDeviceAlignedBlockedMirOnlineMTAOV(blockdefs=blockdefs)                      
     LC4aov <- LC4aov[which(LC4aov$target == group),]
     #looking into interaction below:
-    interaction.plot(LC4aov$device, LC4aov$block, LC4aov$movementtime)
+    #interaction.plot(LC4aov$device, LC4aov$block, LC4aov$movementtime)
     
     #learning curve ANOVA's
     # for ez, case ID should be a factor:
@@ -2477,7 +2477,7 @@ deviceRAEMirOnlineMTANOVA <- function(groups = c('30','60')) {
     LC4aov <- getDeviceAlignedBlockedMirOnlineMTAOV(blockdefs=blockdefs)                      
     LC4aov <- LC4aov[which(LC4aov$target == group),]
     #looking into interaction below:
-    interaction.plot(LC4aov$device, LC4aov$block, LC4aov$movementtime)
+    #interaction.plot(LC4aov$device, LC4aov$block, LC4aov$movementtime)
     
     #learning curve ANOVA's
     # for ez, case ID should be a factor:
@@ -2751,7 +2751,7 @@ deviceAlignedMirOnlinePLANOVA <- function(groups = c('30','60')) {
     LC4aov <- getDeviceAlignedBlockedMirOnlinePLAOV(blockdefs=blockdefs)                      
     LC4aov <- LC4aov[which(LC4aov$target == group),]
     #looking into interaction below:
-    interaction.plot(LC4aov$device, LC4aov$block, LC4aov$pathlength)
+    #interaction.plot(LC4aov$device, LC4aov$block, LC4aov$pathlength)
     
     #learning curve ANOVA's
     # for ez, case ID should be a factor:
@@ -2771,7 +2771,7 @@ deviceMirrorMirOnlinePLANOVA <- function(groups = c('30','60')) {
     LC4aov <- getDeviceAlignedBlockedMirOnlinePLAOV(blockdefs=blockdefs)                      
     LC4aov <- LC4aov[which(LC4aov$target == group),]
     #looking into interaction below:
-    interaction.plot(LC4aov$device, LC4aov$block, LC4aov$pathlength)
+    #interaction.plot(LC4aov$device, LC4aov$block, LC4aov$pathlength)
     
     #learning curve ANOVA's
     # for ez, case ID should be a factor:
@@ -2791,7 +2791,7 @@ deviceRAEMirOnlinePLANOVA <- function(groups = c('30','60')) {
     LC4aov <- getDeviceAlignedBlockedMirOnlinePLAOV(blockdefs=blockdefs)                      
     LC4aov <- LC4aov[which(LC4aov$target == group),]
     #looking into interaction below:
-    interaction.plot(LC4aov$device, LC4aov$block, LC4aov$pathlength)
+    #interaction.plot(LC4aov$device, LC4aov$block, LC4aov$pathlength)
     
     #learning curve ANOVA's
     # for ez, case ID should be a factor:
@@ -3045,7 +3045,7 @@ sexAlignedMirOnlineANOVA <- function(groups = c('30','60')) {
     LC4aov <- getSexAlignedBlockedMirOnlineAOV(blockdefs=blockdefs)                      
     LC4aov <- LC4aov[which(LC4aov$target == group),]
     #looking into interaction below:
-    interaction.plot(LC4aov$sex, LC4aov$block, LC4aov$angdev)
+    #interaction.plot(LC4aov$sex, LC4aov$block, LC4aov$angdev)
     
     #learning curve ANOVA's
     # for ez, case ID should be a factor:
@@ -3188,7 +3188,7 @@ sexMirrorMirOnlineANOVA <- function(groups = c('30','60')) {
     LC4aov <- getSexMirrorBlockedMirOnlineAOV(blockdefs=blockdefs)                      
     LC4aov <- LC4aov[which(LC4aov$target == group),]
     #looking into interaction below:
-    interaction.plot(LC4aov$sex, LC4aov$block, LC4aov$percentcomp)
+    #interaction.plot(LC4aov$sex, LC4aov$block, LC4aov$percentcomp)
     
     #learning curve ANOVA's
     # for ez, case ID should be a factor:
@@ -3372,7 +3372,7 @@ sexRAEMirOnlineANOVA <- function(groups = c('30','60')) {
     LC4aov <- getSexRAEBlockedMirOnlineAOV(blockdefs=blockdefs)                      
     LC4aov <- LC4aov[which(LC4aov$target == group),]
     #looking into interaction below:
-    interaction.plot(LC4aov$sex, LC4aov$block, LC4aov$angdev)
+    #interaction.plot(LC4aov$sex, LC4aov$block, LC4aov$angdev)
     
     #learning curve ANOVA's
     # for ez, case ID should be a factor:
@@ -3453,7 +3453,7 @@ plotSexMirOnlineMT <- function(groups = c('30', '60'), sexes = c('Male','Female'
     #NA to create empty plot
     # could maybe use plot.new() ?
     plot(NA, NA, xlim = c(0,131), ylim = c(-1,11), 
-         xlab = "Trial", ylab = "Movement time (s)", frame.plot = FALSE, #frame.plot takes away borders
+         xlab = "Trial", ylab = "Completion time (s)", frame.plot = FALSE, #frame.plot takes away borders
          main = sprintf("%s degree target location", group), xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
     abline(h = c(1), col = 8, lty = 2) #creates horizontal dashed lines through y =  0 and 30
     abline(v= c(20, 110), col = 8, lty = 2)
@@ -3593,7 +3593,7 @@ sexAlignedMirOnlineMTANOVA <- function(groups = c('30','60')) {
     LC4aov <- getSexAlignedBlockedMirOnlineMTAOV(blockdefs=blockdefs)                      
     LC4aov <- LC4aov[which(LC4aov$target == group),]
     #looking into interaction below:
-    interaction.plot(LC4aov$sex, LC4aov$block, LC4aov$movementtime)
+    #interaction.plot(LC4aov$sex, LC4aov$block, LC4aov$movementtime)
     
     #learning curve ANOVA's
     # for ez, case ID should be a factor:
@@ -3614,7 +3614,7 @@ sexMirrorMirOnlineMTANOVA <- function(groups = c('30','60')) {
     LC4aov <- getSexAlignedBlockedMirOnlineMTAOV(blockdefs=blockdefs)                      
     LC4aov <- LC4aov[which(LC4aov$target == group),]
     #looking into interaction below:
-    interaction.plot(LC4aov$sex, LC4aov$block, LC4aov$movementtime)
+    #interaction.plot(LC4aov$sex, LC4aov$block, LC4aov$movementtime)
     
     #learning curve ANOVA's
     # for ez, case ID should be a factor:
@@ -3746,7 +3746,7 @@ sexRAEMirOnlineMTANOVA <- function(groups = c('30','60')) {
     LC4aov <- getSexAlignedBlockedMirOnlineMTAOV(blockdefs=blockdefs)                      
     LC4aov <- LC4aov[which(LC4aov$target == group),]
     #looking into interaction below:
-    interaction.plot(LC4aov$sex, LC4aov$block, LC4aov$movementtime)
+    #interaction.plot(LC4aov$sex, LC4aov$block, LC4aov$movementtime)
     
     #learning curve ANOVA's
     # for ez, case ID should be a factor:
@@ -4023,7 +4023,7 @@ sexAlignedMirOnlinePLANOVA <- function(groups = c('30','60')) {
     LC4aov <- getSexAlignedBlockedMirOnlinePLAOV(blockdefs=blockdefs)                      
     LC4aov <- LC4aov[which(LC4aov$target == group),]
     #looking into interaction below:
-    interaction.plot(LC4aov$sex, LC4aov$block, LC4aov$pathlength)
+    #interaction.plot(LC4aov$sex, LC4aov$block, LC4aov$pathlength)
     
     #learning curve ANOVA's
     # for ez, case ID should be a factor:
@@ -4042,7 +4042,7 @@ sexMirrorMirOnlinePLANOVA <- function(groups = c('30','60')) {
     LC4aov <- getSexAlignedBlockedMirOnlinePLAOV(blockdefs=blockdefs)                      
     LC4aov <- LC4aov[which(LC4aov$target == group),]
     #looking into interaction below:
-    interaction.plot(LC4aov$sex, LC4aov$block, LC4aov$pathlength)
+    #interaction.plot(LC4aov$sex, LC4aov$block, LC4aov$pathlength)
     
     #learning curve ANOVA's
     # for ez, case ID should be a factor:
@@ -4061,7 +4061,7 @@ sexRAEMirOnlinePLANOVA <- function(groups = c('30','60')) {
     LC4aov <- getSexAlignedBlockedMirOnlinePLAOV(blockdefs=blockdefs)                      
     LC4aov <- LC4aov[which(LC4aov$target == group),]
     #looking into interaction below:
-    interaction.plot(LC4aov$sex, LC4aov$block, LC4aov$pathlength)
+    #interaction.plot(LC4aov$sex, LC4aov$block, LC4aov$pathlength)
     
     #learning curve ANOVA's
     # for ez, case ID should be a factor:

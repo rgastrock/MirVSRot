@@ -625,7 +625,7 @@ plotMTGen <- function(groups = c('far', 'near'), target='inline') {
   #NA to create empty plot
   # could maybe use plot.new() ?
   plot(NA, NA, xlim = c(0,121), ylim = c(0,3.5), 
-       xlab = "Trial", ylab = "Movement time (s)", frame.plot = FALSE, #frame.plot takes away borders
+       xlab = "Trial", ylab = "Completion time (s)", frame.plot = FALSE, #frame.plot takes away borders
        main = "Movement time across trials", xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
   lim <- par('usr')
   rect(81, lim[3]-1, 120, lim[4]+1, border = "#ededed", col = "#ededed") #xleft, ybottom, x right, ytop; light grey hex code

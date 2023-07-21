@@ -1088,7 +1088,7 @@ plotCircularAllTasks <- function(groups = c('30', '60'), target='inline', set) {
     }
     
     #add legend
-    legend(80,0,legend=c('30° target','60° target'),
+    legend(80,30,legend=c('30° target','60° target'),
            col=c(colourscheme[['30']][['S']],colourscheme[['60']][['S']]),
            lty=1,bty='n',cex=1,lwd=2)
     
@@ -1190,7 +1190,7 @@ plotCircularAllTasks <- function(groups = c('30', '60'), target='inline', set) {
     }
     
     #add legend
-    legend(80,0,legend=c('30° target','60° target'),
+    legend(80,30,legend=c('30° target','60° target'),
            col=c(colourscheme[['30']][['S']],colourscheme[['60']][['S']]),
            lty=1,bty='n',cex=1,lwd=2)
     
@@ -2443,11 +2443,12 @@ getParticipantMoveThrough <- function(group,set){
 
 plotParticipantMoveThrough <- function(groups=c('30','60'),set){
   
-  if(set == 'fa2020'){
-    pdf("doc/fig/mirrorreversal-fall/ParticipantMoveThrough.pdf", width=11, pointsize = 8.5)
-  } else if (set == 'su2020'){
-    pdf("doc/fig/mReversalNewAlpha3-master/ParticipantMoveThrough.pdf")
-  }
+  #uncomment to save as pdfs
+  # if(set == 'fa2020'){
+  #   pdf("doc/fig/mirrorreversal-fall/ParticipantMoveThrough.pdf", width=11, pointsize = 8.5)
+  # } else if (set == 'su2020'){
+  #   pdf("doc/fig/mReversalNewAlpha3-master/ParticipantMoveThrough.pdf")
+  # }
   
   for(group in groups){
     data <- getParticipantMoveThrough(group=group, set=set)
@@ -2457,7 +2458,7 @@ plotParticipantMoveThrough <- function(groups=c('30','60'),set){
     #axis(1, at = c(1, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90))
     #axis(2, at = c(0, 2, 4, 6, 8, 10, 20, 30, 60)) #tick marks for y axis
   }
-  dev.off()
+  #dev.off()
   
 }
 
@@ -2558,7 +2559,7 @@ getMovedGroupCircularConfInt <- function(groups = c('30', '60'), set, moved){
       if(length(unique(circ_subdat)) == 1){ #deal with trials with no data at all
         citrial <- as.numeric(c(NA,NA,NA))
       } else{
-        citrial <- getCircularConfidenceInterval(data = circ_subdat)
+        citrial <- getAngularReachDevsCI(data = circ_subdat, group=group)
         citrial <- as.numeric(citrial)
       }
       
@@ -2615,7 +2616,7 @@ getAlignedMovedGroupCircularConfInt <- function(groups = c('30', '60'), set, mov
       if(length(unique(circ_subdat)) == 1){ #deal with trials with no data at all
         citrial <- as.numeric(c(NA,NA,NA))
       } else{
-        citrial <- getCircularConfidenceInterval(data = circ_subdat)
+        citrial <- getAngularReachDevsCI(data = circ_subdat, group=group)
         citrial <- as.numeric(citrial)
       }
       
@@ -2671,7 +2672,7 @@ getRAEMovedGroupCircularConfInt <- function(groups = c('30', '60'), set, moved){
       if(length(unique(circ_subdat)) == 1){ #deal with trials with no data at all
         citrial <- as.numeric(c(NA,NA,NA))
       } else{
-        citrial <- getCircularConfidenceInterval(data = circ_subdat)
+        citrial <- getAngularReachDevsCI(data = circ_subdat, group=group)
         citrial <- as.numeric(citrial)
       }
       
@@ -2905,7 +2906,7 @@ plotMoveThroughAllTasks <- function(groups = c('30', '60'), moves = c('0','1'), 
     }
     
     #add legend
-    legend(80,0,legend=c('without exploration','with exploration'),
+    legend(80,30,legend=c('without exploration','with exploration'),
            col=c(colourscheme[['0']][['S']],colourscheme[['1']][['S']]),
            lty=1,bty='n',cex=1,lwd=2)
     
@@ -3015,7 +3016,7 @@ plotMoveThroughAllTasksSU <- function(groups = c('30', '60'), moves = c('0','1')
     }
     
     #add legend
-    legend(80,0,legend=c('without exploration','with exploration'),
+    legend(80,30,legend=c('without exploration','with exploration'),
            col=c(colourscheme[['0']][['S']],colourscheme[['1']][['S']]),
            lty=1,bty='n',cex=1,lwd=2)
     
@@ -3233,7 +3234,7 @@ plotAllTasksMT <- function(groups = c('30', '60'), target='inline', set) {
     #NA to create empty plot
     # could maybe use plot.new() ?
     plot(NA, NA, xlim = c(0,131), ylim = c(-1,11), 
-         xlab = "Trial", ylab = "Movement time (s)", frame.plot = FALSE, #frame.plot takes away borders
+         xlab = "Trial", ylab = "Completion time (s)", frame.plot = FALSE, #frame.plot takes away borders
          main = "", xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
     abline(h = c(1), col = 8, lty = 2) #creates horizontal dashed lines through y =  0 and 30
     abline(v= c(20, 110), col = 8, lty = 2)
@@ -3318,7 +3319,7 @@ plotAllTasksMT <- function(groups = c('30', '60'), target='inline', set) {
     #NA to create empty plot
     # could maybe use plot.new() ?
     plot(NA, NA, xlim = c(0,131), ylim = c(-1,11), 
-         xlab = "Trial", ylab = "Movement time (s)", frame.plot = FALSE, #frame.plot takes away borders
+         xlab = "Trial", ylab = "Completion time (s)", frame.plot = FALSE, #frame.plot takes away borders
          main = "", xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
     abline(h = c(1), col = 8, lty = 2) #creates horizontal dashed lines through y =  0 and 30
     abline(v= c(20, 110), col = 8, lty = 2)

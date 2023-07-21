@@ -487,7 +487,7 @@ plotDeviceAllTasks <- function(groups = c('30', '60'), devices = c('Mouse','Trac
     }
     
     #add legend
-    legend(80,0,legend=c('Mouse','Trackpad'),
+    legend(80,30,legend=c('Mouse','Trackpad'),
            col=c(colourscheme[['Mouse']][['S']],colourscheme[['Trackpad']][['S']]),
            lty=1,bty='n',cex=1,lwd=2)
     
@@ -597,7 +597,7 @@ plotDeviceAllTasksSU <- function(groups = c('30', '60'), devices = c('Mouse','Tr
     }
     
     #add legend
-    legend(80,0,legend=c('Mouse','Trackpad'),
+    legend(80,30,legend=c('Mouse','Trackpad'),
            col=c(colourscheme[['Mouse']][['S']],colourscheme[['Trackpad']][['S']]),
            lty=1,bty='n',cex=1,lwd=2)
     
@@ -704,7 +704,7 @@ plotDeviceMT <- function(groups = c('30', '60'), devices = c('Mouse','Trackpad')
     #NA to create empty plot
     # could maybe use plot.new() ?
     plot(NA, NA, xlim = c(0,131), ylim = c(-1,11), 
-         xlab = "Trial", ylab = "Movement time (s)", frame.plot = FALSE, #frame.plot takes away borders
+         xlab = "Trial", ylab = "Completion time (s)", frame.plot = FALSE, #frame.plot takes away borders
          main = sprintf("%s degree target location", group), xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
     abline(h = c(1), col = 8, lty = 2) #creates horizontal dashed lines through y =  0 and 30
     abline(v= c(20, 110), col = 8, lty = 2)
@@ -769,7 +769,7 @@ plotDeviceMT <- function(groups = c('30', '60'), devices = c('Mouse','Trackpad')
     }
     
     #add legend
-    legend(80,0.5,legend=c('Mouse','Trackpad'),
+    legend(80,1,legend=c('Mouse','Trackpad'),
            col=c(colourscheme[['Mouse']][['S']],colourscheme[['Trackpad']][['S']]),
            lty=1,bty='n',cex=1,lwd=2)
     
@@ -797,7 +797,7 @@ plotDeviceMTSU <- function(groups = c('30', '60'), devices = c('Mouse','Trackpad
     #NA to create empty plot
     # could maybe use plot.new() ?
     plot(NA, NA, xlim = c(0,131), ylim = c(-1,11), 
-         xlab = "Trial", ylab = "Movement time (s)", frame.plot = FALSE, #frame.plot takes away borders
+         xlab = "Trial", ylab = "Completion time (s)", frame.plot = FALSE, #frame.plot takes away borders
          main = sprintf("%s degree target location", group), xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
     abline(h = c(1), col = 8, lty = 2) #creates horizontal dashed lines through y =  0 and 30
     abline(v= c(20, 110), col = 8, lty = 2)
@@ -881,7 +881,7 @@ plotDeviceMTSU <- function(groups = c('30', '60'), devices = c('Mouse','Trackpad
       lines(x = x, y = na.omit(mid),col=col,lty=1)
     }
     #add legend
-    legend(80,0.5,legend=c('Mouse','Trackpad'),
+    legend(80,1,legend=c('Mouse','Trackpad'),
            col=c(colourscheme[['Mouse']][['S']],colourscheme[['Trackpad']][['S']]),
            lty=1,bty='n',cex=1,lwd=2)
     
@@ -1053,7 +1053,7 @@ plotDevicePL <- function(groups = c('30', '60'), devices = c('Mouse','Trackpad')
     }
     
     #add legend
-    legend(80,0.5,legend=c('Mouse','Trackpad'),
+    legend(80,1,legend=c('Mouse','Trackpad'),
            col=c(colourscheme[['Mouse']][['S']],colourscheme[['Trackpad']][['S']]),
            lty=1,bty='n',cex=1,lwd=2)
     
@@ -1165,7 +1165,7 @@ plotDevicePLSU <- function(groups = c('30', '60'), devices = c('Mouse','Trackpad
       lines(x = x, y = na.omit(mid),col=col,lty=1)
     }
     #add legend
-    legend(80,0.5,legend=c('Mouse','Trackpad'),
+    legend(80,1,legend=c('Mouse','Trackpad'),
            col=c(colourscheme[['Mouse']][['S']],colourscheme[['Trackpad']][['S']]),
            lty=1,bty='n',cex=1,lwd=2)
     
@@ -1448,7 +1448,7 @@ plotSexAllTasks <- function(groups = c('30', '60'), sexes = c('Male','Female'), 
     }
     
     #add legend
-    legend(80,0,legend=c('Male','Female'),
+    legend(80,30,legend=c('Male','Female'),
            col=c(colourscheme[['Male']][['S']],colourscheme[['Female']][['S']]),
            lty=1,bty='n',cex=1,lwd=2)
     
@@ -1558,7 +1558,7 @@ plotSexAllTasksSU <- function(groups = c('30', '60'), sexes = c('Male','Female')
     }
     
     #add legend
-    legend(80,0,legend=c('Male','Female'),
+    legend(80,30,legend=c('Male','Female'),
            col=c(colourscheme[['Male']][['S']],colourscheme[['Female']][['S']]),
            lty=1,bty='n',cex=1,lwd=2)
     
@@ -1665,7 +1665,7 @@ plotSexMT <- function(groups = c('30', '60'), sexes = c('Male','Female'), target
     #NA to create empty plot
     # could maybe use plot.new() ?
     plot(NA, NA, xlim = c(0,131), ylim = c(-1,11), 
-         xlab = "Trial", ylab = "Movement time (s)", frame.plot = FALSE, #frame.plot takes away borders
+         xlab = "Trial", ylab = "Completion time (s)", frame.plot = FALSE, #frame.plot takes away borders
          main = sprintf("%s degree target location", group), xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
     abline(h = c(1), col = 8, lty = 2) #creates horizontal dashed lines through y =  0 and 30
     abline(v= c(20, 110), col = 8, lty = 2)
@@ -1730,7 +1730,7 @@ plotSexMT <- function(groups = c('30', '60'), sexes = c('Male','Female'), target
     }
     
     #add legend
-    legend(80,0.5,legend=c('Male','Female'),
+    legend(80,1,legend=c('Male','Female'),
            col=c(colourscheme[['Male']][['S']],colourscheme[['Female']][['S']]),
            lty=1,bty='n',cex=1,lwd=2)
     
@@ -1758,7 +1758,7 @@ plotSexMTSU <- function(groups = c('30', '60'), sexes = c('Male','Female'), targ
     #NA to create empty plot
     # could maybe use plot.new() ?
     plot(NA, NA, xlim = c(0,131), ylim = c(-1,11), 
-         xlab = "Trial", ylab = "Movement time (s)", frame.plot = FALSE, #frame.plot takes away borders
+         xlab = "Trial", ylab = "Completion time (s)", frame.plot = FALSE, #frame.plot takes away borders
          main = sprintf("%s degree target location", group), xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
     abline(h = c(1), col = 8, lty = 2) #creates horizontal dashed lines through y =  0 and 30
     abline(v= c(20, 110), col = 8, lty = 2)
@@ -1842,7 +1842,7 @@ plotSexMTSU <- function(groups = c('30', '60'), sexes = c('Male','Female'), targ
       lines(x = x, y = na.omit(mid),col=col,lty=1)
     }
     #add legend
-    legend(80,0.5,legend=c('Male','Female'),
+    legend(80,1,legend=c('Male','Female'),
            col=c(colourscheme[['Male']][['S']],colourscheme[['Female']][['S']]),
            lty=1,bty='n',cex=1,lwd=2)
     
@@ -2014,7 +2014,7 @@ plotSexPL <- function(groups = c('30', '60'), sexes = c('Male','Female'), target
     }
     
     #add legend
-    legend(80,0.5,legend=c('Male','Female'),
+    legend(80,1,legend=c('Male','Female'),
            col=c(colourscheme[['Male']][['S']],colourscheme[['Female']][['S']]),
            lty=1,bty='n',cex=1,lwd=2)
     
@@ -2126,7 +2126,7 @@ plotSexPLSU <- function(groups = c('30', '60'), sexes = c('Male','Female'), targ
       lines(x = x, y = na.omit(mid),col=col,lty=1)
     }
     #add legend
-    legend(80,0.5,legend=c('Male','Female'),
+    legend(80,1,legend=c('Male','Female'),
            col=c(colourscheme[['Male']][['S']],colourscheme[['Female']][['S']]),
            lty=1,bty='n',cex=1,lwd=2)
     
