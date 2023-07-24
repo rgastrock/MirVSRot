@@ -1802,6 +1802,7 @@ getLearningCurvesMSE <- function(perturb = c('ROT', 'MIR'), group = 'noninstruct
     k <- c()
     L <- c()
     mse_log <- c()
+    id <- c()
     
     if(ptype == 'ROT'){
       data <- getROTGroupLearningCurves(group = group, maxppid = maxppid, location = location)
@@ -1811,6 +1812,8 @@ getLearningCurvesMSE <- function(perturb = c('ROT', 'MIR'), group = 'noninstruct
     
     subdat <- data[,2:ncol(data)]
     for(icol in c(1:ncol(subdat))){
+      ppid <- icol - 1
+      id <- c(id, ppid)
       ppdat <- subdat[,icol]
       par_step <- stepFunctionFit(signal = ppdat)
       pp_mse_step <- stepFunctionMSE(par=par_step, signal=ppdat)
@@ -1837,7 +1840,7 @@ getLearningCurvesMSE <- function(perturb = c('ROT', 'MIR'), group = 'noninstruct
       mse_log <- c(mse_log, pp_mse_log)
     }
     
-    ndat <- data.frame(step, asymptote, mse_step, lambda, N0, mse_expl, x0, k, L, mse_log)
+    ndat <- data.frame(id, step, asymptote, mse_step, lambda, N0, mse_expl, x0, k, L, mse_log)
     write.csv(ndat, file=sprintf('data/pilot/%s_%s_MSE_LearningCurves.csv',ptype, group), quote=F, row.names=F)
   }
 }
@@ -1882,9 +1885,11 @@ getLambdaLearningCurvesTTest <- function(){
   subdat2 <- MIRdata$lambda
   
   cat('Frequentist t-test (Rotation vs. Mirror): \n')
-  print(t.test(subdat1, subdat2))
+  print(t.test(subdat1, subdat2, paired = TRUE))
+  cat('Effect Size - Cohen d:\n')
+  print(cohensD(subdat1, subdat2, method = 'paired'))
   cat('Bayesian t-test (Rotation vs. Mirror): \n')
-  print(ttestBF(subdat1, subdat2))
+  print(ttestBF(subdat1, subdat2, paired = TRUE))
   
 }
 
@@ -1897,9 +1902,11 @@ getAsymptoteLearningCurvesTTest <- function(){
   subdat2 <- MIRdata$N0
   
   cat('Frequentist t-test (Rotation vs. Mirror): \n')
-  print(t.test(subdat1, subdat2))
+  print(t.test(subdat1, subdat2, paired = TRUE))
+  cat('Effect Size - Cohen d:\n')
+  print(cohensD(subdat1, subdat2, method = 'paired'))
   cat('Bayesian t-test (Rotation vs. Mirror): \n')
-  print(ttestBF(subdat1, subdat2))
+  print(ttestBF(subdat1, subdat2, paired = TRUE))
   
 }
 
@@ -1996,9 +2003,11 @@ getLambdaLearningCurvesWONearTTest <- function(){
   subdat2 <- MIRdata$lambda
   
   cat('Frequentist t-test (Rotation vs. Mirror): \n')
-  print(t.test(subdat1, subdat2))
+  print(t.test(subdat1, subdat2, paired = TRUE))
+  cat('Effect Size - Cohen d:\n')
+  print(cohensD(subdat1, subdat2, method = 'paired'))
   cat('Bayesian t-test (Rotation vs. Mirror): \n')
-  print(ttestBF(subdat1, subdat2))
+  print(ttestBF(subdat1, subdat2, paired = TRUE))
   
 }
 
@@ -2011,8 +2020,10 @@ getAsymptoteLearningCurvesWONearTTest <- function(){
   subdat2 <- MIRdata$N0
   
   cat('Frequentist t-test (Rotation vs. Mirror): \n')
-  print(t.test(subdat1, subdat2))
+  print(t.test(subdat1, subdat2, paired = TRUE))
+  cat('Effect Size - Cohen d:\n')
+  print(cohensD(subdat1, subdat2, method = 'paired'))
   cat('Bayesian t-test (Rotation vs. Mirror): \n')
-  print(ttestBF(subdat1, subdat2))
+  print(ttestBF(subdat1, subdat2, paired = TRUE))
   
 }

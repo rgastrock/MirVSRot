@@ -615,16 +615,16 @@ PLt.test <- function(group) {
   cat('Aligned (last block) compared to Rotation (first block):\n')
   print(t.test(ALdat$compensation, ROTdat$compensation, paired = TRUE))
   cat('Effect Size - Cohen d:\n')
-  print(cohensD(ALdat$compensation, ROTdat$compensation))
+  print(cohensD(ALdat$compensation, ROTdat$compensation, method = 'paired'))
   cat('Bayesian t-test Aligned (last block) compared to Rotation (first block):\n')
-  print(ttestBF(ALdat$compensation, ROTdat$compensation))
+  print(ttestBF(ALdat$compensation, ROTdat$compensation, paired = TRUE))
   
   cat('Aligned (last block) compared to Mirror (first block):\n')
   print(t.test(ALdat$compensation, MIRdat$compensation, paired = TRUE))
   cat('Effect Size - Cohen d:\n')
-  print(cohensD(ALdat$compensation, MIRdat$compensation))
+  print(cohensD(ALdat$compensation, MIRdat$compensation, method = 'paired'))
   cat('Bayesian t-test Aligned (last block) compared to Mirror (first block):\n')
-  print(ttestBF(ALdat$compensation, MIRdat$compensation))
+  print(ttestBF(ALdat$compensation, MIRdat$compensation, paired = TRUE))
   
   #I add a comparison of last block of ROT and MIR compared to aligned, and ROTWASH and MIRWASH last blocks.
   ROTdatlast <- LC4test[which(LC4test$block == 'last' & LC4test$perturbtype == 'ROT'),]
@@ -633,16 +633,16 @@ PLt.test <- function(group) {
   cat('Aligned (last block) compared to Rotation (last block):\n')
   print(t.test(ALdat$compensation, ROTdatlast$compensation, paired = TRUE))
   cat('Effect Size - Cohen d:\n')
-  print(cohensD(ALdat$compensation, ROTdatlast$compensation))
+  print(cohensD(ALdat$compensation, ROTdatlast$compensation, method = 'paired'))
   cat('Bayesian t-test Aligned (last block) compared to Rotation (last block):\n')
-  print(ttestBF(ALdat$compensation, ROTdatlast$compensation))
+  print(ttestBF(ALdat$compensation, ROTdatlast$compensation, paired = TRUE))
   
   cat('Aligned (last block) compared to Mirror (last block):\n')
   print(t.test(ALdat$compensation, MIRdatlast$compensation, paired = TRUE))
   cat('Effect Size - Cohen d:\n')
-  print(cohensD(ALdat$compensation, MIRdatlast$compensation))
+  print(cohensD(ALdat$compensation, MIRdatlast$compensation, method = 'paired'))
   cat('Bayesian t-test Aligned (last block) compared to Mirror (last block):\n')
-  print(ttestBF(ALdat$compensation, MIRdatlast$compensation))
+  print(ttestBF(ALdat$compensation, MIRdatlast$compensation, paired = TRUE))
   
 }
 

@@ -1728,23 +1728,23 @@ RAEt.test <- function(group) {
   cat('Aligned (last block) compared to Rotation Washout (first block):\n')
   print(t.test(ALdat$compensation, ROTdat$compensation, paired = TRUE))
   cat('Effect Size - Cohen d:\n')
-  print(cohensD(ALdat$compensation, ROTdat$compensation))
+  print(cohensD(ALdat$compensation, ROTdat$compensation, method = 'paired'))
   cat('Bayesian t-test Aligned (last block) compared to Rotation Washout (first block):\n')
-  print(ttestBF(ALdat$compensation, ROTdat$compensation))
+  print(ttestBF(ALdat$compensation, ROTdat$compensation, paired = TRUE))
   
   cat('Aligned (last block) compared to Mirror Washout (first block):\n')
   print(t.test(ALdat$compensation, MIRdat$compensation, paired = TRUE))
   cat('Effect Size - Cohen d:\n')
-  print(cohensD(ALdat$compensation, MIRdat$compensation))
+  print(cohensD(ALdat$compensation, MIRdat$compensation, method = 'paired'))
   cat('Bayesian t-test Aligned (last block) compared to Mirror Washout (first block):\n')
-  print(ttestBF(ALdat$compensation, MIRdat$compensation))
+  print(ttestBF(ALdat$compensation, MIRdat$compensation, paired = TRUE))
   
-  cat('Rotation Washout (first block) compared to Mirror Washout (first block):\n')
-  print(t.test(ROTdat$compensation, MIRdat$compensation, paired = TRUE))
-  cat('Effect Size - Cohen d:\n')
-  print(cohensD(ROTdat$compensation, MIRdat$compensation))
-  cat('Bayesian t-test Rotation Washout (first block) compared to Mirror Washout (first block):\n')
-  print(ttestBF(ROTdat$compensation, MIRdat$compensation))
+  # cat('Rotation Washout (first block) compared to Mirror Washout (first block):\n')
+  # print(t.test(ROTdat$compensation, MIRdat$compensation, paired = TRUE))
+  # cat('Effect Size - Cohen d:\n')
+  # print(cohensD(ROTdat$compensation, MIRdat$compensation, method = 'paired'))
+  # cat('Bayesian t-test Rotation Washout (first block) compared to Mirror Washout (first block):\n')
+  # print(ttestBF(ROTdat$compensation, MIRdat$compensation, paired = TRUE))
   
 }
 
@@ -1795,17 +1795,18 @@ RAEComparisonsAllBlocks <- function(group,method='bonferroni'){
   secondAOV <- aov_ez("participant","compensation",LC4aov,within=c("perturbtype","block"))
   #based on cellmeans, confidence intervals and plots give us an idea of what contrasts we want to compare
   
-  MIR_firstvsMIR_second  <- c(1,0,-1,0,0,0)
-  MIR_firstvsMIR_last    <- c(1,0,0,0,-1,0)
-  ROT_firstvsROT_second  <- c(0,1,0,-1,0,0)
-  ROT_firstvsROT_last    <- c(0,1,0,0,0,-1)
+  # MIR_firstvsMIR_second  <- c(1,0,-1,0,0,0)
+  # MIR_firstvsMIR_last    <- c(1,0,0,0,-1,0)
+  # ROT_firstvsROT_second  <- c(0,1,0,-1,0,0)
+  # ROT_firstvsROT_last    <- c(0,1,0,0,0,-1)
   ROT_firstvsMIR_first   <- c(1,-1,0,0,0,0)
   ROT_secondvsMIR_second <- c(0,0,1,-1,0,0)
   ROT_lastvsMIR_last     <- c(0,0,0,0,1,-1)
   
-  contrastList <- list('Block1: MIR vs. Block2: MIR'=MIR_firstvsMIR_second, 'Block1: MIR vs. Block3: MIR'=MIR_firstvsMIR_last,
-                       'Block1: ROT vs. Block2: ROT'=ROT_firstvsROT_second, 'Block1: ROT vs. Block3: ROT'=ROT_firstvsROT_last,
-                       'Block1: ROT vs. MIR'=ROT_firstvsMIR_first, 'Block2: ROT vs. MIR'=ROT_secondvsMIR_second, 'Block3: ROT vs. MIR'=ROT_lastvsMIR_last)
+  # contrastList <- list('Block1: MIR vs. Block2: MIR'=MIR_firstvsMIR_second, 'Block1: MIR vs. Block3: MIR'=MIR_firstvsMIR_last,
+  #                      'Block1: ROT vs. Block2: ROT'=ROT_firstvsROT_second, 'Block1: ROT vs. Block3: ROT'=ROT_firstvsROT_last,
+  #                      'Block1: ROT vs. MIR'=ROT_firstvsMIR_first, 'Block2: ROT vs. MIR'=ROT_secondvsMIR_second, 'Block3: ROT vs. MIR'=ROT_lastvsMIR_last)
+  contrastList <- list('Block1: ROT vs. MIR'=ROT_firstvsMIR_first, 'Block2: ROT vs. MIR'=ROT_secondvsMIR_second, 'Block3: ROT vs. MIR'=ROT_lastvsMIR_last)
   
   comparisons<- contrast(emmeans(secondAOV,specs=c('perturbtype','block')), contrastList, adjust=method)
   
@@ -1882,26 +1883,26 @@ reachaftereffectsBayesfollowup <- function(group) {
   ROTlast <- LC4aov[which(LC4aov$block == 'last' & LC4aov$perturbtype == 'ROT'),]
   
   #mir first vs mir second
-  cat('Bayesian t-test Mirror block 1 vs block 2:\n')
-  print(ttestBF(MIRfirst$compensation, MIRsecond$compensation))
-  #mir first vs mir last
-  cat('Bayesian t-test Mirror block 1 vs last block:\n')
-  print(ttestBF(MIRfirst$compensation, MIRlast$compensation))
-  #rot first vs rot second
-  cat('Bayesian t-test Rotation block 1 vs block 2:\n')
-  print(ttestBF(ROTfirst$compensation, ROTsecond$compensation))
-  #rot first vs rot last
-  cat('Bayesian t-test Rotation block 1 vs last block:\n')
-  print(ttestBF(ROTfirst$compensation, ROTlast$compensation))
+  # cat('Bayesian t-test Mirror block 1 vs block 2:\n')
+  # print(ttestBF(MIRfirst$compensation, MIRsecond$compensation, paired = TRUE))
+  # #mir first vs mir last
+  # cat('Bayesian t-test Mirror block 1 vs last block:\n')
+  # print(ttestBF(MIRfirst$compensation, MIRlast$compensation, paired = TRUE))
+  # #rot first vs rot second
+  # cat('Bayesian t-test Rotation block 1 vs block 2:\n')
+  # print(ttestBF(ROTfirst$compensation, ROTsecond$compensation, paired = TRUE))
+  # #rot first vs rot last
+  # cat('Bayesian t-test Rotation block 1 vs last block:\n')
+  # print(ttestBF(ROTfirst$compensation, ROTlast$compensation, paired = TRUE))
   #rot first vs mir first
   cat('Bayesian t-test Rotation block 1 vs Mirror block 1:\n')
-  print(ttestBF(ROTfirst$compensation, MIRfirst$compensation))
+  print(ttestBF(ROTfirst$compensation, MIRfirst$compensation, paired = TRUE))
   #rot second vs mir second
   cat('Bayesian t-test Rotation block 2 vs Mirror block 2:\n')
-  print(ttestBF(ROTsecond$compensation, MIRsecond$compensation))
+  print(ttestBF(ROTsecond$compensation, MIRsecond$compensation, paired = TRUE))
   #rot last vs mir last
   cat('Bayesian t-test Rotation  last block vs Mirror  last block:\n')
-  print(ttestBF(ROTlast$compensation, MIRlast$compensation))
+  print(ttestBF(ROTlast$compensation, MIRlast$compensation, paired = TRUE))
 }
 
 #Do learning rates (during training) correlate with aftereffects?----

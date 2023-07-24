@@ -1474,6 +1474,8 @@ getLambdaOrderEffectsTTest <- function(perturbation = c('ROT', 'MIR')){
     
     cat(sprintf('Frequentist t-test (perturbation: %s, condition: first vs. second): \n', ptype))
     print(t.test(subdat1, subdat2))
+    cat('Effect Size - Cohen d:\n')
+    print(cohensD(subdat1, subdat2, method = 'unequal'))
     cat(sprintf('Bayesian t-test (perturbation: %s, condition: first vs. second): \n', ptype))
     print(ttestBF(subdat1, subdat2))
   }
@@ -1491,6 +1493,8 @@ getAsymptoteOrderEffectsTTest <- function(perturbation = c('ROT', 'MIR')){
     
     cat(sprintf('Frequentist t-test (perturbation: %s, condition: first vs. second): \n', ptype))
     print(t.test(subdat1, subdat2))
+    cat('Effect Size - Cohen d:\n')
+    print(cohensD(subdat1, subdat2, method = 'unequal'))
     cat(sprintf('Bayesian t-test (perturbation: %s, condition: first vs. second): \n', ptype))
     print(ttestBF(subdat1, subdat2))
   }
@@ -2235,6 +2239,8 @@ getLambdaTargetEffectsTTest <- function(perturbation = c('ROT', 'MIR')){
     
     cat(sprintf('Frequentist t-test (perturbation: %s, condition: after vs. before): \n', ptype))
     print(t.test(subdat1, subdat2))
+    cat('Effect Size - Cohen d:\n')
+    print(cohensD(subdat1, subdat2, method = 'unequal'))
     cat(sprintf('Bayesian t-test (perturbation: %s, condition: after vs. before): \n', ptype))
     print(ttestBF(subdat1, subdat2))
   }
@@ -2252,6 +2258,8 @@ getAsymptoteTargetEffectsTTest <- function(perturbation = c('ROT', 'MIR')){
     
     cat(sprintf('Frequentist t-test (perturbation: %s, condition: after vs. before): \n', ptype))
     print(t.test(subdat1, subdat2))
+    cat('Effect Size - Cohen d:\n')
+    print(cohensD(subdat1, subdat2, method = 'unequal'))
     cat(sprintf('Bayesian t-test (perturbation: %s, condition: after vs. before): \n', ptype))
     print(ttestBF(subdat1, subdat2))
   }
@@ -2789,6 +2797,8 @@ getLambdaAxisEffectsTTest <- function(perturbation = c('ROT', 'MIR')){
     
     cat(sprintf('Frequentist t-test (perturbation: %s, condition: horizontal vs. vertical): \n', ptype))
     print(t.test(subdat1, subdat2))
+    cat('Effect Size - Cohen d:\n')
+    print(cohensD(subdat1, subdat2, method = 'unequal'))
     cat(sprintf('Bayesian t-test (perturbation: %s, condition: horizontal vs. vertical): \n', ptype))
     print(ttestBF(subdat1, subdat2))
   }
@@ -2806,6 +2816,8 @@ getAsymptoteAxisEffectsTTest <- function(perturbation = c('ROT', 'MIR')){
     
     cat(sprintf('Frequentist t-test (perturbation: %s, condition: horizontal vs. vertical): \n', ptype))
     print(t.test(subdat1, subdat2))
+    cat('Effect Size - Cohen d:\n')
+    print(cohensD(subdat1, subdat2, method = 'unequal'))
     cat(sprintf('Bayesian t-test (perturbation: %s, condition: horizontal vs. vertical): \n', ptype))
     print(ttestBF(subdat1, subdat2))
   }

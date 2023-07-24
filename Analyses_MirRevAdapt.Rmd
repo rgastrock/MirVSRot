@@ -427,7 +427,7 @@ RAEComparisonsAllBlocksEffSize(group='instructed')
 reachaftereffectsBayesfollowup(group='instructed')
 ```
 
-Follow up tests show that washout trials following rotation training show aftereffects that go back down near zero. Washout trials following mirror reversed trials, however, did not differ across blocks of trials. Thus, the small aftereffects for mirror reversed trials in the previous set of tests did not hold up here. Finally compensation in rotation washout trials were larger in the first and second blocks, compared to mirror reversed washout trials. Overall, it is clear that aftereffects are observed following rotation training only.
+Follow up tests show that compensation in rotation washout trials were larger in the first and second blocks, compared to mirror reversed washout trials. Overall, it is clear that aftereffects observed following rotation training are larger than those observed following mirror training.
 
 ### Movement analyses
 
@@ -480,7 +480,7 @@ To quantify changes in MT across rotation and mirror reversed training, we condu
 MTt.test(group='instructed')
 ```
 
-COontrary to our findings with noninstructed participants, we found no effects for movement times across the different trial types for instructed participants.
+Contrary to our findings with noninstructed participants, we found no effects for movement times across the different trial types for instructed participants.
 
 We also compared MTs between rotation and mirror reversed reaches across training trials.
 
