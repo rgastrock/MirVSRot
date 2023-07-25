@@ -673,7 +673,7 @@ RAEMTTrainedTargetsComparisonsEffSize()
 RAEMTTrainedTargetsBlockEffectBayesfollowup()
 ```
 
-We find that the main effect of block is driven by a difference between the two blocks during washout, given that completion time is faster as trials progress. Overall, despite observing very small aftereffects, completion time during washout trials do not differ from completion times during aligned reaches.
+We find that the main effect of block is driven by a difference between the two blocks during washout, given that completion time is faster as trials progress. Overall, completion time during washout trials do not differ from completion times during aligned reaches.
 
 #### Path length
 

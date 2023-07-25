@@ -3772,13 +3772,13 @@ alignedTrainedComparisonsBayesfollowup <- function(hand='trained') {
   
   #far vs mid
   cat('Bayesian t-test far vs mid target:\n')
-  print(ttestBF(fartarget$angdev, midtarget$angdev))
+  print(ttestBF(fartarget$angdev, midtarget$angdev, paired = TRUE))
   #far vs near
   cat('Bayesian t-test far vs near target:\n')
-  print(ttestBF(fartarget$angdev, neartarget$angdev))
+  print(ttestBF(fartarget$angdev, neartarget$angdev, paired = TRUE))
   #mid vs near
   cat('Bayesian t-test mid vs near target:\n')
-  print(ttestBF(midtarget$angdev, neartarget$angdev))
+  print(ttestBF(midtarget$angdev, neartarget$angdev, paired = TRUE))
 }
 
 
@@ -4282,13 +4282,13 @@ RAETrainedTargetsBayesfollowup <- function() {
   
   #far vs mid
   cat('Bayesian t-test aligned vs washout block 1:\n')
-  print(ttestBF(aligned$angdev, washout_b1$angdev))
+  print(ttestBF(aligned$angdev, washout_b1$angdev, paired = TRUE))
   #far vs near
   cat('Bayesian t-test aligned vs washout block 2:\n')
-  print(ttestBF(aligned$angdev, washout_b2$angdev))
+  print(ttestBF(aligned$angdev, washout_b2$angdev, paired = TRUE))
   #mid vs near
   cat('Bayesian t-test washout block 1 vs washout block 2:\n')
-  print(ttestBF(washout_b1$angdev, washout_b2$angdev))
+  print(ttestBF(washout_b1$angdev, washout_b2$angdev, paired = TRUE))
 }
 
 #Statistics (Movement Time)----
@@ -4452,13 +4452,13 @@ trainedHandMTTargetEffectBayesfollowup <- function(hand='trained') {
   
   #far vs mid
   cat('Bayesian t-test far vs mid target:\n')
-  print(ttestBF(fartarget$movementtime, midtarget$movementtime))
+  print(ttestBF(fartarget$movementtime, midtarget$movementtime, paired = TRUE))
   #far vs near
   cat('Bayesian t-test far vs near target:\n')
-  print(ttestBF(fartarget$movementtime, neartarget$movementtime))
+  print(ttestBF(fartarget$movementtime, neartarget$movementtime, paired = TRUE))
   #mid vs near
   cat('Bayesian t-test mid vs near target:\n')
-  print(ttestBF(midtarget$movementtime, neartarget$movementtime))
+  print(ttestBF(midtarget$movementtime, neartarget$movementtime, paired = TRUE))
 }
 
 #main effect of block
@@ -4528,13 +4528,13 @@ trainedHandMTBlockEffectBayesfollowup <- function(hand='trained') {
   
   #far vs mid
   cat('Bayesian t-test block 1 vs block 2:\n')
-  print(ttestBF(b1$movementtime, b2$movementtime))
+  print(ttestBF(b1$movementtime, b2$movementtime, paired = TRUE))
   #far vs near
   cat('Bayesian t-test block 1 vs last block:\n')
-  print(ttestBF(b1$movementtime, b3$movementtime))
+  print(ttestBF(b1$movementtime, b3$movementtime, paired = TRUE))
   #mid vs near
   cat('Bayesian t-test block 2 vs last block:\n')
-  print(ttestBF(b2$movementtime, b3$movementtime))
+  print(ttestBF(b2$movementtime, b3$movementtime, paired = TRUE))
 }
 
 # follow up: aligned of untrained hand, main effect of block
@@ -4604,13 +4604,13 @@ untrainedHandMTBlockEffectBayesfollowup <- function(hand='untrained') {
   
   #far vs mid
   cat('Bayesian t-test block 1 vs block 2:\n')
-  print(ttestBF(b1$movementtime, b2$movementtime))
+  print(ttestBF(b1$movementtime, b2$movementtime, paired = TRUE))
   #far vs near
   cat('Bayesian t-test block 1 vs last block:\n')
-  print(ttestBF(b1$movementtime, b3$movementtime))
+  print(ttestBF(b1$movementtime, b3$movementtime, paired = TRUE))
   #mid vs near
   cat('Bayesian t-test block 2 vs last block:\n')
-  print(ttestBF(b2$movementtime, b3$movementtime))
+  print(ttestBF(b2$movementtime, b3$movementtime, paired = TRUE))
 }
 
 #compare target and block across hands (3x3x2)
@@ -4826,37 +4826,37 @@ mirrorMTBayesfollowup <- function() {
   cat('FIRST BLOCK:\n')
   #far vs mid
   cat('Bayesian t-test far vs mid target:\n')
-  print(ttestBF(farb1$movementtime, midb1$movementtime))
+  print(ttestBF(farb1$movementtime, midb1$movementtime, paired = TRUE))
   #far vs near
   cat('Bayesian t-test far vs near target:\n')
-  print(ttestBF(farb1$movementtime, nearb1$movementtime))
+  print(ttestBF(farb1$movementtime, nearb1$movementtime, paired = TRUE))
   #mid vs near
   cat('Bayesian t-test mid vs near target:\n')
-  print(ttestBF(midb1$movementtime, nearb1$movementtime))
+  print(ttestBF(midb1$movementtime, nearb1$movementtime, paired = TRUE))
   
   #block 2
   cat('SECOND BLOCK:\n')
   #far vs mid
   cat('Bayesian t-test far vs mid target:\n')
-  print(ttestBF(farb2$movementtime, midb2$movementtime))
+  print(ttestBF(farb2$movementtime, midb2$movementtime, paired = TRUE))
   #far vs near
   cat('Bayesian t-test far vs near target:\n')
-  print(ttestBF(farb2$movementtime, nearb2$movementtime))
+  print(ttestBF(farb2$movementtime, nearb2$movementtime, paired = TRUE))
   #mid vs near
   cat('Bayesian t-test mid vs near target:\n')
-  print(ttestBF(midb2$movementtime, nearb2$movementtime))
+  print(ttestBF(midb2$movementtime, nearb2$movementtime, paired = TRUE))
   
   #block last
   cat('LAST BLOCK:\n')
   #far vs mid
   cat('Bayesian t-test far vs mid target:\n')
-  print(ttestBF(farb3$movementtime, midb3$movementtime))
+  print(ttestBF(farb3$movementtime, midb3$movementtime, paired = TRUE))
   #far vs near
   cat('Bayesian t-test far vs near target:\n')
-  print(ttestBF(farb3$movementtime, nearb3$movementtime))
+  print(ttestBF(farb3$movementtime, nearb3$movementtime, paired = TRUE))
   #mid vs near
   cat('Bayesian t-test mid vs near target:\n')
-  print(ttestBF(midb3$movementtime, nearb3$movementtime))
+  print(ttestBF(midb3$movementtime, nearb3$movementtime, paired = TRUE))
 }
 
 #Washout phase
@@ -4967,13 +4967,13 @@ RAEMTTargetEffectBayesfollowup <- function() {
   
   #far vs mid
   cat('Bayesian t-test far vs mid target:\n')
-  print(ttestBF(fartarget$movementtime, midtarget$movementtime))
+  print(ttestBF(fartarget$movementtime, midtarget$movementtime, paired = TRUE))
   #far vs near
   cat('Bayesian t-test far vs near target:\n')
-  print(ttestBF(fartarget$movementtime, neartarget$movementtime))
+  print(ttestBF(fartarget$movementtime, neartarget$movementtime, paired = TRUE))
   #mid vs near
   cat('Bayesian t-test mid vs near target:\n')
-  print(ttestBF(midtarget$movementtime, neartarget$movementtime))
+  print(ttestBF(midtarget$movementtime, neartarget$movementtime, paired = TRUE))
 }
 
 #Compare washout MT with baseline MT for only trained targets
@@ -5234,13 +5234,13 @@ RAEMTTrainedTargetsBlockEffectBayesfollowup <- function() {
   
   #far vs mid
   cat('Bayesian t-test aligned vs washout block 1:\n')
-  print(ttestBF(b1$movementtime, b2$movementtime))
+  print(ttestBF(b1$movementtime, b2$movementtime, paired = TRUE))
   #far vs near
   cat('Bayesian t-test aligned vs washout block 2:\n')
-  print(ttestBF(b1$movementtime, b3$movementtime))
+  print(ttestBF(b1$movementtime, b3$movementtime, paired = TRUE))
   #mid vs near
   cat('Bayesian t-test washout block 1 vs washout block 2:\n')
-  print(ttestBF(b2$movementtime, b3$movementtime))
+  print(ttestBF(b2$movementtime, b3$movementtime, paired = TRUE))
 }
 
 #follow up on target effect
@@ -5331,13 +5331,13 @@ RAEMTTrainedTargetsTargetEffectBayesfollowup <- function() {
   
   #far vs mid
   cat('Bayesian t-test far vs mid target:\n')
-  print(ttestBF(fartarget$movementtime, midtarget$movementtime))
+  print(ttestBF(fartarget$movementtime, midtarget$movementtime, paired = TRUE))
   #far vs near
   cat('Bayesian t-test far vs near target:\n')
-  print(ttestBF(fartarget$movementtime, neartarget$movementtime))
+  print(ttestBF(fartarget$movementtime, neartarget$movementtime, paired = TRUE))
   #mid vs near
   cat('Bayesian t-test mid vs near target:\n')
-  print(ttestBF(midtarget$movementtime, neartarget$movementtime))
+  print(ttestBF(midtarget$movementtime, neartarget$movementtime, paired = TRUE))
 }
 
 
@@ -5505,13 +5505,13 @@ trainedHandPLTargetEffectBayesfollowup <- function() {
   
   #far vs mid
   cat('Bayesian t-test far vs mid target:\n')
-  print(ttestBF(fartarget$pathlength, midtarget$pathlength))
+  print(ttestBF(fartarget$pathlength, midtarget$pathlength, paired = TRUE))
   #far vs near
   cat('Bayesian t-test far vs near target:\n')
-  print(ttestBF(fartarget$pathlength, neartarget$pathlength))
+  print(ttestBF(fartarget$pathlength, neartarget$pathlength, paired = TRUE))
   #mid vs near
   cat('Bayesian t-test mid vs near target:\n')
-  print(ttestBF(midtarget$pathlength, neartarget$pathlength))
+  print(ttestBF(midtarget$pathlength, neartarget$pathlength, paired = TRUE))
 }
 
 # follow up: aligned of untrained hand, main effect of block
@@ -5582,13 +5582,13 @@ untrainedHandPLBlockEffectBayesfollowup <- function() {
   
   #far vs mid
   cat('Bayesian t-test block 1 vs block 2:\n')
-  print(ttestBF(b1$pathlength, b2$pathlength))
+  print(ttestBF(b1$pathlength, b2$pathlength, paired = TRUE))
   #far vs near
   cat('Bayesian t-test block 1 vs last block:\n')
-  print(ttestBF(b1$pathlength, b3$pathlength))
+  print(ttestBF(b1$pathlength, b3$pathlength, paired = TRUE))
   #mid vs near
   cat('Bayesian t-test block 2 vs last block:\n')
-  print(ttestBF(b2$pathlength, b3$pathlength))
+  print(ttestBF(b2$pathlength, b3$pathlength, paired = TRUE))
 }
 
 #compare target and block across hands (3x3x2)
@@ -5805,37 +5805,37 @@ mirrorPLBayesfollowup <- function() {
   cat('FIRST BLOCK:\n')
   #far vs mid
   cat('Bayesian t-test far vs mid target:\n')
-  print(ttestBF(farb1$pathlength, midb1$pathlength))
+  print(ttestBF(farb1$pathlength, midb1$pathlength, paired = TRUE))
   #far vs near
   cat('Bayesian t-test far vs near target:\n')
-  print(ttestBF(farb1$pathlength, nearb1$pathlength))
+  print(ttestBF(farb1$pathlength, nearb1$pathlength, paired = TRUE))
   #mid vs near
   cat('Bayesian t-test mid vs near target:\n')
-  print(ttestBF(midb1$pathlength, nearb1$pathlength))
+  print(ttestBF(midb1$pathlength, nearb1$pathlength, paired = TRUE))
   
   #block 2
   cat('SECOND BLOCK:\n')
   #far vs mid
   cat('Bayesian t-test far vs mid target:\n')
-  print(ttestBF(farb2$pathlength, midb2$pathlength))
+  print(ttestBF(farb2$pathlength, midb2$pathlength, paired = TRUE))
   #far vs near
   cat('Bayesian t-test far vs near target:\n')
-  print(ttestBF(farb2$pathlength, nearb2$pathlength))
+  print(ttestBF(farb2$pathlength, nearb2$pathlength, paired = TRUE))
   #mid vs near
   cat('Bayesian t-test mid vs near target:\n')
-  print(ttestBF(midb2$pathlength, nearb2$pathlength))
+  print(ttestBF(midb2$pathlength, nearb2$pathlength, paired = TRUE))
   
   #block last
   cat('LAST BLOCK:\n')
   #far vs mid
   cat('Bayesian t-test far vs mid target:\n')
-  print(ttestBF(farb3$pathlength, midb3$pathlength))
+  print(ttestBF(farb3$pathlength, midb3$pathlength, paired = TRUE))
   #far vs near
   cat('Bayesian t-test far vs near target:\n')
-  print(ttestBF(farb3$pathlength, nearb3$pathlength))
+  print(ttestBF(farb3$pathlength, nearb3$pathlength, paired = TRUE))
   #mid vs near
   cat('Bayesian t-test mid vs near target:\n')
-  print(ttestBF(midb3$pathlength, nearb3$pathlength))
+  print(ttestBF(midb3$pathlength, nearb3$pathlength, paired = TRUE))
 }
 
 
@@ -6167,13 +6167,13 @@ RAEPLTrainedTargetsBlockEffectBayesfollowup <- function() {
   
   #far vs mid
   cat('Bayesian t-test aligned vs washout block 1:\n')
-  print(ttestBF(b1$pathlength, b2$pathlength))
+  print(ttestBF(b1$pathlength, b2$pathlength, paired = TRUE))
   #far vs near
   cat('Bayesian t-test aligned vs washout block 2:\n')
-  print(ttestBF(b1$pathlength, b3$pathlength))
+  print(ttestBF(b1$pathlength, b3$pathlength, paired = TRUE))
   #mid vs near
   cat('Bayesian t-test washout block 1 vs washout block 2:\n')
-  print(ttestBF(b2$pathlength, b3$pathlength))
+  print(ttestBF(b2$pathlength, b3$pathlength, paired = TRUE))
 }
 
 #Devices: Mouse vs Trackpad Statistics (LEARNING)----
