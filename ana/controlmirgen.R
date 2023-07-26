@@ -3932,13 +3932,13 @@ quadrant4ComparisonsBayesfollowup <- function(quadrant='4') {
   
   #far vs mid
   cat('Bayesian t-test far vs mid target:\n')
-  print(ttestBF(fartarget$percentcomp, midtarget$percentcomp))
+  print(ttestBF(fartarget$percentcomp, midtarget$percentcomp, paired = TRUE))
   #far vs near
   cat('Bayesian t-test far vs near target:\n')
-  print(ttestBF(fartarget$percentcomp, neartarget$percentcomp))
+  print(ttestBF(fartarget$percentcomp, neartarget$percentcomp, paired = TRUE))
   #mid vs near
   cat('Bayesian t-test mid vs near target:\n')
-  print(ttestBF(midtarget$percentcomp, neartarget$percentcomp))
+  print(ttestBF(midtarget$percentcomp, neartarget$percentcomp, paired = TRUE))
 }
 
 #work with angular reach deviations for washout
@@ -4098,13 +4098,13 @@ washoutComparisonsBayesfollowup <- function(quadrant='1W') {
   
   #far vs mid
   cat('Bayesian t-test block 1 vs block 2:\n')
-  print(ttestBF(b1$angdev, b2$angdev))
+  print(ttestBF(b1$angdev, b2$angdev, paired = TRUE))
   #far vs near
   cat('Bayesian t-test block 1 vs last block:\n')
-  print(ttestBF(b1$angdev, b3$angdev))
+  print(ttestBF(b1$angdev, b3$angdev, paired = TRUE))
   #mid vs near
   cat('Bayesian t-test block 2 vs last block:\n')
-  print(ttestBF(b2$angdev, b3$angdev))
+  print(ttestBF(b2$angdev, b3$angdev, paired = TRUE))
 }
 
 #follow up on washout (main effect of target)
@@ -4172,13 +4172,13 @@ washoutTargetEffectComparisonsBayesfollowup <- function(quadrant='1W') {
   
   #far vs mid
   cat('Bayesian t-test far vs mid target:\n')
-  print(ttestBF(fartarget$angdev, midtarget$angdev))
+  print(ttestBF(fartarget$angdev, midtarget$angdev, paired = TRUE))
   #far vs near
   cat('Bayesian t-test far vs near target:\n')
-  print(ttestBF(fartarget$angdev, neartarget$angdev))
+  print(ttestBF(fartarget$angdev, neartarget$angdev, paired = TRUE))
   #mid vs near
   cat('Bayesian t-test mid vs near target:\n')
-  print(ttestBF(midtarget$angdev, neartarget$angdev))
+  print(ttestBF(midtarget$angdev, neartarget$angdev, paired = TRUE))
 }
 
 #Next, we want to compare 2 quadrants with each other (3X3X2)
@@ -4316,13 +4316,13 @@ Q1and4ComparisonsBayesfollowup <- function(quadrantA='1', quadrantB='4') {
   
   #far vs mid
   cat('Bayesian t-test far vs mid target:\n')
-  print(ttestBF(fartarget$percentcomp, midtarget$percentcomp))
+  print(ttestBF(fartarget$percentcomp, midtarget$percentcomp, paired = TRUE))
   #far vs near
   cat('Bayesian t-test far vs near target:\n')
-  print(ttestBF(fartarget$percentcomp, neartarget$percentcomp))
+  print(ttestBF(fartarget$percentcomp, neartarget$percentcomp, paired = TRUE))
   #mid vs near
   cat('Bayesian t-test mid vs near target:\n')
-  print(ttestBF(midtarget$percentcomp, neartarget$percentcomp))
+  print(ttestBF(midtarget$percentcomp, neartarget$percentcomp, paired = TRUE))
 }
 
 #follow up on quadrant 1L and 1W (block by quadrant interaction)
@@ -4396,13 +4396,13 @@ Q1Land1WComparisonsBayesfollowup <- function(quadrantA='1L', quadrantB='1W') {
   
   #Block 1: L vs W
   cat('Bayesian t-test Untrained last block vs Washout block 1:\n')
-  print(ttestBF(untrainedb3$percentcomp, washoutb1$percentcomp))
+  print(ttestBF(untrainedb3$percentcomp, washoutb1$percentcomp, paired = TRUE))
   #Block 2: L vs W
   cat('Bayesian t-test Untrained last block vs Washout block 2:\n')
-  print(ttestBF(untrainedb3$percentcomp, washoutb2$percentcomp))
+  print(ttestBF(untrainedb3$percentcomp, washoutb2$percentcomp, paired = TRUE))
   #Block last: L vs W
   cat('Bayesian t-test Untrained last block vs Washout last block:\n')
-  print(ttestBF(untrainedb3$percentcomp, washoutb3$percentcomp))
+  print(ttestBF(untrainedb3$percentcomp, washoutb3$percentcomp, paired = TRUE))
 }
 
 #comparing washout of untrained hand with baseline of untrained hand
@@ -4576,16 +4576,16 @@ untrainedHandSessionComparisonsBayesfollowup <- function() {
   
   #Block 1: L vs W
   cat('Bayesian t-test Untrained block 1 vs Washout block 1:\n')
-  print(ttestBF(baselineb1$angdev, washoutb1$angdev))
+  print(ttestBF(baselineb1$angdev, washoutb1$angdev, paired = TRUE))
   #Block 2: L vs W
   cat('Bayesian t-test Untrained block 2 vs Washout block 2:\n')
-  print(ttestBF(baselineb2$angdev, washoutb2$angdev))
+  print(ttestBF(baselineb2$angdev, washoutb2$angdev, paired = TRUE))
   #Block last: L vs W
   cat('Bayesian t-test Untrained last block vs Washout last block:\n')
-  print(ttestBF(baselineb3$angdev, washoutb3$angdev))
+  print(ttestBF(baselineb3$angdev, washoutb3$angdev, paired = TRUE))
   #last block L vs block 1 W
   cat('Bayesian t-test Untrained last block vs Washout block 1:\n')
-  print(ttestBF(baselineb3$angdev, washoutb1$angdev))
+  print(ttestBF(baselineb3$angdev, washoutb1$angdev, paired = TRUE))
 }
 
 #no significant effects, but probably due to high first block in washout
@@ -4893,33 +4893,33 @@ quadrant1MTComparisonsBayesfollowup <- function(quadrant='1') {
   
   #far vs mid
   cat('Bayesian t-test block 1 far vs mid target:\n')
-  print(ttestBF(farb1$movementtime, midb1$movementtime))
+  print(ttestBF(farb1$movementtime, midb1$movementtime, paired = TRUE))
   #far vs near
   cat('Bayesian t-test block 1 far vs near target:\n')
-  print(ttestBF(farb1$movementtime, nearb1$movementtime))
+  print(ttestBF(farb1$movementtime, nearb1$movementtime, paired = TRUE))
   #mid vs near
   cat('Bayesian t-test  block 1 mid vs near target:\n')
-  print(ttestBF(midb1$movementtime, nearb1$movementtime))
+  print(ttestBF(midb1$movementtime, nearb1$movementtime, paired = TRUE))
   
   #far vs mid
   cat('Bayesian t-test block 2 far vs mid target:\n')
-  print(ttestBF(farb2$movementtime, midb2$movementtime))
+  print(ttestBF(farb2$movementtime, midb2$movementtime, paired = TRUE))
   #far vs near
   cat('Bayesian t-test block 2 far vs near target:\n')
-  print(ttestBF(farb2$movementtime, nearb2$movementtime))
+  print(ttestBF(farb2$movementtime, nearb2$movementtime, paired = TRUE))
   #mid vs near
   cat('Bayesian t-test  block 2 mid vs near target:\n')
-  print(ttestBF(midb2$movementtime, nearb2$movementtime))
+  print(ttestBF(midb2$movementtime, nearb2$movementtime, paired = TRUE))
   
   #far vs mid
   cat('Bayesian t-test last block far vs mid target:\n')
-  print(ttestBF(farb3$movementtime, midb3$movementtime))
+  print(ttestBF(farb3$movementtime, midb3$movementtime, paired = TRUE))
   #far vs near
   cat('Bayesian t-test last block far vs near target:\n')
-  print(ttestBF(farb3$movementtime, nearb3$movementtime))
+  print(ttestBF(farb3$movementtime, nearb3$movementtime, paired = TRUE))
   #mid vs near
   cat('Bayesian t-test last block mid vs near target:\n')
-  print(ttestBF(midb3$movementtime, nearb3$movementtime))
+  print(ttestBF(midb3$movementtime, nearb3$movementtime, paired = TRUE))
 }
 
 # follow up Q4: significant main effects only
@@ -4989,13 +4989,13 @@ quadrant4MTComparisonsTargetEffectBayesfollowup <- function(quadrant='4') {
   
   #far vs mid
   cat('Bayesian t-test far vs mid target:\n')
-  print(ttestBF(fartarget$movementtime, midtarget$movementtime))
+  print(ttestBF(fartarget$movementtime, midtarget$movementtime, paired = TRUE))
   #far vs near
   cat('Bayesian t-test far vs near target:\n')
-  print(ttestBF(fartarget$movementtime, neartarget$movementtime))
+  print(ttestBF(fartarget$movementtime, neartarget$movementtime, paired = TRUE))
   #mid vs near
   cat('Bayesian t-test mid vs near target:\n')
-  print(ttestBF(midtarget$movementtime, neartarget$movementtime))
+  print(ttestBF(midtarget$movementtime, neartarget$movementtime, paired = TRUE))
 }
 
 #main effect of block
@@ -5064,13 +5064,13 @@ quadrant4MTComparisonsBlockEffectBayesfollowup <- function(quadrant='4') {
   
   #far vs mid
   cat('Bayesian t-test block 1 vs block 2:\n')
-  print(ttestBF(b1$movementtime, b2$movementtime))
+  print(ttestBF(b1$movementtime, b2$movementtime, paired = TRUE))
   #far vs near
   cat('Bayesian t-test block 1 vs last block:\n')
-  print(ttestBF(b1$movementtime, b3$movementtime))
+  print(ttestBF(b1$movementtime, b3$movementtime, paired = TRUE))
   #mid vs near
   cat('Bayesian t-test block 2 vs last block:\n')
-  print(ttestBF(b2$movementtime, b3$movementtime))
+  print(ttestBF(b2$movementtime, b3$movementtime, paired = TRUE))
 }
 
 # follow up Q2: significant main effects only
@@ -5141,13 +5141,13 @@ quadrant2MTComparisonsTargetEffectBayesfollowup <- function(quadrant='2') {
   
   #far vs mid
   cat('Bayesian t-test far vs mid target:\n')
-  print(ttestBF(fartarget$movementtime, midtarget$movementtime))
+  print(ttestBF(fartarget$movementtime, midtarget$movementtime, paired = TRUE))
   #far vs near
   cat('Bayesian t-test far vs near target:\n')
-  print(ttestBF(fartarget$movementtime, neartarget$movementtime))
+  print(ttestBF(fartarget$movementtime, neartarget$movementtime, paired = TRUE))
   #mid vs near
   cat('Bayesian t-test mid vs near target:\n')
-  print(ttestBF(midtarget$movementtime, neartarget$movementtime))
+  print(ttestBF(midtarget$movementtime, neartarget$movementtime, paired = TRUE))
 }
 
 #main effect of block
@@ -5216,13 +5216,13 @@ quadrant2MTComparisonsBlockEffectBayesfollowup <- function(quadrant='2') {
   
   #far vs mid
   cat('Bayesian t-test block 1 vs block 2:\n')
-  print(ttestBF(b1$movementtime, b2$movementtime))
+  print(ttestBF(b1$movementtime, b2$movementtime, paired = TRUE))
   #far vs near
   cat('Bayesian t-test block 1 vs last block:\n')
-  print(ttestBF(b1$movementtime, b3$movementtime))
+  print(ttestBF(b1$movementtime, b3$movementtime, paired = TRUE))
   #mid vs near
   cat('Bayesian t-test block 2 vs last block:\n')
-  print(ttestBF(b2$movementtime, b3$movementtime))
+  print(ttestBF(b2$movementtime, b3$movementtime, paired = TRUE))
 }
 
 # follow up Q1A: main effect of target
@@ -5293,13 +5293,13 @@ quadrant1AMTComparisonsTargetEffectBayesfollowup <- function(quadrant='1A') {
   
   #far vs mid
   cat('Bayesian t-test far vs mid target:\n')
-  print(ttestBF(fartarget$movementtime, midtarget$movementtime))
+  print(ttestBF(fartarget$movementtime, midtarget$movementtime, paired = TRUE))
   #far vs near
   cat('Bayesian t-test far vs near target:\n')
-  print(ttestBF(fartarget$movementtime, neartarget$movementtime))
+  print(ttestBF(fartarget$movementtime, neartarget$movementtime, paired = TRUE))
   #mid vs near
   cat('Bayesian t-test mid vs near target:\n')
-  print(ttestBF(midtarget$movementtime, neartarget$movementtime))
+  print(ttestBF(midtarget$movementtime, neartarget$movementtime, paired = TRUE))
 }
 
 # follow up Q1L: significant main effects only (interaction not sig under GG)
@@ -5370,13 +5370,13 @@ quadrant1LMTComparisonsTargetEffectBayesfollowup <- function(quadrant='1L') {
   
   #far vs mid
   cat('Bayesian t-test far vs mid target:\n')
-  print(ttestBF(fartarget$movementtime, midtarget$movementtime))
+  print(ttestBF(fartarget$movementtime, midtarget$movementtime, paired = TRUE))
   #far vs near
   cat('Bayesian t-test far vs near target:\n')
-  print(ttestBF(fartarget$movementtime, neartarget$movementtime))
+  print(ttestBF(fartarget$movementtime, neartarget$movementtime, paired = TRUE))
   #mid vs near
   cat('Bayesian t-test mid vs near target:\n')
-  print(ttestBF(midtarget$movementtime, neartarget$movementtime))
+  print(ttestBF(midtarget$movementtime, neartarget$movementtime, paired = TRUE))
 }
 
 #main effect of block
@@ -5445,13 +5445,13 @@ quadrant1LMTComparisonsBlockEffectBayesfollowup <- function(quadrant='1L') {
   
   #far vs mid
   cat('Bayesian t-test block 1 vs block 2:\n')
-  print(ttestBF(b1$movementtime, b2$movementtime))
+  print(ttestBF(b1$movementtime, b2$movementtime, paired = TRUE))
   #far vs near
   cat('Bayesian t-test block 1 vs last block:\n')
-  print(ttestBF(b1$movementtime, b3$movementtime))
+  print(ttestBF(b1$movementtime, b3$movementtime, paired = TRUE))
   #mid vs near
   cat('Bayesian t-test block 2 vs last block:\n')
-  print(ttestBF(b2$movementtime, b3$movementtime))
+  print(ttestBF(b2$movementtime, b3$movementtime, paired = TRUE))
 }
 
 # follow up Q1W: significant main and interaction effects, look into interaction
@@ -5542,33 +5542,33 @@ quadrant1WMTComparisonsBayesfollowup <- function(quadrant='1W') {
   
   #far vs mid
   cat('Bayesian t-test block 1 far vs mid target:\n')
-  print(ttestBF(farb1$movementtime, midb1$movementtime))
+  print(ttestBF(farb1$movementtime, midb1$movementtime, paired = TRUE))
   #far vs near
   cat('Bayesian t-test block 1 far vs near target:\n')
-  print(ttestBF(farb1$movementtime, nearb1$movementtime))
+  print(ttestBF(farb1$movementtime, nearb1$movementtime, paired = TRUE))
   #mid vs near
   cat('Bayesian t-test  block 1 mid vs near target:\n')
-  print(ttestBF(midb1$movementtime, nearb1$movementtime))
+  print(ttestBF(midb1$movementtime, nearb1$movementtime, paired = TRUE))
   
   #far vs mid
   cat('Bayesian t-test block 2 far vs mid target:\n')
-  print(ttestBF(farb2$movementtime, midb2$movementtime))
+  print(ttestBF(farb2$movementtime, midb2$movementtime, paired = TRUE))
   #far vs near
   cat('Bayesian t-test block 2 far vs near target:\n')
-  print(ttestBF(farb2$movementtime, nearb2$movementtime))
+  print(ttestBF(farb2$movementtime, nearb2$movementtime, paired = TRUE))
   #mid vs near
   cat('Bayesian t-test  block 2 mid vs near target:\n')
-  print(ttestBF(midb2$movementtime, nearb2$movementtime))
+  print(ttestBF(midb2$movementtime, nearb2$movementtime, paired = TRUE))
   
   #far vs mid
   cat('Bayesian t-test last block far vs mid target:\n')
-  print(ttestBF(farb3$movementtime, midb3$movementtime))
+  print(ttestBF(farb3$movementtime, midb3$movementtime, paired = TRUE))
   #far vs near
   cat('Bayesian t-test last block far vs near target:\n')
-  print(ttestBF(farb3$movementtime, nearb3$movementtime))
+  print(ttestBF(farb3$movementtime, nearb3$movementtime, paired = TRUE))
   #mid vs near
   cat('Bayesian t-test last block mid vs near target:\n')
-  print(ttestBF(midb3$movementtime, nearb3$movementtime))
+  print(ttestBF(midb3$movementtime, nearb3$movementtime, paired = TRUE))
 }
 
 #Next, we want to compare 2 quadrants with each other (3X3X2)
@@ -5747,25 +5747,25 @@ Q1and4MTComparisonsBayesfollowup <- function(quadrantA='1', quadrantB='4') {
   
   #tests
   cat('Bayesian t-test Quad 1 vs Quad 4, block 1, far target:\n')
-  print(ttestBF(farb1q1$movementtime, farb1q4$movementtime))
+  print(ttestBF(farb1q1$movementtime, farb1q4$movementtime, paired = TRUE))
   cat('Bayesian t-test Quad 1 vs Quad 4, block 2, far target:\n')
-  print(ttestBF(farb2q1$movementtime, farb2q4$movementtime))
+  print(ttestBF(farb2q1$movementtime, farb2q4$movementtime, paired = TRUE))
   cat('Bayesian t-test Quad 1 vs Quad 4, last block, far target:\n')
-  print(ttestBF(farb3q1$movementtime, farb3q4$movementtime))
+  print(ttestBF(farb3q1$movementtime, farb3q4$movementtime, paired = TRUE))
   
   cat('Bayesian t-test Quad 1 vs Quad 4, block 1, mid target:\n')
-  print(ttestBF(midb1q1$movementtime, midb1q4$movementtime))
+  print(ttestBF(midb1q1$movementtime, midb1q4$movementtime, paired = TRUE))
   cat('Bayesian t-test Quad 1 vs Quad 4, block 2, mid target:\n')
-  print(ttestBF(midb2q1$movementtime, midb2q4$movementtime))
+  print(ttestBF(midb2q1$movementtime, midb2q4$movementtime, paired = TRUE))
   cat('Bayesian t-test Quad 1 vs Quad 4, last block, mid target:\n')
-  print(ttestBF(midb3q1$movementtime, midb3q4$movementtime))
+  print(ttestBF(midb3q1$movementtime, midb3q4$movementtime, paired = TRUE))
   
   cat('Bayesian t-test Quad 1 vs Quad 4, block 1, near target:\n')
-  print(ttestBF(nearb1q1$movementtime, nearb1q4$movementtime))
+  print(ttestBF(nearb1q1$movementtime, nearb1q4$movementtime, paired = TRUE))
   cat('Bayesian t-test Quad 1 vs Quad 4, block 2, near target:\n')
-  print(ttestBF(nearb2q1$movementtime, nearb2q4$movementtime))
+  print(ttestBF(nearb2q1$movementtime, nearb2q4$movementtime, paired = TRUE))
   cat('Bayesian t-test Quad 1 vs Quad 4, last block, near target:\n')
-  print(ttestBF(nearb3q1$movementtime, nearb3q4$movementtime))
+  print(ttestBF(nearb3q1$movementtime, nearb3q4$movementtime, paired = TRUE))
   
 }
 
@@ -5838,11 +5838,11 @@ Q1and2MTComparisonsBayesfollowup <- function(quadrantA='1', quadrantB='2') {
   
   #tests
   cat('Bayesian t-test Quad 1 vs Quad 2, block 1:\n')
-  print(ttestBF(b1q1$movementtime, b1q2$movementtime))
+  print(ttestBF(b1q1$movementtime, b1q2$movementtime, paired = TRUE))
   cat('Bayesian t-test Quad 1 vs Quad 2, block 2:\n')
-  print(ttestBF(b2q1$movementtime, b2q2$movementtime))
+  print(ttestBF(b2q1$movementtime, b2q2$movementtime, paired = TRUE))
   cat('Bayesian t-test Quad 1 vs Quad 2, last block,:\n')
-  print(ttestBF(b3q1$movementtime, b3q2$movementtime))
+  print(ttestBF(b3q1$movementtime, b3q2$movementtime, paired = TRUE))
   
 }
 
@@ -6097,13 +6097,13 @@ part1and2MTComparisonsBayesfollowup <- function() {
   
 
   cat('Bayesian t-test part 1 far vs block 1 far:\n')
-  print(ttestBF(farp1$movementtime, farp2$movementtime))
+  print(ttestBF(farp1$movementtime, farp2$movementtime, paired = TRUE))
 
   cat('Bayesian t-test part 1 mid vs block 1 mid:\n')
-  print(ttestBF(midp1$movementtime, midp2$movementtime))
+  print(ttestBF(midp1$movementtime, midp2$movementtime, paired = TRUE))
 
   cat('Bayesian t-test part 1 near vs block 1 near:\n')
-  print(ttestBF(nearp1$movementtime, nearp2$movementtime))
+  print(ttestBF(nearp1$movementtime, nearp2$movementtime, paired = TRUE))
 
 }
 
@@ -6308,33 +6308,33 @@ quadrant1PLComparisonsBayesfollowup <- function(quadrant='1') {
   
   #far vs mid
   cat('Bayesian t-test block 1 far vs mid target:\n')
-  print(ttestBF(farb1$pathlength, midb1$pathlength))
+  print(ttestBF(farb1$pathlength, midb1$pathlength, paired = TRUE))
   #far vs near
   cat('Bayesian t-test block 1 far vs near target:\n')
-  print(ttestBF(farb1$pathlength, nearb1$pathlength))
+  print(ttestBF(farb1$pathlength, nearb1$pathlength, paired = TRUE))
   #mid vs near
   cat('Bayesian t-test  block 1 mid vs near target:\n')
-  print(ttestBF(midb1$pathlength, nearb1$pathlength))
+  print(ttestBF(midb1$pathlength, nearb1$pathlength, paired = TRUE))
   
   #far vs mid
   cat('Bayesian t-test block 2 far vs mid target:\n')
-  print(ttestBF(farb2$pathlength, midb2$pathlength))
+  print(ttestBF(farb2$pathlength, midb2$pathlength, paired = TRUE))
   #far vs near
   cat('Bayesian t-test block 2 far vs near target:\n')
-  print(ttestBF(farb2$pathlength, nearb2$pathlength))
+  print(ttestBF(farb2$pathlength, nearb2$pathlength, paired = TRUE))
   #mid vs near
   cat('Bayesian t-test  block 2 mid vs near target:\n')
-  print(ttestBF(midb2$pathlength, nearb2$pathlength))
+  print(ttestBF(midb2$pathlength, nearb2$pathlength, paired = TRUE))
   
   #far vs mid
   cat('Bayesian t-test last block far vs mid target:\n')
-  print(ttestBF(farb3$pathlength, midb3$pathlength))
+  print(ttestBF(farb3$pathlength, midb3$pathlength, paired = TRUE))
   #far vs near
   cat('Bayesian t-test last block far vs near target:\n')
-  print(ttestBF(farb3$pathlength, nearb3$pathlength))
+  print(ttestBF(farb3$pathlength, nearb3$pathlength, paired = TRUE))
   #mid vs near
   cat('Bayesian t-test last block mid vs near target:\n')
-  print(ttestBF(midb3$pathlength, nearb3$pathlength))
+  print(ttestBF(midb3$pathlength, nearb3$pathlength, paired = TRUE))
 }
 
 # Quadrant 4: significant main effects of block and target, no interaction
@@ -6406,13 +6406,13 @@ quadrant4PLComparisonsTargetEffectBayesfollowup <- function(quadrant='4') {
   
   #far vs mid
   cat('Bayesian t-test far vs mid target:\n')
-  print(ttestBF(fartarget$pathlength, midtarget$pathlength))
+  print(ttestBF(fartarget$pathlength, midtarget$pathlength, paired = TRUE))
   #far vs near
   cat('Bayesian t-test far vs near target:\n')
-  print(ttestBF(fartarget$pathlength, neartarget$pathlength))
+  print(ttestBF(fartarget$pathlength, neartarget$pathlength, paired = TRUE))
   #mid vs near
   cat('Bayesian t-test mid vs near target:\n')
-  print(ttestBF(midtarget$pathlength, neartarget$pathlength))
+  print(ttestBF(midtarget$pathlength, neartarget$pathlength, paired = TRUE))
 }
 
 
@@ -6484,13 +6484,13 @@ quadrant4PLComparisonsBlockEffectBayesfollowup <- function(quadrant='4') {
   
   #far vs mid
   cat('Bayesian t-test block 1 vs block 2:\n')
-  print(ttestBF(b1$pathlength, b2$pathlength))
+  print(ttestBF(b1$pathlength, b2$pathlength, paired = TRUE))
   #far vs near
   cat('Bayesian t-test block 1 vs last block:\n')
-  print(ttestBF(b1$pathlength, b3$pathlength))
+  print(ttestBF(b1$pathlength, b3$pathlength, paired = TRUE))
   #mid vs near
   cat('Bayesian t-test block 2 vs last block:\n')
-  print(ttestBF(b2$pathlength, b3$pathlength))
+  print(ttestBF(b2$pathlength, b3$pathlength, paired = TRUE))
 }
 
 # Quadrant 2: main effect of target
@@ -6560,13 +6560,13 @@ quadrant2PLComparisonsTargetEffectBayesfollowup <- function(quadrant='2') {
   
   #far vs mid
   cat('Bayesian t-test far vs mid target:\n')
-  print(ttestBF(fartarget$pathlength, midtarget$pathlength))
+  print(ttestBF(fartarget$pathlength, midtarget$pathlength, paired = TRUE))
   #far vs near
   cat('Bayesian t-test far vs near target:\n')
-  print(ttestBF(fartarget$pathlength, neartarget$pathlength))
+  print(ttestBF(fartarget$pathlength, neartarget$pathlength, paired = TRUE))
   #mid vs near
   cat('Bayesian t-test mid vs near target:\n')
-  print(ttestBF(midtarget$pathlength, neartarget$pathlength))
+  print(ttestBF(midtarget$pathlength, neartarget$pathlength, paired = TRUE))
 }
 
 # Quadrant 1A: significant interaction block and target
@@ -6658,33 +6658,33 @@ quadrant1APLComparisonsBayesfollowup <- function(quadrant='1A') {
   
   #far vs mid
   cat('Bayesian t-test block 1 far vs mid target:\n')
-  print(ttestBF(farb1$pathlength, midb1$pathlength))
+  print(ttestBF(farb1$pathlength, midb1$pathlength, paired = TRUE))
   #far vs near
   cat('Bayesian t-test block 1 far vs near target:\n')
-  print(ttestBF(farb1$pathlength, nearb1$pathlength))
+  print(ttestBF(farb1$pathlength, nearb1$pathlength, paired = TRUE))
   #mid vs near
   cat('Bayesian t-test  block 1 mid vs near target:\n')
-  print(ttestBF(midb1$pathlength, nearb1$pathlength))
+  print(ttestBF(midb1$pathlength, nearb1$pathlength, paired = TRUE))
   
   #far vs mid
   cat('Bayesian t-test block 2 far vs mid target:\n')
-  print(ttestBF(farb2$pathlength, midb2$pathlength))
+  print(ttestBF(farb2$pathlength, midb2$pathlength, paired = TRUE))
   #far vs near
   cat('Bayesian t-test block 2 far vs near target:\n')
-  print(ttestBF(farb2$pathlength, nearb2$pathlength))
+  print(ttestBF(farb2$pathlength, nearb2$pathlength, paired = TRUE))
   #mid vs near
   cat('Bayesian t-test  block 2 mid vs near target:\n')
-  print(ttestBF(midb2$pathlength, nearb2$pathlength))
+  print(ttestBF(midb2$pathlength, nearb2$pathlength, paired = TRUE))
   
   #far vs mid
   cat('Bayesian t-test last block far vs mid target:\n')
-  print(ttestBF(farb3$pathlength, midb3$pathlength))
+  print(ttestBF(farb3$pathlength, midb3$pathlength, paired = TRUE))
   #far vs near
   cat('Bayesian t-test last block far vs near target:\n')
-  print(ttestBF(farb3$pathlength, nearb3$pathlength))
+  print(ttestBF(farb3$pathlength, nearb3$pathlength, paired = TRUE))
   #mid vs near
   cat('Bayesian t-test last block mid vs near target:\n')
-  print(ttestBF(midb3$pathlength, nearb3$pathlength))
+  print(ttestBF(midb3$pathlength, nearb3$pathlength, paired = TRUE))
 }
 
 # Quadrant 1L: significant interaction block and target
@@ -6776,33 +6776,33 @@ quadrant1LPLComparisonsBayesfollowup <- function(quadrant='1L') {
   
   #far vs mid
   cat('Bayesian t-test block 1 far vs mid target:\n')
-  print(ttestBF(farb1$pathlength, midb1$pathlength))
+  print(ttestBF(farb1$pathlength, midb1$pathlength, paired = TRUE))
   #far vs near
   cat('Bayesian t-test block 1 far vs near target:\n')
-  print(ttestBF(farb1$pathlength, nearb1$pathlength))
+  print(ttestBF(farb1$pathlength, nearb1$pathlength, paired = TRUE))
   #mid vs near
   cat('Bayesian t-test  block 1 mid vs near target:\n')
-  print(ttestBF(midb1$pathlength, nearb1$pathlength))
+  print(ttestBF(midb1$pathlength, nearb1$pathlength, paired = TRUE))
   
   #far vs mid
   cat('Bayesian t-test block 2 far vs mid target:\n')
-  print(ttestBF(farb2$pathlength, midb2$pathlength))
+  print(ttestBF(farb2$pathlength, midb2$pathlength, paired = TRUE))
   #far vs near
   cat('Bayesian t-test block 2 far vs near target:\n')
-  print(ttestBF(farb2$pathlength, nearb2$pathlength))
+  print(ttestBF(farb2$pathlength, nearb2$pathlength, paired = TRUE))
   #mid vs near
   cat('Bayesian t-test  block 2 mid vs near target:\n')
-  print(ttestBF(midb2$pathlength, nearb2$pathlength))
+  print(ttestBF(midb2$pathlength, nearb2$pathlength, paired = TRUE))
   
   #far vs mid
   cat('Bayesian t-test last block far vs mid target:\n')
-  print(ttestBF(farb3$pathlength, midb3$pathlength))
+  print(ttestBF(farb3$pathlength, midb3$pathlength, paired = TRUE))
   #far vs near
   cat('Bayesian t-test last block far vs near target:\n')
-  print(ttestBF(farb3$pathlength, nearb3$pathlength))
+  print(ttestBF(farb3$pathlength, nearb3$pathlength, paired = TRUE))
   #mid vs near
   cat('Bayesian t-test last block mid vs near target:\n')
-  print(ttestBF(midb3$pathlength, nearb3$pathlength))
+  print(ttestBF(midb3$pathlength, nearb3$pathlength, paired = TRUE))
 }
 
 # Quadrant 1W: significant interaction block and target
@@ -6895,33 +6895,33 @@ quadrant1WPLComparisonsBayesfollowup <- function(quadrant='1W') {
   
   #far vs mid
   cat('Bayesian t-test block 1 far vs mid target:\n')
-  print(ttestBF(farb1$pathlength, midb1$pathlength))
+  print(ttestBF(farb1$pathlength, midb1$pathlength, paired = TRUE))
   #far vs near
   cat('Bayesian t-test block 1 far vs near target:\n')
-  print(ttestBF(farb1$pathlength, nearb1$pathlength))
+  print(ttestBF(farb1$pathlength, nearb1$pathlength, paired = TRUE))
   #mid vs near
   cat('Bayesian t-test  block 1 mid vs near target:\n')
-  print(ttestBF(midb1$pathlength, nearb1$pathlength))
+  print(ttestBF(midb1$pathlength, nearb1$pathlength, paired = TRUE))
   
   #far vs mid
   cat('Bayesian t-test block 2 far vs mid target:\n')
-  print(ttestBF(farb2$pathlength, midb2$pathlength))
+  print(ttestBF(farb2$pathlength, midb2$pathlength, paired = TRUE))
   #far vs near
   cat('Bayesian t-test block 2 far vs near target:\n')
-  print(ttestBF(farb2$pathlength, nearb2$pathlength))
+  print(ttestBF(farb2$pathlength, nearb2$pathlength, paired = TRUE))
   #mid vs near
   cat('Bayesian t-test  block 2 mid vs near target:\n')
-  print(ttestBF(midb2$pathlength, nearb2$pathlength))
+  print(ttestBF(midb2$pathlength, nearb2$pathlength, paired = TRUE))
   
   #far vs mid
   cat('Bayesian t-test last block far vs mid target:\n')
-  print(ttestBF(farb3$pathlength, midb3$pathlength))
+  print(ttestBF(farb3$pathlength, midb3$pathlength, paired = TRUE))
   #far vs near
   cat('Bayesian t-test last block far vs near target:\n')
-  print(ttestBF(farb3$pathlength, nearb3$pathlength))
+  print(ttestBF(farb3$pathlength, nearb3$pathlength, paired = TRUE))
   #mid vs near
   cat('Bayesian t-test last block mid vs near target:\n')
-  print(ttestBF(midb3$pathlength, nearb3$pathlength))
+  print(ttestBF(midb3$pathlength, nearb3$pathlength, paired = TRUE))
 }
 
 
@@ -7066,11 +7066,11 @@ Q1and4PLComparisonsBayesfollowup <- function(quadrantA='1', quadrantB='4') {
   
   #tests
   cat('Bayesian t-test Quad 1 vs Quad 4, block 1:\n')
-  print(ttestBF(b1q1$pathlength, b1q2$pathlength))
+  print(ttestBF(b1q1$pathlength, b1q2$pathlength, paired = TRUE))
   cat('Bayesian t-test Quad 1 vs Quad 4, block 2:\n')
-  print(ttestBF(b2q1$pathlength, b2q2$pathlength))
+  print(ttestBF(b2q1$pathlength, b2q2$pathlength, paired = TRUE))
   cat('Bayesian t-test Quad 1 vs Quad 4, last block,:\n')
-  print(ttestBF(b3q1$pathlength, b3q2$pathlength))
+  print(ttestBF(b3q1$pathlength, b3q2$pathlength, paired = TRUE))
   
 }
 
@@ -7177,25 +7177,25 @@ Q1and2PLComparisonsBayesfollowup <- function(quadrantA='1', quadrantB='2') {
   
   #tests
   cat('Bayesian t-test Quad 1 vs Quad 2, block 1, far target:\n')
-  print(ttestBF(farb1q1$pathlength, farb1q2$pathlength))
+  print(ttestBF(farb1q1$pathlength, farb1q2$pathlength, paired = TRUE))
   cat('Bayesian t-test Quad 1 vs Quad 2, block 2, far target:\n')
-  print(ttestBF(farb2q1$pathlength, farb2q2$pathlength))
+  print(ttestBF(farb2q1$pathlength, farb2q2$pathlength, paired = TRUE))
   cat('Bayesian t-test Quad 1 vs Quad 2, last block, far target:\n')
-  print(ttestBF(farb3q1$pathlength, farb3q2$pathlength))
+  print(ttestBF(farb3q1$pathlength, farb3q2$pathlength, paired = TRUE))
   
   cat('Bayesian t-test Quad 1 vs Quad 2, block 1, mid target:\n')
-  print(ttestBF(midb1q1$pathlength, midb1q2$pathlength))
+  print(ttestBF(midb1q1$pathlength, midb1q2$pathlength, paired = TRUE))
   cat('Bayesian t-test Quad 1 vs Quad 2, block 2, mid target:\n')
-  print(ttestBF(midb2q1$pathlength, midb2q2$pathlength))
+  print(ttestBF(midb2q1$pathlength, midb2q2$pathlength, paired = TRUE))
   cat('Bayesian t-test Quad 1 vs Quad 2, last block, mid target:\n')
-  print(ttestBF(midb3q1$pathlength, midb3q2$pathlength))
+  print(ttestBF(midb3q1$pathlength, midb3q2$pathlength, paired = TRUE))
   
   cat('Bayesian t-test Quad 1 vs Quad 2, block 1, near target:\n')
-  print(ttestBF(nearb1q1$pathlength, nearb1q2$pathlength))
+  print(ttestBF(nearb1q1$pathlength, nearb1q2$pathlength, paired = TRUE))
   cat('Bayesian t-test Quad 1 vs Quad 2, block 2, near target:\n')
-  print(ttestBF(nearb2q1$pathlength, nearb2q2$pathlength))
+  print(ttestBF(nearb2q1$pathlength, nearb2q2$pathlength, paired = TRUE))
   cat('Bayesian t-test Quad 1 vs Quad 2, last block, near target:\n')
-  print(ttestBF(nearb3q1$pathlength, nearb3q2$pathlength))
+  print(ttestBF(nearb3q1$pathlength, nearb3q2$pathlength, paired = TRUE))
   
 }
 
@@ -7276,11 +7276,11 @@ Q1Land1WPLComparisonsBayesfollowup <- function(quadrantA='1L', quadrantB='1W') {
   
   #tests
   cat('Bayesian t-test untrained vs washout, far target:\n')
-  print(ttestBF(farq1L$pathlength, farq1W$pathlength))
+  print(ttestBF(farq1L$pathlength, farq1W$pathlength, paired = TRUE))
   cat('Bayesian t-test untrained vs washout, mid target:\n')
-  print(ttestBF(midq1L$pathlength, midq1W$pathlength))
+  print(ttestBF(midq1L$pathlength, midq1W$pathlength, paired = TRUE))
   cat('Bayesian t-test untrained vs washout, near target:\n')
-  print(ttestBF(nearq1L$pathlength, nearq1W$pathlength))
+  print(ttestBF(nearq1L$pathlength, nearq1W$pathlength, paired = TRUE))
   
 }
 
@@ -7490,25 +7490,25 @@ untrainedHandSessionPLComparisonsBayesfollowup <- function() {
   
   #tests
   cat('Bayesian t-test baseline vs washout in part 2, block 1, far target:\n')
-  print(ttestBF(farb1s1$pathlength, farb1q1W$pathlength))
+  print(ttestBF(farb1s1$pathlength, farb1q1W$pathlength, paired = TRUE))
   cat('Bayesian t-test baseline vs washout in part 2, block 2, far target:\n')
-  print(ttestBF(farb2s1$pathlength, farb2q1W$pathlength))
+  print(ttestBF(farb2s1$pathlength, farb2q1W$pathlength, paired = TRUE))
   cat('Bayesian t-test baseline vs washout in part 2, last block, far target:\n')
-  print(ttestBF(farb3s1$pathlength, farb3q1W$pathlength))
+  print(ttestBF(farb3s1$pathlength, farb3q1W$pathlength, paired = TRUE))
   
   cat('Bayesian t-test baseline vs washout in part 2, block 1, mid target:\n')
-  print(ttestBF(midb1s1$pathlength, midb1q1W$pathlength))
+  print(ttestBF(midb1s1$pathlength, midb1q1W$pathlength, paired = TRUE))
   cat('Bayesian t-test baseline vs washout in part 2, block 2, mid target:\n')
-  print(ttestBF(midb2s1$pathlength, midb2q1W$pathlength))
+  print(ttestBF(midb2s1$pathlength, midb2q1W$pathlength, paired = TRUE))
   cat('Bayesian t-test baseline vs washout in part 2, last block, mid target:\n')
-  print(ttestBF(midb3s1$pathlength, midb3q1W$pathlength))
+  print(ttestBF(midb3s1$pathlength, midb3q1W$pathlength, paired = TRUE))
   
   cat('Bayesian t-test baseline vs washout in part 2, block 1, near target:\n')
-  print(ttestBF(nearb1s1$pathlength, nearb1q1W$pathlength))
+  print(ttestBF(nearb1s1$pathlength, nearb1q1W$pathlength, paired = TRUE))
   cat('Bayesian t-test baseline vs washout in part 2, block 2, near target:\n')
-  print(ttestBF(nearb2s1$pathlength, nearb2q1W$pathlength))
+  print(ttestBF(nearb2s1$pathlength, nearb2q1W$pathlength, paired = TRUE))
   cat('Bayesian t-test baseline vs washout in part 2, last block, near target:\n')
-  print(ttestBF(nearb3s1$pathlength, nearb3q1W$pathlength))
+  print(ttestBF(nearb3s1$pathlength, nearb3q1W$pathlength, paired = TRUE))
   
 }
 
@@ -7700,13 +7700,13 @@ part1and2PLComparisonsBayesfollowup <- function() {
   
   
   cat('Bayesian t-test part 1 far vs block 1 far:\n')
-  print(ttestBF(farp1$pathlength, farp2$pathlength))
+  print(ttestBF(farp1$pathlength, farp2$pathlength, paired = TRUE))
   
   cat('Bayesian t-test part 1 mid vs block 1 mid:\n')
-  print(ttestBF(midp1$pathlength, midp2$pathlength))
+  print(ttestBF(midp1$pathlength, midp2$pathlength, paired = TRUE))
   
   cat('Bayesian t-test part 1 near vs block 1 near:\n')
-  print(ttestBF(nearp1$pathlength, nearp2$pathlength))
+  print(ttestBF(nearp1$pathlength, nearp2$pathlength, paired = TRUE))
   
 }
 
