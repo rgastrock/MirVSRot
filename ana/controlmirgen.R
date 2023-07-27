@@ -1404,7 +1404,7 @@ plotCtrlGenMT <- function(groups = c('far', 'mid', 'near'), target='inline') {
   lim <- par('usr')
   rect(85, lim[3]-1, 126, lim[4]+1, border = "#ededed", col = "#ededed") #xleft, ybottom, x right, ytop; light grey hex code
   #abline(h = c(0, 1), v = c(21, 42, 63, 84, 105), col = 8, lty = 2)
-  abline(h = c(0, 1), col = 8, lty = 2)
+  #abline(h = c(0, 1), col = 8, lty = 2)
   #axis(1, at = c(1, 22, 43, 64, 85, 106, 126)) #tick marks for x axis
   axis(side=1, at=c(1,21), labels=c('1',''))
   axis(side=1, at=c(22,42), labels=c('22',''))
@@ -1412,7 +1412,7 @@ plotCtrlGenMT <- function(groups = c('far', 'mid', 'near'), target='inline') {
   axis(side=1, at=c(64,84), labels=c('64',''))
   axis(side=1, at=c(85,105), labels=c('85',''))
   axis(side=1, at=c(106,126), labels=c('106','126'))
-  axis(2, at = c(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10), las = 2) #tick marks for y axis
+  axis(2, at = c(0, 2, 4, 6, 8, 10), las = 2) #tick marks for y axis
   #axis(3, at = c(10, 32, 53, 74, 95, 116), labels = c('Q1', 'Q4', 'Q2', 'Q1', 'Q1', 'Q1'), line = -2, tick = FALSE) #tick marks for x axis
   
   for(group in groups){
@@ -1641,7 +1641,7 @@ plotCtrlGenPL <- function(groups = c('far', 'mid', 'near'), target='inline') {
   lim <- par('usr')
   rect(85, lim[3]-1, 126, lim[4]+1, border = "#ededed", col = "#ededed") #xleft, ybottom, x right, ytop; light grey hex code
   #abline(h = c(0, 0.4), v = c(21, 42, 63, 84, 105), col = 8, lty = 2)
-  abline(h = c(0, 0.4), col = 8, lty = 2)
+  abline(h = c(0.4), col = 8, lty = 2)
   #axis(1, at = c(1, 22, 43, 64, 85, 106, 126)) #tick marks for x axis
   axis(side=1, at=c(1,21), labels=c('1',''))
   axis(side=1, at=c(22,42), labels=c('22',''))
@@ -1649,7 +1649,7 @@ plotCtrlGenPL <- function(groups = c('far', 'mid', 'near'), target='inline') {
   axis(side=1, at=c(64,84), labels=c('64',''))
   axis(side=1, at=c(85,105), labels=c('85',''))
   axis(side=1, at=c(106,126), labels=c('106','126'))
-  axis(2, at = c(0, .5, 1, 1.5, 2, 2.5, 3, 3.5, 4), las = 2) #tick marks for y axis
+  axis(2, at = c(0.4, 1, 1.5, 2, 2.5, 3, 3.5, 4), las = 2) #tick marks for y axis
   #axis(3, at = c(10, 32, 53, 74, 95, 116), labels = c('Q1', 'Q4', 'Q2', 'Q1', 'Q1', 'Q1'), line = -2, tick = FALSE) #tick marks for x axis
   
   for(group in groups){

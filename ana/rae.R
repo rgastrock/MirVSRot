@@ -567,7 +567,7 @@ plotPTypeAftereffects <- function(perturb = c('ROT', 'MIR'), group = 'noninstruc
   for (ptype in perturb) {
     # plot mean reaches for each group
     col <- colourscheme[[ptype]][['S']]
-    lines(meanGroupReaches[[ptype]],col=col,lty=1)
+    lines(meanGroupReaches[[ptype]],col=col,lty=1,lwd=2)
   }
   
   #add legend
@@ -836,13 +836,13 @@ plotCollapsedBlockedIndRAE <- function(group='noninstructed', maxppid=15, locati
     svglite(file='doc/fig/pilot/Fig32_AllBlockedIndAftereffects.svg', width=9.5, height=10.5, pointsize=16, system_fonts=list(sans="Arial"))
   }
   
-  plot(NA, NA, xlim = c(0,9), ylim = c(-200,210), 
+  plot(NA, NA, xlim = c(0,9), ylim = c(-200,250), 
        xlab = "Block", ylab = "Amount of compensation (%)", frame.plot = FALSE, #frame.plot takes away borders
        main = "", xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
   abline(h = 100, col = '#000000', lty = 2) #creates horizontal dashed lines through y =  0 and 30
   abline(h = 0, col = '#000000', lty = 2)
   axis(1, at=c(1, 3, 6, 8))#, labels=c('Exclusive', 'Inclusive')) #tick marks for x axis
-  axis(2, at = c(-200, -100, 0, 100, 200)) #tick marks for y axis
+  axis(2, at = c(-200, -100, 0, 100, 200), las=2) #tick marks for y axis
   
   for(perturb in perturbtypes){
     data <- getBlockedIndividualAftereffects(group = group, maxppid = maxppid, location = location, targetno = targetno, perturb = perturb)
@@ -895,6 +895,11 @@ plotCollapsedBlockedIndRAE <- function(group='noninstructed', maxppid=15, locati
     }
     
   }
+  
+  #add legend
+  legend(1,200,legend=c('Visuomotor rotation','Mirror reversal'),
+         col=c(colourscheme[['ROT']][['S']],colourscheme[['MIR']][['S']]),
+         lty=1,bty='n',cex=1,lwd=3)
   
   #close everything if you saved plot as svg
   if (target=='svg') {

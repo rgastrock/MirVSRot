@@ -120,6 +120,46 @@ getAlignedPathLengthCI <- function(group, maxppid, type = 't'){
   }
 }
 
+getPLBlockedAlignedConfInt <- function(group, maxppid, type = 't'){
+  
+  data <- getAlignedGroupPathLength(group = group, maxppid = maxppid)
+  subdat <- data[,2:ncol(data)]
+  
+  #we want to get the mean for every 12 trials (they go through each of 12 possible targets in aligned)
+  n <- 12;
+  ndat <- aggregate(subdat, list(rep(1:(nrow(data)%/%n+1),each=n,len=nrow(data))), mean, na.rm = T)[-1];
+  blockno <- c(1:nrow(ndat))
+  ndat <- as.data.frame(cbind(blockno,ndat))
+  
+  data1 <- as.matrix(ndat[,2:dim(ndat)[2]])
+  confidence <- data.frame()
+  
+  
+  for (block in blockno){
+    cireaches <- data1[which(ndat$blockno == block), ]
+    
+    if (type == "t"){
+      cireaches <- cireaches[!is.na(cireaches)]
+      citrial <- t.interval(data = cireaches, variance = var(cireaches), conf.level = 0.95)
+    } else if(type == "b"){
+      citrial <- getBSConfidenceInterval(data = cireaches, resamples = 1000)
+    }
+    
+    if (prod(dim(confidence)) == 0){
+      confidence <- citrial
+    } else {
+      confidence <- rbind(confidence, citrial)
+    }
+    if (group == 'noninstructed'){
+      write.csv(confidence, file='data/pilot/ALIGNED_noninstructed_blocked_CI_PL.csv', row.names = F) 
+    } else if (group == 'instructed'){
+      write.csv(confidence, file='data/pilot/ALIGNED_instructed_blocked_CI_PL.csv', row.names = F)
+    } 
+    
+  }
+  
+}
+
 plotAlignedPathLength <- function(groups=c('noninstructed', 'instructed'),target='inline') {
   
   for (group in groups){
@@ -251,6 +291,47 @@ getROTPathLengthCI <- function(group, maxppid, type = 't'){
     
   }
 }
+
+getPLBlockedROTConfInt <- function(group, maxppid, type = 't'){
+  
+  data <- getROTGroupPathLength(group = group, maxppid = maxppid)
+  subdat <- data[,2:ncol(data)]
+  
+  #we want to get the mean for every 6 trials (they go through each of 6 possible targets)
+  n <- 6;
+  ndat <- aggregate(subdat, list(rep(1:(nrow(data)%/%n+1),each=n,len=nrow(data))), mean, na.rm = T)[-1];
+  blockno <- c(1:nrow(ndat))
+  ndat <- as.data.frame(cbind(blockno,ndat))
+  
+  data1 <- as.matrix(ndat[,2:dim(ndat)[2]])
+  confidence <- data.frame()
+  
+  
+  for (block in blockno){
+    cireaches <- data1[which(ndat$blockno == block), ]
+    
+    if (type == "t"){
+      cireaches <- cireaches[!is.na(cireaches)]
+      citrial <- t.interval(data = cireaches, variance = var(cireaches), conf.level = 0.95)
+    } else if(type == "b"){
+      citrial <- getBSConfidenceInterval(data = cireaches, resamples = 1000)
+    }
+    
+    if (prod(dim(confidence)) == 0){
+      confidence <- citrial
+    } else {
+      confidence <- rbind(confidence, citrial)
+    }
+    if (group == 'noninstructed'){
+      write.csv(confidence, file='data/pilot/ROT_noninstructed_blocked_CI_PL.csv', row.names = F) 
+    } else if (group == 'instructed'){
+      write.csv(confidence, file='data/pilot/ROT_instructed_blocked_CI_PL.csv', row.names = F)
+    } 
+    
+  }
+  
+}
+
 #Mirror reaches----
 getMIRGroupPathLength <- function(group, maxppid){
   
@@ -319,6 +400,210 @@ getMIRPathLengthCI <- function(group, maxppid, type = 't'){
     
   }
 }
+
+getPLBlockedMIRConfInt <- function(group, maxppid, type = 't'){
+  
+  data <- getMIRGroupPathLength(group = group, maxppid = maxppid)
+  subdat <- data[,2:ncol(data)]
+  
+  #we want to get the mean for every 6 trials (they go through each of 6 possible targets)
+  n <- 6;
+  ndat <- aggregate(subdat, list(rep(1:(nrow(data)%/%n+1),each=n,len=nrow(data))), mean, na.rm = T)[-1];
+  blockno <- c(1:nrow(ndat))
+  ndat <- as.data.frame(cbind(blockno,ndat))
+  
+  data1 <- as.matrix(ndat[,2:dim(ndat)[2]])
+  confidence <- data.frame()
+  
+  
+  for (block in blockno){
+    cireaches <- data1[which(ndat$blockno == block), ]
+    
+    if (type == "t"){
+      cireaches <- cireaches[!is.na(cireaches)]
+      citrial <- t.interval(data = cireaches, variance = var(cireaches), conf.level = 0.95)
+    } else if(type == "b"){
+      citrial <- getBSConfidenceInterval(data = cireaches, resamples = 1000)
+    }
+    
+    if (prod(dim(confidence)) == 0){
+      confidence <- citrial
+    } else {
+      confidence <- rbind(confidence, citrial)
+    }
+    if (group == 'noninstructed'){
+      write.csv(confidence, file='data/pilot/MIR_noninstructed_blocked_CI_PL.csv', row.names = F) 
+    } else if (group == 'instructed'){
+      write.csv(confidence, file='data/pilot/MIR_instructed_blocked_CI_PL.csv', row.names = F)
+    } 
+    
+  }
+  
+}
+
+
+#ROTWASHOUT----
+getROTWASHGroupPLTrials <- function(group = 'noninstructed', maxppid = 15) {
+  #participants <- getGroupParticipants(group) #the function that gives all participant ID's for a specified group
+  
+  #a consequence of adding the groups late led me to fix it in the manner below
+  if (group == 'noninstructed'){
+    participants <- seq(0,maxppid,1)
+  } else if (group == 'instructed'){
+    participants <- seq(16,maxppid,1)
+  }
+  
+  
+  dataoutput<- data.frame() #create place holder
+  #go through each participant in this group
+  for (participant in participants) {
+    if (participant%%2 == 1){
+      #mirror then rotation if odd id
+      ppRT <- getParticipantPathLength(group=group, id=participant, taskno = 13, task = 'washout1')
+    } else if (participant%%2 == 0){
+      #if pp id is even
+      #rotation first then mirror
+      ppRT <- getParticipantPathLength(group=group, id=participant, taskno = 7, task = 'washout0')
+    }
+    
+    reaction <- as.numeric(ppRT)#get RT column from RT data
+    trial <- c(1:length(reaction)) #sets up trial column
+    dat <- cbind(trial, reaction)
+    #rdat <- dat$reaches
+    
+    if (prod(dim(dataoutput)) == 0){
+      dataoutput <- dat
+    } else {
+      dataoutput <- cbind(dataoutput, reaction)
+    }
+    
+  }
+  
+  return(dataoutput)
+  
+}
+
+getPLBlockedRotwashConfInt <- function(group, maxppid, type = 't'){
+  
+  data <- getROTWASHGroupPLTrials(group = group, maxppid = maxppid)
+  subdat <- data[,2:ncol(data)]
+  
+  #we want to get the mean for every 6 trials (they go through each of 6 possible targets)
+  n <- 6;
+  ndat <- aggregate(subdat, list(rep(1:(nrow(data)%/%n+1),each=n,len=nrow(data))), mean, na.rm = T)[-1];
+  blockno <- c(1:nrow(ndat))
+  ndat <- as.data.frame(cbind(blockno,ndat))
+  
+  data1 <- as.matrix(ndat[,2:dim(ndat)[2]])
+  confidence <- data.frame()
+  
+  
+  for (block in blockno){
+    cireaches <- data1[which(ndat$blockno == block), ]
+    
+    if (type == "t"){
+      cireaches <- cireaches[!is.na(cireaches)]
+      citrial <- t.interval(data = cireaches, variance = var(cireaches), conf.level = 0.95)
+    } else if(type == "b"){
+      citrial <- getBSConfidenceInterval(data = cireaches, resamples = 1000)
+    }
+    
+    if (prod(dim(confidence)) == 0){
+      confidence <- citrial
+    } else {
+      confidence <- rbind(confidence, citrial)
+    }
+    if (group == 'noninstructed'){
+      write.csv(confidence, file='data/pilot/ROTWASH_noninstructed_blocked_CI_PL.csv', row.names = F) 
+    } else if (group == 'instructed'){
+      write.csv(confidence, file='data/pilot/ROTWASH_instructed_blocked_CI_PL.csv', row.names = F)
+    } 
+    
+  }
+  
+}
+
+#MIRWASHOUT----
+getMIRWASHGroupPLTrials <- function(group = 'noninstructed', maxppid = 15) {
+  #participants <- getGroupParticipants(group) #the function that gives all participant ID's for a specified group
+  
+  #a consequence of adding the groups late led me to fix it in the manner below
+  if (group == 'noninstructed'){
+    participants <- seq(0,maxppid,1)
+  } else if (group == 'instructed'){
+    participants <- seq(16,maxppid,1)
+  }
+  
+  
+  dataoutput<- data.frame() #create place holder
+  #go through each participant in this group
+  for (participant in participants) {
+    if (participant%%2 == 1){
+      #mirror then rotation if odd id
+      ppRT <- getParticipantPathLength(group=group, id=participant, taskno = 7, task = 'washout0')
+    } else if (participant%%2 == 0){
+      #if pp id is even
+      #rotation first then mirror
+      ppRT <- getParticipantPathLength(group=group, id=participant, taskno = 13, task = 'washout1')
+    }
+    
+    reaction <- as.numeric(ppRT)#get RT column from RT data
+    trial <- c(1:length(reaction)) #sets up trial column
+    dat <- cbind(trial, reaction)
+    #rdat <- dat$reaches
+    
+    if (prod(dim(dataoutput)) == 0){
+      dataoutput <- dat
+    } else {
+      dataoutput <- cbind(dataoutput, reaction)
+    }
+    
+  }
+  
+  return(dataoutput)
+  
+}
+
+getPLBlockedMirwashConfInt <- function(group, maxppid, type = 't'){
+  
+  data <- getROTWASHGroupPLTrials(group = group, maxppid = maxppid)
+  subdat <- data[,2:ncol(data)]
+  
+  #we want to get the mean for every 6 trials (they go through each of 6 possible targets)
+  n <- 6;
+  ndat <- aggregate(subdat, list(rep(1:(nrow(data)%/%n+1),each=n,len=nrow(data))), mean, na.rm = T)[-1];
+  blockno <- c(1:nrow(ndat))
+  ndat <- as.data.frame(cbind(blockno,ndat))
+  
+  data1 <- as.matrix(ndat[,2:dim(ndat)[2]])
+  confidence <- data.frame()
+  
+  
+  for (block in blockno){
+    cireaches <- data1[which(ndat$blockno == block), ]
+    
+    if (type == "t"){
+      cireaches <- cireaches[!is.na(cireaches)]
+      citrial <- t.interval(data = cireaches, variance = var(cireaches), conf.level = 0.95)
+    } else if(type == "b"){
+      citrial <- getBSConfidenceInterval(data = cireaches, resamples = 1000)
+    }
+    
+    if (prod(dim(confidence)) == 0){
+      confidence <- citrial
+    } else {
+      confidence <- rbind(confidence, citrial)
+    }
+    if (group == 'noninstructed'){
+      write.csv(confidence, file='data/pilot/MIRWASH_noninstructed_blocked_CI_PL.csv', row.names = F) 
+    } else if (group == 'instructed'){
+      write.csv(confidence, file='data/pilot/MIRWASH_instructed_blocked_CI_PL.csv', row.names = F)
+    } 
+    
+  }
+  
+}
+
 #plots for ROT and MIR----
 plotPTypePathLength <- function(perturb = c('ROT', 'MIR'), group, target='inline') {
   
@@ -376,6 +661,74 @@ plotPTypePathLength <- function(perturb = c('ROT', 'MIR'), group, target='inline
   legend(50,18,legend=c('Visuomotor rotation','Mirror reversal'),
          col=c(colourscheme[['ROT']][['S']],colourscheme[['MIR']][['S']]),
          lty=1,bty='n',cex=1,lwd=2)
+  
+  #close everything if you saved plot as svg
+  if (target=='svg') {
+    dev.off()
+  }
+  
+}
+
+plotNIBlockedPL <- function(target='inline'){
+  
+  #but we can save plot as svg file
+  if (target=='svg') {
+    svglite(file='doc/fig/pilot/Fig49_NI_BlockedPL.svg', width=11.5, height=8.5, pointsize=16, system_fonts=list(sans="Arial"))
+  }
+  
+  #read in the csv files and plot them in one big plot
+  dat1 <- read.csv(file='data/pilot/ALIGNED_noninstructed_blocked_CI_PL.csv')
+  dat2 <- read.csv(file='data/pilot/ROT_noninstructed_blocked_CI_PL.csv')
+  dat3 <- read.csv(file='data/pilot/ROTWASH_noninstructed_blocked_CI_PL.csv')
+  dat4 <- read.csv(file='data/pilot/MIR_noninstructed_blocked_CI_PL.csv')
+  dat5 <- read.csv(file='data/pilot/MIRWASH_noninstructed_blocked_CI_PL.csv')
+  
+  dat <- rbind(dat1, dat2, dat3, dat4, dat5)
+  
+  #separate each task, then plot as usual according to blocks
+  
+  X1 <- seq(1, 4,1)
+  X3 <- seq(5,19,1)
+  X5 <- seq(20,27,1)
+  X7 <- seq(28,42,1)
+  X9 <- seq(43,50,1)
+  
+  Y <- as.numeric(dat$V2)
+  YLow <- as.numeric(dat$V1)
+  YUp <- as.numeric(dat$V3)
+  
+  plot(c(1:length(Y)), Y, type = 'n', axes = FALSE,
+       xlab = 'Blocks', ylab = 'Path length (cm)', main = '',
+       xlim = c(0,51), ylim = c(9,15))
+  
+  #labs <- c('1:AL','9:ROT','24:WASH','32:MIR','47:WASH','54')
+  #axis(side=1, at=c(1,9,24,32,47,54), labels=labs)
+  axis(side=1, at=c(1,5,20,28,43,50))
+  #mtext('Trial & Task', side = 1, outer = TRUE, line=-1, cex = 1)
+  axis(side=2, at=c(9,11,13,15),las=2)
+  
+  #abline(h = c(400,700), col = 'black', lty = 2)
+  abline(v = c(4.5,19.5,27.5,42.5), col = 8, lty = 2)
+  abline(h = c(9), col = 8, lty = 2)
+  
+  polygon(x = c(X1, rev(X1)), y = c(YLow[1:4], rev(YUp[1:4])), border=NA, col=alpha("#b4b4b4",.5))
+  polygon(x = c(X3, rev(X3)), y = c(YLow[5:19], rev(YUp[5:19])), border=NA, col="#e516362f")
+  polygon(x = c(X5, rev(X5)), y = c(YLow[20:27], rev(YUp[20:27])), border=NA, col="#e516362f")
+  polygon(x = c(X7, rev(X7)), y = c(YLow[28:42], rev(YUp[28:42])), border=NA, col="#005de42f")
+  polygon(x = c(X9, rev(X9)), y = c(YLow[43:50], rev(YUp[43:50])), border=NA, col="#005de42f")
+  
+  lines(X1,Y[1:4], col = alpha("#000000", 1))#aligned
+  lines(X3, Y[5:19], col = alpha("#e51636ff", 1))#rotation
+  lines(X5, Y[20:27], col = alpha("#e51636ff", 1))#rotwashout
+  lines(X7, Y[28:42], col = alpha("#005de4ff", 1))#mirror
+  lines(X9, Y[43:50], col = alpha("#005de4ff", 1))#mirwashout
+  
+  
+  
+  #add legend
+  legend(5,15,legend=c('Aligned','Rotation and washout','Mirror Reversal and washout'),
+         col=c("#000000", "#e51636ff", "#005de4ff"),
+         lty=1,bty='n',cex=0.8,lwd=2)
   
   #close everything if you saved plot as svg
   if (target=='svg') {

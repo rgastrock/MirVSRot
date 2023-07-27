@@ -372,7 +372,7 @@ We do not find any main or interaction effects for perturbation type and block. 
 We defined path length (PL) as the total distance, given x and y coordinates of the reach trajectory, traveled between movement onset and offset. Movement onset and offset are the start and end movement times defined in the previous section. The shortest path length to the target is a straight line spanning the start-to-target distance. However, movements are not perfectly straight and may travel in different directions, depending on the perturbation. 
 
 ```{r}
-plotPTypePathLength(group='noninstructed')
+plotNIBlockedPL()
 ```
 
 Similar to the other measures above, we conducted t-tests to compare PLs between the last block of aligned trials with the first and last blocks of rotation and mirror reversed training. We then compared PLs between the two perturbation types.

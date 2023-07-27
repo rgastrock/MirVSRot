@@ -1768,12 +1768,12 @@ plotCtrlMT <- function(groups = c('far', 'mid', 'near'), target='inline') {
   
   #abline(h = c(0, 1), v = c(45, 66, 156), col = 8, lty = 2)
   #axis(1, at = c(1, 25, 46, 55, 67, 95, 125, 157, 165, 177)) #tick marks for x axis
-  abline(h = c(0, 1), col = 8, lty = 2)
+  #abline(h = c(0,1), col = 8, lty = 2)
   axis(side=1, at=c(1,45), labels=c('1',''))
   axis(side=1, at=c(46,66), labels=c('46',''))
   axis(side=1, at=c(67,156), labels=c('67',''))
   axis(side=1, at=c(157,177), labels=c('157','177'))
-  axis(2, at = c(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10), las = 2) #tick marks for y axis
+  axis(2, at = c(0, 2, 4, 6, 8, 10), las = 2) #tick marks for y axis
   
   for(group in groups){
     groupconfidence <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_MovementTime_CI.csv', group))
@@ -2045,18 +2045,18 @@ plotCtrlPL <- function(groups = c('far', 'mid', 'near'), target='inline') {
     svglite(file='doc/fig/controlmironline-master/Fig3_PathLength.svg', width=10, height=7, pointsize=14, system_fonts=list(sans="Arial"))
   }
   
-  plot(NA, NA, xlim = c(0,178), ylim = c(-0.2,4), 
+  plot(NA, NA, xlim = c(0,178), ylim = c(0,4), 
        xlab = "Trial", ylab = "Path Length (monitor scale)", frame.plot = FALSE, #frame.plot takes away borders
        main = "", xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
   
   #abline(h = c(0, 0.4), v = c(45, 66, 156), col = 8, lty = 2)
   #axis(1, at = c(1, 25, 46, 55, 67, 95, 125, 157, 165, 177)) #tick marks for x axis
-  abline(h = c(0, 0.4), col = 8, lty = 2)
+  abline(h = c(0.4), col = 8, lty = 2)
   axis(side=1, at=c(1,45), labels=c('1',''))
   axis(side=1, at=c(46,66), labels=c('46',''))
   axis(side=1, at=c(67,156), labels=c('67',''))
   axis(side=1, at=c(157,177), labels=c('157','177'))
-  axis(2, at = c(0, .5, 1, 1.5, 2, 2.5, 3, 3.5, 4), las = 2) #tick marks for y axis
+  axis(2, at = c(.4, 1, 1.5, 2, 2.5, 3, 3.5, 4), las = 2) #tick marks for y axis
   
   for(group in groups){
     groupconfidence <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_PathLength_CI.csv', group))
