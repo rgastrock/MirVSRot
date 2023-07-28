@@ -547,7 +547,7 @@ plotBlockedLearningPercentages<- function(groups = c('far', 'mid', 'near'), quad
   abline(h = c(0, 100), v = c(21, 42, 63, 84, 105), col = 8, lty = 2) #creates horizontal dashed lines through y =  0 and 30
   
   axis(1, at = c(4, 11, 18, 25, 32, 39, 46, 53, 60, 67, 74, 81, 88, 95, 102, 109, 116, 123),
-       labels = c('first', 'second', 'last', 'first', 'second', 'last', 'first', 'second', 'last', 'first', 'second', 'last', 'first', 'second', 'last', 'first', 'second', 'last'), las=2) #tick marks for x axis
+       labels = c('1', '2', '7', '1', '2', '7', '1', '2', '7', '1', '2', '7', '1', '2', '7', '1', '2', '7')) #tick marks for x axis
   axis(2, at = c(-100, -50, 0, 50, 100, 150, 200), las = 2) #tick marks for y axis
   
   
