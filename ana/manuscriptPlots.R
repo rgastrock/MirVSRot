@@ -10,7 +10,7 @@ plotTabletLearningRAE <- function(target='inline'){
 
   #but we can save plot as svg file
   if (target=='svg') {
-    svglite(file='doc/fig_manuscripts/Fig2_Tablet_LCandRAE.svg', width=11.5, height=8, pointsize=16, system_fonts=list(sans="Arial"))
+    svglite(file='doc/fig_manuscripts/Fig2_Tablet_LCandRAE.svg', width=8, height=12, pointsize=16, system_fonts=list(sans="Arial"))
   }
   
   #par(mfrow=c(1,2), mar=c(4,4,2,0.1))
@@ -52,7 +52,7 @@ plotTabletMovementMeasures <- function(target='inline'){
   
   #but we can save plot as svg file
   if (target=='svg') {
-    svglite(file='doc/fig_manuscripts/Fig3_Tablet_RTMTPL.svg', width=11.5, height=4, pointsize=16, system_fonts=list(sans="Arial"))
+    svglite(file='doc/fig_manuscripts/Fig3_Tablet_RTMTPL.svg', width=11.5, height=5, pointsize=16, system_fonts=list(sans="Arial"))
   }
   
   #par(mfrow=c(1,2), mar=c(4,4,2,0.1))

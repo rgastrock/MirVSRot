@@ -911,13 +911,13 @@ plotNIBlockedRT <- function(target='inline'){
   
   plot(c(1:length(Y)), Y, type = 'n', axes = FALSE,
        xlab = 'Blocks', ylab = 'Reaction time (ms)', main = '',
-       xlim = c(0,51), ylim = c(0,810))
+       xlim = c(0,51), ylim = c(199,801))
   
   #labs <- c('1:AL','9:ROT','24:WASH','32:MIR','47:WASH','54')
   #axis(side=1, at=c(1,9,24,32,47,54), labels=labs)
   axis(side=1, at=c(1,5,20,28,43,50))
   #mtext('Trial & Task', side = 1, outer = TRUE, line=-1, cex = 1)
-  axis(side=2, at=c(0, 200, 400,600,800),las=2)
+  axis(side=2, at=c(200, 300, 400, 500, 600, 700, 800),las=2)
   
   #abline(h = c(400,700), col = 'black', lty = 2)
   abline(v = c(4.5,19.5,27.5,42.5), col = 8, lty = 2)
@@ -937,7 +937,7 @@ plotNIBlockedRT <- function(target='inline'){
 
   
   #add legend
-  legend(27,200,legend=c('Aligned','Rotation and washout','Mirror Reversal and washout'),
+  legend(5,750,legend=c('Aligned','Rotation and washout','Mirror Reversal and washout'),
          col=c("#000000", "#e51636ff", "#005de4ff"),
          lty=1,bty='n',cex=0.8,lwd=2)
   
@@ -2490,13 +2490,13 @@ plotNIBlockedMT <- function(target='inline'){
   
   plot(c(1:length(Y)), Y, type = 'n', axes = FALSE,
        xlab = 'Blocks', ylab = 'Movement time (ms)', main = '',
-       xlim = c(0,51), ylim = c(0,251))
+       xlim = c(0,51), ylim = c(99,251))
   
   #labs <- c('1:AL','9:ROT','24:WASH','32:MIR','47:WASH','54')
   #axis(side=1, at=c(1,9,24,32,47,54), labels=labs)
   axis(side=1, at=c(1,5,20,28,43,50))
   #mtext('Trial & Task', side = 1, outer = TRUE, line=-1, cex = 1)
-  axis(side=2, at=c(0, 100, 150, 200, 250),las=2)
+  axis(side=2, at=c(100, 125, 150, 175, 200, 225, 250),las=2)
   
   #abline(h = c(400,700), col = 'black', lty = 2)
   abline(v = c(4.5,19.5,27.5,42.5), col = 8, lty = 2)
@@ -2516,7 +2516,7 @@ plotNIBlockedMT <- function(target='inline'){
 
   
   #add legend
-  legend(27,50,legend=c('Aligned','Rotation and washout','Mirror Reversal and washout'),
+  legend(5,250,legend=c('Aligned','Rotation and washout','Mirror Reversal and washout'),
          col=c("#000000", "#e51636ff", "#005de4ff"),
          lty=1,bty='n',cex=0.8,lwd=2)
   

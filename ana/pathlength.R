@@ -699,17 +699,17 @@ plotNIBlockedPL <- function(target='inline'){
   
   plot(c(1:length(Y)), Y, type = 'n', axes = FALSE,
        xlab = 'Blocks', ylab = 'Path length (cm)', main = '',
-       xlim = c(0,51), ylim = c(9,15))
+       xlim = c(0,51), ylim = c(10,11.5))
   
   #labs <- c('1:AL','9:ROT','24:WASH','32:MIR','47:WASH','54')
   #axis(side=1, at=c(1,9,24,32,47,54), labels=labs)
   axis(side=1, at=c(1,5,20,28,43,50))
   #mtext('Trial & Task', side = 1, outer = TRUE, line=-1, cex = 1)
-  axis(side=2, at=c(9,11,13,15),las=2)
+  axis(side=2, at=c(10, 10.25, 10.5, 10.75, 11, 11.25, 11.5),las=2)
   
   #abline(h = c(400,700), col = 'black', lty = 2)
   abline(v = c(4.5,19.5,27.5,42.5), col = 8, lty = 2)
-  abline(h = c(9), col = 8, lty = 2)
+  #abline(h = c(9), col = 8, lty = 2)
   
   polygon(x = c(X1, rev(X1)), y = c(YLow[1:4], rev(YUp[1:4])), border=NA, col=alpha("#b4b4b4",.5))
   polygon(x = c(X3, rev(X3)), y = c(YLow[5:19], rev(YUp[5:19])), border=NA, col="#e516362f")
@@ -726,7 +726,7 @@ plotNIBlockedPL <- function(target='inline'){
   
   
   #add legend
-  legend(5,15,legend=c('Aligned','Rotation and washout','Mirror Reversal and washout'),
+  legend(5,11.5,legend=c('Aligned','Rotation and washout','Mirror Reversal and washout'),
          col=c("#000000", "#e51636ff", "#005de4ff"),
          lty=1,bty='n',cex=0.8,lwd=2)
   
