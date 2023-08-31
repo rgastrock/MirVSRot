@@ -538,7 +538,7 @@ plotBlockedLearningPercentages<- function(groups = c('far', 'mid', 'near'), quad
   
   #NA to create empty plot
   # could maybe use plot.new() ?
-  plot(NA, NA, xlim = c(0,127), ylim = c(-200,400), 
+  plot(NA, NA, xlim = c(0,127), ylim = c(-200,300), 
        xlab = "Block", ylab = "Amount of compensation (%)", frame.plot = FALSE, #frame.plot takes away borders
        main = "", xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
   
@@ -548,7 +548,7 @@ plotBlockedLearningPercentages<- function(groups = c('far', 'mid', 'near'), quad
   
   axis(1, at = c(4, 11, 18, 25, 32, 39, 46, 53, 60, 67, 74, 81, 88, 95, 102, 109, 116, 123),
        labels = c('1', '2', '7', '1', '2', '7', '1', '2', '7', '1', '2', '7', '1', '2', '7', '1', '2', '7')) #tick marks for x axis
-  axis(2, at = c(-100, -50, 0, 50, 100, 150, 200), las = 2) #tick marks for y axis
+  axis(2, at = c(-200,-150,-100, -50, 0, 50, 100, 150, 200), las = 2) #tick marks for y axis
   
   
   for(quadrant in quadrants){
@@ -1394,10 +1394,10 @@ plotCtrlGenMT <- function(groups = c('far', 'mid', 'near'), target='inline') {
   
   #but we can save plot as svg file
   if (target=='svg'){
-    svglite(file='doc/fig/controlmirgenonline-master/Fig2_MovementTime.svg', width=10, height=7, pointsize=14, system_fonts=list(sans="Arial"))
+    svglite(file='doc/fig/controlmirgenonline-master/Fig2_MovementTime.svg', width=6, height=10, pointsize=14, system_fonts=list(sans="Arial"))
   }
   
-  plot(NA, NA, xlim = c(0,127), ylim = c(-0.2, 11), 
+  plot(NA, NA, xlim = c(0,127), ylim = c(0, 6), 
        xlab = "Trial", ylab = "Completion time (s)", frame.plot = FALSE, #frame.plot takes away borders
        main = "", xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
   
@@ -1412,7 +1412,7 @@ plotCtrlGenMT <- function(groups = c('far', 'mid', 'near'), target='inline') {
   axis(side=1, at=c(64,84), labels=c('64',''))
   axis(side=1, at=c(85,105), labels=c('85',''))
   axis(side=1, at=c(106,126), labels=c('106','126'))
-  axis(2, at = c(0, 2, 4, 6, 8, 10), las = 2) #tick marks for y axis
+  axis(2, at = c(0, 2, 4, 6), las = 2) #tick marks for y axis
   #axis(3, at = c(10, 32, 53, 74, 95, 116), labels = c('Q1', 'Q4', 'Q2', 'Q1', 'Q1', 'Q1'), line = -2, tick = FALSE) #tick marks for x axis
   
   for(group in groups){
@@ -1631,10 +1631,10 @@ plotCtrlGenPL <- function(groups = c('far', 'mid', 'near'), target='inline') {
   
   #but we can save plot as svg file
   if (target=='svg'){
-    svglite(file='doc/fig/controlmirgenonline-master/Fig3_PathLength.svg', width=10, height=7, pointsize=14, system_fonts=list(sans="Arial"))
+    svglite(file='doc/fig/controlmirgenonline-master/Fig3_PathLength.svg', width=6, height=10, pointsize=14, system_fonts=list(sans="Arial"))
   }
   
-  plot(NA, NA, xlim = c(0,127), ylim = c(-0.2,4), 
+  plot(NA, NA, xlim = c(0,127), ylim = c(0.4,1.6), 
        xlab = "Trial", ylab = "Path length (monitor scale)", frame.plot = FALSE, #frame.plot takes away borders
        main = "", xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
   
@@ -1649,7 +1649,7 @@ plotCtrlGenPL <- function(groups = c('far', 'mid', 'near'), target='inline') {
   axis(side=1, at=c(64,84), labels=c('64',''))
   axis(side=1, at=c(85,105), labels=c('85',''))
   axis(side=1, at=c(106,126), labels=c('106','126'))
-  axis(2, at = c(0.4, 1, 1.5, 2, 2.5, 3, 3.5, 4), las = 2) #tick marks for y axis
+  axis(2, at = c(0.4, 0.8, 1.2, 1.6), las = 2) #tick marks for y axis
   #axis(3, at = c(10, 32, 53, 74, 95, 116), labels = c('Q1', 'Q4', 'Q2', 'Q1', 'Q1', 'Q1'), line = -2, tick = FALSE) #tick marks for x axis
   
   for(group in groups){

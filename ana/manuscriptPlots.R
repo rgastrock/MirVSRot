@@ -87,7 +87,7 @@ plotTabletMovementMeasures <- function(target='inline'){
 plotBlockedSession1 <- function(target='inline', groups = c('far', 'mid', 'near')) {
   
   if (target == 'svg') {
-    svglite(file='doc/fig_manuscripts/Fig4_Session1LC.svg', width=11.5, height=8, pointsize=18, system_fonts=list(sans='Arial'))
+    svglite(file='doc/fig_manuscripts/Fig4_Session1LC.svg', width=10, height=10, pointsize=18, system_fonts=list(sans='Arial'))
   }
   
   #par(mfrow=c(1,2), mar=c(4,4,2,0.1))
@@ -207,14 +207,14 @@ plotSession1MovementMeasures <- function(target='inline'){
   
   #but we can save plot as svg file
   if (target=='svg') {
-    svglite(file='doc/fig_manuscripts/Fig5_Session1_CTPL.svg', width=11.5, height=8, pointsize=16, system_fonts=list(sans="Arial"))
+    svglite(file='doc/fig_manuscripts/Fig5_Session1_CTPL.svg', width=12, height=6, pointsize=16, system_fonts=list(sans="Arial"))
   }
   
   #par(mfrow=c(1,2), mar=c(4,4,2,0.1))
   par(mar=c(4,4,2,0.1))
   
   #layout(matrix(c(1,2,3), nrow=1, ncol=3, byrow = TRUE), widths=c(2,2,2), heights=c(1,1))
-  layout(matrix(c(1,2), 2, 1, byrow = TRUE), widths=c(2), heights=c(1,1))
+  layout(matrix(c(1,2), 1, 2, byrow = TRUE), widths=c(2,2), heights=c(1))
   
   # # # # # # # # # #
   # panel A: Learning Curves across blocks
@@ -238,7 +238,7 @@ plotBlockedSession2<- function(groups = c('far', 'mid', 'near'), target='inline'
   
   
   if (target=='svg') {
-    svglite(file='doc/fig_manuscripts/Fig6_Session2LC.svg', width=16, height=10, pointsize=18, system_fonts=list(sans="Arial"))
+    svglite(file='doc/fig_manuscripts/Fig6_Session2LC.svg', width=10, height=14, pointsize=18, system_fonts=list(sans="Arial"))
   }
   
   
@@ -276,7 +276,7 @@ plotSession2MovementMeasures <- function(target='inline'){
   
   #but we can save plot as svg file
   if (target=='svg') {
-    svglite(file='doc/fig_manuscripts/Fig7_Session2_CTPL.svg', width=11.5, height=8, pointsize=16, system_fonts=list(sans="Arial"))
+    svglite(file='doc/fig_manuscripts/Fig7_Session2_CTPL.svg', width=10, height=14, pointsize=16, system_fonts=list(sans="Arial"))
   }
   
   #par(mfrow=c(1,2), mar=c(4,4,2,0.1))
