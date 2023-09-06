@@ -358,17 +358,22 @@ plotOnlineDependentMeasures <- function(target='inline', groups = c('far', 'mid'
   
 }
 
-plotBlockedOnlinePercentages <- function(groups = c('far', 'mid', 'near'), trialtypes = c('mir', 'washout'), quadrants = c('1', '4', '2', '1A', '1L', '1W'), target='inline'){
+plotBlockedDependentMeasures <- function(groups = c('far', 'mid', 'near'), trialtypes = c('mir', 'washout'), quadrants = c('1', '4', '2', '1A', '1L', '1W'), target='inline'){
   
   if (target=='svg') {
-    svglite(file='doc/fig_manuscripts/Fig9_OnlinePercentages.svg', width=14, height=10, pointsize=14, system_fonts=list(sans='Arial'))
+    svglite(file='doc/fig_manuscripts/Fig9_OnlinePercentages.svg', width=9, height=11, pointsize=14, system_fonts=list(sans='Arial'))
   }
   
-  # create plot
-  #meanGroupReaches <- list() #empty list so that it plots the means last
+  #par(mfrow=c(1,2), mar=c(4,4,2,0.1))
+  par(mar=c(4,4,2,0.1))
   
-  #NA to create empty plot
-  # could maybe use plot.new() ?
+  
+  
+  #layout(matrix(c(1,2,3), nrow=1, ncol=3, byrow = TRUE), widths=c(2,2,2), heights=c(1,1))
+  #layout(matrix(c(1,1,1,2,3,4), 2, 3, byrow = TRUE), widths=c(2,2,2), heights=c(1,1))
+  layout(matrix(c(1,2,3), 3, 1, byrow = TRUE), widths=c(2), heights=c(1,1,1))
+  
+  #Percentages
   plot(NA, NA, xlim = c(0,168), ylim = c(-200,300), 
        xlab = "Block", ylab = "Amount of compensation (%)", frame.plot = FALSE, #frame.plot takes away borders
        main = "", xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
@@ -396,7 +401,8 @@ plotBlockedOnlinePercentages <- function(groups = c('far', 'mid', 'near'), trial
         groupno <- groupno + 1
         colourscheme <- getCtrlColourScheme(group=group)
         if(group == 'near'){
-          col <- colourscheme[[group]][['T']]
+          col <- colourscheme[[group]][['S']]
+          col <- alpha(col, .8)
         } else {
           col <- colourscheme[[group]][['S']]
         }
@@ -434,7 +440,8 @@ plotBlockedOnlinePercentages <- function(groups = c('far', 'mid', 'near'), trial
         groupno <- groupno + 1
         colourscheme <- getCtrlColourScheme(group=group)
         if(group == 'near'){
-          col <- colourscheme[[group]][['T']]
+          col <- colourscheme[[group]][['S']]
+          col <- alpha(col, .8)
         } else {
           col <- colourscheme[[group]][['S']]
         }
@@ -487,7 +494,8 @@ plotBlockedOnlinePercentages <- function(groups = c('far', 'mid', 'near'), trial
       groupno <- groupno + 1
       colourscheme <- getCtrlColourScheme(group=group)
       if(group == 'near'){
-        col <- colourscheme[[group]][['T']]
+        col <- colourscheme[[group]][['S']]
+        col <- alpha(col, .8)
       } else {
         col <- colourscheme[[group]][['S']]
       }
@@ -515,9 +523,475 @@ plotBlockedOnlinePercentages <- function(groups = c('far', 'mid', 'near'), trial
     }
   }
   
+  
+  #Completion time
+  plot(NA, NA, xlim = c(0,168), ylim = c(0,12), 
+       xlab = "Block", ylab = "Completion time (s)", frame.plot = FALSE, #frame.plot takes away borders
+       main = "", xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
+  
+  lim <- par('usr')
+  rect(127, lim[3]-1, 168, lim[4]+1, border = "#ededed", col = "#ededed") #xleft, ybottom, x right, ytop; light grey hex code
+  abline(h = c(0, 100), v = c(21, 42, 63, 84, 105, 126, 147), col = 8, lty = 2) #creates horizontal dashed lines through y =  0 and 30
+  #abline(h = c(0, 100), v = c(21), col = 8, lty = 2) #creates horizontal dashed lines through y =  0 and 30
+  
+  axis(1, at = c(4, 11, 18, 25, 32, 39, 46, 53, 60, 67, 74, 81, 88, 95, 102, 109, 116, 123, 130, 137, 144, 151, 158, 165),
+       labels = c('1', '2', '26-30', '1', '2', '7', '1', '2', '7', '1', '2', '7', '1', '2', '7', '1', '2', '7', '1', '2', '7', '1', '2', '7')) #tick marks for x axis
+  axis(2, at = c(0, 2, 4, 6, 8, 10, 12), las = 2) #tick marks for y axis
+  axis.break(1, 41, style='gap', breakcol='white')
+  
+  
+  for(type in trialtypes){
+    if(type == 'mir'){
+      blockdefs <- list('first'=c(67,3),'second'=c(70,3),'last'=c(142,15))
+      blocked <- getAlignedBlockedMTAOV(blockdefs=blockdefs, hand='trained') 
+      
+      groupno <- 0
+      
+      for(group in groups){
+        
+        groupno <- groupno + 1
+        colourscheme <- getCtrlColourScheme(group=group)
+        if(group == 'near'){
+          col <- colourscheme[[group]][['S']]
+          col <- alpha(col, .8)
+        } else {
+          col <- colourscheme[[group]][['S']]
+        }
+        
+        
+        subblocked <- blocked[which(blocked$target == group),]
+        blocks <- unique(subblocked$block)
+        for(blockname in blocks){
+          subdat <- subblocked[which(subblocked$block == blockname),]
+          meandist <- getConfidenceInterval(data=subdat$movementtime, method='b')
+          
+          trialstart <- blockdefs[blockname][[1]][1] - 1
+          if(blockname == 'first'){
+            trialstart <- 0 + 2
+          } else if (blockname == 'second'){
+            trialstart <- 3 + 6
+          } else if (blockname == 'last'){
+            trialstart <-18-2 #hardcoded to make trial number match sets with shorter number of trials
+          }
+          
+          X <- trialstart + groupno
+          
+          lines(x=rep(X,2),y=c(meandist[[1]], meandist[[3]]),col=col) #lower and upper CI
+          points(x=X,y=meandist[[2]],pch=16,cex=1.5,col=col) #50% plotted as a point
+        }
+      }
+      
+    } else if(type == 'washout'){
+      blockdefs <- list('first'=c(157,3),'second'=c(160,3),'last'=c(175,3))
+      blocked <- getAlignedBlockedMTAOV(blockdefs=blockdefs, hand='trained')
+      groupno <- 0
+      
+      for(group in groups){
+        
+        groupno <- groupno + 1
+        colourscheme <- getCtrlColourScheme(group=group)
+        if(group == 'near'){
+          col <- colourscheme[[group]][['S']]
+          col <- alpha(col, .8)
+        } else {
+          col <- colourscheme[[group]][['S']]
+        }
+        
+        
+        subblocked <- blocked[which(blocked$target == group),]
+        blocks <- unique(subblocked$block)
+        for(blockname in blocks){
+          subdat <- subblocked[which(subblocked$block == blockname),]
+          meandist <- getConfidenceInterval(data=subdat$movementtime, method='b')
+          
+          trialstart <- blockdefs[blockname][[1]][1] - 1
+          if(blockname == 'first'){
+            trialstart <- 0 + 2
+          } else if (blockname == 'second'){
+            trialstart <- 3 + 6
+          } else if (blockname == 'last'){
+            trialstart <-18-2 #hardcoded to make trial number match sets with shorter number of trials
+          }
+          
+          X <- trialstart + groupno + 21
+          
+          lines(x=rep(X,2),y=c(meandist[[1]], meandist[[3]]),col=col) #lower and upper CI
+          points(x=X,y=meandist[[2]],pch=16,cex=1.5,col=col) #50% plotted as a point
+        }
+      }
+    }
+  }
+  
+  for(quadrant in quadrants){
+    if(quadrant == '1'){
+      blockdefs <- list('first'=c(1,3),'second'=c(4,3),'last'=c(19,3))
+    } else if(quadrant == '4'){
+      blockdefs <- list('first'=c(22,3),'second'=c(25,3),'last'=c(40,3))
+    } else if(quadrant == '2'){
+      blockdefs <- list('first'=c(43,3),'second'=c(46,3),'last'=c(61,3))
+    } else if(quadrant == '1A'){
+      blockdefs <- list('first'=c(64,3),'second'=c(67,3),'last'=c(82,3))
+    } else if(quadrant == '1L'){
+      blockdefs <- list('first'=c(85,3),'second'=c(88,3),'last'=c(103,3))
+    } else if(quadrant == '1W'){
+      blockdefs <- list('first'=c(106,3),'second'=c(109,3),'last'=c(124,3))
+    }
+    
+    
+    groupno <- 0
+    blocked <- getBlockedMTAOV(blockdefs=blockdefs, quadrant=quadrant) 
+    for(group in groups){
+      
+      groupno <- groupno + 1
+      colourscheme <- getCtrlColourScheme(group=group)
+      if(group == 'near'){
+        col <- colourscheme[[group]][['S']]
+        col <- alpha(col, .8)
+      } else {
+        col <- colourscheme[[group]][['S']]
+      }
+      
+      subblocked <- blocked[which(blocked$target == group),]
+      blocks <- unique(subblocked$block)
+      for(blockname in blocks){
+        subdat <- subblocked[which(subblocked$block == blockname),]
+        meandist <- getConfidenceInterval(data=subdat$movementtime, method='b')
+        
+        trialstart <- blockdefs[blockname][[1]][1] - 1
+        if(blockname == 'first'){
+          trialstart <- trialstart + 2
+        } else if (blockname == 'second'){
+          trialstart <- trialstart + 6
+        } else if (blockname == 'last'){
+          trialstart <- trialstart - 2
+        }
+        
+        X <- trialstart + groupno + 42
+        
+        lines(x=rep(X,2),y=c(meandist[[1]], meandist[[3]]),col=col) #lower and upper CI
+        points(x=X,y=meandist[[2]],pch=16,cex=1.5,col=col) #50% plotted as a point
+      }
+    }
+  }
+  
+  #Path length
+  plot(NA, NA, xlim = c(0,168), ylim = c(0.4,3.2), 
+       xlab = "Block", ylab = "path length (monitor scale)", frame.plot = FALSE, #frame.plot takes away borders
+       main = "", xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
+  
+  lim <- par('usr')
+  rect(127, lim[3]-1, 168, lim[4]+1, border = "#ededed", col = "#ededed") #xleft, ybottom, x right, ytop; light grey hex code
+  abline(h = c(0.4), v = c(21, 42, 63, 84, 105, 126, 147), col = 8, lty = 2) #creates horizontal dashed lines through y =  0 and 30
+  #abline(h = c(0, 100), v = c(21), col = 8, lty = 2) #creates horizontal dashed lines through y =  0 and 30
+  
+  axis(1, at = c(4, 11, 18, 25, 32, 39, 46, 53, 60, 67, 74, 81, 88, 95, 102, 109, 116, 123, 130, 137, 144, 151, 158, 165),
+       labels = c('1', '2', '26-30', '1', '2', '7', '1', '2', '7', '1', '2', '7', '1', '2', '7', '1', '2', '7', '1', '2', '7', '1', '2', '7')) #tick marks for x axis
+  axis(2, at = c(.4, .8, 1.2, 1.6, 2, 2.4, 2.8, 3.2), las = 2) #tick marks for y axis
+  axis.break(1, 41, style='gap', breakcol='white')
+  
+  
+  for(type in trialtypes){
+    if(type == 'mir'){
+      blockdefs <- list('first'=c(67,3),'second'=c(70,3),'last'=c(142,15))
+      blocked <- getAlignedBlockedPLAOV(blockdefs=blockdefs, hand='trained') 
+      
+      groupno <- 0
+      
+      for(group in groups){
+        
+        groupno <- groupno + 1
+        colourscheme <- getCtrlColourScheme(group=group)
+        if(group == 'near'){
+          col <- colourscheme[[group]][['S']]
+          col <- alpha(col, .8)
+        } else {
+          col <- colourscheme[[group]][['S']]
+        }
+        
+        
+        subblocked <- blocked[which(blocked$target == group),]
+        blocks <- unique(subblocked$block)
+        for(blockname in blocks){
+          subdat <- subblocked[which(subblocked$block == blockname),]
+          meandist <- getConfidenceInterval(data=subdat$pathlength, method='b')
+          
+          trialstart <- blockdefs[blockname][[1]][1] - 1
+          if(blockname == 'first'){
+            trialstart <- 0 + 2
+          } else if (blockname == 'second'){
+            trialstart <- 3 + 6
+          } else if (blockname == 'last'){
+            trialstart <-18-2 #hardcoded to make trial number match sets with shorter number of trials
+          }
+          
+          X <- trialstart + groupno
+          
+          lines(x=rep(X,2),y=c(meandist[[1]], meandist[[3]]),col=col) #lower and upper CI
+          points(x=X,y=meandist[[2]],pch=16,cex=1.5,col=col) #50% plotted as a point
+        }
+      }
+      
+    } else if(type == 'washout'){
+      blockdefs <- list('first'=c(157,3),'second'=c(160,3),'last'=c(175,3))
+      blocked <- getAlignedBlockedPLAOV(blockdefs=blockdefs, hand='trained')
+      groupno <- 0
+      
+      for(group in groups){
+        
+        groupno <- groupno + 1
+        colourscheme <- getCtrlColourScheme(group=group)
+        if(group == 'near'){
+          col <- colourscheme[[group]][['S']]
+          col <- alpha(col, .8)
+        } else {
+          col <- colourscheme[[group]][['S']]
+        }
+        
+        
+        subblocked <- blocked[which(blocked$target == group),]
+        blocks <- unique(subblocked$block)
+        for(blockname in blocks){
+          subdat <- subblocked[which(subblocked$block == blockname),]
+          meandist <- getConfidenceInterval(data=subdat$pathlength, method='b')
+          
+          trialstart <- blockdefs[blockname][[1]][1] - 1
+          if(blockname == 'first'){
+            trialstart <- 0 + 2
+          } else if (blockname == 'second'){
+            trialstart <- 3 + 6
+          } else if (blockname == 'last'){
+            trialstart <-18-2 #hardcoded to make trial number match sets with shorter number of trials
+          }
+          
+          X <- trialstart + groupno + 21
+          
+          lines(x=rep(X,2),y=c(meandist[[1]], meandist[[3]]),col=col) #lower and upper CI
+          points(x=X,y=meandist[[2]],pch=16,cex=1.5,col=col) #50% plotted as a point
+        }
+      }
+    }
+  }
+  
+  for(quadrant in quadrants){
+    if(quadrant == '1'){
+      blockdefs <- list('first'=c(1,3),'second'=c(4,3),'last'=c(19,3))
+    } else if(quadrant == '4'){
+      blockdefs <- list('first'=c(22,3),'second'=c(25,3),'last'=c(40,3))
+    } else if(quadrant == '2'){
+      blockdefs <- list('first'=c(43,3),'second'=c(46,3),'last'=c(61,3))
+    } else if(quadrant == '1A'){
+      blockdefs <- list('first'=c(64,3),'second'=c(67,3),'last'=c(82,3))
+    } else if(quadrant == '1L'){
+      blockdefs <- list('first'=c(85,3),'second'=c(88,3),'last'=c(103,3))
+    } else if(quadrant == '1W'){
+      blockdefs <- list('first'=c(106,3),'second'=c(109,3),'last'=c(124,3))
+    }
+    
+    
+    groupno <- 0
+    blocked <- getBlockedPLAOV(blockdefs=blockdefs, quadrant=quadrant) 
+    for(group in groups){
+      
+      groupno <- groupno + 1
+      colourscheme <- getCtrlColourScheme(group=group)
+      if(group == 'near'){
+        col <- colourscheme[[group]][['S']]
+        col <- alpha(col, .8)
+      } else {
+        col <- colourscheme[[group]][['S']]
+      }
+      
+      subblocked <- blocked[which(blocked$target == group),]
+      blocks <- unique(subblocked$block)
+      for(blockname in blocks){
+        subdat <- subblocked[which(subblocked$block == blockname),]
+        meandist <- getConfidenceInterval(data=subdat$pathlength, method='b')
+        
+        trialstart <- blockdefs[blockname][[1]][1] - 1
+        if(blockname == 'first'){
+          trialstart <- trialstart + 2
+        } else if (blockname == 'second'){
+          trialstart <- trialstart + 6
+        } else if (blockname == 'last'){
+          trialstart <- trialstart - 2
+        }
+        
+        X <- trialstart + groupno + 42
+        
+        lines(x=rep(X,2),y=c(meandist[[1]], meandist[[3]]),col=col) #lower and upper CI
+        points(x=X,y=meandist[[2]],pch=16,cex=1.5,col=col) #50% plotted as a point
+      }
+    }
+  }
+  
+  
   #close everything if you saved plot as svg
   if (target=='svg') {
     dev.off()
   }
   
 }
+
+# plotBlockedOnlinePercentages <- function(groups = c('far', 'mid', 'near'), trialtypes = c('mir', 'washout'), quadrants = c('1', '4', '2', '1A', '1L', '1W'), target='inline'){
+#   
+#   if (target=='svg') {
+#     svglite(file='doc/fig_manuscripts/Fig9_OnlinePercentages.svg', width=14, height=10, pointsize=14, system_fonts=list(sans='Arial'))
+#   }
+#   
+#   # create plot
+#   #meanGroupReaches <- list() #empty list so that it plots the means last
+#   
+#   #NA to create empty plot
+#   # could maybe use plot.new() ?
+#   plot(NA, NA, xlim = c(0,168), ylim = c(-200,300), 
+#        xlab = "Block", ylab = "Amount of compensation (%)", frame.plot = FALSE, #frame.plot takes away borders
+#        main = "", xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
+#   
+#   lim <- par('usr')
+#   rect(127, lim[3]-1, 168, lim[4]+1, border = "#ededed", col = "#ededed") #xleft, ybottom, x right, ytop; light grey hex code
+#   abline(h = c(0, 100), v = c(21, 42, 63, 84, 105, 126, 147), col = 8, lty = 2) #creates horizontal dashed lines through y =  0 and 30
+#   #abline(h = c(0, 100), v = c(21), col = 8, lty = 2) #creates horizontal dashed lines through y =  0 and 30
+#   
+#   axis(1, at = c(4, 11, 18, 25, 32, 39, 46, 53, 60, 67, 74, 81, 88, 95, 102, 109, 116, 123, 130, 137, 144, 151, 158, 165),
+#        labels = c('1', '2', '26-30', '1', '2', '7', '1', '2', '7', '1', '2', '7', '1', '2', '7', '1', '2', '7', '1', '2', '7', '1', '2', '7')) #tick marks for x axis
+#   axis(2, at = c(-200,-150,-100, -50, 0, 50, 100, 150, 200), las = 2) #tick marks for y axis
+#   axis.break(1, 41, style='gap', breakcol='white')
+#   
+#   
+#   for(type in trialtypes){
+#     if(type == 'mir'){
+#       blockdefs <- list('first'=c(1,3),'second'=c(4,3),'last'=c(76,15))
+#       blocked <- getMirrorBlockedLearningAOV(blockdefs=blockdefs) 
+#       
+#       groupno <- 0
+#       
+#       for(group in groups){
+#         
+#         groupno <- groupno + 1
+#         colourscheme <- getCtrlColourScheme(group=group)
+#         if(group == 'near'){
+#           col <- colourscheme[[group]][['T']]
+#         } else {
+#           col <- colourscheme[[group]][['S']]
+#         }
+#         
+#         
+#         subblocked <- blocked[which(blocked$target == group),]
+#         blocks <- unique(subblocked$block)
+#         for(blockname in blocks){
+#           subdat <- subblocked[which(subblocked$block == blockname),]
+#           meandist <- getConfidenceInterval(data=subdat$percentcomp, method='b')
+#           
+#           trialstart <- blockdefs[blockname][[1]][1] - 1
+#           if(blockname == 'first'){
+#             trialstart <- trialstart + 2
+#           } else if (blockname == 'second'){
+#             trialstart <- trialstart + 6
+#           } else if (blockname == 'last'){
+#             trialstart <-18-2 #hardcoded to make trial number match sets with shorter number of trials
+#           }
+#           
+#           X <- trialstart + groupno
+#           
+#           lines(x=rep(X,2),y=c(meandist[[1]], meandist[[3]]),col=col) #lower and upper CI
+#           points(x=X,y=meandist[[2]],pch=16,cex=1.5,col=col) #50% plotted as a point
+#         }
+#       }
+#       
+#     } else if(type == 'washout'){
+#       blockdefs <- list('first'=c(1,3),'second'=c(4,3),'last'=c(19,3))
+#       blocked <- getRAEBlockedPercentagesAOV(blockdefs=blockdefs) 
+#       groupno <- 0
+#       
+#       for(group in groups){
+#         
+#         groupno <- groupno + 1
+#         colourscheme <- getCtrlColourScheme(group=group)
+#         if(group == 'near'){
+#           col <- colourscheme[[group]][['T']]
+#         } else {
+#           col <- colourscheme[[group]][['S']]
+#         }
+#         
+#         
+#         subblocked <- blocked[which(blocked$target == group),]
+#         blocks <- unique(subblocked$block)
+#         for(blockname in blocks){
+#           subdat <- subblocked[which(subblocked$block == blockname),]
+#           meandist <- getConfidenceInterval(data=subdat$percentcomp, method='b')
+#           
+#           trialstart <- blockdefs[blockname][[1]][1] - 1
+#           if(blockname == 'first'){
+#             trialstart <- trialstart + 2
+#           } else if (blockname == 'second'){
+#             trialstart <- trialstart + 6
+#           } else if (blockname == 'last'){
+#             trialstart <-18-2 #hardcoded to make trial number match sets with shorter number of trials
+#           }
+#           
+#           X <- trialstart + groupno + 21
+#           
+#           lines(x=rep(X,2),y=c(meandist[[1]], meandist[[3]]),col=col) #lower and upper CI
+#           points(x=X,y=meandist[[2]],pch=16,cex=1.5,col=col) #50% plotted as a point
+#         }
+#       }
+#     }
+#   }
+#   
+#   for(quadrant in quadrants){
+#     if(quadrant == '1'){
+#       blockdefs <- list('first'=c(1,3),'second'=c(4,3),'last'=c(19,3))
+#     } else if(quadrant == '4'){
+#       blockdefs <- list('first'=c(22,3),'second'=c(25,3),'last'=c(40,3))
+#     } else if(quadrant == '2'){
+#       blockdefs <- list('first'=c(43,3),'second'=c(46,3),'last'=c(61,3))
+#     } else if(quadrant == '1A'){
+#       blockdefs <- list('first'=c(64,3),'second'=c(67,3),'last'=c(82,3))
+#     } else if(quadrant == '1L'){
+#       blockdefs <- list('first'=c(85,3),'second'=c(88,3),'last'=c(103,3))
+#     } else if(quadrant == '1W'){
+#       blockdefs <- list('first'=c(106,3),'second'=c(109,3),'last'=c(124,3))
+#     }
+#     
+#     
+#     groupno <- 0
+#     blocked <- getBlockedLearningAOV(blockdefs=blockdefs, quadrant=quadrant) 
+#     for(group in groups){
+#       
+#       groupno <- groupno + 1
+#       colourscheme <- getCtrlColourScheme(group=group)
+#       if(group == 'near'){
+#         col <- colourscheme[[group]][['T']]
+#       } else {
+#         col <- colourscheme[[group]][['S']]
+#       }
+#       
+#       subblocked <- blocked[which(blocked$target == group),]
+#       blocks <- unique(subblocked$block)
+#       for(blockname in blocks){
+#         subdat <- subblocked[which(subblocked$block == blockname),]
+#         meandist <- getConfidenceInterval(data=subdat$percentcomp, method='b')
+#         
+#         trialstart <- blockdefs[blockname][[1]][1] - 1
+#         if(blockname == 'first'){
+#           trialstart <- trialstart + 2
+#         } else if (blockname == 'second'){
+#           trialstart <- trialstart + 6
+#         } else if (blockname == 'last'){
+#           trialstart <- trialstart - 2
+#         }
+#         
+#         X <- trialstart + groupno + 42
+#         
+#         lines(x=rep(X,2),y=c(meandist[[1]], meandist[[3]]),col=col) #lower and upper CI
+#         points(x=X,y=meandist[[2]],pch=16,cex=1.5,col=col) #50% plotted as a point
+#       }
+#     }
+#   }
+#   
+#   #close everything if you saved plot as svg
+#   if (target=='svg') {
+#     dev.off()
+#   }
+#   
+# }
