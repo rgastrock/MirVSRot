@@ -13,6 +13,7 @@ library(lsr) #for cohensD
 library(BayesFactor)
 library(bayestestR)
 library(tidyverse)
+library(plotrix)
 
 #Generic Functions----
 

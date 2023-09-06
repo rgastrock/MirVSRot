@@ -573,7 +573,11 @@ plotBlockedLearningPercentages<- function(groups = c('far', 'mid', 'near'), quad
       
       groupno <- groupno + 1
       colourscheme <- getCtrlColourScheme(group=group)
-      col <- colourscheme[[group]][['S']]
+      if(group == 'near'){
+        col <- colourscheme[[group]][['T']]
+      } else {
+        col <- colourscheme[[group]][['S']]
+      }
       
       subblocked <- blocked[which(blocked$target == group),]
       blocks <- unique(subblocked$block)
@@ -585,7 +589,7 @@ plotBlockedLearningPercentages<- function(groups = c('far', 'mid', 'near'), quad
         if(blockname == 'first'){
           trialstart <- trialstart + 2
         } else if (blockname == 'second'){
-          trialstart <- trialstart + 7
+          trialstart <- trialstart + 6
         } else if (blockname == 'last'){
           trialstart <- trialstart - 2
         }
@@ -624,37 +628,37 @@ plotLearningCtrlGen<- function(groups = c('far', 'mid', 'near'), target='inline'
   
   #NA to create empty plot
   # could maybe use plot.new() ?
-  plot(NA, NA, xlim = c(0,127), ylim = c(-70,265), 
+  plot(NA, NA, xlim = c(0,127), ylim = c(-65,225), 
        xlab = "Trial", ylab = "Angular reach deviation (°)", frame.plot = FALSE, #frame.plot takes away borders
        main = "", xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
   
   lim <- par('usr')
   rect(85, lim[3]-1, 126, lim[4]+1, border = "#ededed", col = "#ededed") #xleft, ybottom, x right, ytop; light grey hex code
   #abline(h = c(0), v = c(21, 42, 63, 84, 105), col = 8, lty = 2) #creates horizontal dashed lines through y =  0 and 30
-  
-  #we could color code the dashed lines at perfect compensation, but washout needs to be grey
-  perfnear <- rep(10, 105) #add 5 points to either side to extend the line
-  lines(x = c(1:105), y = perfnear, col = '#ff8200ff', lty = 2)
-  
-  perfmid <- rep(90, 105) #add 5 points to either side to extend the line
-  lines(x = c(1:105), y = perfmid, col = '#e51636ff', lty = 2)
-  
-  perffar <- rep(170, 105) #add 5 points to either side to extend the line
-  lines(x = c(1:105), y = perffar, col = '#c400c4ff', lty = 2) 
-  #then add grey lines before trials
-  greynear <- rep(10, 7) #7 is however many the x axis values are
-  lines(x = c(-5:1), y = greynear, col = 8, lty = 2) #5 x values before 0
-  greymid <- rep(90, 7) #7 is however many the x axis values are
-  lines(x = c(-5:1), y = greymid, col = 8, lty = 2) #5 x values before 0
-  greyfar <- rep(170, 7) #7 is however many the x axis values are
-  lines(x = c(-5:1), y = greyfar, col = 8, lty = 2)
-  #grey lines at washout
-  greynear <- rep(10, 27) 
-  lines(x = c(105:131), y = greynear, col = 8, lty = 2) 
-  greymid <- rep(90, 27) 
-  lines(x = c(105:131), y = greymid, col = 8, lty = 2) 
-  greyfar <- rep(170, 27) 
-  lines(x = c(105:131), y = greyfar, col = 8, lty = 2) 
+  abline(h = c(0, 10, 90, 170), col = 8, lty = 2)
+  # #we could color code the dashed lines at perfect compensation, but washout needs to be grey
+  # perfnear <- rep(10, 105) #add 5 points to either side to extend the line
+  # lines(x = c(1:105), y = perfnear, col = '#ff8200ff', lty = 2)
+  # 
+  # perfmid <- rep(90, 105) #add 5 points to either side to extend the line
+  # lines(x = c(1:105), y = perfmid, col = '#e51636ff', lty = 2)
+  # 
+  # perffar <- rep(170, 105) #add 5 points to either side to extend the line
+  # lines(x = c(1:105), y = perffar, col = '#c400c4ff', lty = 2) 
+  # #then add grey lines before trials
+  # greynear <- rep(10, 7) #7 is however many the x axis values are
+  # lines(x = c(-5:1), y = greynear, col = 8, lty = 2) #5 x values before 0
+  # greymid <- rep(90, 7) #7 is however many the x axis values are
+  # lines(x = c(-5:1), y = greymid, col = 8, lty = 2) #5 x values before 0
+  # greyfar <- rep(170, 7) #7 is however many the x axis values are
+  # lines(x = c(-5:1), y = greyfar, col = 8, lty = 2)
+  # #grey lines at washout
+  # greynear <- rep(10, 27) 
+  # lines(x = c(105:131), y = greynear, col = 8, lty = 2) 
+  # greymid <- rep(90, 27) 
+  # lines(x = c(105:131), y = greymid, col = 8, lty = 2) 
+  # greyfar <- rep(170, 27) 
+  # lines(x = c(105:131), y = greyfar, col = 8, lty = 2) 
   
   #axis(1, at = c(1, 22, 43, 64, 85, 106, 126)) #tick marks for x axis
   abline(h = c(0), col = 8, lty = 2)
@@ -773,9 +777,9 @@ plotLearningCtrlGen<- function(groups = c('far', 'mid', 'near'), target='inline'
   }
   
   #add legend
-  legend(106,220,legend=c('far target','mid target', 'near target'),
-         col=c(colourscheme[['far']][['S']],colourscheme[['mid']][['S']],colourscheme[['near']][['S']]),
-         lty=1,bty='n',lwd=2, cex=1)
+  # legend(106,220,legend=c('far target','mid target', 'near target'),
+  #        col=c(colourscheme[['far']][['S']],colourscheme[['mid']][['S']],colourscheme[['near']][['S']]),
+  #        lty=1,bty='n',lwd=2, cex=1)
   
   #close everything if you saved plot as svg
   if (target=='svg') {
@@ -1397,7 +1401,7 @@ plotCtrlGenMT <- function(groups = c('far', 'mid', 'near'), target='inline') {
     svglite(file='doc/fig/controlmirgenonline-master/Fig2_MovementTime.svg', width=6, height=10, pointsize=14, system_fonts=list(sans="Arial"))
   }
   
-  plot(NA, NA, xlim = c(0,127), ylim = c(0, 6), 
+  plot(NA, NA, xlim = c(0,127), ylim = c(0, 12), 
        xlab = "Trial", ylab = "Completion time (s)", frame.plot = FALSE, #frame.plot takes away borders
        main = "", xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
   
@@ -1412,7 +1416,7 @@ plotCtrlGenMT <- function(groups = c('far', 'mid', 'near'), target='inline') {
   axis(side=1, at=c(64,84), labels=c('64',''))
   axis(side=1, at=c(85,105), labels=c('85',''))
   axis(side=1, at=c(106,126), labels=c('106','126'))
-  axis(2, at = c(0, 2, 4, 6), las = 2) #tick marks for y axis
+  axis(2, at = c(0, 2, 4, 6, 8, 10, 12), las = 2) #tick marks for y axis
   #axis(3, at = c(10, 32, 53, 74, 95, 116), labels = c('Q1', 'Q4', 'Q2', 'Q1', 'Q1', 'Q1'), line = -2, tick = FALSE) #tick marks for x axis
   
   for(group in groups){
@@ -1520,9 +1524,9 @@ plotCtrlGenMT <- function(groups = c('far', 'mid', 'near'), target='inline') {
   }
   
   #add legend
-  legend(90,10,legend=c('far target','mid target', 'near target'),
-         col=c(colourscheme[['far']][['S']],colourscheme[['mid']][['S']],colourscheme[['near']][['S']]),
-         lty=1,bty='n',cex=1,lwd=2)
+  # legend(90,10,legend=c('far target','mid target', 'near target'),
+  #        col=c(colourscheme[['far']][['S']],colourscheme[['mid']][['S']],colourscheme[['near']][['S']]),
+  #        lty=1,bty='n',cex=1,lwd=2)
   
   #close everything if you saved plot as svg
   if (target=='svg') {
@@ -1634,7 +1638,7 @@ plotCtrlGenPL <- function(groups = c('far', 'mid', 'near'), target='inline') {
     svglite(file='doc/fig/controlmirgenonline-master/Fig3_PathLength.svg', width=6, height=10, pointsize=14, system_fonts=list(sans="Arial"))
   }
   
-  plot(NA, NA, xlim = c(0,127), ylim = c(0.4,1.6), 
+  plot(NA, NA, xlim = c(0,127), ylim = c(0.4,3.2), 
        xlab = "Trial", ylab = "Path length (monitor scale)", frame.plot = FALSE, #frame.plot takes away borders
        main = "", xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
   
@@ -1649,7 +1653,7 @@ plotCtrlGenPL <- function(groups = c('far', 'mid', 'near'), target='inline') {
   axis(side=1, at=c(64,84), labels=c('64',''))
   axis(side=1, at=c(85,105), labels=c('85',''))
   axis(side=1, at=c(106,126), labels=c('106','126'))
-  axis(2, at = c(0.4, 0.8, 1.2, 1.6), las = 2) #tick marks for y axis
+  axis(2, at = c(.4, .8, 1.2, 1.6, 2, 2.4, 2.8, 3.2), las = 2) #tick marks for y axis
   #axis(3, at = c(10, 32, 53, 74, 95, 116), labels = c('Q1', 'Q4', 'Q2', 'Q1', 'Q1', 'Q1'), line = -2, tick = FALSE) #tick marks for x axis
   
   for(group in groups){
@@ -1757,9 +1761,9 @@ plotCtrlGenPL <- function(groups = c('far', 'mid', 'near'), target='inline') {
   }
   
   #add legend
-  legend(90,4,legend=c('far target','mid target', 'near target'),
-         col=c(colourscheme[['far']][['S']],colourscheme[['mid']][['S']],colourscheme[['near']][['S']]),
-         lty=1,bty='n',cex=1,lwd=2)
+  # legend(90,4,legend=c('far target','mid target', 'near target'),
+  #        col=c(colourscheme[['far']][['S']],colourscheme[['mid']][['S']],colourscheme[['near']][['S']]),
+  #        lty=1,bty='n',cex=1,lwd=2)
   
   #close everything if you saved plot as svg
   if (target=='svg') {

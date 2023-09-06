@@ -953,7 +953,7 @@ plotAllTasksCtrl <- function(groups = c('far', 'mid', 'near'), target='inline') 
   
   plot(NA, NA, xlim = c(0,178), ylim = c(-65,225), 
        xlab = "Trial", ylab = "Angular reach deviation (°)", frame.plot = FALSE, #frame.plot takes away borders
-       main = "Reaches across trials", xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
+       main = "", xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
   #abline(h = c(0, 10, 90, 170), v = c(45, 66, 156), col = 8, lty = 2)
   #axis(1, at = c(1, 25, 46, 55, 67, 95, 125, 157, 165, 177)) #tick marks for x axis
   abline(h = c(0, 10, 90, 170), col = 8, lty = 2)
@@ -1039,7 +1039,7 @@ plotAllTasksCtrl <- function(groups = c('far', 'mid', 'near'), target='inline') 
   }
   
   #add legend
-  legend(5,145,legend=c('far target','mid target', 'near target'),
+  legend(1,170,legend=c('far target','mid target', 'near target'),
          col=c(colourscheme[['far']][['S']],colourscheme[['mid']][['S']],colourscheme[['near']][['S']]),
          lty=1,bty='n',cex=1,lwd=2)
   
@@ -1384,6 +1384,73 @@ plotBlockedMirCtrl <- function(target='inline', groups = c('far', 'mid', 'near')
   
   if (target == 'svg') {
     dev.off()
+  }
+  
+}
+
+#get far reach devs corrected
+getRAECorrectedFarAngDevs <- function(group = 'far'){
+  
+  data <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_RAECtrl.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+  
+  trialno <- data$trial
+  #postrials <- c(1:21, 64:126)
+  
+  for(trial in trialno){
+    subdat <- as.numeric(data[trial, 2:length(data)])
+    
+    for (angleidx in 1:length(subdat)){
+      angle <- subdat[angleidx]
+      if (group == 'far' && angle < -90 && !is.na(angle)){
+        subdat[angleidx] <- angle + 360
+      }
+    }
+    
+    data[trial, 2:length(data)] <- subdat
+  }
+  return(data)
+}
+
+# convert to percent of compensation
+getRAEGroupPercentCompensation <- function(groups = c('far', 'mid', 'near')){
+  
+  for(group in groups){
+    #far group
+    if (group == 'far'){
+      data <- getRAECorrectedFarAngDevs()
+      trialno <- data$trial
+      #postrials <- c(1:21, 64:126)
+      
+      for(trial in trialno){
+        subdat <- as.numeric(data[trial, 2:length(data)])
+        for (angleidx in 1:length(subdat)){
+          angle <- subdat[angleidx]
+          if (!is.na(angle)){
+            subdat[angleidx] <- (angle/170)*100 #full compensation for far targets is 170 deg
+          }
+        }
+        data[trial, 2:length(data)] <- subdat
+      }
+    } else {
+      data <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_RAECtrl.csv', group), check.names = FALSE)
+      trialno <- data$trial
+      #postrials <- c(1:21, 64:126)
+      
+      for(trial in trialno){
+        subdat <- as.numeric(data[trial, 2:length(data)])
+        for (angleidx in 1:length(subdat)){
+          angle <- subdat[angleidx]
+          if (!is.na(angle) && group == 'mid'){
+            subdat[angleidx] <- (angle/90)*100 #full compensation for mid targets is 90 deg
+          } else if(!is.na(angle) && group == 'near'){
+            subdat[angleidx] <- (angle/10)*100 #full compensation for near targets is 10 deg
+          }
+        }
+        data[trial, 2:length(data)] <- subdat
+      }
+    }
+    write.csv(data, file=sprintf('data/controlmironline-master/raw/processed/%s_RAE_PercentCompensation.csv', group), row.names = F) 
+    
   }
   
 }
@@ -1848,9 +1915,9 @@ plotCtrlMT <- function(groups = c('far', 'mid', 'near'), target='inline') {
   }
   
   #add legend
-  legend(5,10,legend=c('far target','mid target', 'near target'),
-         col=c(colourscheme[['far']][['S']],colourscheme[['mid']][['S']],colourscheme[['near']][['S']]),
-         lty=1,bty='n',cex=1,lwd=2)
+  # legend(5,10,legend=c('far target','mid target', 'near target'),
+  #        col=c(colourscheme[['far']][['S']],colourscheme[['mid']][['S']],colourscheme[['near']][['S']]),
+  #        lty=1,bty='n',cex=1,lwd=2)
   
   #close everything if you saved plot as svg
   if (target=='svg') {
@@ -2131,9 +2198,9 @@ plotCtrlPL <- function(groups = c('far', 'mid', 'near'), target='inline') {
   }
   
   #add legend
-  legend(5,3.2,legend=c('far target','mid target', 'near target'),
-         col=c(colourscheme[['far']][['S']],colourscheme[['mid']][['S']],colourscheme[['near']][['S']]),
-         lty=1,bty='n',cex=1,lwd=2)
+  # legend(5,3.2,legend=c('far target','mid target', 'near target'),
+  #        col=c(colourscheme[['far']][['S']],colourscheme[['mid']][['S']],colourscheme[['near']][['S']]),
+  #        lty=1,bty='n',cex=1,lwd=2)
   
   #close everything if you saved plot as svg
   if (target=='svg') {
@@ -3978,6 +4045,53 @@ getRAEBlockedLearningAOV <- function(groups = c('far', 'mid', 'near'), blockdefs
   LCaov$target <- as.factor(LCaov$target)
   LCaov$block <- as.factor(LCaov$block)
   LCaov$block <- factor(LCaov$block, levels = c('first','second'))
+  return(LCaov)
+  
+}
+
+#repeat RAE for percentages - used in plotting
+getRAEBlockedPercentagesAOV <- function(groups = c('far', 'mid', 'near'), blockdefs) {
+  
+  LCaov <- data.frame()
+  for(group in groups){
+    curves <- read.csv(sprintf('data/controlmironline-master/raw/processed/%s_RAE_PercentCompensation.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
+    curves <- curves[,-1] #remove trial rows
+    participants <- colnames(curves)
+    N <- length(participants)
+    
+    #blocked <- array(NA, dim=c(N,length(blockdefs)))
+    
+    target <- c()
+    participant <- c()
+    block <- c()
+    percentcomp <- c()
+    
+    for (ppno in c(1:N)) {
+      
+      pp <- participants[ppno]
+      
+      for (blockno in c(1:length(blockdefs))) {
+        #for each participant, and every 9 trials, get the mean
+        blockdef <- blockdefs[[blockno]]
+        blockstart <- blockdef[1]
+        blockend <- blockstart + blockdef[2] - 1
+        samples <- curves[blockstart:blockend,ppno]
+        samples <- mean(samples, na.rm=TRUE)
+        #samples <- samples[[2]]
+        
+        target <- c(target, group)
+        participant <- c(participant, pp)
+        block <- c(block, names(blockdefs)[blockno])
+        percentcomp <- c(percentcomp, samples)
+      }
+    }
+    LCBlocked <- data.frame(target, participant, block, percentcomp)
+    LCaov <- rbind(LCaov, LCBlocked)
+  }
+  #need to make some columns as factors for ANOVA
+  LCaov$target <- as.factor(LCaov$target)
+  LCaov$block <- as.factor(LCaov$block)
+  LCaov$block <- factor(LCaov$block, levels = c('first','second','last'))
   return(LCaov)
   
 }
