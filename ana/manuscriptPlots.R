@@ -542,7 +542,7 @@ plotBlockedDependentMeasures <- function(groups = c('far', 'mid', 'near'), trial
   }
   
   #Completion time
-  plot(NA, NA, xlim = c(0,168), ylim = c(0,12), 
+  plot(NA, NA, xlim = c(0,168), ylim = c(0,9), 
        xlab = "Block", ylab = "Completion time (s)", frame.plot = FALSE, #frame.plot takes away borders
        main = "", xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
   
@@ -554,7 +554,7 @@ plotBlockedDependentMeasures <- function(groups = c('far', 'mid', 'near'), trial
   
   axis(1, at = c(4, 11, 18, 25, 32, 39, 46, 53, 60, 67, 74, 81, 88, 95, 102, 109, 116, 123, 130, 137, 144, 151, 158, 165),
        labels = c('1', '2', '26-30', '1', '2', '7', '1', '2', '7', '1', '2', '7', '1', '2', '7', '1', '2', '7', '1', '2', '7', '1', '2', '7')) #tick marks for x axis
-  axis(2, at = c(0, 2, 4, 6, 8, 10, 12), las = 2) #tick marks for y axis
+  axis(2, at = c(0, 2, 4, 6, 8), las = 2) #tick marks for y axis
   axis.break(1, 41, style='gap', breakcol='white')
   
   
@@ -691,7 +691,7 @@ plotBlockedDependentMeasures <- function(groups = c('far', 'mid', 'near'), trial
   
   
   #Path length
-  plot(NA, NA, xlim = c(0,168), ylim = c(0.4,3.2), 
+  plot(NA, NA, xlim = c(0,168), ylim = c(0.4,2.6), 
        xlab = "Block", ylab = "Path length (monitor scale)", frame.plot = FALSE, #frame.plot takes away borders
        main = "", xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
   
@@ -703,7 +703,7 @@ plotBlockedDependentMeasures <- function(groups = c('far', 'mid', 'near'), trial
   
   axis(1, at = c(4, 11, 18, 25, 32, 39, 46, 53, 60, 67, 74, 81, 88, 95, 102, 109, 116, 123, 130, 137, 144, 151, 158, 165),
        labels = c('1', '2', '26-30', '1', '2', '7', '1', '2', '7', '1', '2', '7', '1', '2', '7', '1', '2', '7', '1', '2', '7', '1', '2', '7')) #tick marks for x axis
-  axis(2, at = c(.4, .8, 1.2, 1.6, 2, 2.4, 2.8, 3.2), las = 2) #tick marks for y axis
+  axis(2, at = c(.4, .8, 1.2, 1.6, 2, 2.4), las = 2) #tick marks for y axis
   axis.break(1, 41, style='gap', breakcol='white')
   
   
