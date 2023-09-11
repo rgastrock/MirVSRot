@@ -3958,13 +3958,13 @@ getMirrorBlockedLearningAOV <- function(groups = c('far', 'mid', 'near'), blockd
 }
 
 #3x3 anova (target x block)
-mirrorANOVA <- function() {
+mirrorANOVA <- function(groups = c('far', 'mid', 'near')) {
   
   
   blockdefs <- list('first'=c(1,3),'second'=c(4,3),'last'=c(76,15))
   
   
-  LC4aov <- getMirrorBlockedLearningAOV(blockdefs=blockdefs)                  
+  LC4aov <- getMirrorBlockedLearningAOV(groups=groups, blockdefs=blockdefs)                  
   
   #looking into interaction below:
   #interaction.plot(LC4aov$target, LC4aov$block, LC4aov$percentcomp)
@@ -3978,12 +3978,12 @@ mirrorANOVA <- function() {
   
 }
 
-mirrorBayesANOVA <- function() {
+mirrorBayesANOVA <- function(groups = c('far', 'mid', 'near')) {
   
   blockdefs <- list('first'=c(1,3),'second'=c(4,3),'last'=c(76,15))
   
   
-  LC4aov <- getMirrorBlockedLearningAOV(blockdefs=blockdefs)                      
+  LC4aov <- getMirrorBlockedLearningAOV(groups=groups, blockdefs=blockdefs)                      
   #Bayes ANOVA - can use long format
   #will compare models to null (intercept) or no effect - this will be 1
   #higher than 1 will be evidence for alternative hypothesis, lower will be evidence for null hypothesis
@@ -3999,6 +3999,95 @@ mirrorBayesANOVA <- function() {
   
   print(bfLC)
   print(bfinteraction)
+}
+
+#interaction effect, but note this does not hold up in Bayesian ANOVA
+#follow up on targetxblock effect when removing near target
+mirrorNoNearTargetComparisonMeans <- function(groups=c('far', 'mid')){
+  blockdefs <- list('first'=c(1,3),'second'=c(4,3),'last'=c(76,15))
+  
+  
+  LC4aov <- getMirrorBlockedLearningAOV(groups=groups, blockdefs=blockdefs) 
+  
+  LC4aov <- aggregate(percentcomp ~ target*block* participant, data=LC4aov, FUN=mean)
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  secondAOV <- aov_ez("participant","percentcomp",LC4aov,within=c("target","block"))
+  
+  cellmeans <- emmeans(secondAOV,specs=c('target', 'block'))
+  print(cellmeans)
+  
+}
+
+mirrorNoNearTargetComparisons <- function(groups=c('far', 'mid'), method='bonferroni'){
+  blockdefs <- list('first'=c(1,3),'second'=c(4,3),'last'=c(76,15))
+  
+  
+  LC4aov <- getMirrorBlockedLearningAOV(groups=groups, blockdefs=blockdefs) 
+  
+  LC4aov <- aggregate(percentcomp ~ target*block* participant, data=LC4aov, FUN=mean)
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  secondAOV <- aov_ez("participant","percentcomp",LC4aov,within=c("target","block"))
+  
+  #specify contrasts
+  #levels of target are: far, mid, near
+  #first block
+  fvm_b1 <- c(-1,1,0,0,0,0)
+  fvm_b2 <- c(0,0,-1,1,0,0)
+  fvm_b3 <- c(0,0,0,0,-1,1)
+  
+  
+  contrastList <- list('first block: far vs. mid'=fvm_b1, 'second block: far vs. mid'=fvm_b2, 'last block: far vs. mid'=fvm_b3)
+  
+  comparisons<- contrast(emmeans(secondAOV,specs=c('target', 'block')), contrastList, adjust=method)
+  
+  print(comparisons)
+  
+}
+
+#effect size
+mirrorNoNearTargetComparisonsEffSize <- function(groups=c('far', 'mid'), method = 'bonferroni'){
+  comparisons <- mirrorNoNearTargetComparisons(groups=groups, method=method)
+  #we can use eta-squared as effect size
+  #% of variance in DV(percentcomp) accounted for 
+  #by the difference between target1 and target2
+  comparisonsdf <- as.data.frame(comparisons)
+  etasq <- ((comparisonsdf$t.ratio)^2)/(((comparisonsdf$t.ratio)^2)+(comparisonsdf$df))
+  comparisons1 <- cbind(comparisonsdf,etasq)
+  
+  effectsize <- data.frame(comparisons1$contrast, comparisons1$etasq)
+  colnames(effectsize) <- c('contrast', 'etasquared')
+  #print(comparisons)
+  print(effectsize)
+}
+#driven by difference between far and middle target for the last block.
+
+mirrorNoNearTargetBayesfollowup <- function(groups=c('far', 'mid')) {
+  
+  
+  blockdefs <- list('first'=c(1,3),'second'=c(4,3),'last'=c(76,15))
+  
+  
+  LC4aov <- getMirrorBlockedLearningAOV(groups=groups, blockdefs=blockdefs) 
+  
+  LC4aov <- aggregate(percentcomp ~ target*block* participant, data=LC4aov, FUN=mean)
+  LC4aov$participant <- as.factor(LC4aov$participant)              
+  
+  
+  farb1 <- LC4aov[which(LC4aov$block == 'first' & LC4aov$target == 'far'),]
+  farb2 <- LC4aov[which(LC4aov$block == 'second' & LC4aov$target == 'far'),]
+  farb3 <- LC4aov[which(LC4aov$block == 'last' & LC4aov$target == 'far'),]
+  
+  midb1 <- LC4aov[which(LC4aov$block == 'first' & LC4aov$target == 'mid'),]
+  midb2 <- LC4aov[which(LC4aov$block == 'second' & LC4aov$target == 'mid'),]
+  midb3 <- LC4aov[which(LC4aov$block == 'last' & LC4aov$target == 'mid'),]
+  
+  cat('Bayesian t-test first block, far vs. mid:\n')
+  print(ttestBF(farb1$percentcomp, midb1$percentcomp))
+  cat('Bayesian t-test second block, far vs. mid:\n')
+  print(ttestBF(farb2$percentcomp, midb2$percentcomp))
+  cat('Bayesian t-test last block, far vs. mid:\n')
+  print(ttestBF(farb3$percentcomp, midb3$percentcomp))
+  
 }
 
 # Washout trials
