@@ -944,21 +944,21 @@ Q1Land1WComparisonsBayesfollowup()
 
 Follow-up tests on the block by quadrant interaction show that the last block of mirror reversed training differs from the second and last blocks of washout trials. The lack of a difference between the first washout block from the training block is likely due to task switching rather than aftereffects, as participants were not instructed that the perturbation has been turned off.
 
-Finally, we compare the washout trials with the aligned baseline trials using the nondominant hand from the first session. We conduct a 3x3x2 (target x block x session) within-subjects ANOVA.
+Finally, we compare the first and second blocks of washout trials with the last block of aligned baseline trials using the nondominant hand from the first session. We conduct a 2X3 (target x block) within-subjects ANOVA.
 
 ```{r}
-RAEUntrainedHandANOVA()
-RAEUntrainedHandBayesANOVA()
+RAEUntrainedHandANOVA(groups=c('far','mid'))
+RAEUntrainedHandBayesANOVA(groups=c('far','mid'))
 ```
 
-We find a main effect of block and a block by session interaction in the frequentist test, but only a main effect of block in the Bayesian test. We look into the interaction further.
+We find a main effect of block.
 
 ```{r}
 untrainedHandSessionComparisonsEffSize()
 untrainedHandSessionComparisonsBayesfollowup()
 ```
 
-We find no significant effects, but Bayesian follow-up tests show that the effect is driven by a difference between the last block of aligned reaches and the first block of washout trials. Again, this is likely due to higher compensation percentages during the first washout trial. Overall, the data suggest that we do not observe reach aftereffects, given that the compensation percentages ion the first block immediately go back down to zero.
+We find that the last block of baseline and the second washout block differ from the first block of washout. This is evident with how participants' reaches were deviated during the first trial of washout. However, the absence of deviations by the second trial suggest that there are no aftereffects. Deviations from the first trial are only due to directly switching tasks between perturbed and aligned trials without any breaks in between.
 
 ### Movement analysis
 
@@ -1043,7 +1043,7 @@ Follow-up tests show that overall, completion times are slower for the first blo
 
 ##### Generalization across the workspace and hands
 
-To quantify generalization, we compare completion time across quadrants. We conduct a 3x3x2 (target x block x quadrant) within-subjects ANOVA to compare the first set of reaches to quadrant 1 with reaches in quadrant 4. We repeat this test but instead compare quadrant 1 with quadrant 2, quadrant 1 and reaches to quadrant 1 after switching hands (Quadrant 1L).
+To quantify generalization, we compare completion time across quadrants. We conduct a 3x3 (target x block) within-subjects ANOVA to compare the first set of reaches to quadrant 1 with reaches in quadrant 4. We repeat this test but instead compare quadrant 1 with quadrant 2, quadrant 1 and reaches to quadrant 1 after switching hands (Quadrant 1L).
 
 ```{r}
 #Quadrant 1 vs Quadrant 4
@@ -1067,7 +1067,7 @@ Q1and4MTComparisonsEffSize()
 Q1and4MTComparisonsBayesfollowup()
 ```
 
-We find evidence for generalization for the far target, but not the middle and near targets. However, on average, completion times during the first block of the test quadrant are shorter compared to the first block of reaches to the training quadrant.
+We find significant effects for the far target, but not the middle and near targets. However, on average, completion times during the first block of the test quadrant are shorter compared to the first block of reaches to the training quadrant.
 
 In comparing quadrants 1 and 2, We find a significant block effect
 
@@ -1077,7 +1077,7 @@ Q1and2MTComparisonsEffSize()
 Q1and2MTComparisonsBayesfollowup()
 ```
 
-We find evidence for generalization to quadrant 2.
+We find significant effects for quadrant 2.
 
 Finally in comparing quadrant 1 between the trained and untrained hands, we find a target x block effect.
 
@@ -1087,7 +1087,7 @@ Q1and1LMTComparisonsEffSize()
 Q1and1LMTComparisonsBayesfollowup()
 ```
 
-We do not find evidence of generalization across hands, and even the completion times on average do not differ much between the first blocks of reaches with the trained or untrained hand.
+We do not find significant effects across hands, and even the completion times on average do not differ much between the first blocks of reaches with the trained or untrained hand.
 
 ##### Completion times during washout trials
 
@@ -1202,7 +1202,7 @@ QAandBPLComparisonsEffSize(quadrantA='1', quadrantB='4')
 QAandBPLComparisonsBayesfollowup(quadrantA='1', quadrantB='4')
 ```
 
-In comparing quadrants 1 and 4, we find evidence of generalization for the far target, but not for the middle and near targets. However, on average, path lengths are shorter for the first block of reaches to the test quadrant, compared to the first block of reaches to the training quadrant.
+In comparing quadrants 1 and 4, we find significant effects for the far target, but not for the middle and near targets. However, on average, path lengths are shorter for the first block of reaches to the test quadrant, compared to the first block of reaches to the training quadrant.
 
 
 ```{r}
@@ -1211,14 +1211,14 @@ QAandBPLComparisonsEffSize(quadrantA='1', quadrantB='2')
 QAandBPLComparisonsBayesfollowup(quadrantA='1', quadrantB='2')
 ```
 
-In comparing quadrants 1 and 2, we find evidence for generalization with the middle target, but not the far and near targets. However, on average, path lengths are shorter for the first block of reaches to the test quadrant, compared to the first block of reaches to the training quadrant.
+In comparing quadrants 1 and 2, we find significant effects for the middle target, but not the far and near targets. However, on average, path lengths are shorter for the first block of reaches to the test quadrant, compared to the first block of reaches to the training quadrant.
 
 ```{r}
 quadrantA1andBPLComparisonMeans(quadrantA='1', quadrantB='1L')
 QAandBPLComparisonsEffSize(quadrantA='1', quadrantB='1L')
 QAandBPLComparisonsBayesfollowup(quadrantA='1', quadrantB='1L')
 ```
-Finally, in comparing the two hands, we do not find evidence of generalization across hands, and even the path lengths on average do not differ much between the first blocks of reaches with the trained or untrained hand.
+Finally, in comparing the two hands, we do not find significant effects across hands, and even the path lengths on average do not differ much between the first blocks of reaches with the trained or untrained hand.
 
 ##### Path lengths during washout trials
 

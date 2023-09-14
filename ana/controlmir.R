@@ -1219,6 +1219,73 @@ getALIGNEDGroupPercentCompensation <- function(groups = c('far', 'mid', 'near'))
 }
 
 #get far reach devs corrected
+getALIGNEDUNTRAINEDCorrectedFarAngDevs <- function(group = 'far'){
+  
+  data <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl_Untrained_Q1target.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+  
+  
+  trialno <- c(1:length(data$trial))
+  #postrials <- c(1:21, 64:126)
+  for(trial in trialno){
+    subdat <- as.numeric(data[trial, 2:length(data)])
+    
+    for (angleidx in 1:length(subdat)){
+      angle <- subdat[angleidx]
+      if (group == 'far' && angle < -90 && !is.na(angle)){
+        subdat[angleidx] <- angle + 360
+      }
+    }
+    
+    data[trial, 2:length(data)] <- subdat
+  }
+  return(data)
+}
+
+# convert to percent of compensation
+getALIGNEDUNTRAINEDGroupPercentCompensation <- function(groups = c('far', 'mid', 'near')){
+  
+  for(group in groups){
+    #far group
+    if (group == 'far'){
+      data <- getALIGNEDUNTRAINEDCorrectedFarAngDevs()
+      trialno <- data$trial
+      #postrials <- c(1:21, 64:126)
+      
+      for(trial in trialno){
+        subdat <- as.numeric(data[trial, 2:length(data)])
+        for (angleidx in 1:length(subdat)){
+          angle <- subdat[angleidx]
+          if (!is.na(angle)){
+            subdat[angleidx] <- (angle/170)*100 #full compensation for far targets is 170 deg
+          }
+        }
+        data[trial, 2:length(data)] <- subdat
+      }
+    } else {
+      data <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl_Untrained_Q1target.csv', group), check.names = FALSE)
+      trialno <- data$trial
+      #postrials <- c(1:21, 64:126)
+      
+      for(trial in trialno){
+        subdat <- as.numeric(data[trial, 2:length(data)])
+        for (angleidx in 1:length(subdat)){
+          angle <- subdat[angleidx]
+          if (!is.na(angle) && group == 'mid'){
+            subdat[angleidx] <- (angle/90)*100 #full compensation for mid targets is 90 deg
+          } else if(!is.na(angle) && group == 'near'){
+            subdat[angleidx] <- (angle/10)*100 #full compensation for near targets is 10 deg
+          }
+        }
+        data[trial, 2:length(data)] <- subdat
+      }
+    }
+    write.csv(data, file=sprintf('data/controlmironline-master/raw/processed/%s_ALIGNED_Untrained_PercentCompensation.csv', group), row.names = F) 
+    
+  }
+  
+}
+
+#get far reach devs corrected
 getMirrorCorrectedFarAngDevs <- function(group = 'far'){
   
   data <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_MirCtrl.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
