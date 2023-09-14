@@ -1151,6 +1151,74 @@ plotAllTasksCtrlCircular <- function(groups = c('far', 'mid', 'near'), target='i
 }
 
 #get far reach devs corrected
+getALIGNEDCorrectedFarAngDevs <- function(group = 'far'){
+  
+  data <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl_Q1target.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+  
+  
+  trialno <- data$trial
+  #postrials <- c(1:21, 64:126)
+  
+  for(trial in trialno){
+    subdat <- as.numeric(data[trial, 2:length(data)])
+    
+    for (angleidx in 1:length(subdat)){
+      angle <- subdat[angleidx]
+      if (group == 'far' && angle < -90 && !is.na(angle)){
+        subdat[angleidx] <- angle + 360
+      }
+    }
+    
+    data[trial, 2:length(data)] <- subdat
+  }
+  return(data)
+}
+
+# convert to percent of compensation
+getALIGNEDGroupPercentCompensation <- function(groups = c('far', 'mid', 'near')){
+  
+  for(group in groups){
+    #far group
+    if (group == 'far'){
+      data <- getALIGNEDCorrectedFarAngDevs()
+      trialno <- data$trial
+      #postrials <- c(1:21, 64:126)
+      
+      for(trial in trialno){
+        subdat <- as.numeric(data[trial, 2:length(data)])
+        for (angleidx in 1:length(subdat)){
+          angle <- subdat[angleidx]
+          if (!is.na(angle)){
+            subdat[angleidx] <- (angle/170)*100 #full compensation for far targets is 170 deg
+          }
+        }
+        data[trial, 2:length(data)] <- subdat
+      }
+    } else {
+      data <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl_Q1target.csv', group), check.names = FALSE)
+      trialno <- data$trial
+      #postrials <- c(1:21, 64:126)
+      
+      for(trial in trialno){
+        subdat <- as.numeric(data[trial, 2:length(data)])
+        for (angleidx in 1:length(subdat)){
+          angle <- subdat[angleidx]
+          if (!is.na(angle) && group == 'mid'){
+            subdat[angleidx] <- (angle/90)*100 #full compensation for mid targets is 90 deg
+          } else if(!is.na(angle) && group == 'near'){
+            subdat[angleidx] <- (angle/10)*100 #full compensation for near targets is 10 deg
+          }
+        }
+        data[trial, 2:length(data)] <- subdat
+      }
+    }
+    write.csv(data, file=sprintf('data/controlmironline-master/raw/processed/%s_ALIGNED_PercentCompensation.csv', group), row.names = F) 
+    
+  }
+  
+}
+
+#get far reach devs corrected
 getMirrorCorrectedFarAngDevs <- function(group = 'far'){
   
   data <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_MirCtrl.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
@@ -4309,7 +4377,7 @@ getAlignedBlockedTrainedTargets <- function(groups = c('far', 'mid', 'near'), bl
   
   LCaov <- data.frame()
   for(group in groups){
-    curves <- read.csv(sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl_Q1target.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
+    curves <- read.csv(sprintf('data/controlmironline-master/raw/processed/%s_ALIGNED_PercentCompensation.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
     curves <- curves[,-1] #remove trial rows
     participants <- colnames(curves)
     N <- length(participants)
@@ -4319,7 +4387,7 @@ getAlignedBlockedTrainedTargets <- function(groups = c('far', 'mid', 'near'), bl
     target <- c()
     participant <- c()
     block <- c()
-    angdev <- c()
+    percentcomp <- c()
     
     for (ppno in c(1:N)) {
       
@@ -4331,16 +4399,16 @@ getAlignedBlockedTrainedTargets <- function(groups = c('far', 'mid', 'near'), bl
         blockstart <- blockdef[1]
         blockend <- blockstart + blockdef[2] - 1
         samples <- curves[blockstart:blockend,ppno]
-        samples <- getAngularReachDevsStats(data=samples)
+        samples <- mean(samples, na.rm=TRUE)
         #samples <- samples[[2]]
         
         target <- c(target, group)
         participant <- c(participant, pp)
         block <- c(block, names(blockdefs)[blockno])
-        angdev <- c(angdev, samples)
+        percentcomp <- c(percentcomp, samples)
       }
     }
-    LCBlocked <- data.frame(target, participant, block, angdev)
+    LCBlocked <- data.frame(target, participant, block, percentcomp)
     LCaov <- rbind(LCaov, LCBlocked)
   }
   #need to make some columns as factors for ANOVA
@@ -4351,13 +4419,13 @@ getAlignedBlockedTrainedTargets <- function(groups = c('far', 'mid', 'near'), bl
   
 }
 
-RAETrainedTargetsANOVA <- function() {
+RAETrainedTargetsANOVA <- function(groups = c('far', 'mid', 'near')) {
   
   blockdefs <- list('baseline'=c(1,45))
-  LC_aligned <- getAlignedBlockedTrainedTargets(blockdefs=blockdefs)
+  LC_aligned <- getAlignedBlockedTrainedTargets(groups=groups, blockdefs=blockdefs)
   
   blockdefs <- list('first'=c(1,3),'second'=c(4,3))
-  LC_washout <- getRAEBlockedLearningAOV(blockdefs=blockdefs)                      
+  LC_washout <- getRAEBlockedPercentagesAOV(groups=groups, blockdefs=blockdefs)                      
   
   LC4aov <- rbind(LC_aligned, LC_washout)
   LC4aov$block <- factor(LC4aov$block, levels = c('baseline', 'first', 'second'))
@@ -4367,45 +4435,45 @@ RAETrainedTargetsANOVA <- function() {
   #learning curve ANOVA's
   # for ez, case ID should be a factor:
   LC4aov$participant <- as.factor(LC4aov$participant)
-  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=angdev, within= c(block, target), type=3, return_aov = TRUE) #df is k-2 or 3 levels minus 2; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
+  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=percentcomp, within= c(block, target), type=3, return_aov = TRUE) #df is k-2 or 3 levels minus 2; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
   cat('Comparing angular reach deviations during washout trials with aligned trials across targets and blocks, trained hand:\n')
   print(firstAOV[1:3]) #so that it doesn't print the aov object as well
   
 }
 
 #follow up on block effect
-RAETrainedTargetsComparisonMeans <- function(){
+RAETrainedTargetsComparisonMeans <- function(groups = c('far', 'mid', 'near')){
   blockdefs <- list('baseline'=c(1,45))
-  LC_aligned <- getAlignedBlockedTrainedTargets(blockdefs=blockdefs)
+  LC_aligned <- getAlignedBlockedTrainedTargets(groups=groups, blockdefs=blockdefs)
   
   blockdefs <- list('first'=c(1,3),'second'=c(4,3))
-  LC_washout <- getRAEBlockedLearningAOV(blockdefs=blockdefs)                      
+  LC_washout <- getRAEBlockedPercentagesAOV(groups=groups, blockdefs=blockdefs)                      
   
   LC4aov <- rbind(LC_aligned, LC_washout)
   LC4aov$block <- factor(LC4aov$block, levels = c('baseline', 'first', 'second'))
   
-  LC4aov <- aggregate(angdev ~ block* participant, data=LC4aov, FUN=mean)
+  LC4aov <- aggregate(percentcomp ~ block* participant, data=LC4aov, FUN=mean)
   LC4aov$participant <- as.factor(LC4aov$participant)
-  secondAOV <- aov_ez("participant","angdev",LC4aov,within=c("block"))
+  secondAOV <- aov_ez("participant","percentcomp",LC4aov,within=c("block"))
   
   cellmeans <- emmeans(secondAOV,specs=c('block'))
   print(cellmeans)
   
 }
 
-RAETrainedTargetsComparisons <- function(method='bonferroni'){
+RAETrainedTargetsComparisons <- function(groups = c('far', 'mid', 'near'), method='bonferroni'){
   blockdefs <- list('baseline'=c(1,45))
-  LC_aligned <- getAlignedBlockedTrainedTargets(blockdefs=blockdefs)
+  LC_aligned <- getAlignedBlockedTrainedTargets(groups=groups, blockdefs=blockdefs)
   
   blockdefs <- list('first'=c(1,3),'second'=c(4,3))
-  LC_washout <- getRAEBlockedLearningAOV(blockdefs=blockdefs)                      
+  LC_washout <- getRAEBlockedPercentagesAOV(groups=groups, blockdefs=blockdefs)                      
   
   LC4aov <- rbind(LC_aligned, LC_washout)
   LC4aov$block <- factor(LC4aov$block, levels = c('baseline', 'first', 'second'))
   
-  LC4aov <- aggregate(angdev ~ block* participant, data=LC4aov, FUN=mean)
+  LC4aov <- aggregate(percentcomp ~ block* participant, data=LC4aov, FUN=mean)
   LC4aov$participant <- as.factor(LC4aov$participant)
-  secondAOV <- aov_ez("participant","angdev",LC4aov,within=c("block"))
+  secondAOV <- aov_ez("participant","percentcomp",LC4aov,within=c("block"))
   
   #specify contrasts
   #levels of target are: far, mid, near
@@ -4422,8 +4490,8 @@ RAETrainedTargetsComparisons <- function(method='bonferroni'){
 }
 
 #effect size
-RAETrainedTargetsComparisonsEffSize <- function(method = 'bonferroni'){
-  comparisons <- RAETrainedTargetsComparisons(method=method)
+RAETrainedTargetsComparisonsEffSize <- function(groups = c('far', 'mid', 'near'), method = 'bonferroni'){
+  comparisons <- RAETrainedTargetsComparisons(groups=groups, method=method)
   #we can use eta-squared as effect size
   #% of variance in DV(percentcomp) accounted for 
   #by the difference between target1 and target2
@@ -4438,13 +4506,13 @@ RAETrainedTargetsComparisonsEffSize <- function(method = 'bonferroni'){
 }
 #driven by difference between baseline and washout blocks
 
-RAETrainedTargetsBayesANOVA <- function() {
+RAETrainedTargetsBayesANOVA <- function(groups = c('far', 'mid', 'near')) {
   
   blockdefs <- list('baseline'=c(1,45))
-  LC_aligned <- getAlignedBlockedTrainedTargets(blockdefs=blockdefs)
+  LC_aligned <- getAlignedBlockedTrainedTargets(groups=groups, blockdefs=blockdefs)
   
   blockdefs <- list('first'=c(1,3),'second'=c(4,3))
-  LC_washout <- getRAEBlockedLearningAOV(blockdefs=blockdefs)                      
+  LC_washout <- getRAEBlockedPercentagesAOV(groups=groups, blockdefs=blockdefs)                      
   
   LC4aov <- rbind(LC_aligned, LC_washout)
   LC4aov$block <- factor(LC4aov$block, levels = c('baseline', 'first', 'second'))
@@ -4455,7 +4523,7 @@ RAETrainedTargetsBayesANOVA <- function() {
   #compare models either if only main effects, interaction of effects
   #use lmBF function for specific models
   LC4aov$participant <- as.factor(LC4aov$participant)
-  bfLC<- anovaBF(angdev ~ target*block + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+  bfLC<- anovaBF(percentcomp ~ target*block + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
   #compare interaction contribution, over the contribution of both main effects
   #bfinteraction <- bfLC[4]/bfLC[3]
   
@@ -4466,18 +4534,18 @@ RAETrainedTargetsBayesANOVA <- function() {
   print(bfinteraction)
 }
 
-RAETrainedTargetsBayesfollowup <- function() {
+RAETrainedTargetsBayesfollowup <- function(groups = c('far', 'mid', 'near')) {
   
   blockdefs <- list('baseline'=c(1,45))
-  LC_aligned <- getAlignedBlockedTrainedTargets(blockdefs=blockdefs)
+  LC_aligned <- getAlignedBlockedTrainedTargets(groups=groups, blockdefs=blockdefs)
   
   blockdefs <- list('first'=c(1,3),'second'=c(4,3))
-  LC_washout <- getRAEBlockedLearningAOV(blockdefs=blockdefs)                      
+  LC_washout <- getRAEBlockedPercentagesAOV(groups=groups, blockdefs=blockdefs)                      
   
   LC4aov <- rbind(LC_aligned, LC_washout)
   LC4aov$block <- factor(LC4aov$block, levels = c('baseline', 'first', 'second'))
   
-  LC4aov <- aggregate(angdev ~ block* participant, data=LC4aov, FUN=mean)
+  LC4aov <- aggregate(percentcomp ~ block* participant, data=LC4aov, FUN=mean)
   
   aligned <- LC4aov[which(LC4aov$block == 'baseline'),]
   washout_b1 <- LC4aov[which(LC4aov$block == 'first'),]
@@ -4485,13 +4553,13 @@ RAETrainedTargetsBayesfollowup <- function() {
   
   #far vs mid
   cat('Bayesian t-test aligned vs washout block 1:\n')
-  print(ttestBF(aligned$angdev, washout_b1$angdev, paired = TRUE))
+  print(ttestBF(aligned$percentcomp, washout_b1$percentcomp, paired = TRUE))
   #far vs near
   cat('Bayesian t-test aligned vs washout block 2:\n')
-  print(ttestBF(aligned$angdev, washout_b2$angdev, paired = TRUE))
+  print(ttestBF(aligned$percentcomp, washout_b2$percentcomp, paired = TRUE))
   #mid vs near
   cat('Bayesian t-test washout block 1 vs washout block 2:\n')
-  print(ttestBF(washout_b1$angdev, washout_b2$angdev, paired = TRUE))
+  print(ttestBF(washout_b1$percentcomp, washout_b2$percentcomp, paired = TRUE))
 }
 
 #Statistics (Movement Time)----
