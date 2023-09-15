@@ -1975,7 +1975,7 @@ plotCtrlMT <- function(groups = c('far', 'mid', 'near'), target='inline') {
   
   #abline(h = c(0, 1), v = c(45, 66, 156), col = 8, lty = 2)
   #axis(1, at = c(1, 25, 46, 55, 67, 95, 125, 157, 165, 177)) #tick marks for x axis
-  #abline(h = c(0,1), col = 8, lty = 2)
+  abline(h = c(0), col = 8, lty = 2)
   
   lim <- par('usr')
   rect(46, lim[3]-1, 66, lim[4]+1, border = "#e3e3e3", col = "#e3e3e3")

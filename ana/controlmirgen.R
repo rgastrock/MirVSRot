@@ -1410,7 +1410,7 @@ plotCtrlGenMT <- function(groups = c('far', 'mid', 'near'), target='inline') {
   rect(85, lim[3]-1, 105, lim[4]+1, border = "#e3e3e3", col = "#e3e3e3")
   rect(106, lim[3]-1, 126, lim[4]+1, border = "#ededed", col = "#ededed") #xleft, ybottom, x right, ytop; light grey hex code
   #abline(h = c(0, 1), v = c(21, 42, 63, 84, 105), col = 8, lty = 2)
-  #abline(h = c(0, 1), col = 8, lty = 2)
+  abline(h = c(0), col = 8, lty = 2)
   #axis(1, at = c(1, 22, 43, 64, 85, 106, 126)) #tick marks for x axis
   axis(side=1, at=c(1,21), labels=c('1',''))
   axis(side=1, at=c(22,42), labels=c('22',''))
