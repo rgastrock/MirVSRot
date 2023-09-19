@@ -903,6 +903,22 @@ QAandBAsymptoteComparisons(quadrantA='1', quadrantB='1L')
 
 Moreover, we see that relative to compensation during the last block of reaches with the trained hand, compensation was higher for the first block of reaches to the trained hand than the untrained hand.
 
+We can  also conduct tests comparing the first block of reaches with the untrained hand, to the first and last block of reaches in session 1.
+
+```{r}
+intermanualANOVA(groups=c('far','mid'))
+intermanualBayesANOVA(groups=c('far','mid'))
+```
+
+We find a block effect.
+
+```{r}
+intermanualComparisonsEffSize(groups=c('far','mid'))
+intermanualComparisonsBayesfollowup(groups=c('far','mid'))
+```
+
+We find higher compensation values for the last block of training in session 1, compared to the other two blocks.
+
 #### Reach aftereffects for the untrained/ nondominant hand
 
 First, we test for target or block effects within washout trials using the nondominant or untrained hand.
@@ -1089,17 +1105,40 @@ Q1and1LMTComparisonsBayesfollowup()
 
 We do not find significant effects across hands, and even the completion times on average do not differ much between the first blocks of reaches with the trained or untrained hand.
 
+We also compare the first block of reaches with the untrained hand to the first and last block of reaches during training in session 1.
+
+```{r}
+intermanualMTANOVA()
+intermanualMTBayesANOVA()
+```
+
+We find a significant target X block interaction.
+
+```{r}
+intermanualMTComparisonsEffSize()
+intermanualMTComparisonsBayesfollowup()
+```
+
+Overall, we find that reaches using the untrained hand are faster than initial reaches in session 1 training. But, these are generally slower than reaches during the last block of training in session 1. This suggests partial retention.
+
 ##### Completion times during washout trials
 
-We have already shown that far targets have faster completion times for some blocks of washout trials, compared to the other targets. We can now compare these completion times with those during the aligned reaches. We conduct a 3x3x2 (target x block x session) within-subjects ANOVA.
+We have already shown that far targets have faster completion times for some blocks of washout trials, compared to the other targets. We can now compare these completion times with those during the aligned reaches. We conduct a 3x3 (target x block) within-subjects ANOVA.
 
 ```{r}
 RAEUntrainedHandMTANOVA()
 RAEUntrainedHandMTBayesANOVA()
 ```
 
-We do not find a session effect, but do find a block x session interaction. From the plots, we see that this is likely driven by how completion times in both sessions taper off a bit differently. However, the lack of a main effect suggests that completion times are not different between sessions.
+We find a target X block interaction.
 
+```{r}
+RAEUntrainedHandMTComparisonMeans()
+RAEUntrainedHandMTComparisonsEffSize()
+RAEUntrainedHandMTComparisonsBayesfollowup()
+```
+
+Overall, we find differences from the first block of washout, especially for the middle target.
 
 #### Path Length
 
@@ -1220,23 +1259,40 @@ QAandBPLComparisonsBayesfollowup(quadrantA='1', quadrantB='1L')
 ```
 Finally, in comparing the two hands, we do not find significant effects across hands, and even the path lengths on average do not differ much between the first blocks of reaches with the trained or untrained hand.
 
+We also compare the first block of reaches with the untrained hand to the first and last block of reaches during training in session 1.
+
+```{r}
+intermanualPLANOVA()
+intermanualPLBayesANOVA()
+```
+
+We find a significant target X block interaction.
+
+```{r}
+intermanualPLComparisonsEffSize()
+intermanualPLComparisonsBayesfollowup()
+```
+
+Overall, we find that reaches using the untrained hand are shorter than initial reaches in session 1 training. But, these are generally longer than reaches during the last block of training in session 1. This suggests partial retention.
+
 ##### Path lengths during washout trials
 
-We have already shown that in washout trials, theere are longer path lengths to the middle target than the near target during the first block. We now compare path lengths with those during the aligned reaches. We conduct a 3x3x2 (target x block x session) within-subjects ANOVA.
+We have already shown that in washout trials, theere are longer path lengths to the middle target than the near target during the first block. We now compare path lengths with those during the aligned reaches. We conduct a 3x3 (target x block) within-subjects ANOVA.
 
 ```{r}
 RAEUntrainedHandPLANOVA()
 RAEUntrainedHandPLBayesANOVA()
 ```
 
-We find a main effect of session, and a significant target x block x session interaction. We conduct follow-up tests on the interaction.
+We find target x block interaction
 
 ```{r}
-untrainedHandSessionPLComparisonsEffSize()
-untrainedHandSessionPLComparisonsBayesfollowup()
+RAEUntrainedHandPLComparisonMeans()
+RAEUntrainedHandPLComparisonsEffSize()
+RAEUntrainedHandPLComparisonsBayesfollowup()
 ```
 
-Follow-up tests show that the interaction is driven by the longer path lengths for the middle target during the first block of washout compared to the first block of aligned reaches. This confirms what we observe with the plots that path lengths for the middle target are longer during the first few trials of washout.
+Follow-up tests show that the interaction is driven by the longer path lengths for the middle and far targets during the first block of washout compared to the first block of aligned reaches and second block of washout.
 
 
 # Study 2: Supplementary analyses for the online experiment

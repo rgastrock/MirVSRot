@@ -4762,6 +4762,200 @@ untrainedHandSessionComparisonsBayesfollowup <- function(groups = c('far', 'mid'
 
 #no significant effects, but probably due to high first block in washout
 
+#compare the first block of untrained hand with first and last blocks of training with dominant hand
+intermanualANOVA <- function(groups = c('far', 'mid', 'near')) {
+  
+  blockdefs <- list('first'=c(1,3), 'second'=c(4,3), 'last'=c(76,15))
+  LC_part1 <- getMirrorBlockedLearningAOV(groups=groups, blockdefs=blockdefs)
+  #LC_part1$session <- as.factor('part1')
+  #get last block
+  LC_part1 <- LC_part1[which(LC_part1$block == 'first' | LC_part1$block == 'last'),]
+  
+  blockdefs <- list('first'=c(85,3),'second'=c(88,3),'last'=c(103,3))
+  LC_part2 <- getBlockedLearningAOV(groups=groups, blockdefs=blockdefs, quadrant='1L')
+  LC_part2 <- LC_part2[which(LC_part2$block == 'first'),-ncol(LC_part2)]
+  LC_part2$block <- gsub('first', 's2_first', LC_part2$block)
+  
+  #but we only want to analyze participants with data in both
+  LC_part1 <- LC_part1[which(LC_part1$participant %in% LC_part2$participant),]
+  LC4aov <- rbind(LC_part1, LC_part2)
+  LC4aov$block <- factor(LC4aov$block, levels = c('first','last','s2_first'))
+  
+  #looking into interaction below:
+  #interaction.plot(LC4aov$target, LC4aov$block, LC4aov$percentcomp)
+  
+  #learning curve ANOVA's
+  # for ez, case ID should be a factor:
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  
+  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=percentcomp, within= c(target, block), type=3, return_aov = TRUE) #df is k-2 or 3 levels minus 2; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
+  cat('Transfer of learned performance to untrained hand:\n')
+  print(firstAOV[1:3]) #so that it doesn't print the aov object as well
+  
+}
+
+intermanualBayesANOVA <- function(groups = c('far', 'mid', 'near')) {
+  
+  blockdefs <- list('first'=c(1,3), 'second'=c(4,3), 'last'=c(76,15))
+  LC_part1 <- getMirrorBlockedLearningAOV(groups=groups, blockdefs=blockdefs)
+  #LC_part1$session <- as.factor('part1')
+  #get last block
+  LC_part1 <- LC_part1[which(LC_part1$block == 'first' | LC_part1$block == 'last'),]
+  
+  blockdefs <- list('first'=c(85,3),'second'=c(88,3),'last'=c(103,3))
+  LC_part2 <- getBlockedLearningAOV(groups=groups, blockdefs=blockdefs, quadrant='1L')
+  LC_part2 <- LC_part2[which(LC_part2$block == 'first'),-ncol(LC_part2)]
+  LC_part2$block <- gsub('first', 's2_first', LC_part2$block)
+  
+  #but we only want to analyze participants with data in both
+  LC_part1 <- LC_part1[which(LC_part1$participant %in% LC_part2$participant),]
+  LC4aov <- rbind(LC_part1, LC_part2)
+  LC4aov$block <- factor(LC4aov$block, levels = c('first','last','s2_first'))
+  #looking into interaction below:
+  #interaction.plot(LC4aov$target, LC4aov$block, LC4aov$percentcomp)
+  
+  #learning curve ANOVA's
+  # for ez, case ID should be a factor:
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  
+  cat('Transfer of learned performance to untrained hand:\n')
+  bfLC<- anovaBF(percentcomp ~ target*block + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+  #compare interaction contribution, over the contribution of both main effects
+  #bfinteraction <- bfLC[4]/bfLC[3]
+  
+  #bfinclude to compare model with interactions against all other models
+  bfinteraction <- bayesfactor_inclusion(bfLC)
+  
+  print(bfLC)
+  print(bfinteraction)
+  
+}
+
+#main effect of block when comparing far and middle only
+
+
+# if we'd want to see the means with CI
+intermanualComparisonMeans <- function(groups = c('far', 'mid', 'near')){
+  blockdefs <- list('first'=c(1,3), 'second'=c(4,3), 'last'=c(76,15))
+  LC_part1 <- getMirrorBlockedLearningAOV(groups=groups, blockdefs=blockdefs)
+  #LC_part1$session <- as.factor('part1')
+  #get last block
+  LC_part1 <- LC_part1[which(LC_part1$block == 'first' | LC_part1$block == 'last'),]
+  
+  blockdefs <- list('first'=c(85,3),'second'=c(88,3),'last'=c(103,3))
+  LC_part2 <- getBlockedLearningAOV(groups=groups, blockdefs=blockdefs, quadrant='1L')
+  LC_part2 <- LC_part2[which(LC_part2$block == 'first'),-ncol(LC_part2)]
+  LC_part2$block <- gsub('first', 's2_first', LC_part2$block)
+  
+  #but we only want to analyze participants with data in both
+  LC_part1 <- LC_part1[which(LC_part1$participant %in% LC_part2$participant),]
+  LC4aov <- rbind(LC_part1, LC_part2)
+  LC4aov$block <- factor(LC4aov$block, levels = c('first','last','s2_first'))
+  
+  #LC4aov <- aggregate(percentcomp ~ target* participant, data=LC4aov, FUN=mean) #this will be mean for each target, regardless of block and session
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  secondAOV <- aov_ez("participant","percentcomp",LC4aov,within=c("target","block"))
+  
+  cellmeans <- emmeans(secondAOV,specs=c('target','block'))
+  print(cellmeans)
+  
+}
+
+intermanualComparisons <- function(groups = c('far', 'mid', 'near'), method='bonferroni'){
+  blockdefs <- list('first'=c(1,3), 'second'=c(4,3), 'last'=c(76,15))
+  LC_part1 <- getMirrorBlockedLearningAOV(groups=groups, blockdefs=blockdefs)
+  #LC_part1$session <- as.factor('part1')
+  #get last block
+  LC_part1 <- LC_part1[which(LC_part1$block == 'first' | LC_part1$block == 'last'),]
+  
+  blockdefs <- list('first'=c(85,3),'second'=c(88,3),'last'=c(103,3))
+  LC_part2 <- getBlockedLearningAOV(groups=groups, blockdefs=blockdefs, quadrant='1L')
+  LC_part2 <- LC_part2[which(LC_part2$block == 'first'),-ncol(LC_part2)]
+  LC_part2$block <- gsub('first', 's2_first', LC_part2$block)
+  
+  #but we only want to analyze participants with data in both
+  LC_part1 <- LC_part1[which(LC_part1$participant %in% LC_part2$participant),]
+  LC4aov <- rbind(LC_part1, LC_part2)
+  LC4aov$block <- factor(LC4aov$block, levels = c('first','last','s2_first'))
+  
+  #LC4aov <- aggregate(percentcomp ~ target* participant, data=LC4aov, FUN=mean) #this will be mean for each target, regardless of block and session
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  
+  LC4aov <- aggregate(percentcomp ~ block* participant, data=LC4aov, FUN=mean) #regardless of target, the mean for every block within each session
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  secondAOV <- aov_ez("participant","percentcomp",LC4aov,within=c("block"))
+  
+  #interaction.plot(LC4aov$block, LC4aov$session, LC4aov$angdev)
+  #specify contrasts
+  #levels of target are: far, mid, near
+  b1vslast<- c(-1,1,0)
+  b1vss2b1 <- c(-1,0,1)
+  lastvss2b1 <- c(0,-1,1)
+  
+  contrastList <- list('Session1_B1 vs. Session1_last'=b1vslast, 'Session1_B1 vs. Session2_B1'=b1vss2b1, 'Session1_last vs. Session2_B1'=lastvss2b1)
+  
+  
+  comparisons<- contrast(emmeans(secondAOV,specs=c('block')), contrastList, adjust=method)
+  
+  print(comparisons)
+  
+}
+
+#effect size
+intermanualComparisonsEffSize <- function(groups = c('far', 'mid', 'near'), method = 'bonferroni'){
+  comparisons <- intermanualComparisons(groups=groups, method=method)
+  #we can use eta-squared as effect size
+  #% of variance in DV(percentcomp) accounted for 
+  #by the difference between target1 and target2
+  comparisonsdf <- as.data.frame(comparisons)
+  etasq <- ((comparisonsdf$t.ratio)^2)/(((comparisonsdf$t.ratio)^2)+(comparisonsdf$df))
+  comparisons1 <- cbind(comparisonsdf,etasq)
+  
+  effectsize <- data.frame(comparisons1$contrast, comparisons1$etasq)
+  colnames(effectsize) <- c('contrast', 'etasquared')
+  #print(comparisons)
+  print(effectsize)
+}
+
+intermanualComparisonsBayesfollowup <- function(groups = c('far', 'mid', 'near')) {
+  blockdefs <- list('first'=c(1,3), 'second'=c(4,3), 'last'=c(76,15))
+  LC_part1 <- getMirrorBlockedLearningAOV(groups=groups, blockdefs=blockdefs)
+  #LC_part1$session <- as.factor('part1')
+  #get last block
+  LC_part1 <- LC_part1[which(LC_part1$block == 'first' | LC_part1$block == 'last'),]
+  
+  blockdefs <- list('first'=c(85,3),'second'=c(88,3),'last'=c(103,3))
+  LC_part2 <- getBlockedLearningAOV(groups=groups, blockdefs=blockdefs, quadrant='1L')
+  LC_part2 <- LC_part2[which(LC_part2$block == 'first'),-ncol(LC_part2)]
+  LC_part2$block <- gsub('first', 's2_first', LC_part2$block)
+  
+  #but we only want to analyze participants with data in both
+  LC_part1 <- LC_part1[which(LC_part1$participant %in% LC_part2$participant),]
+  LC4aov <- rbind(LC_part1, LC_part2)
+  LC4aov$block <- factor(LC4aov$block, levels = c('first','last','s2_first'))
+  
+  #LC4aov <- aggregate(percentcomp ~ target* participant, data=LC4aov, FUN=mean) #this will be mean for each target, regardless of block and session
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  
+  LC4aov <- aggregate(percentcomp ~ block* participant, data=LC4aov, FUN=mean) #regardless of target, the mean for every block within each session
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  
+  
+  s1b1 <- LC4aov[which(LC4aov$block == 'first'),]
+  s1last <- LC4aov[which(LC4aov$block == 'last'),]
+  s2b1 <- LC4aov[which(LC4aov$block == 's2_first'),]
+  
+  #session 1 block 1 vs session 1 last
+  cat('Bayesian t-test session 1 block 1 vs session 1 last block:\n')
+  print(ttestBF(s1b1$percentcomp, s1last$percentcomp, paired = TRUE))
+  #session 1 block 1 vs session 2 block 1
+  cat('Bayesian t-test session 1 block 1 vs session 2 block 1:\n')
+  print(ttestBF(s1b1$percentcomp, s2b1$percentcomp, paired = TRUE))
+  #session 1 last block vs session 2 block 1
+  cat('Bayesian t-test session 1 last block vs session 2 block 1:\n')
+  print(ttestBF(s1last$percentcomp, s2b1$percentcomp, paired = TRUE))
+}
+
 #test for retention (difference between first and last block in part 1 and first block in part 2)
 retentionANOVA <- function(groups = c('far', 'mid', 'near')) {
   
@@ -6318,16 +6512,18 @@ RAEUntrainedHandMTANOVA <- function() {
   
   blockdefs <- list('first'=c(46, 3),'second'=c(49,3),'last'=c(64,3))
   LC_aligned <- getAlignedBlockedMTAOV(blockdefs=blockdefs, hand='untrained')
-  colnames(LC_aligned) <- c('target', 'participant','block','movementtime','session')
+  LC_aligned <- LC_aligned[which(LC_aligned$block == 'last'),-ncol(LC_aligned)]
+  LC_aligned$block <- gsub('last', 's1_last', LC_aligned$block)
   
   blockdefs <- list('first'=c(106,3),'second'=c(109,3),'last'=c(124,3))
-  LC_washout <- getBlockedMTAOV(blockdefs=blockdefs, quadrant='1W') 
-  colnames(LC_washout) <- c('target', 'participant','block','movementtime','session')
+  LC_washout <- getBlockedMTAOV(blockdefs=blockdefs, quadrant='1W')
+  LC_washout <- LC_washout[which(LC_washout$block == 'first' | LC_washout$block == 'second'),-ncol(LC_washout)]
+  
   
   #but we only want to analyze participants with data in both
   LC_aligned <- LC_aligned[which(LC_aligned$participant %in% LC_washout$participant),]
   LC4aov <- rbind(LC_aligned, LC_washout)
-  LC4aov$session <- factor(LC4aov$session, levels = c('untrained','1W'))
+  LC4aov$block <- factor(LC4aov$block, levels = c('s1_last','first', 'second'))
   
   #looking into interaction below:
   #interaction.plot(LC4aov$target, LC4aov$block, LC4aov$angdev)
@@ -6335,7 +6531,8 @@ RAEUntrainedHandMTANOVA <- function() {
   #learning curve ANOVA's
   # for ez, case ID should be a factor:
   LC4aov$participant <- as.factor(LC4aov$participant)
-  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=movementtime, within= c(block, target, session), type=3, return_aov = TRUE) #df is k-2 or 3 levels minus 2; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
+  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=movementtime, within= c(target, block), type=3, return_aov = TRUE) #df is k-2 or 3 levels minus 2; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
+  
   cat('Comparing completion times during washout trials with aligned trials across targets and blocks, untrained hand:\n')
   print(firstAOV[1:3]) #so that it doesn't print the aov object as well
   
@@ -6345,16 +6542,18 @@ RAEUntrainedHandMTBayesANOVA <- function() {
   
   blockdefs <- list('first'=c(46, 3),'second'=c(49,3),'last'=c(64,3))
   LC_aligned <- getAlignedBlockedMTAOV(blockdefs=blockdefs, hand='untrained')
-  colnames(LC_aligned) <- c('target', 'participant','block','movementtime','session')
+  LC_aligned <- LC_aligned[which(LC_aligned$block == 'last'),-ncol(LC_aligned)]
+  LC_aligned$block <- gsub('last', 's1_last', LC_aligned$block)
   
   blockdefs <- list('first'=c(106,3),'second'=c(109,3),'last'=c(124,3))
-  LC_washout <- getBlockedMTAOV(blockdefs=blockdefs, quadrant='1W') 
-  colnames(LC_washout) <- c('target', 'participant','block','movementtime','session')
+  LC_washout <- getBlockedMTAOV(blockdefs=blockdefs, quadrant='1W')
+  LC_washout <- LC_washout[which(LC_washout$block == 'first' | LC_washout$block == 'second'),-ncol(LC_washout)]
+  
   
   #but we only want to analyze participants with data in both
   LC_aligned <- LC_aligned[which(LC_aligned$participant %in% LC_washout$participant),]
   LC4aov <- rbind(LC_aligned, LC_washout)
-  LC4aov$session <- factor(LC4aov$session, levels = c('untrained','1W'))
+  LC4aov$block <- factor(LC4aov$block, levels = c('s1_last','first', 'second'))
   
   #looking into interaction below:
   #interaction.plot(LC4aov$target, LC4aov$block, LC4aov$angdev)
@@ -6363,7 +6562,7 @@ RAEUntrainedHandMTBayesANOVA <- function() {
   # for ez, case ID should be a factor:
   LC4aov$participant <- as.factor(LC4aov$participant)
   cat('Comparing completion times during washout trials with aligned trials across targets and blocks, untrained hand:\n')
-  bfLC<- anovaBF(movementtime ~ target*block*session + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+  bfLC<- anovaBF(movementtime ~ target*block + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
   #compare interaction contribution, over the contribution of both main effects
   #bfinteraction <- bfLC[4]/bfLC[3]
   
@@ -6372,6 +6571,374 @@ RAEUntrainedHandMTBayesANOVA <- function() {
   
   print(bfLC)
   print(bfinteraction)
+  
+}
+
+RAEUntrainedHandMTComparisonMeans <- function(){
+  blockdefs <- list('first'=c(46, 3),'second'=c(49,3),'last'=c(64,3))
+  LC_aligned <- getAlignedBlockedMTAOV(blockdefs=blockdefs, hand='untrained')
+  LC_aligned <- LC_aligned[which(LC_aligned$block == 'last'),-ncol(LC_aligned)]
+  LC_aligned$block <- gsub('last', 's1_last', LC_aligned$block)
+  
+  blockdefs <- list('first'=c(106,3),'second'=c(109,3),'last'=c(124,3))
+  LC_washout <- getBlockedMTAOV(blockdefs=blockdefs, quadrant='1W')
+  LC_washout <- LC_washout[which(LC_washout$block == 'first' | LC_washout$block == 'second'),-ncol(LC_washout)]
+  
+  
+  #but we only want to analyze participants with data in both
+  LC_aligned <- LC_aligned[which(LC_aligned$participant %in% LC_washout$participant),]
+  LC4aov <- rbind(LC_aligned, LC_washout)
+  LC4aov$block <- factor(LC4aov$block, levels = c('s1_last','first', 'second'))
+  #looking into interaction below:
+  #interaction.plot(LC4aov$target, LC4aov$session, LC4aov$movementtime)
+  
+  #learning curve ANOVA's
+  # for ez, case ID should be a factor:
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  secondAOV <- aov_ez("participant","movementtime",LC4aov,within=c("target", "block"))
+  
+  cellmeans <- emmeans(secondAOV,specs=c('target', 'block'))
+  print(cellmeans)
+  
+}
+
+RAEUntrainedHandMTComparisons <- function(method='bonferroni'){
+  blockdefs <- list('first'=c(46, 3),'second'=c(49,3),'last'=c(64,3))
+  LC_aligned <- getAlignedBlockedMTAOV(blockdefs=blockdefs, hand='untrained')
+  LC_aligned <- LC_aligned[which(LC_aligned$block == 'last'),-ncol(LC_aligned)]
+  LC_aligned$block <- gsub('last', 's1_last', LC_aligned$block)
+  
+  blockdefs <- list('first'=c(106,3),'second'=c(109,3),'last'=c(124,3))
+  LC_washout <- getBlockedMTAOV(blockdefs=blockdefs, quadrant='1W')
+  LC_washout <- LC_washout[which(LC_washout$block == 'first' | LC_washout$block == 'second'),-ncol(LC_washout)]
+  
+  
+  #but we only want to analyze participants with data in both
+  LC_aligned <- LC_aligned[which(LC_aligned$participant %in% LC_washout$participant),]
+  LC4aov <- rbind(LC_aligned, LC_washout)
+  LC4aov$block <- factor(LC4aov$block, levels = c('s1_last','first', 'second'))
+  #looking into interaction below:
+  #interaction.plot(LC4aov$target, LC4aov$session, LC4aov$movementtime)
+  
+  #learning curve ANOVA's
+  # for ez, case ID should be a factor:
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  secondAOV <- aov_ez("participant","movementtime",LC4aov,within=c("target", "block"))
+  
+  #specify contrasts
+  #levels of target are: far, mid, near
+  far_s1lastvsfar_w1 <- c(-1,0,0,1,0,0,0,0,0)
+  far_s1lastvsfar_w2 <- c(-1,0,0,0,0,0,1,0,0)
+  far_w1vsfar_w2 <- c(0,0,0,-1,0,0,1,0,0)
+  
+  mid_s1lastvsmid_w1 <- c(0,-1,0,0,1,0,0,0,0)
+  mid_s1lastvsmid_w2 <- c(0,-1,0,0,0,0,0,1,0)
+  mid_w1vsmid_w2 <- c(0,0,0,0,-1,0,0,1,0)
+  
+  near_s1lastvsnear_w1 <- c(0,0,-1,0,0,1,0,0,0)
+  near_s1lastvsnear_w2 <- c(0,0,-1,0,0,0,0,0,1)
+  near_w1vsnear_w2 <- c(0,0,0,0,0,-1,0,0,1)
+  
+  
+  contrastList <- list('Far: Session 1 last block vs washout block 1'=far_s1lastvsfar_w1, 'Far: Session 1 last block vs washout block 2'=far_s1lastvsfar_w2, 'Far: washout block 1 vs washout block 2'=far_w1vsfar_w2, 
+                       'Mid: Session 1 last block vs washout block 1'=mid_s1lastvsmid_w1, 'Mid: Session 1 last block vs washout block 2'=mid_s1lastvsmid_w2, 'Mid: washout block 1 vs washout block 2'=mid_w1vsmid_w2, 
+                       'Near: Session 1 last block vs washout block 1'=near_s1lastvsnear_w1, 'near: Session 1 last block vs washout block 2'=near_s1lastvsnear_w2, 'Near: washout block 1 vs washout block 2'=near_w1vsnear_w2)
+  
+  comparisons<- contrast(emmeans(secondAOV,specs=c('target', 'block')), contrastList, adjust=method)
+  
+  print(comparisons)
+  
+}
+
+#effect size
+RAEUntrainedHandMTComparisonsEffSize <- function(method = 'bonferroni'){
+  comparisons <- RAEUntrainedHandMTComparisons(method=method)
+  #we can use eta-squared as effect size
+  #% of variance in DV(percentcomp) accounted for 
+  #by the difference between target1 and target2
+  comparisonsdf <- as.data.frame(comparisons)
+  etasq <- ((comparisonsdf$t.ratio)^2)/(((comparisonsdf$t.ratio)^2)+(comparisonsdf$df))
+  comparisons1 <- cbind(comparisonsdf,etasq)
+  
+  effectsize <- data.frame(comparisons1$contrast, comparisons1$etasq)
+  colnames(effectsize) <- c('contrast', 'etasquared')
+  #print(comparisons)
+  print(effectsize)
+}
+
+RAEUntrainedHandMTComparisonsBayesfollowup <- function() {
+  blockdefs <- list('first'=c(46, 3),'second'=c(49,3),'last'=c(64,3))
+  LC_aligned <- getAlignedBlockedMTAOV(blockdefs=blockdefs, hand='untrained')
+  LC_aligned <- LC_aligned[which(LC_aligned$block == 'last'),-ncol(LC_aligned)]
+  LC_aligned$block <- gsub('last', 's1_last', LC_aligned$block)
+  
+  blockdefs <- list('first'=c(106,3),'second'=c(109,3),'last'=c(124,3))
+  LC_washout <- getBlockedMTAOV(blockdefs=blockdefs, quadrant='1W')
+  LC_washout <- LC_washout[which(LC_washout$block == 'first' | LC_washout$block == 'second'),-ncol(LC_washout)]
+  
+  
+  #but we only want to analyze participants with data in both
+  LC_aligned <- LC_aligned[which(LC_aligned$participant %in% LC_washout$participant),]
+  LC4aov <- rbind(LC_aligned, LC_washout)
+  LC4aov$block <- factor(LC4aov$block, levels = c('s1_last','first', 'second'))
+  #looking into interaction below:
+  #interaction.plot(LC4aov$target, LC4aov$session, LC4aov$movementtime)
+  
+  #learning curve ANOVA's
+  # for ez, case ID should be a factor:
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  
+  
+  far_w1 <- LC4aov[which(LC4aov$target == 'far' & LC4aov$block == 'first'),]
+  far_w2 <- LC4aov[which(LC4aov$target == 'far' & LC4aov$block == 'second'),]
+  far_s1last <- LC4aov[which(LC4aov$target == 'far' & LC4aov$block == 's1_last'),]
+  
+  mid_w1 <- LC4aov[which(LC4aov$target == 'mid' & LC4aov$block == 'first'),]
+  mid_w2 <- LC4aov[which(LC4aov$target == 'mid' & LC4aov$block == 'second'),]
+  mid_s1last <- LC4aov[which(LC4aov$target == 'mid' & LC4aov$block == 's1_last'),]
+  
+  near_w1 <- LC4aov[which(LC4aov$target == 'near' & LC4aov$block == 'first'),]
+  near_w2 <- LC4aov[which(LC4aov$target == 'near' & LC4aov$block == 'second'),]
+  near_s1last <- LC4aov[which(LC4aov$target == 'near' & LC4aov$block == 's1_last'),]
+  
+  
+  cat('Bayesian t-test Far: Session 1 last block vs Washout Block 1:\n')
+  print(ttestBF(far_s1last$movementtime, far_w1$movementtime, paired = TRUE))
+  cat('Bayesian t-test Far: Session 1 last block vs Washout Block 2:\n')
+  print(ttestBF(far_s1last$movementtime, far_w2$movementtime, paired = TRUE))
+  cat('Bayesian t-test Far: Washout block 1 vs Washout Block 2:\n')
+  print(ttestBF(far_w1$movementtime, far_w2$movementtime, paired = TRUE))
+  
+  cat('Bayesian t-test Mid: Session 1 last block vs Washout Block 1:\n')
+  print(ttestBF(mid_s1last$movementtime, mid_w1$movementtime, paired = TRUE))
+  cat('Bayesian t-test Mid: Session 1 last block vs Washout Block 2:\n')
+  print(ttestBF(mid_s1last$movementtime, mid_w2$movementtime, paired = TRUE))
+  cat('Bayesian t-test Mid: Washout block 1 vs Washout Block 2:\n')
+  print(ttestBF(mid_w1$movementtime, mid_w2$movementtime, paired = TRUE))
+  
+  cat('Bayesian t-test Near: Session 1 last block vs Washout Block 1:\n')
+  print(ttestBF(near_s1last$movementtime, near_w1$movementtime, paired = TRUE))
+  cat('Bayesian t-test Near: Session 1 last block vs Washout Block 2:\n')
+  print(ttestBF(near_s1last$movementtime, near_w2$movementtime, paired = TRUE))
+  cat('Bayesian t-test Near: Washout block 1 vs Washout Block 2:\n')
+  print(ttestBF(near_w1$movementtime, near_w2$movementtime, paired = TRUE))
+  
+}
+
+#compare the first block of untrained hand with first and last blocks of training with dominant hand
+intermanualMTANOVA <- function(groups = c('far', 'mid', 'near')) {
+  
+  blockdefs <- list('first'=c(67,3),'second'=c(70,3),'last'=c(142,15))
+  LC_part1 <- getAlignedBlockedMTAOV(blockdefs=blockdefs, hand='trained') 
+  LC_part1 <- LC_part1[,-5]
+  LC_part1 <- LC_part1[which(LC_part1$block == 'first' | LC_part1$block == 'last'),]
+  #LC_part1$session <- as.factor('part1')
+  
+  blockdefs <- list('first'=c(85,3),'second'=c(88,3),'last'=c(103,3))
+  LC_part2 <- getBlockedMTAOV(blockdefs=blockdefs, quadrant='1L') 
+  LC_part2 <- LC_part2[which(LC_part2$block == 'first'),-ncol(LC_part2)]
+  LC_part2$block <- gsub('first', 's2_first', LC_part2$block)
+  
+  #but we only want to analyze participants with data in both
+  LC_part1 <- LC_part1[which(LC_part1$participant %in% LC_part2$participant),]
+  LC4aov <- rbind(LC_part1, LC_part2)
+  LC4aov$block <- factor(LC4aov$block, levels = c('first','last','s2_first'))
+  
+  #looking into interaction below:
+  #interaction.plot(LC4aov$target, LC4aov$block, LC4aov$percentcomp)
+  
+  #learning curve ANOVA's
+  # for ez, case ID should be a factor:
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  
+  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=movementtime, within= c(target, block), type=3, return_aov = TRUE) #df is k-2 or 3 levels minus 2; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
+  cat('Transfer of learned performance to untrained hand:\n')
+  print(firstAOV[1:3]) #so that it doesn't print the aov object as well
+  
+}
+
+intermanualMTBayesANOVA <- function(groups = c('far', 'mid', 'near')) {
+  
+  blockdefs <- list('first'=c(67,3),'second'=c(70,3),'last'=c(142,15))
+  LC_part1 <- getAlignedBlockedMTAOV(blockdefs=blockdefs, hand='trained') 
+  LC_part1 <- LC_part1[,-5]
+  LC_part1 <- LC_part1[which(LC_part1$block == 'first' | LC_part1$block == 'last'),]
+  #LC_part1$session <- as.factor('part1')
+  
+  blockdefs <- list('first'=c(85,3),'second'=c(88,3),'last'=c(103,3))
+  LC_part2 <- getBlockedMTAOV(blockdefs=blockdefs, quadrant='1L') 
+  LC_part2 <- LC_part2[which(LC_part2$block == 'first'),-ncol(LC_part2)]
+  LC_part2$block <- gsub('first', 's2_first', LC_part2$block)
+  
+  #but we only want to analyze participants with data in both
+  LC_part1 <- LC_part1[which(LC_part1$participant %in% LC_part2$participant),]
+  LC4aov <- rbind(LC_part1, LC_part2)
+  LC4aov$block <- factor(LC4aov$block, levels = c('first','last','s2_first'))
+  #looking into interaction below:
+  #interaction.plot(LC4aov$target, LC4aov$block, LC4aov$percentcomp)
+  
+  #learning curve ANOVA's
+  # for ez, case ID should be a factor:
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  
+  cat('Transfer of learned performance to untrained hand:\n')
+  bfLC<- anovaBF(movementtime ~ target*block + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+  #compare interaction contribution, over the contribution of both main effects
+  #bfinteraction <- bfLC[4]/bfLC[3]
+  
+  #bfinclude to compare model with interactions against all other models
+  bfinteraction <- bayesfactor_inclusion(bfLC)
+  
+  print(bfLC)
+  print(bfinteraction)
+  
+}
+
+intermanualMTComparisonMeans <- function(){
+  blockdefs <- list('first'=c(67,3),'second'=c(70,3),'last'=c(142,15))
+  LC_part1 <- getAlignedBlockedMTAOV(blockdefs=blockdefs, hand='trained') 
+  LC_part1 <- LC_part1[,-5]
+  LC_part1 <- LC_part1[which(LC_part1$block == 'first' | LC_part1$block == 'last'),]
+  #LC_part1$session <- as.factor('part1')
+  
+  blockdefs <- list('first'=c(85,3),'second'=c(88,3),'last'=c(103,3))
+  LC_part2 <- getBlockedMTAOV(blockdefs=blockdefs, quadrant='1L') 
+  LC_part2 <- LC_part2[which(LC_part2$block == 'first'),-ncol(LC_part2)]
+  LC_part2$block <- gsub('first', 's2_first', LC_part2$block)
+  
+  #but we only want to analyze participants with data in both
+  LC_part1 <- LC_part1[which(LC_part1$participant %in% LC_part2$participant),]
+  LC4aov <- rbind(LC_part1, LC_part2)
+  LC4aov$block <- factor(LC4aov$block, levels = c('first','last','s2_first'))
+  #looking into interaction below:
+  #interaction.plot(LC4aov$target, LC4aov$session, LC4aov$movementtime)
+  
+  #learning curve ANOVA's
+  # for ez, case ID should be a factor:
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  secondAOV <- aov_ez("participant","movementtime",LC4aov,within=c("target", "block"))
+  
+  cellmeans <- emmeans(secondAOV,specs=c('target', 'block'))
+  print(cellmeans)
+  
+}
+
+intermanualMTComparisons <- function(method='bonferroni'){
+  blockdefs <- list('first'=c(67,3),'second'=c(70,3),'last'=c(142,15))
+  LC_part1 <- getAlignedBlockedMTAOV(blockdefs=blockdefs, hand='trained') 
+  LC_part1 <- LC_part1[,-5]
+  LC_part1 <- LC_part1[which(LC_part1$block == 'first' | LC_part1$block == 'last'),]
+  #LC_part1$session <- as.factor('part1')
+  
+  blockdefs <- list('first'=c(85,3),'second'=c(88,3),'last'=c(103,3))
+  LC_part2 <- getBlockedMTAOV(blockdefs=blockdefs, quadrant='1L') 
+  LC_part2 <- LC_part2[which(LC_part2$block == 'first'),-ncol(LC_part2)]
+  LC_part2$block <- gsub('first', 's2_first', LC_part2$block)
+  
+  #but we only want to analyze participants with data in both
+  LC_part1 <- LC_part1[which(LC_part1$participant %in% LC_part2$participant),]
+  LC4aov <- rbind(LC_part1, LC_part2)
+  LC4aov$block <- factor(LC4aov$block, levels = c('first','last','s2_first'))
+  #looking into interaction below:
+  #interaction.plot(LC4aov$target, LC4aov$session, LC4aov$movementtime)
+  
+  #learning curve ANOVA's
+  # for ez, case ID should be a factor:
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  secondAOV <- aov_ez("participant","movementtime",LC4aov,within=c("target", "block"))
+  
+  #specify contrasts
+  #levels of target are: far, mid, near
+  far_s1b1vsfar_s2b1 <- c(-1,0,0,0,0,0,1,0,0)
+  far_s1lastvsfar_s2b1 <- c(0,0,0,-1,0,0,1,0,0)
+  
+  mid_s1b1vsmid_s2b1 <- c(0,-1,0,0,0,0,0,1,0)
+  mid_s1lastvsmid_s2b1 <- c(0,0,0,0,-1,0,0,1,0)
+  
+  near_s1b1vsnear_s2b1 <- c(0,0,-1,0,0,0,0,0,1)
+  near_s1lastvsnear_s2b1 <- c(0,0,0,0,0,-1,0,0,1)
+  
+  
+  contrastList <- list('Far: Session 1 Block 1 vs Session 2 Block 1'=far_s1b1vsfar_s2b1, 'Far: Session 1 last block vs Session 2 Block 1'=far_s1lastvsfar_s2b1, 
+                       'Mid: Session 1 Block 1 vs Session 2 Block 1'=mid_s1b1vsmid_s2b1, 'Mid: Session 1 last block vs Session 2 Block 1'=mid_s1lastvsmid_s2b1,
+                       'Near: Session 1 Block 1 vs Session 2 Block 1'=near_s1b1vsnear_s2b1, 'Near: Session 1 last block vs Session 2 Block 1'=near_s1lastvsnear_s2b1)
+  
+  comparisons<- contrast(emmeans(secondAOV,specs=c('target', 'block')), contrastList, adjust=method)
+  
+  print(comparisons)
+  
+}
+
+#effect size
+intermanualMTComparisonsEffSize <- function(method = 'bonferroni'){
+  comparisons <- intermanualMTComparisons(method=method)
+  #we can use eta-squared as effect size
+  #% of variance in DV(percentcomp) accounted for 
+  #by the difference between target1 and target2
+  comparisonsdf <- as.data.frame(comparisons)
+  etasq <- ((comparisonsdf$t.ratio)^2)/(((comparisonsdf$t.ratio)^2)+(comparisonsdf$df))
+  comparisons1 <- cbind(comparisonsdf,etasq)
+  
+  effectsize <- data.frame(comparisons1$contrast, comparisons1$etasq)
+  colnames(effectsize) <- c('contrast', 'etasquared')
+  #print(comparisons)
+  print(effectsize)
+}
+
+intermanualMTComparisonsBayesfollowup <- function() {
+  blockdefs <- list('first'=c(67,3),'second'=c(70,3),'last'=c(142,15))
+  LC_part1 <- getAlignedBlockedMTAOV(blockdefs=blockdefs, hand='trained') 
+  LC_part1 <- LC_part1[,-5]
+  LC_part1 <- LC_part1[which(LC_part1$block == 'first' | LC_part1$block == 'last'),]
+  #LC_part1$session <- as.factor('part1')
+  
+  blockdefs <- list('first'=c(85,3),'second'=c(88,3),'last'=c(103,3))
+  LC_part2 <- getBlockedMTAOV(blockdefs=blockdefs, quadrant='1L') 
+  LC_part2 <- LC_part2[which(LC_part2$block == 'first'),-ncol(LC_part2)]
+  LC_part2$block <- gsub('first', 's2_first', LC_part2$block)
+  
+  #but we only want to analyze participants with data in both
+  LC_part1 <- LC_part1[which(LC_part1$participant %in% LC_part2$participant),]
+  LC4aov <- rbind(LC_part1, LC_part2)
+  LC4aov$block <- factor(LC4aov$block, levels = c('first','last','s2_first'))
+  #looking into interaction below:
+  #interaction.plot(LC4aov$target, LC4aov$session, LC4aov$movementtime)
+  
+  #learning curve ANOVA's
+  # for ez, case ID should be a factor:
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  
+  
+  far_s1b1 <- LC4aov[which(LC4aov$target == 'far' & LC4aov$block == 'first'),]
+  far_s1last <- LC4aov[which(LC4aov$target == 'far' & LC4aov$block == 'last'),]
+  far_s2b1 <- LC4aov[which(LC4aov$target == 'far' & LC4aov$block == 's2_first'),]
+  
+  mid_s1b1 <- LC4aov[which(LC4aov$target == 'mid' & LC4aov$block == 'first'),]
+  mid_s1last <- LC4aov[which(LC4aov$target == 'mid' & LC4aov$block == 'last'),]
+  mid_s2b1 <- LC4aov[which(LC4aov$target == 'mid' & LC4aov$block == 's2_first'),]
+  
+  near_s1b1 <- LC4aov[which(LC4aov$target == 'near' & LC4aov$block == 'first'),]
+  near_s1last <- LC4aov[which(LC4aov$target == 'near' & LC4aov$block == 'last'),]
+  near_s2b1 <- LC4aov[which(LC4aov$target == 'near' & LC4aov$block == 's2_first'),]
+  
+  
+  cat('Bayesian t-test Far: Session 1 Block 1 vs Session 2 Block 1:\n')
+  print(ttestBF(far_s1b1$movementtime, far_s2b1$movementtime, paired = TRUE))
+  
+  cat('Bayesian t-test Far: Session 1 last block vs Session 2 Block 1:\n')
+  print(ttestBF(far_s1last$movementtime, far_s2b1$movementtime, paired = TRUE))
+  
+  cat('Bayesian t-test Mid: Session 1 Block 1 vs Session 2 Block 1:\n')
+  print(ttestBF(mid_s1b1$movementtime, mid_s2b1$movementtime, paired = TRUE))
+  
+  cat('Bayesian t-test Mid: Session 1 last block vs Session 2 Block 1:\n')
+  print(ttestBF(mid_s1last$movementtime, mid_s2b1$movementtime, paired = TRUE))
+  
+  cat('Bayesian t-test Near: Session 1 Block 1 vs Session 2 Block 1:\n')
+  print(ttestBF(near_s1b1$movementtime, near_s2b1$movementtime, paired = TRUE))
+  
+  cat('Bayesian t-test Near: Session 1 last block vs Session 2 Block 1:\n')
+  print(ttestBF(near_s1last$movementtime, near_s2b1$movementtime, paired = TRUE))
   
 }
 
@@ -7637,16 +8204,18 @@ RAEUntrainedHandPLANOVA <- function() {
   
   blockdefs <- list('first'=c(46, 3),'second'=c(49,3),'last'=c(64,3))
   LC_aligned <- getAlignedBlockedPLAOV(blockdefs=blockdefs, hand='untrained')
-  colnames(LC_aligned) <- c('target', 'participant','block','pathlength','session')
+  LC_aligned <- LC_aligned[which(LC_aligned$block == 'last'),-ncol(LC_aligned)]
+  LC_aligned$block <- gsub('last', 's1_last', LC_aligned$block)
   
   blockdefs <- list('first'=c(106,3),'second'=c(109,3),'last'=c(124,3))
-  LC_washout <- getBlockedPLAOV(blockdefs=blockdefs, quadrant='1W') 
-  colnames(LC_washout) <- c('target', 'participant','block','pathlength','session')
+  LC_washout <- getBlockedPLAOV(blockdefs=blockdefs, quadrant='1W')
+  LC_washout <- LC_washout[which(LC_washout$block == 'first' | LC_washout$block == 'second'),-ncol(LC_washout)]
+  
   
   #but we only want to analyze participants with data in both
   LC_aligned <- LC_aligned[which(LC_aligned$participant %in% LC_washout$participant),]
   LC4aov <- rbind(LC_aligned, LC_washout)
-  LC4aov$session <- factor(LC4aov$session, levels = c('untrained','1W'))
+  LC4aov$block <- factor(LC4aov$block, levels = c('s1_last','first', 'second'))
   
   #looking into interaction below:
   #interaction.plot(LC4aov$target, LC4aov$block, LC4aov$angdev)
@@ -7654,7 +8223,8 @@ RAEUntrainedHandPLANOVA <- function() {
   #learning curve ANOVA's
   # for ez, case ID should be a factor:
   LC4aov$participant <- as.factor(LC4aov$participant)
-  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=pathlength, within= c(block, target, session), type=3, return_aov = TRUE) #df is k-2 or 3 levels minus 2; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
+  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=pathlength, within= c(target, block), type=3, return_aov = TRUE) #df is k-2 or 3 levels minus 2; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
+  
   cat('Comparing path length during washout trials with aligned trials across targets and blocks, untrained hand:\n')
   print(firstAOV[1:3]) #so that it doesn't print the aov object as well
   
@@ -7664,16 +8234,18 @@ RAEUntrainedHandPLBayesANOVA <- function() {
   
   blockdefs <- list('first'=c(46, 3),'second'=c(49,3),'last'=c(64,3))
   LC_aligned <- getAlignedBlockedPLAOV(blockdefs=blockdefs, hand='untrained')
-  colnames(LC_aligned) <- c('target', 'participant','block','pathlength','session')
+  LC_aligned <- LC_aligned[which(LC_aligned$block == 'last'),-ncol(LC_aligned)]
+  LC_aligned$block <- gsub('last', 's1_last', LC_aligned$block)
   
   blockdefs <- list('first'=c(106,3),'second'=c(109,3),'last'=c(124,3))
-  LC_washout <- getBlockedPLAOV(blockdefs=blockdefs, quadrant='1W') 
-  colnames(LC_washout) <- c('target', 'participant','block','pathlength','session')
+  LC_washout <- getBlockedPLAOV(blockdefs=blockdefs, quadrant='1W')
+  LC_washout <- LC_washout[which(LC_washout$block == 'first' | LC_washout$block == 'second'),-ncol(LC_washout)]
+  
   
   #but we only want to analyze participants with data in both
   LC_aligned <- LC_aligned[which(LC_aligned$participant %in% LC_washout$participant),]
   LC4aov <- rbind(LC_aligned, LC_washout)
-  LC4aov$session <- factor(LC4aov$session, levels = c('untrained','1W'))
+  LC4aov$block <- factor(LC4aov$block, levels = c('s1_last','first', 'second'))
   
   #looking into interaction below:
   #interaction.plot(LC4aov$target, LC4aov$block, LC4aov$angdev)
@@ -7681,8 +8253,8 @@ RAEUntrainedHandPLBayesANOVA <- function() {
   #learning curve ANOVA's
   # for ez, case ID should be a factor:
   LC4aov$participant <- as.factor(LC4aov$participant)
-  cat('Comparing path lengths during washout trials with aligned trials across targets and blocks, untrained hand:\n')
-  bfLC<- anovaBF(pathlength ~ target*block*session + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+  cat('Comparing path length during washout trials with aligned trials across targets and blocks, untrained hand:\n')
+  bfLC<- anovaBF(pathlength ~ target*block + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
   #compare interaction contribution, over the contribution of both main effects
   #bfinteraction <- bfLC[4]/bfLC[3]
   
@@ -7694,89 +8266,85 @@ RAEUntrainedHandPLBayesANOVA <- function() {
   
 }
 
-# main effect of session, follow up significant 3 way interaction
-untrainedHandSessionPLComparisonMeans <- function(){
+RAEUntrainedHandPLComparisonMeans <- function(){
   blockdefs <- list('first'=c(46, 3),'second'=c(49,3),'last'=c(64,3))
   LC_aligned <- getAlignedBlockedPLAOV(blockdefs=blockdefs, hand='untrained')
-  colnames(LC_aligned) <- c('target', 'participant','block','pathlength','session')
+  LC_aligned <- LC_aligned[which(LC_aligned$block == 'last'),-ncol(LC_aligned)]
+  LC_aligned$block <- gsub('last', 's1_last', LC_aligned$block)
   
   blockdefs <- list('first'=c(106,3),'second'=c(109,3),'last'=c(124,3))
   LC_washout <- getBlockedPLAOV(blockdefs=blockdefs, quadrant='1W')
-  colnames(LC_washout) <- c('target', 'participant','block','pathlength','session')
+  LC_washout <- LC_washout[which(LC_washout$block == 'first' | LC_washout$block == 'second'),-ncol(LC_washout)]
+  
   
   #but we only want to analyze participants with data in both
   LC_aligned <- LC_aligned[which(LC_aligned$participant %in% LC_washout$participant),]
   LC4aov <- rbind(LC_aligned, LC_washout)
-  LC4aov$session <- factor(LC4aov$session, levels = c('untrained','1W'))
+  LC4aov$block <- factor(LC4aov$block, levels = c('s1_last','first', 'second'))
+  #looking into interaction below:
+  #interaction.plot(LC4aov$target, LC4aov$session, LC4aov$movementtime)
   
-  LC4aov$participant <- as.factor(LC4aov$participant) 
-  
-  
+  #learning curve ANOVA's
+  # for ez, case ID should be a factor:
   LC4aov$participant <- as.factor(LC4aov$participant)
-  secondAOV <- aov_ez("participant","pathlength",LC4aov,within=c("target", "block", "session"))
+  secondAOV <- aov_ez("participant","pathlength",LC4aov,within=c("target", "block"))
   
-  cellmeans <- emmeans(secondAOV,specs=c('target', 'block', 'session'))
+  cellmeans <- emmeans(secondAOV,specs=c('target', 'block'))
   print(cellmeans)
   
 }
 
-untrainedHandSessionPLComparisons <- function(method='bonferroni'){
+RAEUntrainedHandPLComparisons <- function(method='bonferroni'){
   blockdefs <- list('first'=c(46, 3),'second'=c(49,3),'last'=c(64,3))
   LC_aligned <- getAlignedBlockedPLAOV(blockdefs=blockdefs, hand='untrained')
-  colnames(LC_aligned) <- c('target', 'participant','block','pathlength','session')
+  LC_aligned <- LC_aligned[which(LC_aligned$block == 'last'),-ncol(LC_aligned)]
+  LC_aligned$block <- gsub('last', 's1_last', LC_aligned$block)
   
   blockdefs <- list('first'=c(106,3),'second'=c(109,3),'last'=c(124,3))
   LC_washout <- getBlockedPLAOV(blockdefs=blockdefs, quadrant='1W')
-  colnames(LC_washout) <- c('target', 'participant','block','pathlength','session')
+  LC_washout <- LC_washout[which(LC_washout$block == 'first' | LC_washout$block == 'second'),-ncol(LC_washout)]
+  
   
   #but we only want to analyze participants with data in both
   LC_aligned <- LC_aligned[which(LC_aligned$participant %in% LC_washout$participant),]
   LC4aov <- rbind(LC_aligned, LC_washout)
-  LC4aov$session <- factor(LC4aov$session, levels = c('untrained','1W'))
+  LC4aov$block <- factor(LC4aov$block, levels = c('s1_last','first', 'second'))
+  #looking into interaction below:
+  #interaction.plot(LC4aov$target, LC4aov$session, LC4aov$movementtime)
   
-  LC4aov$participant <- as.factor(LC4aov$participant) 
-  
-  
+  #learning curve ANOVA's
+  # for ez, case ID should be a factor:
   LC4aov$participant <- as.factor(LC4aov$participant)
-  secondAOV <- aov_ez("participant","pathlength",LC4aov,within=c("target", "block", "session"))
+  secondAOV <- aov_ez("participant","pathlength",LC4aov,within=c("target", "block"))
   
   #specify contrasts
   #levels of target are: far, mid, near
-  far_b1_p1vsfar_b1_p2 <- c(-1,0,0,0,0,0,0,0,0,
-                            1,0,0,0,0,0,0,0,0)
-  far_b2_p1vsfar_b2_p2 <- c(0,0,0,-1,0,0,0,0,0,
-                            0,0,0,1,0,0,0,0,0)
-  far_b3_p1vsfar_b3_p2 <- c(0,0,0,0,0,0,-1,0,0,
-                            0,0,0,0,0,0,1,0,0)
+  far_s1lastvsfar_w1 <- c(-1,0,0,1,0,0,0,0,0)
+  far_s1lastvsfar_w2 <- c(-1,0,0,0,0,0,1,0,0)
+  far_w1vsfar_w2 <- c(0,0,0,-1,0,0,1,0,0)
   
-  mid_b1_p1vsmid_b1_p2 <- c(0,-1,0,0,0,0,0,0,0,
-                            0,1,0,0,0,0,0,0,0)
-  mid_b2_p1vsmid_b2_p2 <- c(0,0,0,0,-1,0,0,0,0,
-                            0,0,0,0,1,0,0,0,0)
-  mid_b3_p1vsmid_b3_p2 <- c(0,0,0,0,0,0,0,-1,0,
-                            0,0,0,0,0,0,0,1,0)
+  mid_s1lastvsmid_w1 <- c(0,-1,0,0,1,0,0,0,0)
+  mid_s1lastvsmid_w2 <- c(0,-1,0,0,0,0,0,1,0)
+  mid_w1vsmid_w2 <- c(0,0,0,0,-1,0,0,1,0)
   
-  near_b1_p1vsnear_b1_p2 <- c(0,0,-1,0,0,0,0,0,0,
-                              0,0,1,0,0,0,0,0,0)
-  near_b2_p1vsnear_b2_p2 <- c(0,0,0,0,0,-1,0,0,0,
-                              0,0,0,0,0,1,0,0,0)
-  near_b3_p1vsnear_b3_p2 <- c(0,0,0,0,0,0,0,0,-1,
-                              0,0,0,0,0,0,0,0,1)
+  near_s1lastvsnear_w1 <- c(0,0,-1,0,0,1,0,0,0)
+  near_s1lastvsnear_w2 <- c(0,0,-1,0,0,0,0,0,1)
+  near_w1vsnear_w2 <- c(0,0,0,0,0,-1,0,0,1)
   
   
-  contrastList <- list('Baseline vs Washout in part 2, first block, Far'=far_b1_p1vsfar_b1_p2, 'Baseline vs Washout in part 2, second block, Far'=far_b2_p1vsfar_b2_p2, 'Baseline vs Washout in part 2, last block, Far'=far_b3_p1vsfar_b3_p2,
-                       'Baseline vs Washout in part 2, first block, Mid'=mid_b1_p1vsmid_b1_p2, 'Baseline vs Washout in part 2, second block, Mid'=mid_b2_p1vsmid_b2_p2, 'Baseline vs Washout in part 2, last block, Mid'=mid_b3_p1vsmid_b3_p2,
-                       'Baseline vs Washout in part 2, first block, Near'=near_b1_p1vsnear_b1_p2, 'Baseline vs Washout in part 2, second block, Near'=near_b2_p1vsnear_b2_p2, 'Baseline vs Washout in part 2, last block, Near'=near_b3_p1vsnear_b3_p2)
+  contrastList <- list('Far: Session 1 last block vs washout block 1'=far_s1lastvsfar_w1, 'Far: Session 1 last block vs washout block 2'=far_s1lastvsfar_w2, 'Far: washout block 1 vs washout block 2'=far_w1vsfar_w2, 
+                       'Mid: Session 1 last block vs washout block 1'=mid_s1lastvsmid_w1, 'Mid: Session 1 last block vs washout block 2'=mid_s1lastvsmid_w2, 'Mid: washout block 1 vs washout block 2'=mid_w1vsmid_w2, 
+                       'Near: Session 1 last block vs washout block 1'=near_s1lastvsnear_w1, 'near: Session 1 last block vs washout block 2'=near_s1lastvsnear_w2, 'Near: washout block 1 vs washout block 2'=near_w1vsnear_w2)
   
-  comparisons<- contrast(emmeans(secondAOV,specs=c('target', 'block', 'session')), contrastList, adjust=method)
+  comparisons<- contrast(emmeans(secondAOV,specs=c('target', 'block')), contrastList, adjust=method)
   
   print(comparisons)
   
 }
 
 #effect size
-untrainedHandSessionPLComparisonsEffSize <- function(method = 'bonferroni'){
-  comparisons <- untrainedHandSessionPLComparisons(method=method)
+RAEUntrainedHandPLComparisonsEffSize <- function(method = 'bonferroni'){
+  comparisons <- RAEUntrainedHandPLComparisons(method=method)
   #we can use eta-squared as effect size
   #% of variance in DV(percentcomp) accounted for 
   #by the difference between target1 and target2
@@ -7789,76 +8357,283 @@ untrainedHandSessionPLComparisonsEffSize <- function(method = 'bonferroni'){
   #print(comparisons)
   print(effectsize)
 }
-#driven by a difference in middle targets between baseline and washout in the first block (it was high in washout)
 
-untrainedHandSessionPLComparisonsBayesfollowup <- function() {
-  
+RAEUntrainedHandPLComparisonsBayesfollowup <- function() {
   blockdefs <- list('first'=c(46, 3),'second'=c(49,3),'last'=c(64,3))
   LC_aligned <- getAlignedBlockedPLAOV(blockdefs=blockdefs, hand='untrained')
-  colnames(LC_aligned) <- c('target', 'participant','block','pathlength','session')
+  LC_aligned <- LC_aligned[which(LC_aligned$block == 'last'),-ncol(LC_aligned)]
+  LC_aligned$block <- gsub('last', 's1_last', LC_aligned$block)
   
   blockdefs <- list('first'=c(106,3),'second'=c(109,3),'last'=c(124,3))
   LC_washout <- getBlockedPLAOV(blockdefs=blockdefs, quadrant='1W')
-  colnames(LC_washout) <- c('target', 'participant','block','pathlength','session')
+  LC_washout <- LC_washout[which(LC_washout$block == 'first' | LC_washout$block == 'second'),-ncol(LC_washout)]
+  
   
   #but we only want to analyze participants with data in both
   LC_aligned <- LC_aligned[which(LC_aligned$participant %in% LC_washout$participant),]
   LC4aov <- rbind(LC_aligned, LC_washout)
-  LC4aov$session <- factor(LC4aov$session, levels = c('untrained','1W'))
+  LC4aov$block <- factor(LC4aov$block, levels = c('s1_last','first', 'second'))
+  #looking into interaction below:
+  #interaction.plot(LC4aov$target, LC4aov$session, LC4aov$movementtime)
   
-  LC4aov$participant <- as.factor(LC4aov$participant) 
-  
-  
+  #learning curve ANOVA's
+  # for ez, case ID should be a factor:
   LC4aov$participant <- as.factor(LC4aov$participant)
   
   
-  farb1s1 <- LC4aov[which(LC4aov$block == 'first' & LC4aov$target == 'far' & LC4aov$session == 'untrained'),]
-  midb1s1 <- LC4aov[which(LC4aov$block == 'first' & LC4aov$target == 'mid' & LC4aov$session == 'untrained'),]
-  nearb1s1 <- LC4aov[which(LC4aov$block == 'first' & LC4aov$target == 'near' & LC4aov$session == 'untrained'),]
+  far_w1 <- LC4aov[which(LC4aov$target == 'far' & LC4aov$block == 'first'),]
+  far_w2 <- LC4aov[which(LC4aov$target == 'far' & LC4aov$block == 'second'),]
+  far_s1last <- LC4aov[which(LC4aov$target == 'far' & LC4aov$block == 's1_last'),]
   
-  farb2s1 <- LC4aov[which(LC4aov$block == 'second' & LC4aov$target == 'far' & LC4aov$session == 'untrained'),]
-  midb2s1 <- LC4aov[which(LC4aov$block == 'second' & LC4aov$target == 'mid' & LC4aov$session == 'untrained'),]
-  nearb2s1 <- LC4aov[which(LC4aov$block == 'second' & LC4aov$target == 'near' & LC4aov$session == 'untrained'),]
+  mid_w1 <- LC4aov[which(LC4aov$target == 'mid' & LC4aov$block == 'first'),]
+  mid_w2 <- LC4aov[which(LC4aov$target == 'mid' & LC4aov$block == 'second'),]
+  mid_s1last <- LC4aov[which(LC4aov$target == 'mid' & LC4aov$block == 's1_last'),]
   
-  farb3s1 <- LC4aov[which(LC4aov$block == 'last' & LC4aov$target == 'far' & LC4aov$session == 'untrained'),]
-  midb3s1 <- LC4aov[which(LC4aov$block == 'last' & LC4aov$target == 'mid' & LC4aov$session == 'untrained'),]
-  nearb3s1 <- LC4aov[which(LC4aov$block == 'last' & LC4aov$target == 'near' & LC4aov$session == 'untrained'),]
+  near_w1 <- LC4aov[which(LC4aov$target == 'near' & LC4aov$block == 'first'),]
+  near_w2 <- LC4aov[which(LC4aov$target == 'near' & LC4aov$block == 'second'),]
+  near_s1last <- LC4aov[which(LC4aov$target == 'near' & LC4aov$block == 's1_last'),]
   
-  farb1q1W <- LC4aov[which(LC4aov$block == 'first' & LC4aov$target == 'far' & LC4aov$session == '1W'),]
-  midb1q1W <- LC4aov[which(LC4aov$block == 'first' & LC4aov$target == 'mid' & LC4aov$session == '1W'),]
-  nearb1q1W <- LC4aov[which(LC4aov$block == 'first' & LC4aov$target == 'near' & LC4aov$session == '1W'),]
   
-  farb2q1W <- LC4aov[which(LC4aov$block == 'second' & LC4aov$target == 'far' & LC4aov$session == '1W'),]
-  midb2q1W <- LC4aov[which(LC4aov$block == 'second' & LC4aov$target == 'mid' & LC4aov$session == '1W'),]
-  nearb2q1W <- LC4aov[which(LC4aov$block == 'second' & LC4aov$target == 'near' & LC4aov$session == '1W'),]
+  cat('Bayesian t-test Far: Session 1 last block vs Washout Block 1:\n')
+  print(ttestBF(far_s1last$pathlength, far_w1$pathlength, paired = TRUE))
+  cat('Bayesian t-test Far: Session 1 last block vs Washout Block 2:\n')
+  print(ttestBF(far_s1last$pathlength, far_w2$pathlength, paired = TRUE))
+  cat('Bayesian t-test Far: Washout block 1 vs Washout Block 2:\n')
+  print(ttestBF(far_w1$pathlength, far_w2$pathlength, paired = TRUE))
   
-  farb3q1W <- LC4aov[which(LC4aov$block == 'last' & LC4aov$target == 'far' & LC4aov$session == '1W'),]
-  midb3q1W <- LC4aov[which(LC4aov$block == 'last' & LC4aov$target == 'mid' & LC4aov$session == '1W'),]
-  nearb3q1W <- LC4aov[which(LC4aov$block == 'last' & LC4aov$target == 'near' & LC4aov$session == '1W'),]
+  cat('Bayesian t-test Mid: Session 1 last block vs Washout Block 1:\n')
+  print(ttestBF(mid_s1last$pathlength, mid_w1$pathlength, paired = TRUE))
+  cat('Bayesian t-test Mid: Session 1 last block vs Washout Block 2:\n')
+  print(ttestBF(mid_s1last$pathlength, mid_w2$pathlength, paired = TRUE))
+  cat('Bayesian t-test Mid: Washout block 1 vs Washout Block 2:\n')
+  print(ttestBF(mid_w1$pathlength, mid_w2$pathlength, paired = TRUE))
   
-  #tests
-  cat('Bayesian t-test baseline vs washout in part 2, block 1, far target:\n')
-  print(ttestBF(farb1s1$pathlength, farb1q1W$pathlength, paired = TRUE))
-  cat('Bayesian t-test baseline vs washout in part 2, block 2, far target:\n')
-  print(ttestBF(farb2s1$pathlength, farb2q1W$pathlength, paired = TRUE))
-  cat('Bayesian t-test baseline vs washout in part 2, last block, far target:\n')
-  print(ttestBF(farb3s1$pathlength, farb3q1W$pathlength, paired = TRUE))
-  
-  cat('Bayesian t-test baseline vs washout in part 2, block 1, mid target:\n')
-  print(ttestBF(midb1s1$pathlength, midb1q1W$pathlength, paired = TRUE))
-  cat('Bayesian t-test baseline vs washout in part 2, block 2, mid target:\n')
-  print(ttestBF(midb2s1$pathlength, midb2q1W$pathlength, paired = TRUE))
-  cat('Bayesian t-test baseline vs washout in part 2, last block, mid target:\n')
-  print(ttestBF(midb3s1$pathlength, midb3q1W$pathlength, paired = TRUE))
-  
-  cat('Bayesian t-test baseline vs washout in part 2, block 1, near target:\n')
-  print(ttestBF(nearb1s1$pathlength, nearb1q1W$pathlength, paired = TRUE))
-  cat('Bayesian t-test baseline vs washout in part 2, block 2, near target:\n')
-  print(ttestBF(nearb2s1$pathlength, nearb2q1W$pathlength, paired = TRUE))
-  cat('Bayesian t-test baseline vs washout in part 2, last block, near target:\n')
-  print(ttestBF(nearb3s1$pathlength, nearb3q1W$pathlength, paired = TRUE))
+  cat('Bayesian t-test Near: Session 1 last block vs Washout Block 1:\n')
+  print(ttestBF(near_s1last$pathlength, near_w1$pathlength, paired = TRUE))
+  cat('Bayesian t-test Near: Session 1 last block vs Washout Block 2:\n')
+  print(ttestBF(near_s1last$pathlength, near_w2$pathlength, paired = TRUE))
+  cat('Bayesian t-test Near: Washout block 1 vs Washout Block 2:\n')
+  print(ttestBF(near_w1$pathlength, near_w2$pathlength, paired = TRUE))
   
 }
+
+#compare the first block of untrained hand with first and last blocks of training with dominant hand
+intermanualPLANOVA <- function(groups = c('far', 'mid', 'near')) {
+  
+  blockdefs <- list('first'=c(67,3),'second'=c(70,3),'last'=c(142,15))
+  LC_part1 <- getAlignedBlockedPLAOV(blockdefs=blockdefs, hand='trained') 
+  LC_part1 <- LC_part1[,-5]
+  LC_part1 <- LC_part1[which(LC_part1$block == 'first' | LC_part1$block == 'last'),]
+  #LC_part1$session <- as.factor('part1')
+  
+  blockdefs <- list('first'=c(85,3),'second'=c(88,3),'last'=c(103,3))
+  LC_part2 <- getBlockedPLAOV(blockdefs=blockdefs, quadrant='1L') 
+  LC_part2 <- LC_part2[which(LC_part2$block == 'first'),-ncol(LC_part2)]
+  LC_part2$block <- gsub('first', 's2_first', LC_part2$block)
+  
+  #but we only want to analyze participants with data in both
+  LC_part1 <- LC_part1[which(LC_part1$participant %in% LC_part2$participant),]
+  LC4aov <- rbind(LC_part1, LC_part2)
+  LC4aov$block <- factor(LC4aov$block, levels = c('first','last','s2_first'))
+  
+  #looking into interaction below:
+  #interaction.plot(LC4aov$target, LC4aov$block, LC4aov$percentcomp)
+  
+  #learning curve ANOVA's
+  # for ez, case ID should be a factor:
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  
+  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=pathlength, within= c(target, block), type=3, return_aov = TRUE) #df is k-2 or 3 levels minus 2; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
+  cat('Transfer of learned performance to untrained hand:\n')
+  print(firstAOV[1:3]) #so that it doesn't print the aov object as well
+  
+}
+
+intermanualPLBayesANOVA <- function(groups = c('far', 'mid', 'near')) {
+  
+  blockdefs <- list('first'=c(67,3),'second'=c(70,3),'last'=c(142,15))
+  LC_part1 <- getAlignedBlockedPLAOV(blockdefs=blockdefs, hand='trained') 
+  LC_part1 <- LC_part1[,-5]
+  LC_part1 <- LC_part1[which(LC_part1$block == 'first' | LC_part1$block == 'last'),]
+  #LC_part1$session <- as.factor('part1')
+  
+  blockdefs <- list('first'=c(85,3),'second'=c(88,3),'last'=c(103,3))
+  LC_part2 <- getBlockedPLAOV(blockdefs=blockdefs, quadrant='1L') 
+  LC_part2 <- LC_part2[which(LC_part2$block == 'first'),-ncol(LC_part2)]
+  LC_part2$block <- gsub('first', 's2_first', LC_part2$block)
+  
+  #but we only want to analyze participants with data in both
+  LC_part1 <- LC_part1[which(LC_part1$participant %in% LC_part2$participant),]
+  LC4aov <- rbind(LC_part1, LC_part2)
+  LC4aov$block <- factor(LC4aov$block, levels = c('first','last','s2_first'))
+  #looking into interaction below:
+  #interaction.plot(LC4aov$target, LC4aov$block, LC4aov$percentcomp)
+  
+  #learning curve ANOVA's
+  # for ez, case ID should be a factor:
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  
+  cat('Transfer of learned performance to untrained hand:\n')
+  bfLC<- anovaBF(pathlength ~ target*block + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+  #compare interaction contribution, over the contribution of both main effects
+  #bfinteraction <- bfLC[4]/bfLC[3]
+  
+  #bfinclude to compare model with interactions against all other models
+  bfinteraction <- bayesfactor_inclusion(bfLC)
+  
+  print(bfLC)
+  print(bfinteraction)
+  
+}
+
+intermanualPLComparisonMeans <- function(){
+  blockdefs <- list('first'=c(67,3),'second'=c(70,3),'last'=c(142,15))
+  LC_part1 <- getAlignedBlockedPLAOV(blockdefs=blockdefs, hand='trained') 
+  LC_part1 <- LC_part1[,-5]
+  LC_part1 <- LC_part1[which(LC_part1$block == 'first' | LC_part1$block == 'last'),]
+  #LC_part1$session <- as.factor('part1')
+  
+  blockdefs <- list('first'=c(85,3),'second'=c(88,3),'last'=c(103,3))
+  LC_part2 <- getBlockedPLAOV(blockdefs=blockdefs, quadrant='1L') 
+  LC_part2 <- LC_part2[which(LC_part2$block == 'first'),-ncol(LC_part2)]
+  LC_part2$block <- gsub('first', 's2_first', LC_part2$block)
+  
+  #but we only want to analyze participants with data in both
+  LC_part1 <- LC_part1[which(LC_part1$participant %in% LC_part2$participant),]
+  LC4aov <- rbind(LC_part1, LC_part2)
+  LC4aov$block <- factor(LC4aov$block, levels = c('first','last','s2_first'))
+  #looking into interaction below:
+  #interaction.plot(LC4aov$target, LC4aov$session, LC4aov$movementtime)
+  
+  #learning curve ANOVA's
+  # for ez, case ID should be a factor:
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  secondAOV <- aov_ez("participant","pathlength",LC4aov,within=c("target", "block"))
+  
+  cellmeans <- emmeans(secondAOV,specs=c('target', 'block'))
+  print(cellmeans)
+  
+}
+
+intermanualPLComparisons <- function(method='bonferroni'){
+  blockdefs <- list('first'=c(67,3),'second'=c(70,3),'last'=c(142,15))
+  LC_part1 <- getAlignedBlockedPLAOV(blockdefs=blockdefs, hand='trained') 
+  LC_part1 <- LC_part1[,-5]
+  LC_part1 <- LC_part1[which(LC_part1$block == 'first' | LC_part1$block == 'last'),]
+  #LC_part1$session <- as.factor('part1')
+  
+  blockdefs <- list('first'=c(85,3),'second'=c(88,3),'last'=c(103,3))
+  LC_part2 <- getBlockedPLAOV(blockdefs=blockdefs, quadrant='1L') 
+  LC_part2 <- LC_part2[which(LC_part2$block == 'first'),-ncol(LC_part2)]
+  LC_part2$block <- gsub('first', 's2_first', LC_part2$block)
+  
+  #but we only want to analyze participants with data in both
+  LC_part1 <- LC_part1[which(LC_part1$participant %in% LC_part2$participant),]
+  LC4aov <- rbind(LC_part1, LC_part2)
+  LC4aov$block <- factor(LC4aov$block, levels = c('first','last','s2_first'))
+  #looking into interaction below:
+  #interaction.plot(LC4aov$target, LC4aov$session, LC4aov$movementtime)
+  
+  #learning curve ANOVA's
+  # for ez, case ID should be a factor:
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  secondAOV <- aov_ez("participant","pathlength",LC4aov,within=c("target", "block"))
+  
+  #specify contrasts
+  #levels of target are: far, mid, near
+  far_s1b1vsfar_s2b1 <- c(-1,0,0,0,0,0,1,0,0)
+  far_s1lastvsfar_s2b1 <- c(0,0,0,-1,0,0,1,0,0)
+  
+  mid_s1b1vsmid_s2b1 <- c(0,-1,0,0,0,0,0,1,0)
+  mid_s1lastvsmid_s2b1 <- c(0,0,0,0,-1,0,0,1,0)
+  
+  near_s1b1vsnear_s2b1 <- c(0,0,-1,0,0,0,0,0,1)
+  near_s1lastvsnear_s2b1 <- c(0,0,0,0,0,-1,0,0,1)
+  
+  
+  contrastList <- list('Far: Session 1 Block 1 vs Session 2 Block 1'=far_s1b1vsfar_s2b1, 'Far: Session 1 last block vs Session 2 Block 1'=far_s1lastvsfar_s2b1, 
+                       'Mid: Session 1 Block 1 vs Session 2 Block 1'=mid_s1b1vsmid_s2b1, 'Mid: Session 1 last block vs Session 2 Block 1'=mid_s1lastvsmid_s2b1,
+                       'Near: Session 1 Block 1 vs Session 2 Block 1'=near_s1b1vsnear_s2b1, 'Near: Session 1 last block vs Session 2 Block 1'=near_s1lastvsnear_s2b1)
+  
+  comparisons<- contrast(emmeans(secondAOV,specs=c('target', 'block')), contrastList, adjust=method)
+  
+  print(comparisons)
+  
+}
+
+#effect size
+intermanualPLComparisonsEffSize <- function(method = 'bonferroni'){
+  comparisons <- intermanualPLComparisons(method=method)
+  #we can use eta-squared as effect size
+  #% of variance in DV(percentcomp) accounted for 
+  #by the difference between target1 and target2
+  comparisonsdf <- as.data.frame(comparisons)
+  etasq <- ((comparisonsdf$t.ratio)^2)/(((comparisonsdf$t.ratio)^2)+(comparisonsdf$df))
+  comparisons1 <- cbind(comparisonsdf,etasq)
+  
+  effectsize <- data.frame(comparisons1$contrast, comparisons1$etasq)
+  colnames(effectsize) <- c('contrast', 'etasquared')
+  #print(comparisons)
+  print(effectsize)
+}
+
+intermanualPLComparisonsBayesfollowup <- function() {
+  blockdefs <- list('first'=c(67,3),'second'=c(70,3),'last'=c(142,15))
+  LC_part1 <- getAlignedBlockedPLAOV(blockdefs=blockdefs, hand='trained') 
+  LC_part1 <- LC_part1[,-5]
+  LC_part1 <- LC_part1[which(LC_part1$block == 'first' | LC_part1$block == 'last'),]
+  #LC_part1$session <- as.factor('part1')
+  
+  blockdefs <- list('first'=c(85,3),'second'=c(88,3),'last'=c(103,3))
+  LC_part2 <- getBlockedPLAOV(blockdefs=blockdefs, quadrant='1L') 
+  LC_part2 <- LC_part2[which(LC_part2$block == 'first'),-ncol(LC_part2)]
+  LC_part2$block <- gsub('first', 's2_first', LC_part2$block)
+  
+  #but we only want to analyze participants with data in both
+  LC_part1 <- LC_part1[which(LC_part1$participant %in% LC_part2$participant),]
+  LC4aov <- rbind(LC_part1, LC_part2)
+  LC4aov$block <- factor(LC4aov$block, levels = c('first','last','s2_first'))
+  #looking into interaction below:
+  #interaction.plot(LC4aov$target, LC4aov$session, LC4aov$movementtime)
+  
+  #learning curve ANOVA's
+  # for ez, case ID should be a factor:
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  
+  
+  far_s1b1 <- LC4aov[which(LC4aov$target == 'far' & LC4aov$block == 'first'),]
+  far_s1last <- LC4aov[which(LC4aov$target == 'far' & LC4aov$block == 'last'),]
+  far_s2b1 <- LC4aov[which(LC4aov$target == 'far' & LC4aov$block == 's2_first'),]
+  
+  mid_s1b1 <- LC4aov[which(LC4aov$target == 'mid' & LC4aov$block == 'first'),]
+  mid_s1last <- LC4aov[which(LC4aov$target == 'mid' & LC4aov$block == 'last'),]
+  mid_s2b1 <- LC4aov[which(LC4aov$target == 'mid' & LC4aov$block == 's2_first'),]
+  
+  near_s1b1 <- LC4aov[which(LC4aov$target == 'near' & LC4aov$block == 'first'),]
+  near_s1last <- LC4aov[which(LC4aov$target == 'near' & LC4aov$block == 'last'),]
+  near_s2b1 <- LC4aov[which(LC4aov$target == 'near' & LC4aov$block == 's2_first'),]
+  
+  
+  cat('Bayesian t-test Far: Session 1 Block 1 vs Session 2 Block 1:\n')
+  print(ttestBF(far_s1b1$pathlength, far_s2b1$pathlength, paired = TRUE))
+  
+  cat('Bayesian t-test Far: Session 1 last block vs Session 2 Block 1:\n')
+  print(ttestBF(far_s1last$pathlength, far_s2b1$pathlength, paired = TRUE))
+  
+  cat('Bayesian t-test Mid: Session 1 Block 1 vs Session 2 Block 1:\n')
+  print(ttestBF(mid_s1b1$pathlength, mid_s2b1$pathlength, paired = TRUE))
+  
+  cat('Bayesian t-test Mid: Session 1 last block vs Session 2 Block 1:\n')
+  print(ttestBF(mid_s1last$pathlength, mid_s2b1$pathlength, paired = TRUE))
+  
+  cat('Bayesian t-test Near: Session 1 Block 1 vs Session 2 Block 1:\n')
+  print(ttestBF(near_s1b1$pathlength, near_s2b1$pathlength, paired = TRUE))
+  
+  cat('Bayesian t-test Near: Session 1 last block vs Session 2 Block 1:\n')
+  print(ttestBF(near_s1last$pathlength, near_s2b1$pathlength, paired = TRUE))
+  
+}
+
 
 # Retention PLs (compare first and last block of part 1 with first block of part 2)
 retentionPLANOVA <- function() {
