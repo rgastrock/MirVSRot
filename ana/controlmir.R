@@ -5212,6 +5212,59 @@ mirrorMTBayesfollowup <- function() {
   print(ttestBF(midb3$movementtime, nearb3$movementtime, paired = TRUE))
 }
 
+AlignedMTTrainedTargetsAnova <- function() {
+  
+  blockdefs <- list('baseline'=c(1,45))
+  LC4aov <- getAlignedBlockedMTTrainedTargets(blockdefs=blockdefs)
+  
+
+  far <- LC4aov$movementtime[which(LC4aov$target == 'far')]
+  mid <-  LC4aov$movementtime[which(LC4aov$target == 'mid')]
+  near <-  LC4aov$movementtime[which(LC4aov$target == 'near')]
+  
+
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=movementtime, within= c(target), type=3, return_aov = TRUE) #df is k-2 or 3 levels minus 2; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
+  cat('Movement time during washout trials across targets, trained hand:\n')
+  print(firstAOV[1:3]) #so that it doesn't print the aov object as well
+  
+}
+
+#does movement go back to baseline levels?
+LearningMTTrainedTargetsBayestTest <- function() {
+  
+  blockdefs <- list('baseline'=c(1,45))
+  LC_aligned <- getAlignedBlockedMTTrainedTargets(blockdefs=blockdefs)
+  
+  blockdefs <- list('first'=c(67,3),'second'=c(70,3),'last'=c(142,15))
+  LC_mirror <- getAlignedBlockedMTAOV(blockdefs=blockdefs, hand='trained') 
+  LC_mirror <- LC_mirror[which(LC_mirror$block == 'first' | LC_mirror$block == 'last'),-ncol(LC_mirror)]
+  
+  #but we only want to analyze participants with data in both
+  LC4aov <- rbind(LC_aligned, LC_mirror)
+  LC4aov$block <- factor(LC4aov$block, levels = c('baseline','first','last'))
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  
+  alignedblk <- LC4aov$movementtime[which(LC4aov$block == 'baseline')]
+  mirrorblk1 <-  LC4aov$movementtime[which(LC4aov$block == 'first')]
+  mirrorblk2 <-  LC4aov$movementtime[which(LC4aov$block == 'last')]
+  
+  cat('Frequentist t-test (Aligned vs. Mirror block 1): \n')
+  print(t.test(alignedblk, mirrorblk1, paired = TRUE))
+  cat('Effect Size - Cohen d:\n')
+  print(cohensD(alignedblk, mirrorblk1, method = 'paired'))
+  cat('Bayesian t-test (Aligned vs. Mirror block 1): \n')
+  print(ttestBF(alignedblk, mirrorblk1, paired = TRUE))
+  
+  cat('Frequentist t-test (Aligned vs. Mirror last block): \n')
+  print(t.test(alignedblk, mirrorblk2, paired = TRUE))
+  cat('Effect Size - Cohen d:\n')
+  print(cohensD(alignedblk, mirrorblk2, method = 'paired'))
+  cat('Bayesian t-test (Aligned vs. Mirror last block): \n')
+  print(ttestBF(alignedblk, mirrorblk2, paired = TRUE))
+  
+}
+
 #Washout phase
 #check target by block within washout period
 RAEMTANOVA <- function() {
@@ -6191,6 +6244,40 @@ mirrorPLBayesfollowup <- function() {
   print(ttestBF(midb3$pathlength, nearb3$pathlength, paired = TRUE))
 }
 
+#does movement go back to baseline levels?
+LearningPLTrainedTargetsBayestTest <- function() {
+  
+  blockdefs <- list('baseline'=c(1,45))
+  LC_aligned <- getAlignedBlockedPLTrainedTargets(blockdefs=blockdefs)
+  
+  blockdefs <- list('first'=c(67,3),'second'=c(70,3),'last'=c(142,15))
+  LC_mirror <- getAlignedBlockedPLAOV(blockdefs=blockdefs, hand='trained') 
+  LC_mirror <- LC_mirror[which(LC_mirror$block == 'first' | LC_mirror$block == 'last'),-ncol(LC_mirror)]
+  
+  #but we only want to analyze participants with data in both
+  LC4aov <- rbind(LC_aligned, LC_mirror)
+  LC4aov$block <- factor(LC4aov$block, levels = c('baseline','first','last'))
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  
+  alignedblk <- LC4aov$pathlength[which(LC4aov$block == 'baseline')]
+  mirrorblk1 <-  LC4aov$pathlength[which(LC4aov$block == 'first')]
+  mirrorblk2 <-  LC4aov$pathlength[which(LC4aov$block == 'last')]
+  
+  cat('Frequentist t-test (Aligned vs. Mirror block 1): \n')
+  print(t.test(alignedblk, mirrorblk1, paired = TRUE))
+  cat('Effect Size - Cohen d:\n')
+  print(cohensD(alignedblk, mirrorblk1, method = 'paired'))
+  cat('Bayesian t-test (Aligned vs. Mirror block 1): \n')
+  print(ttestBF(alignedblk, mirrorblk1, paired = TRUE))
+  
+  cat('Frequentist t-test (Aligned vs. Mirror last block): \n')
+  print(t.test(alignedblk, mirrorblk2, paired = TRUE))
+  cat('Effect Size - Cohen d:\n')
+  print(cohensD(alignedblk, mirrorblk2, method = 'paired'))
+  cat('Bayesian t-test (Aligned vs. Mirror last block): \n')
+  print(ttestBF(alignedblk, mirrorblk2, paired = TRUE))
+  
+}
 
 #Washout phase
 #check target by block within washout period

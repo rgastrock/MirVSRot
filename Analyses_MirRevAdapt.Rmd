@@ -608,6 +608,7 @@ alignedMTBayesANOVA()
 We find main effects of target and block for the trained hand, and a main effect of block for the untrained hand. The effect of block is expected, given that completion time becomes faster as trials progress. We investigate the target effect in the trained hand further.
 
 ```{r}
+trainedHandMTComparisonMeansTargetEffect()
 trainedHandMTComparisonsEffSizeTargetEffect()
 trainedHandMTTargetEffectBayesfollowup()
 ```
@@ -646,6 +647,14 @@ mirrorMTBayesfollowup()
 
 Follow-up tests show faster completion times for the far target compared to the middle target across all three blocks. The far target is also faster than the near target for the last block. These results suggest that movement initiation and execution towards the far target is faster than the other two targets.
 
+We also compare the first and last block of training CTs to those in the aligned trials. We conduct t-tests comparing each block:
+
+```{r}
+LearningMTTrainedTargetsBayestTest()
+```
+
+We find that CTs do not go back to baseline by the end of training, but are comparable to those in baseline.
+
 For washout trials, we first conduct a 3x2 (target x first and second block) within-subject ANOVA, to test for any effects across target locations.
 
 ```{r}
@@ -672,6 +681,7 @@ RAEMTTrainedTargetsBayesANOVA()
 We find main effects of block and target, but no interaction. We then conduct follow-up tests on the block effect, regardless of target location.
 
 ```{r}
+RAEMTTrainedTargetsComparisonMeans()
 RAEMTTrainedTargetsComparisonsEffSize()
 RAEMTTrainedTargetsBlockEffectBayesfollowup()
 ```
@@ -696,6 +706,7 @@ alignedPLBayesANOVA()
 We find a main effect of target for the trained hand, and a main effect of block for the untrained hand. From the plot, we observe that the path lengths become shorter as aligned reaches progress with the untrained/nondominant hand. Thus, we conduct follow up tests for the main effect of target in the trained hand.
 
 ```{r}
+trainedHandPLComparisonMeansTargetEffect()
 trainedHandPLComparisonsEffSizeTargetEffect()
 trainedHandPLTargetEffectBayesfollowup()
 ```
@@ -733,6 +744,14 @@ mirrorPLBayesfollowup()
 
 Follow-up tests show that the far target had shorter path lengths than the middle target across block of trials. The far target also had a shorter path length than the near target during the end of learning. Finally, the near target had shorter path lengths that the middle target for the first two blocks. Taken together, these results suggest that path lengths were shortest for the far target, and longest for the middle target.
 
+We also compare the first and last block of training PLs to those in the aligned trials. We conduct t-tests comparing each block:
+
+```{r}
+LearningPLTrainedTargetsBayestTest()
+```
+
+We find that PLs do not go back to baseline by the end of training, but are comparable to those in baseline.
+
 For washout trials, we first conduct a 3x2 (target x first and second block) within-subjects ANOVA to investigate effects across target locations.
 
 ```{r}
@@ -752,6 +771,7 @@ RAEPLTrainedTargetsBayesANOVA()
 We find a main effect of block.
 
 ```{r}
+RAEPLTrainedTargetsComparisonMeans()
 RAEPLTrainedTargetsComparisonsEffSize()
 RAEPLTrainedTargetsBlockEffectBayesfollowup()
 ```
