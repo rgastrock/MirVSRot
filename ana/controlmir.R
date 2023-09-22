@@ -5212,16 +5212,11 @@ mirrorMTBayesfollowup <- function() {
   print(ttestBF(midb3$movementtime, nearb3$movementtime, paired = TRUE))
 }
 
+#do targets differ during baseline for dominant hand?
 AlignedMTTrainedTargetsAnova <- function() {
   
   blockdefs <- list('baseline'=c(1,45))
   LC4aov <- getAlignedBlockedMTTrainedTargets(blockdefs=blockdefs)
-  
-
-  far <- LC4aov$movementtime[which(LC4aov$target == 'far')]
-  mid <-  LC4aov$movementtime[which(LC4aov$target == 'mid')]
-  near <-  LC4aov$movementtime[which(LC4aov$target == 'near')]
-  
 
   LC4aov$participant <- as.factor(LC4aov$participant)
   firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=movementtime, within= c(target), type=3, return_aov = TRUE) #df is k-2 or 3 levels minus 2; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
@@ -5229,6 +5224,121 @@ AlignedMTTrainedTargetsAnova <- function() {
   print(firstAOV[1:3]) #so that it doesn't print the aov object as well
   
 }
+
+AlignedMTTrainedTargetsBayesANOVA <- function() {
+  
+  blockdefs <- list('baseline'=c(1,45))
+  LC4aov <- getAlignedBlockedMTTrainedTargets(blockdefs=blockdefs)                      
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  bfLC<- anovaBF(movementtime ~ target + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+  #compare interaction contribution, over the contribution of both main effects
+  #bfinteraction <- bfLC[4]/bfLC[3]
+  
+  #bfinclude to compare model with interactions against all other models
+  bfinteraction <- bayesfactor_inclusion(bfLC)
+  
+  print(bfLC)
+  print(bfinteraction)
+}
+
+AlignedMTTrainedTargetsComparisonMeans <- function(){
+  blockdefs <- list('baseline'=c(1,45))
+  LC4aov <- getAlignedBlockedMTTrainedTargets(blockdefs=blockdefs)  
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  secondAOV <- aov_ez("participant","movementtime",LC4aov,within=c("target"))
+  
+  cellmeans <- emmeans(secondAOV,specs=c('target'))
+  print(cellmeans)
+  
+}
+
+AlignedMTTrainedTargetsComparisons <- function(method='bonferroni'){
+  blockdefs <- list('baseline'=c(1,45))
+  LC4aov <- getAlignedBlockedMTTrainedTargets(blockdefs=blockdefs) 
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  secondAOV <- aov_ez("participant","movementtime",LC4aov,within=c("target"))
+  
+  #specify contrasts
+  #levels of target are: far, mid, near
+  farvsmid <- c(-1,1,0)
+  farvsnear <- c(-1,0,1)
+  midvsnear <- c(0,-1,1)
+  
+  contrastList <- list('Far vs. Mid'=farvsmid, 'Far vs. Near'=farvsnear, 'Mid vs. Near'=midvsnear)
+  
+  comparisons<- contrast(emmeans(secondAOV,specs=c('target')), contrastList, adjust=method)
+  
+  print(comparisons)
+  
+}
+
+#effect size
+AlignedMTTrainedTargetsEffSize <- function(method = 'bonferroni'){
+  comparisons <- AlignedMTTrainedTargetsComparisons(method=method)
+  #we can use eta-squared as effect size
+  #% of variance in DV(percentcomp) accounted for 
+  #by the difference between target1 and target2
+  comparisonsdf <- as.data.frame(comparisons)
+  etasq <- ((comparisonsdf$t.ratio)^2)/(((comparisonsdf$t.ratio)^2)+(comparisonsdf$df))
+  comparisons1 <- cbind(comparisonsdf,etasq)
+  
+  effectsize <- data.frame(comparisons1$contrast, comparisons1$etasq)
+  colnames(effectsize) <- c('contrast', 'etasquared')
+  #print(comparisons)
+  print(effectsize)
+}
+
+AlignedMTTrainedTargetsBayesfollowup <- function() {
+  
+  
+  blockdefs <- list('baseline'=c(1,45))
+  LC4aov <- getAlignedBlockedMTTrainedTargets(blockdefs=blockdefs)                 
+  
+  fartarget <- LC4aov[which(LC4aov$target == 'far'),]
+  midtarget <- LC4aov[which(LC4aov$target == 'mid'),]
+  neartarget <- LC4aov[which(LC4aov$target == 'near'),]
+  
+  #far vs mid
+  cat('Bayesian t-test far vs mid target:\n')
+  print(ttestBF(fartarget$movementtime, midtarget$movementtime, paired = TRUE))
+  #far vs near
+  cat('Bayesian t-test far vs near target:\n')
+  print(ttestBF(fartarget$movementtime, neartarget$movementtime, paired = TRUE))
+  #mid vs near
+  cat('Bayesian t-test mid vs near target:\n')
+  print(ttestBF(midtarget$movementtime, neartarget$movementtime, paired = TRUE))
+}
+
+#do targets differ during baseline for nondominant hand?
+AlignedMTUntrainedTargetsAnova <- function() {
+  
+  blockdefs <- list('nondom_base'=c(1,21))
+  LC4aov <- getAlignedBlockedMTUntrainedTargets(blockdefs=blockdefs)
+  
+
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=movementtime, within= c(target), type=3, return_aov = TRUE) #df is k-2 or 3 levels minus 2; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
+  cat('Movement time during washout trials across targets, untrained hand:\n')
+  print(firstAOV[1:3]) #so that it doesn't print the aov object as well
+  
+}
+
+AlignedMTUntrainedTargetsBayesANOVA <- function() {
+  
+  blockdefs <- list('nondom_base'=c(1,21))
+  LC4aov <- getAlignedBlockedMTUntrainedTargets(blockdefs=blockdefs)                     
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  bfLC<- anovaBF(movementtime ~ target + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+  #compare interaction contribution, over the contribution of both main effects
+  #bfinteraction <- bfLC[4]/bfLC[3]
+  
+  #bfinclude to compare model with interactions against all other models
+  bfinteraction <- bayesfactor_inclusion(bfLC)
+  
+  print(bfLC)
+  print(bfinteraction)
+}
+
 
 #does movement go back to baseline levels?
 LearningMTTrainedTargetsBayestTest <- function() {
@@ -5456,7 +5566,6 @@ getAlignedGroupMTTrainedTargets <- function(groups = c('far', 'mid', 'near')){
   }
 }
 
-#blockdefs <- list('baseline'=c(1,45)) we want the full aligned period given how each target appears 5 times per pp
 getAlignedBlockedMTTrainedTargets <- function(groups = c('far', 'mid', 'near'), blockdefs) {
   
   LCaov <- data.frame()
@@ -5498,6 +5607,98 @@ getAlignedBlockedMTTrainedTargets <- function(groups = c('far', 'mid', 'near'), 
   LCaov$target <- as.factor(LCaov$target)
   LCaov$block <- as.factor(LCaov$block)
   LCaov$block <- factor(LCaov$block, levels = c('baseline'))
+  return(LCaov)
+  
+}
+
+getAlignedGroupMTUntrainedTargets <- function(groups = c('far', 'mid', 'near')){
+  #group is either 'far', 'mid', 'near' in relation to mirror, but we only want the 5, 45, 85 targets
+  for(group in groups){
+    datafilenames <- list.files('data/controlmironline-master/raw', pattern = '*.csv')
+    
+    
+    dataoutput<- data.frame() #create place holder
+    for(datafilenum in c(1:length(datafilenames))){
+      datafilename <- sprintf('data/controlmironline-master/raw/%s', datafilenames[datafilenum]) #change this, depending on location in directory
+      
+      cat(sprintf('file %d / %d     (%s)\n',datafilenum,length(datafilenames),datafilename))
+      adat <- getParticipantMTTrainedTargets(filename = datafilename)
+      adat <- adat[which(adat$taskno == 2),] #get only aligned data for both hands
+      # per target location, get reachdev for corresponding trials
+      
+      trial <- c(1:length(adat$trialno))
+      #adat$trialno <- trial
+      for (triali in trial){
+        trialdat <- adat[triali,]
+        #set reachdev to NA if not the target location we want
+        if (trialdat$targetdist != group){
+          trialdat$time <- NA
+        }
+        adat[triali,] <- trialdat
+      }
+      ppreaches <- adat$time #get reach deviations column from learning curve data
+      ppdat <- data.frame(trial, ppreaches)
+      
+      ppname <- unique(adat$participant)
+      names(ppdat)[names(ppdat) == 'ppreaches'] <- ppname
+      
+      if (prod(dim(dataoutput)) == 0){
+        dataoutput <- ppdat
+      } else {
+        dataoutput <- cbind(dataoutput, ppreaches)
+        names(dataoutput)[names(dataoutput) == 'ppreaches'] <- ppname
+      }
+    }
+    
+    
+    #return(dataoutput)
+    write.csv(dataoutput, file=sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl_MT_Untrained_Q1target.csv', group), row.names = F)
+  }
+}
+
+
+#blockdefs <- list('baseline'=c(1,45)) we want the full aligned period given how each target appears 5 times per pp
+getAlignedBlockedMTUntrainedTargets <- function(groups = c('far', 'mid', 'near'), blockdefs) {
+  
+  LCaov <- data.frame()
+  for(group in groups){
+    curves <- read.csv(sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl_MT_Untrained_Q1target.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
+    curves <- curves[,-1] #remove trial rows
+    participants <- colnames(curves)
+    N <- length(participants)
+    
+    #blocked <- array(NA, dim=c(N,length(blockdefs)))
+    
+    target <- c()
+    participant <- c()
+    block <- c()
+    movementtime <- c()
+    
+    for (ppno in c(1:N)) {
+      
+      pp <- participants[ppno]
+      
+      for (blockno in c(1:length(blockdefs))) {
+        #for each participant, and every 3 trials, get the mean
+        blockdef <- blockdefs[[blockno]]
+        blockstart <- blockdef[1]
+        blockend <- blockstart + blockdef[2] - 1
+        samples <- curves[blockstart:blockend,ppno]
+        samples <- mean(samples, na.rm=TRUE)
+        
+        target <- c(target, group)
+        participant <- c(participant, pp)
+        block <- c(block, names(blockdefs)[blockno])
+        movementtime <- c(movementtime, samples)
+      }
+    }
+    LCBlocked <- data.frame(target, participant, block, movementtime)
+    LCaov <- rbind(LCaov, LCBlocked)
+  }
+  #need to make some columns as factors for ANOVA
+  LCaov$target <- as.factor(LCaov$target)
+  LCaov$block <- as.factor(LCaov$block)
+  LCaov$block <- factor(LCaov$block, levels = c('nondom_base'))
   return(LCaov)
   
 }
@@ -6080,7 +6281,6 @@ PLComparisonsHandEffect <- function(handA='trained', handB='untrained', method='
   
 }
 
-
 #Mirror trials PL
 #3x3 anova (target x block)
 mirrorPLANOVA <- function() {
@@ -6242,6 +6442,65 @@ mirrorPLBayesfollowup <- function() {
   #mid vs near
   cat('Bayesian t-test mid vs near target:\n')
   print(ttestBF(midb3$pathlength, nearb3$pathlength, paired = TRUE))
+}
+
+#do targets differ during baseline for dominant hand?
+AlignedPLTrainedTargetsAnova <- function() {
+  
+  blockdefs <- list('baseline'=c(1,45))
+  LC4aov <- getAlignedBlockedPLTrainedTargets(blockdefs=blockdefs)
+  
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=pathlength, within= c(target), type=3, return_aov = TRUE) #df is k-2 or 3 levels minus 2; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
+  cat('Path length during washout trials across targets, trained hand:\n')
+  print(firstAOV[1:3]) #so that it doesn't print the aov object as well
+  
+}
+
+AlignedPLTrainedTargetsBayesANOVA <- function() {
+  
+  blockdefs <- list('baseline'=c(1,45))
+  LC4aov <- getAlignedBlockedPLTrainedTargets(blockdefs=blockdefs)                      
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  bfLC<- anovaBF(pathlength ~ target + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+  #compare interaction contribution, over the contribution of both main effects
+  #bfinteraction <- bfLC[4]/bfLC[3]
+  
+  #bfinclude to compare model with interactions against all other models
+  bfinteraction <- bayesfactor_inclusion(bfLC)
+  
+  print(bfLC)
+  print(bfinteraction)
+}
+
+#do targets differ during baseline for nondominant hand?
+AlignedPLUntrainedTargetsAnova <- function() {
+  
+  blockdefs <- list('nondom_base'=c(1,21))
+  LC4aov <- getAlignedBlockedPLUntrainedTargets(blockdefs=blockdefs)
+  
+  
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  firstAOV <- ezANOVA(data=LC4aov, wid=participant, dv=pathlength, within= c(target), type=3, return_aov = TRUE) #df is k-2 or 3 levels minus 2; N-1*k-1 for denom, total will be (N-1)(k1 -1)(k2 - 1)
+  cat('Path Length during washout trials across targets, untrained hand:\n')
+  print(firstAOV[1:3]) #so that it doesn't print the aov object as well
+  
+}
+
+AlignedPLUntrainedTargetsBayesANOVA <- function() {
+  
+  blockdefs <- list('nondom_base'=c(1,21))
+  LC4aov <- getAlignedBlockedPLUntrainedTargets(blockdefs=blockdefs)                     
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  bfLC<- anovaBF(pathlength ~ target + participant, data = LC4aov, whichRandom = 'participant') #include data from participants, but note that this is a random factor
+  #compare interaction contribution, over the contribution of both main effects
+  #bfinteraction <- bfLC[4]/bfLC[3]
+  
+  #bfinclude to compare model with interactions against all other models
+  bfinteraction <- bayesfactor_inclusion(bfLC)
+  
+  print(bfLC)
+  print(bfinteraction)
 }
 
 #does movement go back to baseline levels?
@@ -6465,6 +6724,98 @@ getAlignedBlockedPLTrainedTargets <- function(groups = c('far', 'mid', 'near'), 
   LCaov$target <- as.factor(LCaov$target)
   LCaov$block <- as.factor(LCaov$block)
   LCaov$block <- factor(LCaov$block, levels = c('baseline'))
+  return(LCaov)
+  
+}
+
+getAlignedGroupPLUntrainedTargets <- function(groups = c('far', 'mid', 'near')){
+  #group is either 'far', 'mid', 'near' in relation to mirror, but we only want the 5, 45, 85 targets
+  for(group in groups){
+    datafilenames <- list.files('data/controlmironline-master/raw', pattern = '*.csv')
+    
+    
+    dataoutput<- data.frame() #create place holder
+    for(datafilenum in c(1:length(datafilenames))){
+      datafilename <- sprintf('data/controlmironline-master/raw/%s', datafilenames[datafilenum]) #change this, depending on location in directory
+      
+      cat(sprintf('file %d / %d     (%s)\n',datafilenum,length(datafilenames),datafilename))
+      adat <- getParticipantPLTrainedTargets(filename = datafilename)
+      adat <- adat[which(adat$taskno == 2),] #get only aligned data for both hands
+      # per target location, get reachdev for corresponding trials
+      
+      trial <- c(1:length(adat$trialno))
+      #adat$trialno <- trial
+      for (triali in trial){
+        trialdat <- adat[triali,]
+        #set reachdev to NA if not the target location we want
+        if (trialdat$targetdist != group){
+          trialdat$path_length <- NA
+        }
+        adat[triali,] <- trialdat
+      }
+      ppreaches <- adat$path_length #get reach deviations column from learning curve data
+      ppdat <- data.frame(trial, ppreaches)
+      
+      ppname <- unique(adat$participant)
+      names(ppdat)[names(ppdat) == 'ppreaches'] <- ppname
+      
+      if (prod(dim(dataoutput)) == 0){
+        dataoutput <- ppdat
+      } else {
+        dataoutput <- cbind(dataoutput, ppreaches)
+        names(dataoutput)[names(dataoutput) == 'ppreaches'] <- ppname
+      }
+    }
+    
+    
+    #return(dataoutput)
+    write.csv(dataoutput, file=sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl_PL_Untrained_Q1target.csv', group), row.names = F)
+  }
+}
+
+
+#blockdefs <- list('baseline'=c(1,45)) we want the full aligned period given how each target appears 5 times per pp
+getAlignedBlockedPLUntrainedTargets <- function(groups = c('far', 'mid', 'near'), blockdefs) {
+  
+  LCaov <- data.frame()
+  for(group in groups){
+    curves <- read.csv(sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl_PL_Untrained_Q1target.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
+    curves <- curves[,-1] #remove trial rows
+    participants <- colnames(curves)
+    N <- length(participants)
+    
+    #blocked <- array(NA, dim=c(N,length(blockdefs)))
+    
+    target <- c()
+    participant <- c()
+    block <- c()
+    pathlength <- c()
+    
+    for (ppno in c(1:N)) {
+      
+      pp <- participants[ppno]
+      
+      for (blockno in c(1:length(blockdefs))) {
+        #for each participant, and every 3 trials, get the mean
+        blockdef <- blockdefs[[blockno]]
+        blockstart <- blockdef[1]
+        blockend <- blockstart + blockdef[2] - 1
+        samples <- curves[blockstart:blockend,ppno]
+        samples <- mean(samples, na.rm=TRUE)
+        
+        target <- c(target, group)
+        participant <- c(participant, pp)
+        block <- c(block, names(blockdefs)[blockno])
+        pathlength <- c(pathlength, samples)
+      }
+    }
+    LCBlocked <- data.frame(target, participant, block, pathlength)
+    LCaov <- rbind(LCaov, LCBlocked)
+  }
+  #need to make some columns as factors for ANOVA
+  LCaov$target <- as.factor(LCaov$target)
+  LCaov$block <- as.factor(LCaov$block)
+  LCaov$block <- factor(LCaov$block, levels = c('nondom_base'))
   return(LCaov)
   
 }

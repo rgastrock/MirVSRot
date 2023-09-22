@@ -338,8 +338,33 @@ plotBlockedDependentMeasures <- function(groups = c('far', 'mid', 'near'), trial
   axis(1, at = c(4, 11, 18, 25, 32, 39, 46, 53, 60, 67, 74, 81, 88, 95, 102, 109, 116, 123, 130, 137, 144, 151, 158, 165),
        labels = c('1', '2', '26-30', '1', '2', '7', '1', '2', '7', '1', '2', '7', '1', '2', '7', '1', '2', '7', '1', '2', '7', '1', '2', '7')) #tick marks for x axis
   axis(2, at = c(0, 2, 4, 6, 8), las = 2) #tick marks for y axis
-  axis.break(1, 41, style='gap', breakcol='white')
   
+  
+  #add in CT during aligned for dominant hand as dashed lines (per group)
+  blockdefs <- list('baseline'=c(1,45))
+  LC_aligned <- getAlignedBlockedMTTrainedTargets(blockdefs=blockdefs)
+  for(group in groups){
+    colourscheme <- getCtrlColourScheme(group=group)
+    baseline_ct <- mean(LC_aligned$movementtime[which(LC_aligned$target == group)])
+    col <- colourscheme[[group]][['S']]
+    X1 <- c(0:40)
+    #X2 <- c(129:145)
+    lines(x = X1, y = rep(baseline_ct, length(X1)), col = col, lty = 2)
+    #lines(x = X2, y = rep(baseline_ct, length(X2)), col = col, lty = 2)
+  }
+  
+  #add in CT during aligned for nondominant hand as dashed lines (per group) in the last washout block
+  blockdefs <- list('nondom_base'=c(1,21))
+  LC_aligned <- getAlignedBlockedMTUntrainedTargets(blockdefs=blockdefs)
+  for(group in groups){
+    colourscheme <- getCtrlColourScheme(group=group)
+    baseline_ct <- mean(LC_aligned$movementtime[which(LC_aligned$target == group)])
+    col <- colourscheme[[group]][['S']]
+    X1 <- c(150:166)
+    lines(x = X1, y = rep(baseline_ct, length(X1)), col = col, lty = 2)
+  }
+  
+  axis.break(1, 41, style='gap', breakcol='white')
   
   for(type in trialtypes){
     if(type == 'mir'){
@@ -488,6 +513,31 @@ plotBlockedDependentMeasures <- function(groups = c('far', 'mid', 'near'), trial
   axis(1, at = c(4, 11, 18, 25, 32, 39, 46, 53, 60, 67, 74, 81, 88, 95, 102, 109, 116, 123, 130, 137, 144, 151, 158, 165),
        labels = c('1', '2', '26-30', '1', '2', '7', '1', '2', '7', '1', '2', '7', '1', '2', '7', '1', '2', '7', '1', '2', '7', '1', '2', '7')) #tick marks for x axis
   axis(2, at = c(.4, .8, 1.2, 1.6, 2, 2.4), las = 2) #tick marks for y axis
+  
+  #add in PL during aligned for dominant hand as dashed lines (per group)
+  blockdefs <- list('baseline'=c(1,45))
+  LC_aligned <- getAlignedBlockedPLTrainedTargets(blockdefs=blockdefs)
+  for(group in groups){
+    colourscheme <- getCtrlColourScheme(group=group)
+    baseline_ct <- mean(LC_aligned$pathlength[which(LC_aligned$target == group)])
+    col <- colourscheme[[group]][['S']]
+    X1 <- c(0:40)
+    #X2 <- c(129:145)
+    lines(x = X1, y = rep(baseline_ct, length(X1)), col = col, lty = 2)
+    #lines(x = X2, y = rep(baseline_ct, length(X2)), col = col, lty = 2)
+  }
+  
+  #add in CT during aligned for nondominant hand as dashed lines (per group) in the last washout block
+  blockdefs <- list('nondom_base'=c(1,21))
+  LC_aligned <- getAlignedBlockedPLUntrainedTargets(blockdefs=blockdefs)
+  for(group in groups){
+    colourscheme <- getCtrlColourScheme(group=group)
+    baseline_ct <- mean(LC_aligned$pathlength[which(LC_aligned$target == group)])
+    col <- colourscheme[[group]][['S']]
+    X1 <- c(150:166)
+    lines(x = X1, y = rep(baseline_ct, length(X1)), col = col, lty = 2)
+  }
+  
   axis.break(1, 41, style='gap', breakcol='white')
   
   

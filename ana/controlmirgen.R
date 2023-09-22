@@ -5173,6 +5173,94 @@ retentionAsymptoteComparisons <- function(groups = c('far', 'mid')){
 }
 
 
+#baseline correction for nondominant hand----
+#given a hand effect between left and right hands in baseline, we subtract the average difference from reaches with the left hand in session 2
+getAlignedHandBiasesMT <- function(){
+  
+  blockdefs <- list('baseline'=c(1,45))
+  LC4aov <- getAlignedBlockedMTTrainedTargets(blockdefs=blockdefs)
+  fartarget <- LC4aov[which(LC4aov$target == 'far'),]
+  midtarget <- LC4aov[which(LC4aov$target == 'mid'),]
+  neartarget <- LC4aov[which(LC4aov$target == 'near'),]
+  
+  domhandfar <- mean(fartarget$movementtime)
+  domhandmid <- mean(midtarget$movementtime)
+  domhandnear <- mean(neartarget$movementtime)
+  
+  blockdefs <- list('nondom_base'=c(1,21))
+  LC4aov <- getAlignedBlockedMTUntrainedTargets(blockdefs=blockdefs)  
+  fartarget <- LC4aov[which(LC4aov$target == 'far'),]
+  midtarget <- LC4aov[which(LC4aov$target == 'mid'),]
+  neartarget <- LC4aov[which(LC4aov$target == 'near'),]
+  
+  nondomhandfar <- mean(fartarget$movementtime)
+  nondomhandmid <- mean(midtarget$movementtime)
+  nondomhandnear <- mean(neartarget$movementtime)
+  
+  biasfar <- nondomhandfar - domhandfar
+  biasmid <- nondomhandmid - domhandmid
+  biasnear <- nondomhandnear - domhandnear
+  
+  averagebias <- mean(c(biasfar, biasmid, biasnear))
+  
+  return(averagebias)
+}
+
+getBaseCorrTrainingMT <- function(quadrant='1L'){
+  
+  blockdefs <- list('first'=c(85,3),'second'=c(88,3),'last'=c(103,3))
+  LC4aov <- getBlockedMTAOV(blockdefs=blockdefs, quadrant=quadrant)  
+  
+  bias <- getAlignedHandBiasesMT()
+  
+  LC4aov$movementtime <- LC4aov$movementtime - bias
+  
+  return(LC4aov)
+}
+
+getAlignedHandBiasesPL <- function(){
+  
+  blockdefs <- list('baseline'=c(1,45))
+  LC4aov <- getAlignedBlockedPLTrainedTargets(blockdefs=blockdefs)
+  fartarget <- LC4aov[which(LC4aov$target == 'far'),]
+  midtarget <- LC4aov[which(LC4aov$target == 'mid'),]
+  neartarget <- LC4aov[which(LC4aov$target == 'near'),]
+  
+  domhandfar <- mean(fartarget$pathlength)
+  domhandmid <- mean(midtarget$pathlength)
+  domhandnear <- mean(neartarget$pathlength)
+  
+  blockdefs <- list('nondom_base'=c(1,21))
+  LC4aov <- getAlignedBlockedPLUntrainedTargets(blockdefs=blockdefs)  
+  fartarget <- LC4aov[which(LC4aov$target == 'far'),]
+  midtarget <- LC4aov[which(LC4aov$target == 'mid'),]
+  neartarget <- LC4aov[which(LC4aov$target == 'near'),]
+  
+  nondomhandfar <- mean(fartarget$pathlength)
+  nondomhandmid <- mean(midtarget$pathlength)
+  nondomhandnear <- mean(neartarget$pathlength)
+  
+  biasfar <- nondomhandfar - domhandfar
+  biasmid <- nondomhandmid - domhandmid
+  biasnear <- nondomhandnear - domhandnear
+  
+  averagebias <- mean(c(biasfar, biasmid, biasnear))
+  
+  return(averagebias)
+}
+
+getBaseCorrTrainingPL <- function(quadrant='1L'){
+  
+  blockdefs <- list('first'=c(85,3),'second'=c(88,3),'last'=c(103,3))
+  LC4aov <- getBlockedPLAOV(blockdefs=blockdefs, quadrant=quadrant)  
+  
+  bias <- getAlignedHandBiasesPL()
+  
+  LC4aov$pathlength <- LC4aov$pathlength - bias
+  
+  return(LC4aov)
+}
+
 #Statistics (Movement time)-----
 
 getBlockedMTAOV <- function(groups = c('far', 'mid', 'near'), blockdefs, quadrant) {
@@ -6734,8 +6822,7 @@ intermanualMTANOVA <- function(groups = c('far', 'mid', 'near')) {
   LC_part1 <- LC_part1[which(LC_part1$block == 'first' | LC_part1$block == 'last'),]
   #LC_part1$session <- as.factor('part1')
   
-  blockdefs <- list('first'=c(85,3),'second'=c(88,3),'last'=c(103,3))
-  LC_part2 <- getBlockedMTAOV(blockdefs=blockdefs, quadrant='1L') 
+  LC_part2 <- getBaseCorrTrainingMT()
   LC_part2 <- LC_part2[which(LC_part2$block == 'first'),-ncol(LC_part2)]
   LC_part2$block <- gsub('first', 's2_first', LC_part2$block)
   
@@ -6765,8 +6852,7 @@ intermanualMTBayesANOVA <- function(groups = c('far', 'mid', 'near')) {
   LC_part1 <- LC_part1[which(LC_part1$block == 'first' | LC_part1$block == 'last'),]
   #LC_part1$session <- as.factor('part1')
   
-  blockdefs <- list('first'=c(85,3),'second'=c(88,3),'last'=c(103,3))
-  LC_part2 <- getBlockedMTAOV(blockdefs=blockdefs, quadrant='1L') 
+  LC_part2 <- getBaseCorrTrainingMT()
   LC_part2 <- LC_part2[which(LC_part2$block == 'first'),-ncol(LC_part2)]
   LC_part2$block <- gsub('first', 's2_first', LC_part2$block)
   
@@ -6801,8 +6887,7 @@ intermanualMTComparisonMeans <- function(){
   LC_part1 <- LC_part1[which(LC_part1$block == 'first' | LC_part1$block == 'last'),]
   #LC_part1$session <- as.factor('part1')
   
-  blockdefs <- list('first'=c(85,3),'second'=c(88,3),'last'=c(103,3))
-  LC_part2 <- getBlockedMTAOV(blockdefs=blockdefs, quadrant='1L') 
+  LC_part2 <- getBaseCorrTrainingMT()
   LC_part2 <- LC_part2[which(LC_part2$block == 'first'),-ncol(LC_part2)]
   LC_part2$block <- gsub('first', 's2_first', LC_part2$block)
   
@@ -6830,8 +6915,7 @@ intermanualMTComparisons <- function(method='bonferroni'){
   LC_part1 <- LC_part1[which(LC_part1$block == 'first' | LC_part1$block == 'last'),]
   #LC_part1$session <- as.factor('part1')
   
-  blockdefs <- list('first'=c(85,3),'second'=c(88,3),'last'=c(103,3))
-  LC_part2 <- getBlockedMTAOV(blockdefs=blockdefs, quadrant='1L') 
+  LC_part2 <- getBaseCorrTrainingMT() 
   LC_part2 <- LC_part2[which(LC_part2$block == 'first'),-ncol(LC_part2)]
   LC_part2$block <- gsub('first', 's2_first', LC_part2$block)
   
@@ -6892,8 +6976,7 @@ intermanualMTComparisonsBayesfollowup <- function() {
   LC_part1 <- LC_part1[which(LC_part1$block == 'first' | LC_part1$block == 'last'),]
   #LC_part1$session <- as.factor('part1')
   
-  blockdefs <- list('first'=c(85,3),'second'=c(88,3),'last'=c(103,3))
-  LC_part2 <- getBlockedMTAOV(blockdefs=blockdefs, quadrant='1L') 
+  LC_part2 <- getBaseCorrTrainingMT()
   LC_part2 <- LC_part2[which(LC_part2$block == 'first'),-ncol(LC_part2)]
   LC_part2$block <- gsub('first', 's2_first', LC_part2$block)
   
@@ -8426,8 +8509,7 @@ intermanualPLANOVA <- function(groups = c('far', 'mid', 'near')) {
   LC_part1 <- LC_part1[which(LC_part1$block == 'first' | LC_part1$block == 'last'),]
   #LC_part1$session <- as.factor('part1')
   
-  blockdefs <- list('first'=c(85,3),'second'=c(88,3),'last'=c(103,3))
-  LC_part2 <- getBlockedPLAOV(blockdefs=blockdefs, quadrant='1L') 
+  LC_part2 <- getBaseCorrTrainingPL()
   LC_part2 <- LC_part2[which(LC_part2$block == 'first'),-ncol(LC_part2)]
   LC_part2$block <- gsub('first', 's2_first', LC_part2$block)
   
@@ -8457,8 +8539,7 @@ intermanualPLBayesANOVA <- function(groups = c('far', 'mid', 'near')) {
   LC_part1 <- LC_part1[which(LC_part1$block == 'first' | LC_part1$block == 'last'),]
   #LC_part1$session <- as.factor('part1')
   
-  blockdefs <- list('first'=c(85,3),'second'=c(88,3),'last'=c(103,3))
-  LC_part2 <- getBlockedPLAOV(blockdefs=blockdefs, quadrant='1L') 
+  LC_part2 <- getBaseCorrTrainingPL() 
   LC_part2 <- LC_part2[which(LC_part2$block == 'first'),-ncol(LC_part2)]
   LC_part2$block <- gsub('first', 's2_first', LC_part2$block)
   
@@ -8493,8 +8574,7 @@ intermanualPLComparisonMeans <- function(){
   LC_part1 <- LC_part1[which(LC_part1$block == 'first' | LC_part1$block == 'last'),]
   #LC_part1$session <- as.factor('part1')
   
-  blockdefs <- list('first'=c(85,3),'second'=c(88,3),'last'=c(103,3))
-  LC_part2 <- getBlockedPLAOV(blockdefs=blockdefs, quadrant='1L') 
+  LC_part2 <- getBaseCorrTrainingPL() 
   LC_part2 <- LC_part2[which(LC_part2$block == 'first'),-ncol(LC_part2)]
   LC_part2$block <- gsub('first', 's2_first', LC_part2$block)
   
@@ -8522,8 +8602,7 @@ intermanualPLComparisons <- function(method='bonferroni'){
   LC_part1 <- LC_part1[which(LC_part1$block == 'first' | LC_part1$block == 'last'),]
   #LC_part1$session <- as.factor('part1')
   
-  blockdefs <- list('first'=c(85,3),'second'=c(88,3),'last'=c(103,3))
-  LC_part2 <- getBlockedPLAOV(blockdefs=blockdefs, quadrant='1L') 
+  LC_part2 <- getBaseCorrTrainingPL() 
   LC_part2 <- LC_part2[which(LC_part2$block == 'first'),-ncol(LC_part2)]
   LC_part2$block <- gsub('first', 's2_first', LC_part2$block)
   
@@ -8584,8 +8663,7 @@ intermanualPLComparisonsBayesfollowup <- function() {
   LC_part1 <- LC_part1[which(LC_part1$block == 'first' | LC_part1$block == 'last'),]
   #LC_part1$session <- as.factor('part1')
   
-  blockdefs <- list('first'=c(85,3),'second'=c(88,3),'last'=c(103,3))
-  LC_part2 <- getBlockedPLAOV(blockdefs=blockdefs, quadrant='1L') 
+  LC_part2 <- getBaseCorrTrainingPL()
   LC_part2 <- LC_part2[which(LC_part2$block == 'first'),-ncol(LC_part2)]
   LC_part2$block <- gsub('first', 's2_first', LC_part2$block)
   
