@@ -6473,6 +6473,17 @@ AlignedPLTrainedTargetsBayesANOVA <- function() {
   print(bfinteraction)
 }
 
+AlignedPLTrainedTargetsComparisonMeans <- function(){
+  blockdefs <- list('baseline'=c(1,45))
+  LC4aov <- getAlignedBlockedPLTrainedTargets(blockdefs=blockdefs)  
+  LC4aov$participant <- as.factor(LC4aov$participant)
+  secondAOV <- aov_ez("participant","pathlength",LC4aov,within=c("target"))
+  
+  cellmeans <- emmeans(secondAOV,specs=c('target'))
+  print(cellmeans)
+  
+}
+
 #do targets differ during baseline for nondominant hand?
 AlignedPLUntrainedTargetsAnova <- function() {
   

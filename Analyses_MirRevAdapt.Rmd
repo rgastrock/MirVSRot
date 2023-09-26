@@ -641,6 +641,7 @@ mirrorMTBayesANOVA()
 We find a significant block by target interaction.
 
 ```{r}
+mirrorMTComparisonMeans()
 mirrorMTComparisonsEffSize()
 mirrorMTBayesfollowup()
 ```
@@ -738,6 +739,7 @@ mirrorPLBayesANOVA()
 We find a significant target by block interaction.
 
 ```{r}
+mirrorPLComparisonMeans()
 mirrorPLComparisonsEffSize()
 mirrorPLBayesfollowup()
 ```
@@ -1135,6 +1137,7 @@ intermanualMTBayesANOVA()
 We find a significant target X block interaction.
 
 ```{r}
+intermanualMTComparisonMeans()
 intermanualMTComparisonsEffSize()
 intermanualMTComparisonsBayesfollowup()
 ```
@@ -1289,6 +1292,7 @@ intermanualPLBayesANOVA()
 We find a significant target X block interaction.
 
 ```{r}
+intermanualPLComparisonMeans()
 intermanualPLComparisonsEffSize()
 intermanualPLComparisonsBayesfollowup()
 ```
