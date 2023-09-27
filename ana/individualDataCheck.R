@@ -127,3 +127,43 @@ plotIndividualRates <- function(group='noninstructed', location = 'maxvel'){
   }
   dev.off()
 }
+
+
+plotIndividualMeasures <- function(group='noninstructed', location = 'maxvel'){
+  pdf(file='doc/fig/pilot/CheckData2_MIR_LearningMeasures.pdf', width=12, height=7, pointsize=14)
+  maxppid <- 15
+  for(id in c(0:maxppid)){
+    data <- getMIRParticipantLearningCurve(group=group, id = id, location = location)
+    
+    #plot learning compensation
+    plot(NA, NA, xlim = c(0,91), ylim = c(-250,250), 
+         xlab = "Trial", ylab = "Amount of Compensation (%)", frame.plot = FALSE, #frame.plot takes away borders
+         main = sprintf("MIR: pp%03d, Compensation", id), xaxt = 'n', yaxt = 'n') #xaxt and yaxt to allow to specify tick marks
+    abline(h = c(-100,0, 100), col = 8, lty = 2) #creates horizontal dashed lines through y =  0 and 30
+    axis(1, at = c(1, 45, 90), labels = c('1', '45', '90')) #tick marks for x axis
+    #axis(1, at = c(90, 138), labels = c('', '47')) #tick marks for x axis
+    axis(2, at = c(-200, -100, 0, 100, 200)) #tick marks for y axis
+    
+    for(triali in 1:nrow(data)){
+      subdat <- data[triali,]
+      if(subdat$compensate == 15){
+        col <- '#ff8200ff'
+        points(triali, subdat$reachdev, pch=19, col=col)
+      } else if (subdat$compensate == 30){
+        col <- '#e51636ff'
+        points(triali, subdat$reachdev, pch=19, col=col)
+      } else if (subdat$compensate == 45){
+        col <- '#c400c4ff'
+        points(triali, subdat$reachdev, pch=19, col=col)
+      }
+    }
+    lines(c(1:90), data$reachdev, lty=1, col='grey', lwd=1)
+    
+    
+    legend(80,250,legend=c('target 7.5° away','target 14.5° away', 'target 22.5.5° away'),
+           col=c('#ff8200ff','#FF0000', '#c400c4ff'),
+           pch=19, bty='n',cex=0.85)
+    
+  }
+  dev.off()
+}
