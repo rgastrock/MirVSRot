@@ -229,7 +229,7 @@ getCtrlHandMatches <- function(){
   
   handmatches <- merge(allresp, qualtresp, by='ppname')
   
-  write.csv(handmatches, file='data/controlmironline-master/raw/processed/HandMatches.csv', row.names = F)
+  write.csv(handmatches, file='data/controlmironline-master/processed/HandMatches.csv', row.names = F)
   #These were then manually inspected to see any mismatches
 }
 
@@ -303,14 +303,14 @@ getAlignedGroupLearningCtrl <- function(groups = c('far', 'mid', 'near')){
     
     
     #return(dataoutput)
-    write.csv(dataoutput, file=sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl.csv', group), row.names = F)
+    write.csv(dataoutput, file=sprintf('data/controlmironline-master/processed/%s_AlignedCtrl.csv', group), row.names = F)
   }
 }
 
 getAlignedGroupLearningCtrlCI <- function(groups = c('far', 'mid', 'near')){
   
   for(group in groups){
-    data <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+    data <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_AlignedCtrl.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
     
     trialno <- data$trial
     
@@ -325,7 +325,7 @@ getAlignedGroupLearningCtrlCI <- function(groups = c('far', 'mid', 'near')){
       } else {
         confidence <- rbind(confidence, citrial)
       }
-      write.csv(confidence, file=sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl_CI.csv', group), row.names = F)
+      write.csv(confidence, file=sprintf('data/controlmironline-master/processed/%s_AlignedCtrl_CI.csv', group), row.names = F)
     }
   }
 }
@@ -333,7 +333,7 @@ getAlignedGroupLearningCtrlCI <- function(groups = c('far', 'mid', 'near')){
 getAlignedGroupLearningCtrlCircularCI <- function(groups = c('far', 'mid', 'near')){
   for(group in groups){
     
-    data <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+    data <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_AlignedCtrl.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
     
     
     
@@ -359,7 +359,7 @@ getAlignedGroupLearningCtrlCircularCI <- function(groups = c('far', 'mid', 'near
         confidence <- rbind(confidence, citrial)
       }
       
-      write.csv(confidence, file=sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl_Circular_CI.csv', group), row.names = F) 
+      write.csv(confidence, file=sprintf('data/controlmironline-master/processed/%s_AlignedCtrl_Circular_CI.csv', group), row.names = F) 
       
     }
   }
@@ -388,7 +388,7 @@ plotAlignedCtrl <- function(groups = c('far', 'mid', 'near'), target='inline') {
   
   for(group in groups){
     #read in files created by getGroupConfidenceInterval in filehandling.R
-    groupconfidence <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl_CI.csv', group))
+    groupconfidence <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_AlignedCtrl_CI.csv', group))
     
     #split up data set for plotting purposes
     groupconfidenceAligned <- groupconfidence[1:45,]
@@ -463,7 +463,7 @@ plotAlignedCtrlCircular <- function(groups = c('far', 'mid', 'near'), target='in
   
   for(group in groups){
     #read in files created by getGroupConfidenceInterval in filehandling.R
-    groupconfidence <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl_Circular_CI.csv', group))
+    groupconfidence <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_AlignedCtrl_Circular_CI.csv', group))
     
     #split up data set for plotting purposes
     groupconfidenceAligned <- groupconfidence[1:45,]
@@ -580,14 +580,14 @@ getMirroredGroupLearningCtrl <- function(groups = c('far', 'mid', 'near')){
     
     
     #return(dataoutput)
-    write.csv(dataoutput, file=sprintf('data/controlmironline-master/raw/processed/%s_MirCtrl.csv', group), row.names = F)
+    write.csv(dataoutput, file=sprintf('data/controlmironline-master/processed/%s_MirCtrl.csv', group), row.names = F)
   }
 }
 
 getMirroredGroupLearningCtrlCI <- function(groups = c('far', 'mid', 'near')){
   
   for(group in groups){
-    data <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_MirCtrl.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+    data <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_MirCtrl.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
     
     trialno <- data$trial
     
@@ -602,7 +602,7 @@ getMirroredGroupLearningCtrlCI <- function(groups = c('far', 'mid', 'near')){
       } else {
         confidence <- rbind(confidence, citrial)
       }
-      write.csv(confidence, file=sprintf('data/controlmironline-master/raw/processed/%s_MirCtrl_CI.csv', group), row.names = F)
+      write.csv(confidence, file=sprintf('data/controlmironline-master/processed/%s_MirCtrl_CI.csv', group), row.names = F)
     }
   }
 }
@@ -610,7 +610,7 @@ getMirroredGroupLearningCtrlCI <- function(groups = c('far', 'mid', 'near')){
 getMirroredGroupLearningCtrlCircularCI <- function(groups = c('far', 'mid', 'near')){
   for(group in groups){
     
-    data <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_MirCtrl.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+    data <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_MirCtrl.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
     
     
     
@@ -636,7 +636,7 @@ getMirroredGroupLearningCtrlCircularCI <- function(groups = c('far', 'mid', 'nea
         confidence <- rbind(confidence, citrial)
       }
       
-      write.csv(confidence, file=sprintf('data/controlmironline-master/raw/processed/%s_MirCtrl_Circular_CI.csv', group), row.names = F) 
+      write.csv(confidence, file=sprintf('data/controlmironline-master/processed/%s_MirCtrl_Circular_CI.csv', group), row.names = F) 
       
     }
   }
@@ -665,7 +665,7 @@ plotMirCtrl <- function(groups = c('far', 'mid', 'near'), target='inline') {
   
   for(group in groups){
     #read in files created by getGroupConfidenceInterval in filehandling.R
-    groupconfidence <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_MirCtrl_CI.csv', group))
+    groupconfidence <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_MirCtrl_CI.csv', group))
     
     colourscheme <- getCtrlColourScheme(groups = group)
     #plot Mir Data
@@ -718,7 +718,7 @@ plotMirCtrlCircular <- function(groups = c('far', 'mid', 'near'), target='inline
   
   for(group in groups){
     #read in files created by getGroupConfidenceInterval in filehandling.R
-    groupconfidence <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_MirCtrl_Circular_CI.csv', group))
+    groupconfidence <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_MirCtrl_Circular_CI.csv', group))
     
     colourscheme <- getCtrlColourScheme(groups = group)
     #plot Mir Data
@@ -813,14 +813,14 @@ getRAEGroupLearningCtrl <- function(groups = c('far', 'mid', 'near')){
     
     
     #return(dataoutput)
-    write.csv(dataoutput, file=sprintf('data/controlmironline-master/raw/processed/%s_RAECtrl.csv', group), row.names = F)
+    write.csv(dataoutput, file=sprintf('data/controlmironline-master/processed/%s_RAECtrl.csv', group), row.names = F)
   }
 }
 
 getRAEGroupLearningCtrlCI <- function(groups = c('far', 'mid', 'near')){
   
   for(group in groups){
-    data <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_RAECtrl.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+    data <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_RAECtrl.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
     
     trialno <- data$trial
     
@@ -835,7 +835,7 @@ getRAEGroupLearningCtrlCI <- function(groups = c('far', 'mid', 'near')){
       } else {
         confidence <- rbind(confidence, citrial)
       }
-      write.csv(confidence, file=sprintf('data/controlmironline-master/raw/processed/%s_RAECtrl_CI.csv', group), row.names = F)
+      write.csv(confidence, file=sprintf('data/controlmironline-master/processed/%s_RAECtrl_CI.csv', group), row.names = F)
     }
   }
 }
@@ -843,7 +843,7 @@ getRAEGroupLearningCtrlCI <- function(groups = c('far', 'mid', 'near')){
 getRAEGroupLearningCtrlCircularCI <- function(groups = c('far', 'mid', 'near')){
   for(group in groups){
     
-    data <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_RAECtrl.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+    data <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_RAECtrl.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
     
     
     
@@ -869,7 +869,7 @@ getRAEGroupLearningCtrlCircularCI <- function(groups = c('far', 'mid', 'near')){
         confidence <- rbind(confidence, citrial)
       }
       
-      write.csv(confidence, file=sprintf('data/controlmironline-master/raw/processed/%s_RAECtrl_Circular_CI.csv', group), row.names = F) 
+      write.csv(confidence, file=sprintf('data/controlmironline-master/processed/%s_RAECtrl_Circular_CI.csv', group), row.names = F) 
       
     }
   }
@@ -898,7 +898,7 @@ plotRAECtrl <- function(groups = c('far', 'mid', 'near'), target='inline') {
   
   for(group in groups){
     #read in files created by getGroupConfidenceInterval in filehandling.R
-    groupconfidence <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_RAECtrl_CI.csv', group))
+    groupconfidence <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_RAECtrl_CI.csv', group))
     
     colourscheme <- getCtrlColourScheme(groups = group)
     #plot Mir Data
@@ -951,7 +951,7 @@ plotRAECtrlCircular <- function(groups = c('far', 'mid', 'near'), target='inline
   
   for(group in groups){
     #read in files created by getGroupConfidenceInterval in filehandling.R
-    groupconfidence <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_RAECtrl_Circular_CI.csv', group))
+    groupconfidence <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_RAECtrl_Circular_CI.csv', group))
     
     colourscheme <- getCtrlColourScheme(groups = group)
     #plot Mir Data
@@ -1010,9 +1010,9 @@ plotAllTasksCtrl <- function(groups = c('far', 'mid', 'near'), target='inline') 
   
   for(group in groups){
     #read in files created by getGroupConfidenceInterval in filehandling.R
-    groupconfidence <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl_CI.csv', group))
-    groupconfidenceLC <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_MirCtrl_CI.csv', group))
-    groupconfidenceRAE <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_RAECtrl_CI.csv', group))
+    groupconfidence <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_AlignedCtrl_CI.csv', group))
+    groupconfidenceLC <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_MirCtrl_CI.csv', group))
+    groupconfidenceRAE <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_RAECtrl_CI.csv', group))
     
     
     
@@ -1111,9 +1111,9 @@ plotAllTasksCtrlCircular <- function(groups = c('far', 'mid', 'near'), target='i
   
   for(group in groups){
     #read in files created by getGroupConfidenceInterval in filehandling.R
-    groupconfidence <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl_Circular_CI.csv', group))
-    groupconfidenceLC <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_MirCtrl_Circular_CI.csv', group))
-    groupconfidenceRAE <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_RAECtrl_Circular_CI.csv', group))
+    groupconfidence <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_AlignedCtrl_Circular_CI.csv', group))
+    groupconfidenceLC <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_MirCtrl_Circular_CI.csv', group))
+    groupconfidenceRAE <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_RAECtrl_Circular_CI.csv', group))
     
     
     
@@ -1197,7 +1197,7 @@ plotAllTasksCtrlCircular <- function(groups = c('far', 'mid', 'near'), target='i
 #get far reach devs corrected
 getALIGNEDCorrectedFarAngDevs <- function(group = 'far'){
   
-  data <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl_Q1target.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+  data <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_AlignedCtrl_Q1target.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
   
   
   trialno <- data$trial
@@ -1239,7 +1239,7 @@ getALIGNEDGroupPercentCompensation <- function(groups = c('far', 'mid', 'near'))
         data[trial, 2:length(data)] <- subdat
       }
     } else {
-      data <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl_Q1target.csv', group), check.names = FALSE)
+      data <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_AlignedCtrl_Q1target.csv', group), check.names = FALSE)
       trialno <- data$trial
       #postrials <- c(1:21, 64:126)
       
@@ -1256,7 +1256,7 @@ getALIGNEDGroupPercentCompensation <- function(groups = c('far', 'mid', 'near'))
         data[trial, 2:length(data)] <- subdat
       }
     }
-    write.csv(data, file=sprintf('data/controlmironline-master/raw/processed/%s_ALIGNED_PercentCompensation.csv', group), row.names = F) 
+    write.csv(data, file=sprintf('data/controlmironline-master/processed/%s_ALIGNED_PercentCompensation.csv', group), row.names = F) 
     
   }
   
@@ -1265,7 +1265,7 @@ getALIGNEDGroupPercentCompensation <- function(groups = c('far', 'mid', 'near'))
 #get far reach devs corrected
 getALIGNEDUNTRAINEDCorrectedFarAngDevs <- function(group = 'far'){
   
-  data <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl_Untrained_Q1target.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+  data <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_AlignedCtrl_Untrained_Q1target.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
   
   
   trialno <- c(1:length(data$trial))
@@ -1306,7 +1306,7 @@ getALIGNEDUNTRAINEDGroupPercentCompensation <- function(groups = c('far', 'mid',
         data[trial, 2:length(data)] <- subdat
       }
     } else {
-      data <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl_Untrained_Q1target.csv', group), check.names = FALSE)
+      data <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_AlignedCtrl_Untrained_Q1target.csv', group), check.names = FALSE)
       trialno <- data$trial
       #postrials <- c(1:21, 64:126)
       
@@ -1323,7 +1323,7 @@ getALIGNEDUNTRAINEDGroupPercentCompensation <- function(groups = c('far', 'mid',
         data[trial, 2:length(data)] <- subdat
       }
     }
-    write.csv(data, file=sprintf('data/controlmironline-master/raw/processed/%s_ALIGNED_Untrained_PercentCompensation.csv', group), row.names = F) 
+    write.csv(data, file=sprintf('data/controlmironline-master/processed/%s_ALIGNED_Untrained_PercentCompensation.csv', group), row.names = F) 
     
   }
   
@@ -1332,7 +1332,7 @@ getALIGNEDUNTRAINEDGroupPercentCompensation <- function(groups = c('far', 'mid',
 #get far reach devs corrected
 getMirrorCorrectedFarAngDevs <- function(group = 'far'){
   
-  data <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_MirCtrl.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+  data <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_MirCtrl.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
   
   trialno <- data$trial
   #postrials <- c(1:21, 64:126)
@@ -1373,7 +1373,7 @@ getMirrorGroupPercentCompensation <- function(groups = c('far', 'mid', 'near')){
         data[trial, 2:length(data)] <- subdat
       }
     } else {
-      data <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_MirCtrl.csv', group), check.names = FALSE)
+      data <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_MirCtrl.csv', group), check.names = FALSE)
       trialno <- data$trial
       #postrials <- c(1:21, 64:126)
       
@@ -1390,7 +1390,7 @@ getMirrorGroupPercentCompensation <- function(groups = c('far', 'mid', 'near')){
         data[trial, 2:length(data)] <- subdat
       }
     }
-    write.csv(data, file=sprintf('data/controlmironline-master/raw/processed/%s_Mirror_PercentCompensation.csv', group), row.names = F) 
+    write.csv(data, file=sprintf('data/controlmironline-master/processed/%s_Mirror_PercentCompensation.csv', group), row.names = F) 
     
   }
   
@@ -1398,7 +1398,7 @@ getMirrorGroupPercentCompensation <- function(groups = c('far', 'mid', 'near')){
 
 getBlockedMirCtrl <- function(group, blockdefs) {
   
-  curves <- read.csv(sprintf('data/controlmironline-master/raw/processed/%s_MirCtrl.csv',group), stringsAsFactors=FALSE)  
+  curves <- read.csv(sprintf('data/controlmironline-master/processed/%s_MirCtrl.csv',group), stringsAsFactors=FALSE)  
   curves <- curves[,-1] #remove trial rows
   N <- dim(curves)[2]
   
@@ -1424,7 +1424,7 @@ getBlockedMirCtrl <- function(group, blockdefs) {
 
 getBlockedMirCtrlPercentage <- function(group, blockdefs) {
   
-  curves <- read.csv(sprintf('data/controlmironline-master/raw/processed/%s_Mirror_PercentCompensation.csv',group), stringsAsFactors=FALSE, check.names = FALSE) 
+  curves <- read.csv(sprintf('data/controlmironline-master/processed/%s_Mirror_PercentCompensation.csv',group), stringsAsFactors=FALSE, check.names = FALSE) 
   curves <- curves[,-1] #remove trial rows
   N <- dim(curves)[2]
   
@@ -1570,7 +1570,7 @@ plotBlockedMirCtrl <- function(target='inline', groups = c('far', 'mid', 'near')
 #get far reach devs corrected
 getRAECorrectedFarAngDevs <- function(group = 'far'){
   
-  data <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_RAECtrl.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+  data <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_RAECtrl.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
   
   trialno <- data$trial
   #postrials <- c(1:21, 64:126)
@@ -1611,7 +1611,7 @@ getRAEGroupPercentCompensation <- function(groups = c('far', 'mid', 'near')){
         data[trial, 2:length(data)] <- subdat
       }
     } else {
-      data <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_RAECtrl.csv', group), check.names = FALSE)
+      data <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_RAECtrl.csv', group), check.names = FALSE)
       trialno <- data$trial
       #postrials <- c(1:21, 64:126)
       
@@ -1628,7 +1628,7 @@ getRAEGroupPercentCompensation <- function(groups = c('far', 'mid', 'near')){
         data[trial, 2:length(data)] <- subdat
       }
     }
-    write.csv(data, file=sprintf('data/controlmironline-master/raw/processed/%s_RAE_PercentCompensation.csv', group), row.names = F) 
+    write.csv(data, file=sprintf('data/controlmironline-master/processed/%s_RAE_PercentCompensation.csv', group), row.names = F) 
     
   }
   
@@ -1640,7 +1640,7 @@ plotAlignedCtrlCircFreq <- function(groups = c('far', 'mid', 'near')){
   
   for(group in groups){
     
-    dat <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+    dat <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_AlignedCtrl.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
     
     pdf(sprintf("doc/fig/controlmironline-master/Distribution_%s_AlignedCtrl.pdf", group))
     
@@ -1707,7 +1707,7 @@ plotMirroredCtrlCircFreq <- function(groups = c('far', 'mid', 'near')){
   
   for(group in groups){
     
-    dat <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_MirCtrl.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+    dat <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_MirCtrl.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
     
     pdf(sprintf("doc/fig/controlmironline-master/Distribution_%s_MirCtrl.pdf", group))
     
@@ -1774,7 +1774,7 @@ plotRAECtrlCircFreq <- function(groups = c('far', 'mid', 'near')){
   
   for(group in groups){
     
-    dat <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_RAECtrl.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+    dat <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_RAECtrl.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
     
     pdf(sprintf("doc/fig/controlmironline-master/Distribution_%s_RAECtrl.pdf", group))
     
@@ -1961,7 +1961,7 @@ getGroupCtrlMT <- function(groups = c('far', 'mid', 'near')){
     # }
     
     #return(dataoutput)
-    write.csv(dataoutput, file=sprintf('data/controlmironline-master/raw/processed/%s_MovementTime.csv', group), row.names = F)
+    write.csv(dataoutput, file=sprintf('data/controlmironline-master/processed/%s_MovementTime.csv', group), row.names = F)
     #can keep track of deleted trials here, by using the saved csv file or counting NA values in dataoutput
   }
 }
@@ -1969,7 +1969,7 @@ getGroupCtrlMT <- function(groups = c('far', 'mid', 'near')){
 getGroupCtrlMTCI <- function(groups = c('far','mid', 'near'), type = 't'){
   for(group in groups){
     
-    data <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_MovementTime.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+    data <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_MovementTime.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
     
     trialno <- data$trial
     data1 <- as.matrix(data[,2:dim(data)[2]])
@@ -1996,7 +1996,7 @@ getGroupCtrlMTCI <- function(groups = c('far','mid', 'near'), type = 't'){
       } else {
         confidence <- rbind(confidence, citrial)
       }
-      write.csv(confidence, file=sprintf('data/controlmironline-master/raw/processed/%s_MovementTime_CI.csv', group), row.names = F) 
+      write.csv(confidence, file=sprintf('data/controlmironline-master/processed/%s_MovementTime_CI.csv', group), row.names = F) 
     }
   }
 }
@@ -2027,7 +2027,7 @@ plotCtrlMT <- function(groups = c('far', 'mid', 'near'), target='inline') {
   axis(2, at = c(0, 2, 4, 6, 8), las = 2) #tick marks for y axis
   
   for(group in groups){
-    groupconfidence <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_MovementTime_CI.csv', group))
+    groupconfidence <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_MovementTime_CI.csv', group))
     
     
     #split up data set for plotting purposes
@@ -2249,7 +2249,7 @@ getGroupCtrlPL <- function(groups = c('far', 'mid', 'near')){
     # }
     
     #return(dataoutput)
-    write.csv(dataoutput, file=sprintf('data/controlmironline-master/raw/processed/%s_PathLength.csv', group), row.names = F)
+    write.csv(dataoutput, file=sprintf('data/controlmironline-master/processed/%s_PathLength.csv', group), row.names = F)
     #can keep track of deleted trials here, by using the saved csv file or counting NA values in dataoutput
   }
 }
@@ -2257,7 +2257,7 @@ getGroupCtrlPL <- function(groups = c('far', 'mid', 'near')){
 getGroupCtrlPLCI <- function(groups = c('far','mid', 'near'), type = 't'){
   for(group in groups){
     
-    data <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_PathLength.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+    data <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_PathLength.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
     
     trialno <- data$trial
     data1 <- as.matrix(data[,2:dim(data)[2]])
@@ -2284,7 +2284,7 @@ getGroupCtrlPLCI <- function(groups = c('far','mid', 'near'), type = 't'){
       } else {
         confidence <- rbind(confidence, citrial)
       }
-      write.csv(confidence, file=sprintf('data/controlmironline-master/raw/processed/%s_PathLength_CI.csv', group), row.names = F) 
+      write.csv(confidence, file=sprintf('data/controlmironline-master/processed/%s_PathLength_CI.csv', group), row.names = F) 
     }
   }
 }
@@ -2315,7 +2315,7 @@ plotCtrlPL <- function(groups = c('far', 'mid', 'near'), target='inline') {
   axis(2, at = c(.4, .8, 1.2, 1.6, 2, 2.4, 2.8), las = 2) #tick marks for y axis
   
   for(group in groups){
-    groupconfidence <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_PathLength_CI.csv', group))
+    groupconfidence <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_PathLength_CI.csv', group))
     
     
     #split up data set for plotting purposes
@@ -2408,11 +2408,11 @@ plotIndividualCtrl <- function(groups = c('far', 'mid', 'near'), target='inline'
     }
     
     
-    data<- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl.csv', group), check.names = FALSE)
+    data<- read.csv(file=sprintf('data/controlmironline-master/processed/%s_AlignedCtrl.csv', group), check.names = FALSE)
     data_AL <- data[1:45,]
     data_LeftAL <- data[46:66,]
-    data_MIR<- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_MirCtrl.csv', group), check.names = FALSE)
-    data_RAE<- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_RAECtrl.csv', group), check.names = FALSE)
+    data_MIR<- read.csv(file=sprintf('data/controlmironline-master/processed/%s_MirCtrl.csv', group), check.names = FALSE)
+    data_RAE<- read.csv(file=sprintf('data/controlmironline-master/processed/%s_RAECtrl.csv', group), check.names = FALSE)
     
     plot(NA, NA, xlim = c(0,178), ylim = c(-200,225), 
          xlab = "Trial", ylab = "Angular reach deviation (°)", frame.plot = FALSE, #frame.plot takes away borders
@@ -2443,7 +2443,7 @@ plotIndividualCtrl <- function(groups = c('far', 'mid', 'near'), target='inline'
     }
     lines(x=c(1:45), y=mean_AL, col='orange', lw=2)
     #plot line indicating mean of data points as circular values
-    dat_CI <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl_CI.csv', group))
+    dat_CI <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_AlignedCtrl_CI.csv', group))
     circmean_AL <- dat_CI[1:45,2]
     lines(x=c(1:45), y=circmean_AL, col='red', lw=2)
     
@@ -2462,7 +2462,7 @@ plotIndividualCtrl <- function(groups = c('far', 'mid', 'near'), target='inline'
     }
     lines(x=c(46:66), y=mean_LeftAL, col='orange', lw=2)
     #plot line indicating mean of data points as circular values
-    dat_CI <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl_CI.csv', group))
+    dat_CI <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_AlignedCtrl_CI.csv', group))
     circmean_AL <- dat_CI[46:66,2]
     lines(x=c(46:66), y=circmean_AL, col='red', lw=2)
     
@@ -2481,7 +2481,7 @@ plotIndividualCtrl <- function(groups = c('far', 'mid', 'near'), target='inline'
     }
     lines(x=c(67:156), y=mean_MIR, col='orange', lw=2)
     #plot line indicating mean of data points as circular values
-    dat_CI <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_MirCtrl_CI.csv', group))
+    dat_CI <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_MirCtrl_CI.csv', group))
     circmean_MIR <- dat_CI[,2]
     lines(x=c(67:156), y=circmean_MIR, col='red', lw=2)
     
@@ -2501,7 +2501,7 @@ plotIndividualCtrl <- function(groups = c('far', 'mid', 'near'), target='inline'
     }
     lines(x=c(157:177), y=mean_RAE, col='orange', lw=2)
     #plot line indicating mean of data points as circular values
-    dat_CI <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_RAECtrl_CI.csv', group))
+    dat_CI <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_RAECtrl_CI.csv', group))
     circmean_RAE <- dat_CI[,2]
     lines(x=c(157:177), y=circmean_RAE, col='red', lw=2)
     
@@ -2524,11 +2524,11 @@ plotCtrlHeatmaps <- function(groups = c('far', 'mid', 'near'), target = 'inline'
       svglite(file=sprintf('doc/fig/controlmironline-master/Fig1E_%s_Heatmap.svg', group), width=14, height=8, pointsize=14, system_fonts=list(sans="Arial"))
     }
     
-    dat<- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl.csv', group), check.names = FALSE)
+    dat<- read.csv(file=sprintf('data/controlmironline-master/processed/%s_AlignedCtrl.csv', group), check.names = FALSE)
     data_AL <- dat[1:45,]
     data_LeftAL <- dat[46:66,]
-    data_MIR<- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_MirCtrl.csv', group), check.names = FALSE)
-    data_RAE<- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_RAECtrl.csv', group), check.names = FALSE)
+    data_MIR<- read.csv(file=sprintf('data/controlmironline-master/processed/%s_MirCtrl.csv', group), check.names = FALSE)
+    data_RAE<- read.csv(file=sprintf('data/controlmironline-master/processed/%s_RAECtrl.csv', group), check.names = FALSE)
     data <- rbind(data_AL, data_LeftAL, data_MIR, data_RAE)
     
     interval <- seq(-200, 200, 10) #group ang devs in bins of 10 degrees each, -200 and 200 due to some values above 180
@@ -2605,19 +2605,19 @@ getDeviceCtrlCI<- function(groups = c('far', 'mid', 'near'), device, task){
     if(task == "Aligned"){
       #keep only data of pp from this list
       #Aligned
-      dat_AL <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+      dat_AL <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_AlignedCtrl.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
       trial <- dat_AL$trial
       ndat <- dat_AL[,which(colnames(dat_AL) %in% ppqualt)]
       data <- cbind(trial, ndat)
     } else if(task == "Mirror"){
       #Mirror
-      dat_MR <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_MirCtrl.csv', group), check.names = FALSE)
+      dat_MR <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_MirCtrl.csv', group), check.names = FALSE)
       trial <- dat_MR$trial
       ndat <- dat_MR[,which(colnames(dat_MR) %in% ppqualt)]
       data <- cbind(trial, ndat)
     } else if(task == "RAE"){
       #RAE
-      dat_RAE <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_RAECtrl.csv', group), check.names = FALSE)
+      dat_RAE <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_RAECtrl.csv', group), check.names = FALSE)
       trial <- dat_RAE$trial
       ndat <- dat_RAE[,which(colnames(dat_RAE) %in% ppqualt)]
       data <- cbind(trial, ndat)
@@ -2638,7 +2638,7 @@ getDeviceCtrlCI<- function(groups = c('far', 'mid', 'near'), device, task){
         confidence <- rbind(confidence, citrial)
       }
       
-      write.csv(confidence, file=sprintf('data/controlmironline-master/raw/processed/%s_%sCtrl_CI_%s.csv', group, task, device), row.names = F)
+      write.csv(confidence, file=sprintf('data/controlmironline-master/processed/%s_%sCtrl_CI_%s.csv', group, task, device), row.names = F)
       
     }
   }
@@ -2656,19 +2656,19 @@ getDeviceCtrlCircularCI<- function(groups = c('far', 'mid', 'near'), device, tas
     if(task == "Aligned"){
       #keep only data of pp from this list
       #Aligned
-      dat_AL <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+      dat_AL <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_AlignedCtrl.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
       trial <- dat_AL$trial
       ndat <- dat_AL[,which(colnames(dat_AL) %in% ppqualt)]
       data <- cbind(trial, ndat)
     } else if(task == "Mirror"){
       #Mirror
-      dat_MR <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_MirCtrl.csv', group), check.names = FALSE)
+      dat_MR <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_MirCtrl.csv', group), check.names = FALSE)
       trial <- dat_MR$trial
       ndat <- dat_MR[,which(colnames(dat_MR) %in% ppqualt)]
       data <- cbind(trial, ndat)
     } else if(task == "RAE"){
       #RAE
-      dat_RAE <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_RAECtrl.csv', group), check.names = FALSE)
+      dat_RAE <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_RAECtrl.csv', group), check.names = FALSE)
       trial <- dat_RAE$trial
       ndat <- dat_RAE[,which(colnames(dat_RAE) %in% ppqualt)]
       data <- cbind(trial, ndat)
@@ -2696,7 +2696,7 @@ getDeviceCtrlCircularCI<- function(groups = c('far', 'mid', 'near'), device, tas
         confidence <- rbind(confidence, citrial)
       }
       
-      write.csv(confidence, file=sprintf('data/controlmironline-master/raw/processed/%s_%sCtrl_Circular_CI_%s.csv', group, task, device), row.names = F)
+      write.csv(confidence, file=sprintf('data/controlmironline-master/processed/%s_%sCtrl_Circular_CI_%s.csv', group, task, device), row.names = F)
       
     }
   }
@@ -2725,11 +2725,11 @@ plotDeviceCtrl <- function(groups = c('far', 'mid', 'near'), devices = c('Mouse'
     
     for(device in devices){
       #read in files created by getGroupConfidenceInterval in filehandling.R
-      groupconfidence <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl_CI_%s.csv', group, device))
+      groupconfidence <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_AlignedCtrl_CI_%s.csv', group, device))
       groupconfidenceAligned <- groupconfidence[c(1:45),]
       groupconfidenceLeftAligned <- groupconfidence[c(46:66),]
-      groupconfidenceLC <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_MirrorCtrl_CI_%s.csv', group, device))
-      groupconfidenceRAE <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_RAECtrl_CI_%s.csv', group, device))
+      groupconfidenceLC <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_MirrorCtrl_CI_%s.csv', group, device))
+      groupconfidenceRAE <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_RAECtrl_CI_%s.csv', group, device))
       
       
       
@@ -2831,11 +2831,11 @@ plotDeviceCtrlCircular <- function(groups = c('far', 'mid', 'near'), devices = c
     
     for(device in devices){
       #read in files created by getGroupConfidenceInterval in filehandling.R
-      groupconfidence <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl_Circular_CI_%s.csv', group, device))
+      groupconfidence <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_AlignedCtrl_Circular_CI_%s.csv', group, device))
       groupconfidenceAligned <- groupconfidence[c(1:45),]
       groupconfidenceLeftAligned <- groupconfidence[c(46:66),]
-      groupconfidenceLC <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_MirrorCtrl_Circular_CI_%s.csv', group, device))
-      groupconfidenceRAE <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_RAECtrl_Circular_CI_%s.csv', group, device))
+      groupconfidenceLC <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_MirrorCtrl_Circular_CI_%s.csv', group, device))
+      groupconfidenceRAE <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_RAECtrl_Circular_CI_%s.csv', group, device))
       
       
       
@@ -2924,7 +2924,7 @@ getDeviceCtrlMTCI<- function(groups = c('far', 'mid', 'near'), device, type = 't
     ppqualt <- devqualt$id
     
     
-    dat <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_MovementTime.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+    dat <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_MovementTime.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
     trial <- dat$trial
     ndat <- dat[,which(colnames(dat) %in% ppqualt)]
     data <- cbind(trial, ndat)
@@ -2960,7 +2960,7 @@ getDeviceCtrlMTCI<- function(groups = c('far', 'mid', 'near'), device, type = 't
       } else {
         confidence <- rbind(confidence, citrial)
       }
-      write.csv(confidence, file=sprintf('data/controlmironline-master/raw/processed/%s_MovementTime_CI_%s.csv', group, device), row.names = F) 
+      write.csv(confidence, file=sprintf('data/controlmironline-master/processed/%s_MovementTime_CI_%s.csv', group, device), row.names = F) 
     }
   }
 }
@@ -2981,7 +2981,7 @@ plotDeviceCtrlMT <- function(groups = c('far', 'mid', 'near'), devices = c('Mous
     axis(2, at = c(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10), las = 2) #tick marks for y axis
     
     for(device in devices){
-      groupconfidence <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_MovementTime_CI_%s.csv', group, device))
+      groupconfidence <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_MovementTime_CI_%s.csv', group, device))
       
       
       #split up data set for plotting purposes
@@ -3075,7 +3075,7 @@ getDeviceCtrlPLCI<- function(groups = c('far', 'mid', 'near'), device, type = 't
     ppqualt <- devqualt$id
     
     
-    dat <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_PathLength.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+    dat <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_PathLength.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
     trial <- dat$trial
     ndat <- dat[,which(colnames(dat) %in% ppqualt)]
     data <- cbind(trial, ndat)
@@ -3111,7 +3111,7 @@ getDeviceCtrlPLCI<- function(groups = c('far', 'mid', 'near'), device, type = 't
       } else {
         confidence <- rbind(confidence, citrial)
       }
-      write.csv(confidence, file=sprintf('data/controlmironline-master/raw/processed/%s_PathLength_CI_%s.csv', group, device), row.names = F) 
+      write.csv(confidence, file=sprintf('data/controlmironline-master/processed/%s_PathLength_CI_%s.csv', group, device), row.names = F) 
     }
   }
 }
@@ -3132,7 +3132,7 @@ plotDeviceCtrlPL <- function(groups = c('far', 'mid', 'near'), devices = c('Mous
     axis(2, at = c(0, .5, 1, 1.5, 2, 2.5, 3, 3.5, 4), las = 2) #tick marks for y axis
     
     for(device in devices){
-      groupconfidence <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_PathLength_CI_%s.csv', group, device))
+      groupconfidence <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_PathLength_CI_%s.csv', group, device))
       
       
       #split up data set for plotting purposes
@@ -3229,19 +3229,19 @@ getSexCtrlCI<- function(groups = c('far', 'mid', 'near'), sex, task){
     if(task == "Aligned"){
       #keep only data of pp from this list
       #Aligned
-      dat_AL <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+      dat_AL <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_AlignedCtrl.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
       trial <- dat_AL$trial
       ndat <- dat_AL[,which(colnames(dat_AL) %in% ppqualt)]
       data <- cbind(trial, ndat)
     } else if(task == "Mirror"){
       #Mirror
-      dat_MR <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_MirCtrl.csv', group), check.names = FALSE)
+      dat_MR <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_MirCtrl.csv', group), check.names = FALSE)
       trial <- dat_MR$trial
       ndat <- dat_MR[,which(colnames(dat_MR) %in% ppqualt)]
       data <- cbind(trial, ndat)
     } else if(task == "RAE"){
       #RAE
-      dat_RAE <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_RAECtrl.csv', group), check.names = FALSE)
+      dat_RAE <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_RAECtrl.csv', group), check.names = FALSE)
       trial <- dat_RAE$trial
       ndat <- dat_RAE[,which(colnames(dat_RAE) %in% ppqualt)]
       data <- cbind(trial, ndat)
@@ -3262,7 +3262,7 @@ getSexCtrlCI<- function(groups = c('far', 'mid', 'near'), sex, task){
         confidence <- rbind(confidence, citrial)
       }
       
-      write.csv(confidence, file=sprintf('data/controlmironline-master/raw/processed/%s_%sCtrl_CI_%s.csv', group, task, sex), row.names = F)
+      write.csv(confidence, file=sprintf('data/controlmironline-master/processed/%s_%sCtrl_CI_%s.csv', group, task, sex), row.names = F)
       
     }
   }
@@ -3280,19 +3280,19 @@ getSexCtrlCircularCI<- function(groups = c('far', 'mid', 'near'), sex, task){
     if(task == "Aligned"){
       #keep only data of pp from this list
       #Aligned
-      dat_AL <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+      dat_AL <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_AlignedCtrl.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
       trial <- dat_AL$trial
       ndat <- dat_AL[,which(colnames(dat_AL) %in% ppqualt)]
       data <- cbind(trial, ndat)
     } else if(task == "Mirror"){
       #Mirror
-      dat_MR <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_MirCtrl.csv', group), check.names = FALSE)
+      dat_MR <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_MirCtrl.csv', group), check.names = FALSE)
       trial <- dat_MR$trial
       ndat <- dat_MR[,which(colnames(dat_MR) %in% ppqualt)]
       data <- cbind(trial, ndat)
     } else if(task == "RAE"){
       #RAE
-      dat_RAE <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_RAECtrl.csv', group), check.names = FALSE)
+      dat_RAE <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_RAECtrl.csv', group), check.names = FALSE)
       trial <- dat_RAE$trial
       ndat <- dat_RAE[,which(colnames(dat_RAE) %in% ppqualt)]
       data <- cbind(trial, ndat)
@@ -3320,7 +3320,7 @@ getSexCtrlCircularCI<- function(groups = c('far', 'mid', 'near'), sex, task){
         confidence <- rbind(confidence, citrial)
       }
       
-      write.csv(confidence, file=sprintf('data/controlmironline-master/raw/processed/%s_%sCtrl_Circular_CI_%s.csv', group, task, sex), row.names = F)
+      write.csv(confidence, file=sprintf('data/controlmironline-master/processed/%s_%sCtrl_Circular_CI_%s.csv', group, task, sex), row.names = F)
       
     }
   }
@@ -3349,11 +3349,11 @@ plotSexCtrl <- function(groups = c('far', 'mid', 'near'), sexes = c('Male','Fema
     
     for(sex in sexes){
       #read in files created by getGroupConfidenceInterval in filehandling.R
-      groupconfidence <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl_CI_%s.csv', group, sex))
+      groupconfidence <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_AlignedCtrl_CI_%s.csv', group, sex))
       groupconfidenceAligned <- groupconfidence[c(1:45),]
       groupconfidenceLeftAligned <- groupconfidence[c(46:66),]
-      groupconfidenceLC <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_MirrorCtrl_CI_%s.csv', group, sex))
-      groupconfidenceRAE <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_RAECtrl_CI_%s.csv', group, sex))
+      groupconfidenceLC <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_MirrorCtrl_CI_%s.csv', group, sex))
+      groupconfidenceRAE <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_RAECtrl_CI_%s.csv', group, sex))
       
       
       
@@ -3455,11 +3455,11 @@ plotSexCtrlCircular <- function(groups = c('far', 'mid', 'near'), sexes = c('Mal
     
     for(sex in sexes){
       #read in files created by getGroupConfidenceInterval in filehandling.R
-      groupconfidence <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl_Circular_CI_%s.csv', group, sex))
+      groupconfidence <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_AlignedCtrl_Circular_CI_%s.csv', group, sex))
       groupconfidenceAligned <- groupconfidence[c(1:45),]
       groupconfidenceLeftAligned <- groupconfidence[c(46:66),]
-      groupconfidenceLC <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_MirrorCtrl_Circular_CI_%s.csv', group, sex))
-      groupconfidenceRAE <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_RAECtrl_Circular_CI_%s.csv', group, sex))
+      groupconfidenceLC <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_MirrorCtrl_Circular_CI_%s.csv', group, sex))
+      groupconfidenceRAE <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_RAECtrl_Circular_CI_%s.csv', group, sex))
       
       
       
@@ -3548,7 +3548,7 @@ getSexCtrlMTCI<- function(groups = c('far', 'mid', 'near'), sex, type = 't'){
     ppqualt <- devqualt$id
     
     
-    dat <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_MovementTime.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+    dat <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_MovementTime.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
     trial <- dat$trial
     ndat <- dat[,which(colnames(dat) %in% ppqualt)]
     data <- cbind(trial, ndat)
@@ -3584,7 +3584,7 @@ getSexCtrlMTCI<- function(groups = c('far', 'mid', 'near'), sex, type = 't'){
       } else {
         confidence <- rbind(confidence, citrial)
       }
-      write.csv(confidence, file=sprintf('data/controlmironline-master/raw/processed/%s_MovementTime_CI_%s.csv', group, sex), row.names = F) 
+      write.csv(confidence, file=sprintf('data/controlmironline-master/processed/%s_MovementTime_CI_%s.csv', group, sex), row.names = F) 
     }
   }
 }
@@ -3605,7 +3605,7 @@ plotSexCtrlMT <- function(groups = c('far', 'mid', 'near'), sexes = c('Male','Fe
     axis(2, at = c(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10), las = 2) #tick marks for y axis
     
     for(sex in sexes){
-      groupconfidence <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_MovementTime_CI_%s.csv', group, sex))
+      groupconfidence <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_MovementTime_CI_%s.csv', group, sex))
       
       
       #split up data set for plotting purposes
@@ -3699,7 +3699,7 @@ getSexCtrlPLCI<- function(groups = c('far', 'mid', 'near'), sex, type = 't'){
     ppqualt <- devqualt$id
     
     
-    dat <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_PathLength.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+    dat <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_PathLength.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
     trial <- dat$trial
     ndat <- dat[,which(colnames(dat) %in% ppqualt)]
     data <- cbind(trial, ndat)
@@ -3735,7 +3735,7 @@ getSexCtrlPLCI<- function(groups = c('far', 'mid', 'near'), sex, type = 't'){
       } else {
         confidence <- rbind(confidence, citrial)
       }
-      write.csv(confidence, file=sprintf('data/controlmironline-master/raw/processed/%s_PathLength_CI_%s.csv', group, sex), row.names = F) 
+      write.csv(confidence, file=sprintf('data/controlmironline-master/processed/%s_PathLength_CI_%s.csv', group, sex), row.names = F) 
     }
   }
 }
@@ -3756,7 +3756,7 @@ plotSexCtrlPL <- function(groups = c('far', 'mid', 'near'), sexes = c('Male','Fe
     axis(2, at = c(0, .5, 1, 1.5, 2, 2.5, 3, 3.5, 4), las = 2) #tick marks for y axis
     
     for(sex in sexes){
-      groupconfidence <- read.csv(file=sprintf('data/controlmironline-master/raw/processed/%s_PathLength_CI_%s.csv', group, sex))
+      groupconfidence <- read.csv(file=sprintf('data/controlmironline-master/processed/%s_PathLength_CI_%s.csv', group, sex))
       
       
       #split up data set for plotting purposes
@@ -3852,7 +3852,7 @@ getAlignedBlockedLearningAOV <- function(groups = c('far', 'mid', 'near'), block
   
   LCaov <- data.frame()
   for(group in groups){
-    curves <- read.csv(sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
+    curves <- read.csv(sprintf('data/controlmironline-master/processed/%s_AlignedCtrl.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
     curves <- curves[,-1] #remove trial rows
     participants <- colnames(curves)
     N <- length(participants)
@@ -4105,7 +4105,7 @@ getMirrorBlockedLearningAOV <- function(groups = c('far', 'mid', 'near'), blockd
   
   LCaov <- data.frame()
   for(group in groups){
-    curves <- read.csv(sprintf('data/controlmironline-master/raw/processed/%s_Mirror_PercentCompensation.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
+    curves <- read.csv(sprintf('data/controlmironline-master/processed/%s_Mirror_PercentCompensation.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
     curves <- curves[,-1] #remove trial rows
     participants <- colnames(curves)
     N <- length(participants)
@@ -4285,7 +4285,7 @@ getRAEBlockedLearningAOV <- function(groups = c('far', 'mid', 'near'), blockdefs
   
   LCaov <- data.frame()
   for(group in groups){
-    curves <- read.csv(sprintf('data/controlmironline-master/raw/processed/%s_RAECtrl.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
+    curves <- read.csv(sprintf('data/controlmironline-master/processed/%s_RAECtrl.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
     curves <- curves[,-1] #remove trial rows
     participants <- colnames(curves)
     N <- length(participants)
@@ -4332,7 +4332,7 @@ getRAEBlockedPercentagesAOV <- function(groups = c('far', 'mid', 'near'), blockd
   
   LCaov <- data.frame()
   for(group in groups){
-    curves <- read.csv(sprintf('data/controlmironline-master/raw/processed/%s_RAE_PercentCompensation.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
+    curves <- read.csv(sprintf('data/controlmironline-master/processed/%s_RAE_PercentCompensation.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
     curves <- curves[,-1] #remove trial rows
     participants <- colnames(curves)
     N <- length(participants)
@@ -4489,7 +4489,7 @@ getAlignedGroupTrainedTargets <- function(groups = c('far', 'mid', 'near')){
     
     
     #return(dataoutput)
-    write.csv(dataoutput, file=sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl_Q1target.csv', group), row.names = F)
+    write.csv(dataoutput, file=sprintf('data/controlmironline-master/processed/%s_AlignedCtrl_Q1target.csv', group), row.names = F)
   }
 }
 
@@ -4498,7 +4498,7 @@ getAlignedBlockedTrainedTargets <- function(groups = c('far', 'mid', 'near'), bl
   
   LCaov <- data.frame()
   for(group in groups){
-    curves <- read.csv(sprintf('data/controlmironline-master/raw/processed/%s_ALIGNED_PercentCompensation.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
+    curves <- read.csv(sprintf('data/controlmironline-master/processed/%s_ALIGNED_PercentCompensation.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
     curves <- curves[,-1] #remove trial rows
     participants <- colnames(curves)
     N <- length(participants)
@@ -4688,7 +4688,7 @@ getAlignedBlockedMTAOV <- function(groups = c('far', 'mid', 'near'), blockdefs, 
   
   LCaov <- data.frame()
   for(group in groups){
-    curves <- read.csv(sprintf('data/controlmironline-master/raw/processed/%s_MovementTime.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
+    curves <- read.csv(sprintf('data/controlmironline-master/processed/%s_MovementTime.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
     curves <- curves[,-1] #remove trial rows
     participants <- colnames(curves)
     N <- length(participants)
@@ -5601,7 +5601,7 @@ getAlignedGroupMTTrainedTargets <- function(groups = c('far', 'mid', 'near')){
     
     
     #return(dataoutput)
-    write.csv(dataoutput, file=sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl_MT_Q1target.csv', group), row.names = F)
+    write.csv(dataoutput, file=sprintf('data/controlmironline-master/processed/%s_AlignedCtrl_MT_Q1target.csv', group), row.names = F)
   }
 }
 
@@ -5609,7 +5609,7 @@ getAlignedBlockedMTTrainedTargets <- function(groups = c('far', 'mid', 'near'), 
   
   LCaov <- data.frame()
   for(group in groups){
-    curves <- read.csv(sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl_MT_Q1target.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
+    curves <- read.csv(sprintf('data/controlmironline-master/processed/%s_AlignedCtrl_MT_Q1target.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
     curves <- curves[,-1] #remove trial rows
     participants <- colnames(curves)
     N <- length(participants)
@@ -5691,7 +5691,7 @@ getAlignedGroupMTUntrainedTargets <- function(groups = c('far', 'mid', 'near')){
     
     
     #return(dataoutput)
-    write.csv(dataoutput, file=sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl_MT_Untrained_Q1target.csv', group), row.names = F)
+    write.csv(dataoutput, file=sprintf('data/controlmironline-master/processed/%s_AlignedCtrl_MT_Untrained_Q1target.csv', group), row.names = F)
   }
 }
 
@@ -5701,7 +5701,7 @@ getAlignedBlockedMTUntrainedTargets <- function(groups = c('far', 'mid', 'near')
   
   LCaov <- data.frame()
   for(group in groups){
-    curves <- read.csv(sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl_MT_Untrained_Q1target.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
+    curves <- read.csv(sprintf('data/controlmironline-master/processed/%s_AlignedCtrl_MT_Untrained_Q1target.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
     curves <- curves[,-1] #remove trial rows
     participants <- colnames(curves)
     N <- length(participants)
@@ -5992,7 +5992,7 @@ getAlignedBlockedPLAOV <- function(groups = c('far', 'mid', 'near'), blockdefs, 
   
   LCaov <- data.frame()
   for(group in groups){
-    curves <- read.csv(sprintf('data/controlmironline-master/raw/processed/%s_PathLength.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
+    curves <- read.csv(sprintf('data/controlmironline-master/processed/%s_PathLength.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
     curves <- curves[,-1] #remove trial rows
     participants <- colnames(curves)
     N <- length(participants)
@@ -6728,7 +6728,7 @@ getAlignedGroupPLTrainedTargets <- function(groups = c('far', 'mid', 'near')){
     
     
     #return(dataoutput)
-    write.csv(dataoutput, file=sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl_PL_Q1target.csv', group), row.names = F)
+    write.csv(dataoutput, file=sprintf('data/controlmironline-master/processed/%s_AlignedCtrl_PL_Q1target.csv', group), row.names = F)
   }
 }
 
@@ -6737,7 +6737,7 @@ getAlignedBlockedPLTrainedTargets <- function(groups = c('far', 'mid', 'near'), 
   
   LCaov <- data.frame()
   for(group in groups){
-    curves <- read.csv(sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl_PL_Q1target.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
+    curves <- read.csv(sprintf('data/controlmironline-master/processed/%s_AlignedCtrl_PL_Q1target.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
     curves <- curves[,-1] #remove trial rows
     participants <- colnames(curves)
     N <- length(participants)
@@ -6819,7 +6819,7 @@ getAlignedGroupPLUntrainedTargets <- function(groups = c('far', 'mid', 'near')){
     
     
     #return(dataoutput)
-    write.csv(dataoutput, file=sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl_PL_Untrained_Q1target.csv', group), row.names = F)
+    write.csv(dataoutput, file=sprintf('data/controlmironline-master/processed/%s_AlignedCtrl_PL_Untrained_Q1target.csv', group), row.names = F)
   }
 }
 
@@ -6829,7 +6829,7 @@ getAlignedBlockedPLUntrainedTargets <- function(groups = c('far', 'mid', 'near')
   
   LCaov <- data.frame()
   for(group in groups){
-    curves <- read.csv(sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl_PL_Untrained_Q1target.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
+    curves <- read.csv(sprintf('data/controlmironline-master/processed/%s_AlignedCtrl_PL_Untrained_Q1target.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
     curves <- curves[,-1] #remove trial rows
     participants <- colnames(curves)
     N <- length(participants)
@@ -7030,7 +7030,7 @@ getDeviceAlignedBlockedLearningAOV <- function(groups = c('far', 'mid', 'near'),
       devqualt <- qualtdat[which(qualtdat$Q6.4 == d),]
       ppqualt <- devqualt$id
       
-      curves <- read.csv(sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
+      curves <- read.csv(sprintf('data/controlmironline-master/processed/%s_AlignedCtrl.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
       trial <- curves$trial
       ndat <- curves[,which(colnames(curves) %in% ppqualt)]
       curves <- cbind(trial, ndat)
@@ -7152,7 +7152,7 @@ getDeviceMirrorBlockedLearningAOV <- function(groups = c('far', 'mid', 'near'), 
       devqualt <- qualtdat[which(qualtdat$Q6.4 == d),]
       ppqualt <- devqualt$id
       
-      curves <- read.csv(sprintf('data/controlmironline-master/raw/processed/%s_Mirror_PercentCompensation.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
+      curves <- read.csv(sprintf('data/controlmironline-master/processed/%s_Mirror_PercentCompensation.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
       trial <- curves$trial
       ndat <- curves[,which(colnames(curves) %in% ppqualt)]
       curves <- cbind(trial, ndat)
@@ -7257,7 +7257,7 @@ getDeviceRAEBlockedLearningAOV <- function(groups = c('far', 'mid', 'near'), blo
       devqualt <- qualtdat[which(qualtdat$Q6.4 == d),]
       ppqualt <- devqualt$id
       
-      curves <- read.csv(sprintf('data/controlmironline-master/raw/processed/%s_RAECtrl.csv',group), stringsAsFactors=FALSE, check.names = FALSE)
+      curves <- read.csv(sprintf('data/controlmironline-master/processed/%s_RAECtrl.csv',group), stringsAsFactors=FALSE, check.names = FALSE)
       trial <- curves$trial
       ndat <- curves[,which(colnames(curves) %in% ppqualt)]
       curves <- cbind(trial, ndat)
@@ -7362,7 +7362,7 @@ getDeviceAlignedBlockedTrainedTargets <- function(groups = c('far', 'mid', 'near
       devqualt <- qualtdat[which(qualtdat$Q6.4 == d),]
       ppqualt <- devqualt$id
       
-      curves <- read.csv(sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl_Q1target.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
+      curves <- read.csv(sprintf('data/controlmironline-master/processed/%s_AlignedCtrl_Q1target.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
       trial <- curves$trial
       ndat <- curves[,which(colnames(curves) %in% ppqualt)]
       curves <- cbind(trial, ndat)
@@ -7476,7 +7476,7 @@ getDeviceAlignedBlockedMTAOV <- function(groups = c('far', 'mid', 'near'), block
       devqualt <- qualtdat[which(qualtdat$Q6.4 == d),]
       ppqualt <- devqualt$id
       
-      curves <- read.csv(sprintf('data/controlmironline-master/raw/processed/%s_MovementTime.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
+      curves <- read.csv(sprintf('data/controlmironline-master/processed/%s_MovementTime.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
       trial <- curves$trial
       ndat <- curves[,which(colnames(curves) %in% ppqualt)]
       curves <- cbind(trial, ndat)
@@ -7662,7 +7662,7 @@ getDeviceAlignedBlockedMTTrainedTargets <- function(groups = c('far', 'mid', 'ne
       devqualt <- qualtdat[which(qualtdat$Q6.4 == d),]
       ppqualt <- devqualt$id
       
-      curves <- read.csv(sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl_MT_Q1target.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
+      curves <- read.csv(sprintf('data/controlmironline-master/processed/%s_AlignedCtrl_MT_Q1target.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
       trial <- curves$trial
       ndat <- curves[,which(colnames(curves) %in% ppqualt)]
       curves <- cbind(trial, ndat)
@@ -7773,7 +7773,7 @@ getDeviceAlignedBlockedPLAOV <- function(groups = c('far', 'mid', 'near'), block
       devqualt <- qualtdat[which(qualtdat$Q6.4 == d),]
       ppqualt <- devqualt$id
       
-      curves <- read.csv(sprintf('data/controlmironline-master/raw/processed/%s_PathLength.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
+      curves <- read.csv(sprintf('data/controlmironline-master/processed/%s_PathLength.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
       trial <- curves$trial
       ndat <- curves[,which(colnames(curves) %in% ppqualt)]
       curves <- cbind(trial, ndat)
@@ -7980,7 +7980,7 @@ getDeviceAlignedBlockedPLTrainedTargets <- function(groups = c('far', 'mid', 'ne
       devqualt <- qualtdat[which(qualtdat$Q6.4 == d),]
       ppqualt <- devqualt$id
       
-      curves <- read.csv(sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl_PL_Q1target.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
+      curves <- read.csv(sprintf('data/controlmironline-master/processed/%s_AlignedCtrl_PL_Q1target.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
       trial <- curves$trial
       ndat <- curves[,which(colnames(curves) %in% ppqualt)]
       curves <- cbind(trial, ndat)
@@ -8094,7 +8094,7 @@ getSexAlignedBlockedLearningAOV <- function(groups = c('far', 'mid', 'near'), bl
       devqualt <- qualtdat[which(qualtdat$Q2.2 == s),]
       ppqualt <- devqualt$id
       
-      curves <- read.csv(sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
+      curves <- read.csv(sprintf('data/controlmironline-master/processed/%s_AlignedCtrl.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
       trial <- curves$trial
       ndat <- curves[,which(colnames(curves) %in% ppqualt)]
       curves <- cbind(trial, ndat)
@@ -8216,7 +8216,7 @@ getSexMirrorBlockedLearningAOV <- function(groups = c('far', 'mid', 'near'), blo
       devqualt <- qualtdat[which(qualtdat$Q2.2 == s),]
       ppqualt <- devqualt$id
       
-      curves <- read.csv(sprintf('data/controlmironline-master/raw/processed/%s_Mirror_PercentCompensation.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
+      curves <- read.csv(sprintf('data/controlmironline-master/processed/%s_Mirror_PercentCompensation.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
       trial <- curves$trial
       ndat <- curves[,which(colnames(curves) %in% ppqualt)]
       curves <- cbind(trial, ndat)
@@ -8321,7 +8321,7 @@ getSexRAEBlockedLearningAOV <- function(groups = c('far', 'mid', 'near'), blockd
       devqualt <- qualtdat[which(qualtdat$Q2.2 == s),]
       ppqualt <- devqualt$id
       
-      curves <- read.csv(sprintf('data/controlmironline-master/raw/processed/%s_RAECtrl.csv',group), stringsAsFactors=FALSE, check.names = FALSE)
+      curves <- read.csv(sprintf('data/controlmironline-master/processed/%s_RAECtrl.csv',group), stringsAsFactors=FALSE, check.names = FALSE)
       trial <- curves$trial
       ndat <- curves[,which(colnames(curves) %in% ppqualt)]
       curves <- cbind(trial, ndat)
@@ -8426,7 +8426,7 @@ getSexAlignedBlockedTrainedTargets <- function(groups = c('far', 'mid', 'near'),
       devqualt <- qualtdat[which(qualtdat$Q2.2 == s),]
       ppqualt <- devqualt$id
       
-      curves <- read.csv(sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl_Q1target.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
+      curves <- read.csv(sprintf('data/controlmironline-master/processed/%s_AlignedCtrl_Q1target.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
       trial <- curves$trial
       ndat <- curves[,which(colnames(curves) %in% ppqualt)]
       curves <- cbind(trial, ndat)
@@ -8540,7 +8540,7 @@ getSexAlignedBlockedMTAOV <- function(groups = c('far', 'mid', 'near'), blockdef
       devqualt <- qualtdat[which(qualtdat$Q2.2 == s),]
       ppqualt <- devqualt$id
       
-      curves <- read.csv(sprintf('data/controlmironline-master/raw/processed/%s_MovementTime.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
+      curves <- read.csv(sprintf('data/controlmironline-master/processed/%s_MovementTime.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
       trial <- curves$trial
       ndat <- curves[,which(colnames(curves) %in% ppqualt)]
       curves <- cbind(trial, ndat)
@@ -8833,7 +8833,7 @@ getSexAlignedBlockedMTTrainedTargets <- function(groups = c('far', 'mid', 'near'
       devqualt <- qualtdat[which(qualtdat$Q2.2 == s),]
       ppqualt <- devqualt$id
       
-      curves <- read.csv(sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl_MT_Q1target.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
+      curves <- read.csv(sprintf('data/controlmironline-master/processed/%s_AlignedCtrl_MT_Q1target.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
       trial <- curves$trial
       ndat <- curves[,which(colnames(curves) %in% ppqualt)]
       curves <- cbind(trial, ndat)
@@ -8969,7 +8969,7 @@ getSexAlignedBlockedPLAOV <- function(groups = c('far', 'mid', 'near'), blockdef
       devqualt <- qualtdat[which(qualtdat$Q2.2 == s),]
       ppqualt <- devqualt$id
       
-      curves <- read.csv(sprintf('data/controlmironline-master/raw/processed/%s_PathLength.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
+      curves <- read.csv(sprintf('data/controlmironline-master/processed/%s_PathLength.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
       trial <- curves$trial
       ndat <- curves[,which(colnames(curves) %in% ppqualt)]
       curves <- cbind(trial, ndat)
@@ -9153,7 +9153,7 @@ getSexAlignedBlockedPLTrainedTargets <- function(groups = c('far', 'mid', 'near'
       devqualt <- qualtdat[which(qualtdat$Q2.2 == s),]
       ppqualt <- devqualt$id
       
-      curves <- read.csv(sprintf('data/controlmironline-master/raw/processed/%s_AlignedCtrl_PL_Q1target.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
+      curves <- read.csv(sprintf('data/controlmironline-master/processed/%s_AlignedCtrl_PL_Q1target.csv',group), stringsAsFactors=FALSE, check.names = FALSE)  
       trial <- curves$trial
       ndat <- curves[,which(colnames(curves) %in% ppqualt)]
       curves <- cbind(trial, ndat)

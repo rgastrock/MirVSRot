@@ -178,7 +178,7 @@ plotPTypeLearningCurves <- function(perturb = c('ROT', 'MIR'), group = 'noninstr
   
   for(ptype in perturb){
     #read in files created by getGroupConfidenceInterval in filehandling.R
-    groupconfidence <- read.csv(file=sprintf('data/pilot/%s_%s_CI_learningcurve.csv', ptype, group))
+    groupconfidence <- read.csv(file=sprintf('data/pilot/processed/%s_%s_CI_learningcurve.csv', ptype, group))
     
     colourscheme <- getPtypeColourScheme(ptype)
     #take only first, last and middle columns of file
@@ -341,9 +341,9 @@ getROTGroupConfidenceInterval <- function(group, maxppid, location, type){
       confidence <- rbind(confidence, citrial)
     }
     if (group == 'noninstructed'){
-      write.csv(confidence, file='data/pilot/ROT_noninstructed_CI_learningcurve.csv', row.names = F) 
+      write.csv(confidence, file='data/pilot/processed/ROT_noninstructed_CI_learningcurve.csv', row.names = F) 
     } else if (group == 'instructed'){
-      write.csv(confidence, file='data/pilot/ROT_instructed_CI_learningcurve.csv', row.names = F)
+      write.csv(confidence, file='data/pilot/processed/ROT_instructed_CI_learningcurve.csv', row.names = F)
     }
     
   }
@@ -372,7 +372,7 @@ plotROTLearningCurves <- function(groups = c('noninstructed'),target='inline') {
   
   for(group in groups){
     #read in files created by getGroupConfidenceInterval in filehandling.R
-    groupconfidence <- read.csv(file=sprintf('data/pilot/ROT_%s_CI_learningcurve.csv', group))
+    groupconfidence <- read.csv(file=sprintf('data/pilot/processed/ROT_%s_CI_learningcurve.csv', group))
     
     colourscheme <- getColourScheme(groups = group)
     #take only first, last and middle columns of file
@@ -580,9 +580,9 @@ getMIRGroupConfidenceInterval <- function(group, maxppid, location, type){
       confidence <- rbind(confidence, citrial)
     }
     if (group == 'noninstructed'){
-      write.csv(confidence, file='data/pilot/MIR_noninstructed_CI_learningcurve.csv', row.names = F) 
+      write.csv(confidence, file='data/pilot/processed/MIR_noninstructed_CI_learningcurve.csv', row.names = F) 
     } else if (group == 'instructed'){
-      write.csv(confidence, file='data/pilot/MIR_instructed_CI_learningcurve.csv', row.names = F)
+      write.csv(confidence, file='data/pilot/processed/MIR_instructed_CI_learningcurve.csv', row.names = F)
     }
   }
   #}
@@ -610,7 +610,7 @@ plotMIRLearningCurves <- function(groups = c('noninstructed'), target='inline') 
   
   for(group in groups){
     #read in files created by getGroupConfidenceInterval in filehandling.R
-    groupconfidence <- read.csv(file=sprintf('data/pilot/MIR_%s_CI_learningcurve.csv', group))
+    groupconfidence <- read.csv(file=sprintf('data/pilot/processed/MIR_%s_CI_learningcurve.csv', group))
     
     colourscheme <- getColourScheme(groups = group)
     #take only first, last and middle columns of file
@@ -779,9 +779,9 @@ getROTGroupConfidenceIntervalWONear <- function(group, maxppid, location, type){
       confidence <- rbind(confidence, citrial)
     }
     if (group == 'noninstructed'){
-      write.csv(confidence, file='data/pilot/ROT_noninstructed_CI_learningcurve_WONear.csv', row.names = F) 
+      write.csv(confidence, file='data/pilot/processed/ROT_noninstructed_CI_learningcurve_WONear.csv', row.names = F) 
     } else if (group == 'instructed'){
-      write.csv(confidence, file='data/pilot/ROT_instructed_CI_learningcurve_WONear.csv', row.names = F)
+      write.csv(confidence, file='data/pilot/processed/ROT_instructed_CI_learningcurve_WONear.csv', row.names = F)
     }
     
   }
@@ -810,7 +810,7 @@ plotROTLearningCurvesWONear <- function(groups = c('noninstructed','instructed')
   
   for(group in groups){
     #read in files created by getGroupConfidenceInterval in filehandling.R
-    groupconfidence <- read.csv(file=sprintf('data/pilot/ROT_%s_CI_learningcurve_WONear.csv', group))
+    groupconfidence <- read.csv(file=sprintf('data/pilot/processed/ROT_%s_CI_learningcurve_WONear.csv', group))
     
     colourscheme <- getColourScheme(groups = group)
     #take only first, last and middle columns of file
@@ -979,9 +979,9 @@ getMIRGroupConfidenceIntervalWONear <- function(group, maxppid, location, type){
       confidence <- rbind(confidence, citrial)
     }
     if (group == 'noninstructed'){
-      write.csv(confidence, file='data/pilot/MIR_noninstructed_CI_learningcurve_WONear.csv', row.names = F) 
+      write.csv(confidence, file='data/pilot/processed/MIR_noninstructed_CI_learningcurve_WONear.csv', row.names = F) 
     } else if (group == 'instructed'){
-      write.csv(confidence, file='data/pilot/MIR_instructed_CI_learningcurve_WONear.csv', row.names = F)
+      write.csv(confidence, file='data/pilot/processed/MIR_instructed_CI_learningcurve_WONear.csv', row.names = F)
     }
   }
   #}
@@ -1009,7 +1009,7 @@ plotMIRLearningCurvesWONear <- function(groups = c('noninstructed','instructed')
   
   for(group in groups){
     #read in files created by getGroupConfidenceInterval in filehandling.R
-    groupconfidence <- read.csv(file=sprintf('data/pilot/MIR_%s_CI_learningcurve_WONear.csv', group))
+    groupconfidence <- read.csv(file=sprintf('data/pilot/processed/MIR_%s_CI_learningcurve_WONear.csv', group))
     
     colourscheme <- getColourScheme(groups = group)
     #take only first, last and middle columns of file
@@ -1232,9 +1232,9 @@ getMIRGroupTargetCurveConfidenceInterval <- function(group, maxppid, location, a
         confidence <- rbind(confidence, citrial)
       }
       if (group == 'noninstructed'){
-        write.csv(confidence, file=sprintf('data/pilot/MIR_noninstructed_CI_targetcurve%s.csv', angle), row.names = F) 
+        write.csv(confidence, file=sprintf('data/pilot/processed/MIR_noninstructed_CI_targetcurve%s.csv', angle), row.names = F) 
       } else if (group == 'instructed'){
-        write.csv(confidence, file=sprintf('data/pilot/MIR_instructed_CI_targetcurve%s.csv', angle), row.names = F)
+        write.csv(confidence, file=sprintf('data/pilot/processed/MIR_instructed_CI_targetcurve%s.csv', angle), row.names = F)
       }
     }
   }
@@ -1263,7 +1263,7 @@ plotNIMIRTargetCurve<- function(group = 'noninstructed', angles = c(15,30,45), t
   
   for(angle in angles){
     #read in files created by getGroupConfidenceInterval in filehandling.R
-    groupconfidence <- read.csv(file=sprintf('data/pilot/MIR_%s_CI_targetcurve%s.csv', group, angle))
+    groupconfidence <- read.csv(file=sprintf('data/pilot/processed/MIR_%s_CI_targetcurve%s.csv', group, angle))
     
     colourscheme <- getTtypeColourScheme(angles = angle)
     #take only first, last and middle columns of file
@@ -1322,7 +1322,7 @@ plotIMIRTargetCurve<- function(group = 'instructed', angles = c(15,30,45), targe
   
   for(angle in angles){
     #read in files created by getGroupConfidenceInterval in filehandling.R
-    groupconfidence <- read.csv(file=sprintf('data/pilot/MIR_%s_CI_targetcurve%s.csv', group, angle))
+    groupconfidence <- read.csv(file=sprintf('data/pilot/processed/MIR_%s_CI_targetcurve%s.csv', group, angle))
     
     colourscheme <- getTtypeColourScheme(angles = angle)
     #take only first, last and middle columns of file
@@ -1381,7 +1381,7 @@ plotPTypeLearningCurvesWONear <- function(perturb = c('ROT', 'MIR'), group = 'no
   
   for(ptype in perturb){
     #read in files created by getGroupConfidenceInterval in filehandling.R
-    groupconfidence <- read.csv(file=sprintf('data/pilot/%s_%s_CI_learningcurve_WONear.csv', ptype, group))
+    groupconfidence <- read.csv(file=sprintf('data/pilot/processed/%s_%s_CI_learningcurve_WONear.csv', ptype, group))
     
     colourscheme <- getPtypeColourScheme(ptype)
     #take only first, last and middle columns of file
@@ -1841,7 +1841,7 @@ getLearningCurvesMSE <- function(perturb = c('ROT', 'MIR'), group = 'noninstruct
     }
     
     ndat <- data.frame(id, step, asymptote, mse_step, lambda, N0, mse_expl, x0, k, L, mse_log)
-    write.csv(ndat, file=sprintf('data/pilot/%s_%s_MSE_LearningCurves.csv',ptype, group), quote=F, row.names=F)
+    write.csv(ndat, file=sprintf('data/pilot/processed/%s_%s_MSE_LearningCurves.csv',ptype, group), quote=F, row.names=F)
   }
 }
 
@@ -1851,7 +1851,7 @@ getGroupLearningCurvesLikelihoods <- function(perturb = c('ROT', 'MIR'), klevel 
   loglikelihood_expl <- c()
   loglikelihood_log <- c()
   for(ptype in perturb){
-    data <- read.csv(sprintf('data/pilot/%s_noninstructed_MSE_LearningCurves.csv', ptype))
+    data <- read.csv(sprintf('data/pilot/processed/%s_noninstructed_MSE_LearningCurves.csv', ptype))
     
     ndat <- data
     MSE_step <- setNames(sum(ndat$mse_step), 'mse_step')
@@ -1878,8 +1878,8 @@ getGroupLearningCurvesLikelihoods <- function(perturb = c('ROT', 'MIR'), klevel 
 
 getLambdaLearningCurvesTTest <- function(){
   
-  ROTdata <- read.csv('data/pilot/ROT_noninstructed_MSE_LearningCurves.csv')
-  MIRdata <- read.csv('data/pilot/MIR_noninstructed_MSE_LearningCurves.csv')
+  ROTdata <- read.csv('data/pilot/processed/ROT_noninstructed_MSE_LearningCurves.csv')
+  MIRdata <- read.csv('data/pilot/processed/MIR_noninstructed_MSE_LearningCurves.csv')
   
   subdat1 <- ROTdata$lambda
   subdat2 <- MIRdata$lambda
@@ -1895,8 +1895,8 @@ getLambdaLearningCurvesTTest <- function(){
 
 getAsymptoteLearningCurvesTTest <- function(){
   
-  ROTdata <- read.csv('data/pilot/ROT_noninstructed_MSE_LearningCurves.csv')
-  MIRdata <- read.csv('data/pilot/MIR_noninstructed_MSE_LearningCurves.csv')
+  ROTdata <- read.csv('data/pilot/processed/ROT_noninstructed_MSE_LearningCurves.csv')
+  MIRdata <- read.csv('data/pilot/processed/MIR_noninstructed_MSE_LearningCurves.csv')
   
   subdat1 <- ROTdata$N0
   subdat2 <- MIRdata$N0
@@ -1959,7 +1959,7 @@ getLearningCurvesWONearMSE <- function(perturb = c('ROT', 'MIR'), group = 'nonin
     }
     
     ndat <- data.frame(step, asymptote, mse_step, lambda, N0, mse_expl, x0, k, L, mse_log)
-    write.csv(ndat, file=sprintf('data/pilot/%s_%s_MSE_LearningCurvesWONear.csv',ptype, group), quote=F, row.names=F)
+    write.csv(ndat, file=sprintf('data/pilot/processed/%s_%s_MSE_LearningCurvesWONear.csv',ptype, group), quote=F, row.names=F)
   }
 }
 
@@ -1969,7 +1969,7 @@ getGroupLearningCurvesWONearLikelihoods <- function(perturb = c('ROT', 'MIR'), k
   loglikelihood_expl <- c()
   loglikelihood_log <- c()
   for(ptype in perturb){
-    data <- read.csv(sprintf('data/pilot/%s_noninstructed_MSE_LearningCurvesWONear.csv', ptype))
+    data <- read.csv(sprintf('data/pilot/processed/%s_noninstructed_MSE_LearningCurvesWONear.csv', ptype))
     
     ndat <- data
     MSE_step <- setNames(sum(ndat$mse_step), 'mse_step')
@@ -1996,8 +1996,8 @@ getGroupLearningCurvesWONearLikelihoods <- function(perturb = c('ROT', 'MIR'), k
 
 getLambdaLearningCurvesWONearTTest <- function(){
   
-  ROTdata <- read.csv('data/pilot/ROT_noninstructed_MSE_LearningCurvesWONear.csv')
-  MIRdata <- read.csv('data/pilot/MIR_noninstructed_MSE_LearningCurvesWONear.csv')
+  ROTdata <- read.csv('data/pilot/processed/ROT_noninstructed_MSE_LearningCurvesWONear.csv')
+  MIRdata <- read.csv('data/pilot/processed/MIR_noninstructed_MSE_LearningCurvesWONear.csv')
   
   subdat1 <- ROTdata$lambda
   subdat2 <- MIRdata$lambda
@@ -2013,8 +2013,8 @@ getLambdaLearningCurvesWONearTTest <- function(){
 
 getAsymptoteLearningCurvesWONearTTest <- function(){
   
-  ROTdata <- read.csv('data/pilot/ROT_noninstructed_MSE_LearningCurvesWONear.csv')
-  MIRdata <- read.csv('data/pilot/MIR_noninstructed_MSE_LearningCurvesWONear.csv')
+  ROTdata <- read.csv('data/pilot/processed/ROT_noninstructed_MSE_LearningCurvesWONear.csv')
+  MIRdata <- read.csv('data/pilot/processed/MIR_noninstructed_MSE_LearningCurvesWONear.csv')
   
   subdat1 <- ROTdata$N0
   subdat2 <- MIRdata$N0

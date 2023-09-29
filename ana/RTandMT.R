@@ -13,9 +13,9 @@ getRTTrials <- function(group, id, task, taskno){
   #note that task type and taskno have to match, depending on present csv files
   #Note to change filepath once data folder is arranged
   # if (id < 10){
-  #   dat <- read.csv(file = sprintf('data/pilot/SELECTED/%s/p00%d/p00%d-%d-%s.csv', group, id, id, taskno,task))
+  #   dat <- read.csv(file = sprintf('data/pilot/processed/SELECTED/%s/p00%d/p00%d-%d-%s.csv', group, id, id, taskno,task))
   # } else{
-  #   dat <- read.csv(file = sprintf('data/pilot/SELECTED/%s/p0%d/p0%d-%d-%s.csv', group, id, id, taskno,task))
+  #   dat <- read.csv(file = sprintf('data/pilot/processed/SELECTED/%s/p0%d/p0%d-%d-%s.csv', group, id, id, taskno,task))
   # }
   
   dat <- getParticipantTaskData(group = group, id = id, taskno = taskno, task = task)
@@ -175,9 +175,9 @@ getRTBlockedAlignedConfInt <- function(group, maxppid, type = 't'){
       confidence <- rbind(confidence, citrial)
     }
     if (group == 'noninstructed'){
-      write.csv(confidence, file='data/pilot/ALIGNED_noninstructed_blocked_CI_RT.csv', row.names = F) 
+      write.csv(confidence, file='data/pilot/processed/ALIGNED_noninstructed_blocked_CI_RT.csv', row.names = F) 
     } else if (group == 'instructed'){
-      write.csv(confidence, file='data/pilot/ALIGNED_instructed_blocked_CI_RT.csv', row.names = F)
+      write.csv(confidence, file='data/pilot/processed/ALIGNED_instructed_blocked_CI_RT.csv', row.names = F)
     } 
     
   }
@@ -215,9 +215,9 @@ getRTAlignedConfInt <- function(group, maxppid, type = 't'){
       confidence <- rbind(confidence, citrial)
     }
     if (group == 'noninstructed'){
-      write.csv(confidence, file='data/pilot/ALIGNED_noninstructed_CI_RT.csv', row.names = F) 
+      write.csv(confidence, file='data/pilot/processed/ALIGNED_noninstructed_CI_RT.csv', row.names = F) 
     } else if (group == 'instructed'){
-      write.csv(confidence, file='data/pilot/ALIGNED_instructed_CI_RT.csv', row.names = F)
+      write.csv(confidence, file='data/pilot/processed/ALIGNED_instructed_CI_RT.csv', row.names = F)
     } 
     
   }
@@ -340,9 +340,9 @@ getRTBlockedROTConfInt <- function(group, maxppid, type = 't'){
       confidence <- rbind(confidence, citrial)
     }
     if (group == 'noninstructed'){
-      write.csv(confidence, file='data/pilot/ROT_noninstructed_blocked_CI_RT.csv', row.names = F) 
+      write.csv(confidence, file='data/pilot/processed/ROT_noninstructed_blocked_CI_RT.csv', row.names = F) 
     } else if (group == 'instructed'){
-      write.csv(confidence, file='data/pilot/ROT_instructed_blocked_CI_RT.csv', row.names = F)
+      write.csv(confidence, file='data/pilot/processed/ROT_instructed_blocked_CI_RT.csv', row.names = F)
     } 
     
   }
@@ -379,9 +379,9 @@ getRTROTConfInt <- function(group, maxppid, type = 't'){
       confidence <- rbind(confidence, citrial)
     }
     if (group == 'noninstructed'){
-      write.csv(confidence, file='data/pilot/ROT_noninstructed_CI_RT.csv', row.names = F) 
+      write.csv(confidence, file='data/pilot/processed/ROT_noninstructed_CI_RT.csv', row.names = F) 
     } else if (group == 'instructed'){
-      write.csv(confidence, file='data/pilot/ROT_instructed_CI_RT.csv', row.names = F)
+      write.csv(confidence, file='data/pilot/processed/ROT_instructed_CI_RT.csv', row.names = F)
     } 
     
   }
@@ -505,9 +505,9 @@ getRTBlockedMIRConfInt <- function(group, maxppid, type = 't'){
       confidence <- rbind(confidence, citrial)
     }
     if (group == 'noninstructed'){
-      write.csv(confidence, file='data/pilot/MIR_noninstructed_blocked_CI_RT.csv', row.names = F) 
+      write.csv(confidence, file='data/pilot/processed/MIR_noninstructed_blocked_CI_RT.csv', row.names = F) 
     } else if (group == 'instructed'){
-      write.csv(confidence, file='data/pilot/MIR_instructed_blocked_CI_RT.csv', row.names = F)
+      write.csv(confidence, file='data/pilot/processed/MIR_instructed_blocked_CI_RT.csv', row.names = F)
     } 
     
   }
@@ -544,9 +544,9 @@ getRTMIRConfInt <- function(group, maxppid, type = 't'){
       confidence <- rbind(confidence, citrial)
     }
     if (group == 'noninstructed'){
-      write.csv(confidence, file='data/pilot/MIR_noninstructed_CI_RT.csv', row.names = F) 
+      write.csv(confidence, file='data/pilot/processed/MIR_noninstructed_CI_RT.csv', row.names = F) 
     } else if (group == 'instructed'){
-      write.csv(confidence, file='data/pilot/MIR_instructed_CI_RT.csv', row.names = F)
+      write.csv(confidence, file='data/pilot/processed/MIR_instructed_CI_RT.csv', row.names = F)
     } 
     
   }
@@ -669,9 +669,9 @@ getRTBlockedRotwashConfInt <- function(group, maxppid, type = 't'){
       confidence <- rbind(confidence, citrial)
     }
     if (group == 'noninstructed'){
-      write.csv(confidence, file='data/pilot/ROTWASH_noninstructed_blocked_CI_RT.csv', row.names = F) 
+      write.csv(confidence, file='data/pilot/processed/ROTWASH_noninstructed_blocked_CI_RT.csv', row.names = F) 
     } else if (group == 'instructed'){
-      write.csv(confidence, file='data/pilot/ROTWASH_instructed_blocked_CI_RT.csv', row.names = F)
+      write.csv(confidence, file='data/pilot/processed/ROTWASH_instructed_blocked_CI_RT.csv', row.names = F)
     } 
     
   }
@@ -708,9 +708,9 @@ getRTRotwashConfInt <- function(group, maxppid, type = 't'){
       confidence <- rbind(confidence, citrial)
     }
     if (group == 'noninstructed'){
-      write.csv(confidence, file='data/pilot/ROTWASH_noninstructed_CI_RT.csv', row.names = F) 
+      write.csv(confidence, file='data/pilot/processed/ROTWASH_noninstructed_CI_RT.csv', row.names = F) 
     } else if (group == 'instructed'){
-      write.csv(confidence, file='data/pilot/ROTWASH_instructed_CI_RT.csv', row.names = F)
+      write.csv(confidence, file='data/pilot/processed/ROTWASH_instructed_CI_RT.csv', row.names = F)
     } 
     
   }
@@ -833,9 +833,9 @@ getRTBlockedMirwashConfInt <- function(group, maxppid, type = 't'){
       confidence <- rbind(confidence, citrial)
     }
     if (group == 'noninstructed'){
-      write.csv(confidence, file='data/pilot/MIRWASH_noninstructed_blocked_CI_RT.csv', row.names = F) 
+      write.csv(confidence, file='data/pilot/processed/MIRWASH_noninstructed_blocked_CI_RT.csv', row.names = F) 
     } else if (group == 'instructed'){
-      write.csv(confidence, file='data/pilot/MIRWASH_instructed_blocked_CI_RT.csv', row.names = F)
+      write.csv(confidence, file='data/pilot/processed/MIRWASH_instructed_blocked_CI_RT.csv', row.names = F)
     } 
     
   }
@@ -872,9 +872,9 @@ getRTMirwashConfInt <- function(group, maxppid, type = 't'){
       confidence <- rbind(confidence, citrial)
     }
     if (group == 'noninstructed'){
-      write.csv(confidence, file='data/pilot/MIRWASH_noninstructed_CI_RT.csv', row.names = F) 
+      write.csv(confidence, file='data/pilot/processed/MIRWASH_noninstructed_CI_RT.csv', row.names = F) 
     } else if (group == 'instructed'){
-      write.csv(confidence, file='data/pilot/MIRWASH_instructed_CI_RT.csv', row.names = F)
+      write.csv(confidence, file='data/pilot/processed/MIRWASH_instructed_CI_RT.csv', row.names = F)
     } 
     
   }
@@ -889,11 +889,11 @@ plotNIBlockedRT <- function(target='inline'){
   }
   
   #read in the csv files and plot them in one big plot
-  dat1 <- read.csv(file='data/pilot/ALIGNED_noninstructed_blocked_CI_RT.csv')
-  dat2 <- read.csv(file='data/pilot/ROT_noninstructed_blocked_CI_RT.csv')
-  dat3 <- read.csv(file='data/pilot/ROTWASH_noninstructed_blocked_CI_RT.csv')
-  dat4 <- read.csv(file='data/pilot/MIR_noninstructed_blocked_CI_RT.csv')
-  dat5 <- read.csv(file='data/pilot/MIRWASH_noninstructed_blocked_CI_RT.csv')
+  dat1 <- read.csv(file='data/pilot/processed/ALIGNED_noninstructed_blocked_CI_RT.csv')
+  dat2 <- read.csv(file='data/pilot/processed/ROT_noninstructed_blocked_CI_RT.csv')
+  dat3 <- read.csv(file='data/pilot/processed/ROTWASH_noninstructed_blocked_CI_RT.csv')
+  dat4 <- read.csv(file='data/pilot/processed/MIR_noninstructed_blocked_CI_RT.csv')
+  dat5 <- read.csv(file='data/pilot/processed/MIRWASH_noninstructed_blocked_CI_RT.csv')
   
   dat <- rbind(dat1, dat2, dat3, dat4, dat5)
   
@@ -956,11 +956,11 @@ plotIBlockedRT <- function(target='inline'){
   }
   
   #read in the csv files and plot them in one big plot
-  dat1 <- read.csv(file='data/pilot/ALIGNED_instructed_blocked_CI_RT.csv')
-  dat2 <- read.csv(file='data/pilot/ROT_instructed_blocked_CI_RT.csv')
-  dat3 <- read.csv(file='data/pilot/ROTWASH_instructed_blocked_CI_RT.csv')
-  dat4 <- read.csv(file='data/pilot/MIR_instructed_blocked_CI_RT.csv')
-  dat5 <- read.csv(file='data/pilot/MIRWASH_instructed_blocked_CI_RT.csv')
+  dat1 <- read.csv(file='data/pilot/processed/ALIGNED_instructed_blocked_CI_RT.csv')
+  dat2 <- read.csv(file='data/pilot/processed/ROT_instructed_blocked_CI_RT.csv')
+  dat3 <- read.csv(file='data/pilot/processed/ROTWASH_instructed_blocked_CI_RT.csv')
+  dat4 <- read.csv(file='data/pilot/processed/MIR_instructed_blocked_CI_RT.csv')
+  dat5 <- read.csv(file='data/pilot/processed/MIRWASH_instructed_blocked_CI_RT.csv')
   
   dat <- rbind(dat1, dat2, dat3, dat4, dat5)
   
@@ -1055,7 +1055,7 @@ getRTLongFormat <- function(groups = c('noninstructed','instructed'), location =
       ALdat <- cbind(ALdat, perturb)
       #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
       longALdata <- gather(ALdat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
-      write.csv(longALdata, file=sprintf('data/pilot/ALIGNED_%s_RT_long.csv', group), row.names = F)
+      write.csv(longALdata, file=sprintf('data/pilot/processed/ALIGNED_%s_RT_long.csv', group), row.names = F)
       
       
       #Rotation data
@@ -1068,7 +1068,7 @@ getRTLongFormat <- function(groups = c('noninstructed','instructed'), location =
       ROTdat <- cbind(ROTdat, perturb)
       #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
       longROTdata <- gather(ROTdat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
-      write.csv(longROTdata, file=sprintf('data/pilot/ROT_%s_RT_long.csv', group), row.names = F)
+      write.csv(longROTdata, file=sprintf('data/pilot/processed/ROT_%s_RT_long.csv', group), row.names = F)
       
       #RotWASH data
       ROTWASHdat <- getRTRotwash(group=group,maxppid=maxppid)
@@ -1080,7 +1080,7 @@ getRTLongFormat <- function(groups = c('noninstructed','instructed'), location =
       ROTWASHdat <- cbind(ROTWASHdat, perturb)
       #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
       longROTWASHdata <- gather(ROTWASHdat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
-      write.csv(longROTWASHdata, file=sprintf('data/pilot/ROTWASH_%s_RT_long.csv', group), row.names = F)
+      write.csv(longROTWASHdata, file=sprintf('data/pilot/processed/ROTWASH_%s_RT_long.csv', group), row.names = F)
       
       #Mirror data
       MIRdat <- getRTMir(group=group,maxppid=maxppid)
@@ -1092,7 +1092,7 @@ getRTLongFormat <- function(groups = c('noninstructed','instructed'), location =
       MIRdat <- cbind(MIRdat, perturb)
       #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
       longMIRdata <- gather(MIRdat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
-      write.csv(longMIRdata, file=sprintf('data/pilot/MIR_%s_RT_long.csv', group), row.names = F)
+      write.csv(longMIRdata, file=sprintf('data/pilot/processed/MIR_%s_RT_long.csv', group), row.names = F)
       
       #MirWASH data
       MIRWASHdat <- getRTMirwash(group=group,maxppid=maxppid)
@@ -1104,7 +1104,7 @@ getRTLongFormat <- function(groups = c('noninstructed','instructed'), location =
       MIRWASHdat <- cbind(MIRWASHdat, perturb)
       #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
       longMIRWASHdata <- gather(MIRWASHdat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
-      write.csv(longMIRWASHdata, file=sprintf('data/pilot/MIRWASH_%s_RT_long.csv', group), row.names = F)
+      write.csv(longMIRWASHdata, file=sprintf('data/pilot/processed/MIRWASH_%s_RT_long.csv', group), row.names = F)
     } else if (group == 'instructed'){
       maxppid = 31
       #Aligned data
@@ -1117,7 +1117,7 @@ getRTLongFormat <- function(groups = c('noninstructed','instructed'), location =
       ALdat <- cbind(ALdat, perturb)
       #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
       longALdata <- gather(ALdat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
-      write.csv(longALdata, file=sprintf('data/pilot/ALIGNED_%s_RT_long.csv', group), row.names = F)
+      write.csv(longALdata, file=sprintf('data/pilot/processed/ALIGNED_%s_RT_long.csv', group), row.names = F)
       
       
       #Rotation data
@@ -1130,7 +1130,7 @@ getRTLongFormat <- function(groups = c('noninstructed','instructed'), location =
       ROTdat <- cbind(ROTdat, perturb)
       #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
       longROTdata <- gather(ROTdat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
-      write.csv(longROTdata, file=sprintf('data/pilot/ROT_%s_RT_long.csv', group), row.names = F)
+      write.csv(longROTdata, file=sprintf('data/pilot/processed/ROT_%s_RT_long.csv', group), row.names = F)
       
       #RotWASH data
       ROTWASHdat <- getRTRotwash(group=group,maxppid=maxppid)
@@ -1142,7 +1142,7 @@ getRTLongFormat <- function(groups = c('noninstructed','instructed'), location =
       ROTWASHdat <- cbind(ROTWASHdat, perturb)
       #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
       longROTWASHdata <- gather(ROTWASHdat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
-      write.csv(longROTWASHdata, file=sprintf('data/pilot/ROTWASH_%s_RT_long.csv', group), row.names = F)
+      write.csv(longROTWASHdata, file=sprintf('data/pilot/processed/ROTWASH_%s_RT_long.csv', group), row.names = F)
       
       #Mirror data
       MIRdat <- getRTMir(group=group,maxppid=maxppid)
@@ -1154,7 +1154,7 @@ getRTLongFormat <- function(groups = c('noninstructed','instructed'), location =
       MIRdat <- cbind(MIRdat, perturb)
       #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
       longMIRdata <- gather(MIRdat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
-      write.csv(longMIRdata, file=sprintf('data/pilot/MIR_%s_RT_long.csv', group), row.names = F)
+      write.csv(longMIRdata, file=sprintf('data/pilot/processed/MIR_%s_RT_long.csv', group), row.names = F)
       
       #MirWASH data
       MIRWASHdat <- getRTMirwash(group=group,maxppid=maxppid)
@@ -1166,7 +1166,7 @@ getRTLongFormat <- function(groups = c('noninstructed','instructed'), location =
       MIRWASHdat <- cbind(MIRWASHdat, perturb)
       #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
       longMIRWASHdata <- gather(MIRWASHdat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
-      write.csv(longMIRWASHdata, file=sprintf('data/pilot/MIRWASH_%s_RT_long.csv', group), row.names = F)
+      write.csv(longMIRWASHdata, file=sprintf('data/pilot/processed/MIRWASH_%s_RT_long.csv', group), row.names = F)
     }
     
   }
@@ -1175,7 +1175,7 @@ getRTLongFormat <- function(groups = c('noninstructed','instructed'), location =
 #First, we grab data from aligned, since it is the baseline for all
 getRTBlockedAlignedData <- function(group, blockdefs){
   LCaov <- data.frame()
-  curves <- read.csv(sprintf('data/pilot/ALIGNED_%s_RT_long.csv', group), stringsAsFactors=FALSE)  
+  curves <- read.csv(sprintf('data/pilot/processed/ALIGNED_%s_RT_long.csv', group), stringsAsFactors=FALSE)  
   participants <- unique(curves$participant)
   #R <- dim(curves)[1] # not needed, checks if rows=90 (correct trial numbers)
   #curves <- curves[,-1] #take away trial column
@@ -1241,7 +1241,7 @@ getRTBlockedPerturbData <- function(perturbations = c('ROT','MIR'), group, block
   LCaov <- data.frame()
   #to include instructed group, just create another for loop here
   for (perturb in perturbations){  
-    curves <- read.csv(sprintf('data/pilot/%s_%s_RT_long.csv',perturb,group), stringsAsFactors=FALSE)  
+    curves <- read.csv(sprintf('data/pilot/processed/%s_%s_RT_long.csv',perturb,group), stringsAsFactors=FALSE)  
     participants <- unique(curves$participant)
     #R <- dim(curves)[1] # not needed, checks if rows=90 (correct trial numbers)
     #curves <- curves[,-1] #take away trial column
@@ -1306,7 +1306,7 @@ getRTBlockedWashoutData <- function(perturbations = c('ROTWASH','MIRWASH'), grou
   LCaov <- data.frame()
   #to include instructed group, just create another for loop here
   for (perturb in perturbations){  
-    curves <- read.csv(sprintf('data/pilot/%s_%s_RT_long.csv',perturb, group), stringsAsFactors=FALSE)  
+    curves <- read.csv(sprintf('data/pilot/processed/%s_%s_RT_long.csv',perturb, group), stringsAsFactors=FALSE)  
     participants <- unique(curves$participant)
     #R <- dim(curves)[1] # not needed, checks if rows=90 (correct trial numbers)
     #curves <- curves[,-1] #take away trial column
@@ -1755,9 +1755,9 @@ getMTBlockedAlignedConfInt <- function(group, maxppid, type = 't'){
       confidence <- rbind(confidence, citrial)
     }
     if (group == 'noninstructed'){
-      write.csv(confidence, file='data/pilot/ALIGNED_noninstructed_blocked_CI_MT.csv', row.names = F) 
+      write.csv(confidence, file='data/pilot/processed/ALIGNED_noninstructed_blocked_CI_MT.csv', row.names = F) 
     } else if (group == 'instructed'){
-      write.csv(confidence, file='data/pilot/ALIGNED_instructed_blocked_CI_MT.csv', row.names = F)
+      write.csv(confidence, file='data/pilot/processed/ALIGNED_instructed_blocked_CI_MT.csv', row.names = F)
     } 
     
   }
@@ -1794,9 +1794,9 @@ getMTAlignedConfInt <- function(group, maxppid, type = 't'){
       confidence <- rbind(confidence, citrial)
     }
     if (group == 'noninstructed'){
-      write.csv(confidence, file='data/pilot/ALIGNED_noninstructed_CI_MT.csv', row.names = F) 
+      write.csv(confidence, file='data/pilot/processed/ALIGNED_noninstructed_CI_MT.csv', row.names = F) 
     } else if (group == 'instructed'){
-      write.csv(confidence, file='data/pilot/ALIGNED_instructed_CI_MT.csv', row.names = F)
+      write.csv(confidence, file='data/pilot/processed/ALIGNED_instructed_CI_MT.csv', row.names = F)
     } 
     
   }
@@ -1919,9 +1919,9 @@ getMTBlockedROTConfInt <- function(group, maxppid, type = 't'){
       confidence <- rbind(confidence, citrial)
     }
     if (group == 'noninstructed'){
-      write.csv(confidence, file='data/pilot/ROT_noninstructed_blocked_CI_MT.csv', row.names = F) 
+      write.csv(confidence, file='data/pilot/processed/ROT_noninstructed_blocked_CI_MT.csv', row.names = F) 
     } else if (group == 'instructed'){
-      write.csv(confidence, file='data/pilot/ROT_instructed_blocked_CI_MT.csv', row.names = F)
+      write.csv(confidence, file='data/pilot/processed/ROT_instructed_blocked_CI_MT.csv', row.names = F)
     } 
     
   }
@@ -1958,9 +1958,9 @@ getMTROTConfInt <- function(group, maxppid, type = 't'){
       confidence <- rbind(confidence, citrial)
     }
     if (group == 'noninstructed'){
-      write.csv(confidence, file='data/pilot/ROT_noninstructed_CI_MT.csv', row.names = F) 
+      write.csv(confidence, file='data/pilot/processed/ROT_noninstructed_CI_MT.csv', row.names = F) 
     } else if (group == 'instructed'){
-      write.csv(confidence, file='data/pilot/ROT_instructed_CI_MT.csv', row.names = F)
+      write.csv(confidence, file='data/pilot/processed/ROT_instructed_CI_MT.csv', row.names = F)
     } 
     
   }
@@ -2083,9 +2083,9 @@ getMTBlockedMIRConfInt <- function(group, maxppid, type = 't'){
       confidence <- rbind(confidence, citrial)
     }
     if (group == 'noninstructed'){
-      write.csv(confidence, file='data/pilot/MIR_noninstructed_blocked_CI_MT.csv', row.names = F) 
+      write.csv(confidence, file='data/pilot/processed/MIR_noninstructed_blocked_CI_MT.csv', row.names = F) 
     } else if (group == 'instructed'){
-      write.csv(confidence, file='data/pilot/MIR_instructed_blocked_CI_MT.csv', row.names = F)
+      write.csv(confidence, file='data/pilot/processed/MIR_instructed_blocked_CI_MT.csv', row.names = F)
     } 
     
   }
@@ -2122,9 +2122,9 @@ getMTMIRConfInt <- function(group, maxppid, type = 't'){
       confidence <- rbind(confidence, citrial)
     }
     if (group == 'noninstructed'){
-      write.csv(confidence, file='data/pilot/MIR_noninstructed_CI_MT.csv', row.names = F) 
+      write.csv(confidence, file='data/pilot/processed/MIR_noninstructed_CI_MT.csv', row.names = F) 
     } else if (group == 'instructed'){
-      write.csv(confidence, file='data/pilot/MIR_instructed_CI_MT.csv', row.names = F)
+      write.csv(confidence, file='data/pilot/processed/MIR_instructed_CI_MT.csv', row.names = F)
     } 
     
   }
@@ -2248,9 +2248,9 @@ getMTBlockedRotwashConfInt <- function(group, maxppid, type = 't'){
       confidence <- rbind(confidence, citrial)
     }
     if (group == 'noninstructed'){
-      write.csv(confidence, file='data/pilot/ROTWASH_noninstructed_blocked_CI_MT.csv', row.names = F) 
+      write.csv(confidence, file='data/pilot/processed/ROTWASH_noninstructed_blocked_CI_MT.csv', row.names = F) 
     } else if (group == 'instructed'){
-      write.csv(confidence, file='data/pilot/ROTWASH_instructed_blocked_CI_MT.csv', row.names = F)
+      write.csv(confidence, file='data/pilot/processed/ROTWASH_instructed_blocked_CI_MT.csv', row.names = F)
     } 
     
   }
@@ -2287,9 +2287,9 @@ getMTRotwashConfInt <- function(group, maxppid, type = 't'){
       confidence <- rbind(confidence, citrial)
     }
     if (group == 'noninstructed'){
-      write.csv(confidence, file='data/pilot/ROTWASH_noninstructed_CI_MT.csv', row.names = F) 
+      write.csv(confidence, file='data/pilot/processed/ROTWASH_noninstructed_CI_MT.csv', row.names = F) 
     } else if (group == 'instructed'){
-      write.csv(confidence, file='data/pilot/ROTWASH_instructed_CI_MT.csv', row.names = F)
+      write.csv(confidence, file='data/pilot/processed/ROTWASH_instructed_CI_MT.csv', row.names = F)
     } 
     
   }
@@ -2412,9 +2412,9 @@ getMTBlockedMirwashConfInt <- function(group, maxppid, type = 't'){
       confidence <- rbind(confidence, citrial)
     }
     if (group == 'noninstructed'){
-      write.csv(confidence, file='data/pilot/MIRWASH_noninstructed_blocked_CI_MT.csv', row.names = F) 
+      write.csv(confidence, file='data/pilot/processed/MIRWASH_noninstructed_blocked_CI_MT.csv', row.names = F) 
     } else if (group == 'instructed'){
-      write.csv(confidence, file='data/pilot/MIRWASH_instructed_blocked_CI_MT.csv', row.names = F)
+      write.csv(confidence, file='data/pilot/processed/MIRWASH_instructed_blocked_CI_MT.csv', row.names = F)
     } 
     
   }
@@ -2451,9 +2451,9 @@ getMTMirwashConfInt <- function(group, maxppid, type = 't'){
       confidence <- rbind(confidence, citrial)
     }
     if (group == 'noninstructed'){
-      write.csv(confidence, file='data/pilot/MIRWASH_noninstructed_CI_MT.csv', row.names = F) 
+      write.csv(confidence, file='data/pilot/processed/MIRWASH_noninstructed_CI_MT.csv', row.names = F) 
     } else if (group == 'instructed'){
-      write.csv(confidence, file='data/pilot/MIRWASH_instructed_CI_MT.csv', row.names = F)
+      write.csv(confidence, file='data/pilot/processed/MIRWASH_instructed_CI_MT.csv', row.names = F)
     } 
     
   }
@@ -2468,11 +2468,11 @@ plotNIBlockedMT <- function(target='inline'){
   }
   
   #read in the csv files and plot them in one big plot
-  dat1 <- read.csv(file='data/pilot/ALIGNED_noninstructed_blocked_CI_MT.csv')
-  dat2 <- read.csv(file='data/pilot/ROT_noninstructed_blocked_CI_MT.csv')
-  dat3 <- read.csv(file='data/pilot/ROTWASH_noninstructed_blocked_CI_MT.csv')
-  dat4 <- read.csv(file='data/pilot/MIR_noninstructed_blocked_CI_MT.csv')
-  dat5 <- read.csv(file='data/pilot/MIRWASH_noninstructed_blocked_CI_MT.csv')
+  dat1 <- read.csv(file='data/pilot/processed/ALIGNED_noninstructed_blocked_CI_MT.csv')
+  dat2 <- read.csv(file='data/pilot/processed/ROT_noninstructed_blocked_CI_MT.csv')
+  dat3 <- read.csv(file='data/pilot/processed/ROTWASH_noninstructed_blocked_CI_MT.csv')
+  dat4 <- read.csv(file='data/pilot/processed/MIR_noninstructed_blocked_CI_MT.csv')
+  dat5 <- read.csv(file='data/pilot/processed/MIRWASH_noninstructed_blocked_CI_MT.csv')
   
   dat <- rbind(dat1, dat2, dat3, dat4, dat5)
   
@@ -2535,11 +2535,11 @@ plotIBlockedMT <- function(target='inline'){
   }
   
   #read in the csv files and plot them in one big plot
-  dat1 <- read.csv(file='data/pilot/ALIGNED_instructed_blocked_CI_MT.csv')
-  dat2 <- read.csv(file='data/pilot/ROT_instructed_blocked_CI_MT.csv')
-  dat3 <- read.csv(file='data/pilot/ROTWASH_instructed_blocked_CI_MT.csv')
-  dat4 <- read.csv(file='data/pilot/MIR_instructed_blocked_CI_MT.csv')
-  dat5 <- read.csv(file='data/pilot/MIRWASH_instructed_blocked_CI_MT.csv')
+  dat1 <- read.csv(file='data/pilot/processed/ALIGNED_instructed_blocked_CI_MT.csv')
+  dat2 <- read.csv(file='data/pilot/processed/ROT_instructed_blocked_CI_MT.csv')
+  dat3 <- read.csv(file='data/pilot/processed/ROTWASH_instructed_blocked_CI_MT.csv')
+  dat4 <- read.csv(file='data/pilot/processed/MIR_instructed_blocked_CI_MT.csv')
+  dat5 <- read.csv(file='data/pilot/processed/MIRWASH_instructed_blocked_CI_MT.csv')
   
   dat <- rbind(dat1, dat2, dat3, dat4, dat5)
   
@@ -2634,7 +2634,7 @@ getMTLongFormat <- function(groups = c('noninstructed','instructed'), location =
       ALdat <- cbind(ALdat, perturb)
       #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
       longALdata <- gather(ALdat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
-      write.csv(longALdata, file=sprintf('data/pilot/ALIGNED_%s_MT_long.csv', group), row.names = F)
+      write.csv(longALdata, file=sprintf('data/pilot/processed/ALIGNED_%s_MT_long.csv', group), row.names = F)
       
       
       #Rotation data
@@ -2647,7 +2647,7 @@ getMTLongFormat <- function(groups = c('noninstructed','instructed'), location =
       ROTdat <- cbind(ROTdat, perturb)
       #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
       longROTdata <- gather(ROTdat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
-      write.csv(longROTdata, file=sprintf('data/pilot/ROT_%s_MT_long.csv', group), row.names = F)
+      write.csv(longROTdata, file=sprintf('data/pilot/processed/ROT_%s_MT_long.csv', group), row.names = F)
       
       #RotWASH data
       ROTWASHdat <- getMTRotwash(group=group,maxppid=maxppid)
@@ -2659,7 +2659,7 @@ getMTLongFormat <- function(groups = c('noninstructed','instructed'), location =
       ROTWASHdat <- cbind(ROTWASHdat, perturb)
       #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
       longROTWASHdata <- gather(ROTWASHdat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
-      write.csv(longROTWASHdata, file=sprintf('data/pilot/ROTWASH_%s_MT_long.csv', group), row.names = F)
+      write.csv(longROTWASHdata, file=sprintf('data/pilot/processed/ROTWASH_%s_MT_long.csv', group), row.names = F)
       
       #Mirror data
       MIRdat <- getMTMir(group=group,maxppid=maxppid)
@@ -2671,7 +2671,7 @@ getMTLongFormat <- function(groups = c('noninstructed','instructed'), location =
       MIRdat <- cbind(MIRdat, perturb)
       #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
       longMIRdata <- gather(MIRdat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
-      write.csv(longMIRdata, file=sprintf('data/pilot/MIR_%s_MT_long.csv', group), row.names = F)
+      write.csv(longMIRdata, file=sprintf('data/pilot/processed/MIR_%s_MT_long.csv', group), row.names = F)
       
       #MirWASH data
       MIRWASHdat <- getMTMirwash(group=group,maxppid=maxppid)
@@ -2683,7 +2683,7 @@ getMTLongFormat <- function(groups = c('noninstructed','instructed'), location =
       MIRWASHdat <- cbind(MIRWASHdat, perturb)
       #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
       longMIRWASHdata <- gather(MIRWASHdat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
-      write.csv(longMIRWASHdata, file=sprintf('data/pilot/MIRWASH_%s_MT_long.csv', group), row.names = F)
+      write.csv(longMIRWASHdata, file=sprintf('data/pilot/processed/MIRWASH_%s_MT_long.csv', group), row.names = F)
     } else if (group == 'instructed'){
       maxppid = 31
       #Aligned data
@@ -2696,7 +2696,7 @@ getMTLongFormat <- function(groups = c('noninstructed','instructed'), location =
       ALdat <- cbind(ALdat, perturb)
       #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
       longALdata <- gather(ALdat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
-      write.csv(longALdata, file=sprintf('data/pilot/ALIGNED_%s_MT_long.csv', group), row.names = F)
+      write.csv(longALdata, file=sprintf('data/pilot/processed/ALIGNED_%s_MT_long.csv', group), row.names = F)
       
       
       #Rotation data
@@ -2709,7 +2709,7 @@ getMTLongFormat <- function(groups = c('noninstructed','instructed'), location =
       ROTdat <- cbind(ROTdat, perturb)
       #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
       longROTdata <- gather(ROTdat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
-      write.csv(longROTdata, file=sprintf('data/pilot/ROT_%s_MT_long.csv', group), row.names = F)
+      write.csv(longROTdata, file=sprintf('data/pilot/processed/ROT_%s_MT_long.csv', group), row.names = F)
       
       #RotWASH data
       ROTWASHdat <- getMTRotwash(group=group,maxppid=maxppid)
@@ -2721,7 +2721,7 @@ getMTLongFormat <- function(groups = c('noninstructed','instructed'), location =
       ROTWASHdat <- cbind(ROTWASHdat, perturb)
       #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
       longROTWASHdata <- gather(ROTWASHdat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
-      write.csv(longROTWASHdata, file=sprintf('data/pilot/ROTWASH_%s_MT_long.csv', group), row.names = F)
+      write.csv(longROTWASHdata, file=sprintf('data/pilot/processed/ROTWASH_%s_MT_long.csv', group), row.names = F)
       
       #Mirror data
       MIRdat <- getMTMir(group=group,maxppid=maxppid)
@@ -2733,7 +2733,7 @@ getMTLongFormat <- function(groups = c('noninstructed','instructed'), location =
       MIRdat <- cbind(MIRdat, perturb)
       #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
       longMIRdata <- gather(MIRdat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
-      write.csv(longMIRdata, file=sprintf('data/pilot/MIR_%s_MT_long.csv', group), row.names = F)
+      write.csv(longMIRdata, file=sprintf('data/pilot/processed/MIR_%s_MT_long.csv', group), row.names = F)
       
       #MirWASH data
       MIRWASHdat <- getMTMirwash(group=group,maxppid=maxppid)
@@ -2745,7 +2745,7 @@ getMTLongFormat <- function(groups = c('noninstructed','instructed'), location =
       MIRWASHdat <- cbind(MIRWASHdat, perturb)
       #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
       longMIRWASHdata <- gather(MIRWASHdat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
-      write.csv(longMIRWASHdata, file=sprintf('data/pilot/MIRWASH_%s_MT_long.csv', group), row.names = F)
+      write.csv(longMIRWASHdata, file=sprintf('data/pilot/processed/MIRWASH_%s_MT_long.csv', group), row.names = F)
     }
   }
 }
@@ -2753,7 +2753,7 @@ getMTLongFormat <- function(groups = c('noninstructed','instructed'), location =
 #First, we grab data from aligned, since it is the baseline for all
 getMTBlockedAlignedData <- function(group, blockdefs){
   LCaov <- data.frame()
-  curves <- read.csv(sprintf('data/pilot/ALIGNED_%s_MT_long.csv',group), stringsAsFactors=FALSE)  
+  curves <- read.csv(sprintf('data/pilot/processed/ALIGNED_%s_MT_long.csv',group), stringsAsFactors=FALSE)  
   participants <- unique(curves$participant)
   #R <- dim(curves)[1] # not needed, checks if rows=90 (correct trial numbers)
   #curves <- curves[,-1] #take away trial column
@@ -2819,7 +2819,7 @@ getMTBlockedPerturbData <- function(perturbations = c('ROT','MIR'), group, block
   LCaov <- data.frame()
   #to include instructed group, just create another for loop here
   for (perturb in perturbations){  
-    curves <- read.csv(sprintf('data/pilot/%s_%s_MT_long.csv',perturb,group), stringsAsFactors=FALSE)  
+    curves <- read.csv(sprintf('data/pilot/processed/%s_%s_MT_long.csv',perturb,group), stringsAsFactors=FALSE)  
     participants <- unique(curves$participant)
     #R <- dim(curves)[1] # not needed, checks if rows=90 (correct trial numbers)
     #curves <- curves[,-1] #take away trial column
@@ -2884,7 +2884,7 @@ getMTBlockedWashoutData <- function(perturbations = c('ROTWASH','MIRWASH'), grou
   LCaov <- data.frame()
   #to include instructed group, just create another for loop here
   for (perturb in perturbations){  
-    curves <- read.csv(sprintf('data/pilot/%s_%s_MT_long.csv',perturb,group), stringsAsFactors=FALSE)  
+    curves <- read.csv(sprintf('data/pilot/processed/%s_%s_MT_long.csv',perturb,group), stringsAsFactors=FALSE)  
     participants <- unique(curves$participant)
     #R <- dim(curves)[1] # not needed, checks if rows=90 (correct trial numbers)
     #curves <- curves[,-1] #take away trial column

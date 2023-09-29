@@ -112,9 +112,9 @@ getAlignedPathLengthCI <- function(group, maxppid, type = 't'){
       confidence <- rbind(confidence, citrial)
     }
     if (group == 'noninstructed'){
-      write.csv(confidence, file='data/pilot/ALIGNED_noninstructed_CI_pathlength.csv', row.names = F) 
+      write.csv(confidence, file='data/pilot/processed/ALIGNED_noninstructed_CI_pathlength.csv', row.names = F) 
     } else if (group == 'instructed'){
-      write.csv(confidence, file='data/pilot/ALIGNED_instructed_CI_pathlength.csv', row.names = F)
+      write.csv(confidence, file='data/pilot/processed/ALIGNED_instructed_CI_pathlength.csv', row.names = F)
     }
     
   }
@@ -151,9 +151,9 @@ getPLBlockedAlignedConfInt <- function(group, maxppid, type = 't'){
       confidence <- rbind(confidence, citrial)
     }
     if (group == 'noninstructed'){
-      write.csv(confidence, file='data/pilot/ALIGNED_noninstructed_blocked_CI_PL.csv', row.names = F) 
+      write.csv(confidence, file='data/pilot/processed/ALIGNED_noninstructed_blocked_CI_PL.csv', row.names = F) 
     } else if (group == 'instructed'){
-      write.csv(confidence, file='data/pilot/ALIGNED_instructed_blocked_CI_PL.csv', row.names = F)
+      write.csv(confidence, file='data/pilot/processed/ALIGNED_instructed_blocked_CI_PL.csv', row.names = F)
     } 
     
   }
@@ -187,7 +187,7 @@ plotAlignedPathLength <- function(groups=c('noninstructed', 'instructed'),target
     
     
     #read in files created by getGroupConfidenceInterval in filehandling.R
-    groupconfidence <- read.csv(file=sprintf('data/pilot/ALIGNED_%s_CI_pathlength.csv', group))
+    groupconfidence <- read.csv(file=sprintf('data/pilot/processed/ALIGNED_%s_CI_pathlength.csv', group))
     
     colourscheme <- getColourScheme(groups = group)
     #take only first, last and middle columns of file
@@ -284,9 +284,9 @@ getROTPathLengthCI <- function(group, maxppid, type = 't'){
       confidence <- rbind(confidence, citrial)
     }
     if (group == 'noninstructed'){
-      write.csv(confidence, file='data/pilot/ROT_noninstructed_CI_pathlength.csv', row.names = F) 
+      write.csv(confidence, file='data/pilot/processed/ROT_noninstructed_CI_pathlength.csv', row.names = F) 
     } else if (group == 'instructed'){
-      write.csv(confidence, file='data/pilot/ROT_instructed_CI_pathlength.csv', row.names = F)
+      write.csv(confidence, file='data/pilot/processed/ROT_instructed_CI_pathlength.csv', row.names = F)
     }
     
   }
@@ -323,9 +323,9 @@ getPLBlockedROTConfInt <- function(group, maxppid, type = 't'){
       confidence <- rbind(confidence, citrial)
     }
     if (group == 'noninstructed'){
-      write.csv(confidence, file='data/pilot/ROT_noninstructed_blocked_CI_PL.csv', row.names = F) 
+      write.csv(confidence, file='data/pilot/processed/ROT_noninstructed_blocked_CI_PL.csv', row.names = F) 
     } else if (group == 'instructed'){
-      write.csv(confidence, file='data/pilot/ROT_instructed_blocked_CI_PL.csv', row.names = F)
+      write.csv(confidence, file='data/pilot/processed/ROT_instructed_blocked_CI_PL.csv', row.names = F)
     } 
     
   }
@@ -393,9 +393,9 @@ getMIRPathLengthCI <- function(group, maxppid, type = 't'){
       confidence <- rbind(confidence, citrial)
     }
     if (group == 'noninstructed'){
-      write.csv(confidence, file='data/pilot/MIR_noninstructed_CI_pathlength.csv', row.names = F) 
+      write.csv(confidence, file='data/pilot/processed/MIR_noninstructed_CI_pathlength.csv', row.names = F) 
     } else if (group == 'instructed'){
-      write.csv(confidence, file='data/pilot/MIR_instructed_CI_pathlength.csv', row.names = F)
+      write.csv(confidence, file='data/pilot/processed/MIR_instructed_CI_pathlength.csv', row.names = F)
     }
     
   }
@@ -432,9 +432,9 @@ getPLBlockedMIRConfInt <- function(group, maxppid, type = 't'){
       confidence <- rbind(confidence, citrial)
     }
     if (group == 'noninstructed'){
-      write.csv(confidence, file='data/pilot/MIR_noninstructed_blocked_CI_PL.csv', row.names = F) 
+      write.csv(confidence, file='data/pilot/processed/MIR_noninstructed_blocked_CI_PL.csv', row.names = F) 
     } else if (group == 'instructed'){
-      write.csv(confidence, file='data/pilot/MIR_instructed_blocked_CI_PL.csv', row.names = F)
+      write.csv(confidence, file='data/pilot/processed/MIR_instructed_blocked_CI_PL.csv', row.names = F)
     } 
     
   }
@@ -514,9 +514,9 @@ getPLBlockedRotwashConfInt <- function(group, maxppid, type = 't'){
       confidence <- rbind(confidence, citrial)
     }
     if (group == 'noninstructed'){
-      write.csv(confidence, file='data/pilot/ROTWASH_noninstructed_blocked_CI_PL.csv', row.names = F) 
+      write.csv(confidence, file='data/pilot/processed/ROTWASH_noninstructed_blocked_CI_PL.csv', row.names = F) 
     } else if (group == 'instructed'){
-      write.csv(confidence, file='data/pilot/ROTWASH_instructed_blocked_CI_PL.csv', row.names = F)
+      write.csv(confidence, file='data/pilot/processed/ROTWASH_instructed_blocked_CI_PL.csv', row.names = F)
     } 
     
   }
@@ -595,9 +595,9 @@ getPLBlockedMirwashConfInt <- function(group, maxppid, type = 't'){
       confidence <- rbind(confidence, citrial)
     }
     if (group == 'noninstructed'){
-      write.csv(confidence, file='data/pilot/MIRWASH_noninstructed_blocked_CI_PL.csv', row.names = F) 
+      write.csv(confidence, file='data/pilot/processed/MIRWASH_noninstructed_blocked_CI_PL.csv', row.names = F) 
     } else if (group == 'instructed'){
-      write.csv(confidence, file='data/pilot/MIRWASH_instructed_blocked_CI_PL.csv', row.names = F)
+      write.csv(confidence, file='data/pilot/processed/MIRWASH_instructed_blocked_CI_PL.csv', row.names = F)
     } 
     
   }
@@ -632,7 +632,7 @@ plotPTypePathLength <- function(perturb = c('ROT', 'MIR'), group, target='inline
   
   for(ptype in perturb){
     #read in files created by getGroupConfidenceInterval in filehandling.R
-    groupconfidence <- read.csv(file=sprintf('data/pilot/%s_%s_CI_pathlength.csv', ptype, group))
+    groupconfidence <- read.csv(file=sprintf('data/pilot/processed/%s_%s_CI_pathlength.csv', ptype, group))
     
     colourscheme <- getPtypeColourScheme(ptype)
     #take only first, last and middle columns of file
@@ -677,11 +677,11 @@ plotNIBlockedPL <- function(target='inline'){
   }
   
   #read in the csv files and plot them in one big plot
-  dat1 <- read.csv(file='data/pilot/ALIGNED_noninstructed_blocked_CI_PL.csv')
-  dat2 <- read.csv(file='data/pilot/ROT_noninstructed_blocked_CI_PL.csv')
-  dat3 <- read.csv(file='data/pilot/ROTWASH_noninstructed_blocked_CI_PL.csv')
-  dat4 <- read.csv(file='data/pilot/MIR_noninstructed_blocked_CI_PL.csv')
-  dat5 <- read.csv(file='data/pilot/MIRWASH_noninstructed_blocked_CI_PL.csv')
+  dat1 <- read.csv(file='data/pilot/processed/ALIGNED_noninstructed_blocked_CI_PL.csv')
+  dat2 <- read.csv(file='data/pilot/processed/ROT_noninstructed_blocked_CI_PL.csv')
+  dat3 <- read.csv(file='data/pilot/processed/ROTWASH_noninstructed_blocked_CI_PL.csv')
+  dat4 <- read.csv(file='data/pilot/processed/MIR_noninstructed_blocked_CI_PL.csv')
+  dat5 <- read.csv(file='data/pilot/processed/MIRWASH_noninstructed_blocked_CI_PL.csv')
   
   dat <- rbind(dat1, dat2, dat3, dat4, dat5)
   
@@ -753,7 +753,7 @@ getPathLongFormat <- function(groups = c('noninstructed','instructed'), location
       ALdat <- cbind(ALdat, perturb)
       #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
       longALdata <- gather(ALdat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
-      write.csv(longALdata, file=sprintf('data/pilot/ALIGNED_%s_PL_long.csv', group), row.names = F)
+      write.csv(longALdata, file=sprintf('data/pilot/processed/ALIGNED_%s_PL_long.csv', group), row.names = F)
       
       
       #Rotation data
@@ -766,7 +766,7 @@ getPathLongFormat <- function(groups = c('noninstructed','instructed'), location
       ROTdat <- cbind(ROTdat, perturb)
       #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
       longROTdata <- gather(ROTdat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
-      write.csv(longROTdata, file=sprintf('data/pilot/ROT_%s_PL_long.csv', group), row.names = F)
+      write.csv(longROTdata, file=sprintf('data/pilot/processed/ROT_%s_PL_long.csv', group), row.names = F)
       
       #Mirror data
       MIRdat <- getMIRGroupPathLength(group=group,maxppid=maxppid)
@@ -778,7 +778,7 @@ getPathLongFormat <- function(groups = c('noninstructed','instructed'), location
       MIRdat <- cbind(MIRdat, perturb)
       #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
       longMIRdata <- gather(MIRdat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
-      write.csv(longMIRdata, file=sprintf('data/pilot/MIR_%s_PL_long.csv', group), row.names = F)
+      write.csv(longMIRdata, file=sprintf('data/pilot/processed/MIR_%s_PL_long.csv', group), row.names = F)
     } else if (group == 'instructed'){
       maxppid = 31
       #Aligned data
@@ -791,7 +791,7 @@ getPathLongFormat <- function(groups = c('noninstructed','instructed'), location
       ALdat <- cbind(ALdat, perturb)
       #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
       longALdata <- gather(ALdat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
-      write.csv(longALdata, file=sprintf('data/pilot/ALIGNED_%s_PL_long.csv', group), row.names = F)
+      write.csv(longALdata, file=sprintf('data/pilot/processed/ALIGNED_%s_PL_long.csv', group), row.names = F)
       
       
       #Rotation data
@@ -804,7 +804,7 @@ getPathLongFormat <- function(groups = c('noninstructed','instructed'), location
       ROTdat <- cbind(ROTdat, perturb)
       #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
       longROTdata <- gather(ROTdat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
-      write.csv(longROTdata, file=sprintf('data/pilot/ROT_%s_PL_long.csv', group), row.names = F)
+      write.csv(longROTdata, file=sprintf('data/pilot/processed/ROT_%s_PL_long.csv', group), row.names = F)
       
       #Mirror data
       MIRdat <- getMIRGroupPathLength(group=group,maxppid=maxppid)
@@ -816,7 +816,7 @@ getPathLongFormat <- function(groups = c('noninstructed','instructed'), location
       MIRdat <- cbind(MIRdat, perturb)
       #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
       longMIRdata <- gather(MIRdat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
-      write.csv(longMIRdata, file=sprintf('data/pilot/MIR_%s_PL_long.csv', group), row.names = F)
+      write.csv(longMIRdata, file=sprintf('data/pilot/processed/MIR_%s_PL_long.csv', group), row.names = F)
     }
   }
 }
@@ -824,7 +824,7 @@ getPathLongFormat <- function(groups = c('noninstructed','instructed'), location
 #First, we grab data from aligned, since it is the baseline for all
 getPLBlockedAlignedData <- function(group, blockdefs){
   LCaov <- data.frame()
-  curves <- read.csv(sprintf('data/pilot/ALIGNED_%s_PL_long.csv',group), stringsAsFactors=FALSE)  
+  curves <- read.csv(sprintf('data/pilot/processed/ALIGNED_%s_PL_long.csv',group), stringsAsFactors=FALSE)  
   participants <- unique(curves$participant)
   #R <- dim(curves)[1] # not needed, checks if rows=90 (correct trial numbers)
   #curves <- curves[,-1] #take away trial column
@@ -890,7 +890,7 @@ getPLBlockedPerturbData <- function(perturbations = c('ROT','MIR'), group, block
   LCaov <- data.frame()
   #to include instructed group, just create another for loop here
   for (perturb in perturbations){  
-    curves <- read.csv(sprintf('data/pilot/%s_%s_PL_long.csv',perturb,group), stringsAsFactors=FALSE)  
+    curves <- read.csv(sprintf('data/pilot/processed/%s_%s_PL_long.csv',perturb,group), stringsAsFactors=FALSE)  
     participants <- unique(curves$participant)
     #R <- dim(curves)[1] # not needed, checks if rows=90 (correct trial numbers)
     #curves <- curves[,-1] #take away trial column

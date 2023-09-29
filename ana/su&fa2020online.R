@@ -146,9 +146,9 @@ removeOutlierAlignedReaches <- function(group, set){
   }
   #return(data)
   if (set == 'su2020'){
-    write.csv(data, file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_CircularAligned.csv',group), row.names = F)
+    write.csv(data, file=sprintf('data/mReversalNewAlpha3-master/processed/%s_CircularAligned.csv',group), row.names = F)
   } else if (set == 'fa2020'){
-    write.csv(data, file=sprintf('data/mirrorreversal-fall/raw/processed/%s_CircularAligned.csv', group), row.names = F)
+    write.csv(data, file=sprintf('data/mirrorreversal-fall/processed/%s_CircularAligned.csv', group), row.names = F)
   }
 }
 
@@ -157,9 +157,9 @@ removeOutlierAlignedReaches <- function(group, set){
 getParticipantsOutlierAligned <- function(group, set){
   #data <- removeOutlierAlignedReaches(group=group, set=set)
   if (set == 'su2020'){
-    data <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_CircularAligned.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+    data <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/processed/%s_CircularAligned.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
   } else if (set == 'fa2020'){
-    data <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_CircularAligned.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+    data <- read.csv(file=sprintf('data/mirrorreversal-fall/processed/%s_CircularAligned.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
   }
   ppremove <- c()
   for(pp in 2:ncol(data)){
@@ -257,9 +257,9 @@ getGroupCircularAlignedConfInt <- function(groups = c('30','60'), set){
     # use cleaned aligned trials (i.e. only trials with reaches in correct quadrant)
     #data <- removeOutlierAlignedReaches(group=group, set=set)
     if (set == 'su2020'){
-      data <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_CircularAligned.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+      data <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/processed/%s_CircularAligned.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
     } else if (set == 'fa2020'){
-      data <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_CircularAligned.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+      data <- read.csv(file=sprintf('data/mirrorreversal-fall/processed/%s_CircularAligned.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
     }
     #current fix for summer data being non-randomized and not counterbalanced
     trialno <- data$trial
@@ -296,9 +296,9 @@ getGroupCircularAlignedConfInt <- function(groups = c('30','60'), set){
       }
       
       if (set == 'su2020'){
-        write.csv(confidence, file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_CircularAligned_CI.csv', group), row.names = F) 
+        write.csv(confidence, file=sprintf('data/mReversalNewAlpha3-master/processed/%s_CircularAligned_CI.csv', group), row.names = F) 
       } else if (set == 'fa2020'){
-        write.csv(confidence, file=sprintf('data/mirrorreversal-fall/raw/processed/%s_CircularAligned_CI.csv', group), row.names = F) 
+        write.csv(confidence, file=sprintf('data/mirrorreversal-fall/processed/%s_CircularAligned_CI.csv', group), row.names = F) 
       }
     }
   }
@@ -327,7 +327,7 @@ plotCircularAligned <- function(groups = c('30', '60'), target='inline', set) {
     
     for(group in groups){
       #read in files created by getGroupConfidenceInterval in filehandling.R
-      groupconfidence <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_CircularAligned_CI.csv', group))
+      groupconfidence <- read.csv(file=sprintf('data/mirrorreversal-fall/processed/%s_CircularAligned_CI.csv', group))
       
       
       
@@ -384,7 +384,7 @@ plotCircularAligned <- function(groups = c('30', '60'), target='inline', set) {
     
     for(group in groups){
       #read in files created by getGroupConfidenceInterval in filehandling.R
-      groupconfidence <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_CircularAligned_CI.csv', group))
+      groupconfidence <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/processed/%s_CircularAligned_CI.csv', group))
       
       
       
@@ -552,9 +552,9 @@ getGroupCircularConfInt <- function(groups = c('30','60'), set){
   for(group in groups){
     #data <- getGroupCircularLC(group=group, set=set)
     if (set == 'su2020'){
-      data <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_CircularLC.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+      data <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/processed/%s_CircularLC.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
     } else if (set == 'fa2020'){
-      data <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_CircularLC.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+      data <- read.csv(file=sprintf('data/mirrorreversal-fall/processed/%s_CircularLC.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
     }
     
     
@@ -580,9 +580,9 @@ getGroupCircularConfInt <- function(groups = c('30','60'), set){
         confidence <- rbind(confidence, citrial)
       }
       if (set == 'su2020'){
-        write.csv(confidence, file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_CircularLC_CI.csv', group), row.names = F) 
+        write.csv(confidence, file=sprintf('data/mReversalNewAlpha3-master/processed/%s_CircularLC_CI.csv', group), row.names = F) 
       } else if (set == 'fa2020'){
-        write.csv(confidence, file=sprintf('data/mirrorreversal-fall/raw/processed/%s_CircularLC_CI.csv', group), row.names = F) 
+        write.csv(confidence, file=sprintf('data/mirrorreversal-fall/processed/%s_CircularLC_CI.csv', group), row.names = F) 
       }
     }
   }
@@ -611,7 +611,7 @@ plotCircularLC <- function(groups = c('30', '60'), target='inline', set) {
     
     for(group in groups){
       #read in files created by getGroupConfidenceInterval in filehandling.R
-      groupconfidence <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_CircularLC_CI.csv', group))
+      groupconfidence <- read.csv(file=sprintf('data/mirrorreversal-fall/processed/%s_CircularLC_CI.csv', group))
       
       
       
@@ -670,7 +670,7 @@ plotCircularLC <- function(groups = c('30', '60'), target='inline', set) {
     
     for(group in groups){
       #read in files created by getGroupConfidenceInterval in filehandling.R
-      groupconfidence <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_CircularLC_CI.csv', group))
+      groupconfidence <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/processed/%s_CircularLC_CI.csv', group))
       
       
       
@@ -825,9 +825,9 @@ getGroupCircularRAE <- function(group, set){
   
   #return(dataoutput)
   if (set == 'su2020'){
-    write.csv(dataoutput, file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_CircularRAE.csv',group), row.names = F)
+    write.csv(dataoutput, file=sprintf('data/mReversalNewAlpha3-master/processed/%s_CircularRAE.csv',group), row.names = F)
   } else if (set == 'fa2020'){
-    write.csv(dataoutput, file=sprintf('data/mirrorreversal-fall/raw/processed/%s_CircularRAE.csv', group), row.names = F)
+    write.csv(dataoutput, file=sprintf('data/mirrorreversal-fall/processed/%s_CircularRAE.csv', group), row.names = F)
   }
   #removed outlier procedure first. Due to circular statistics, mean and sd now differ.
   #typical outlier removal procedure would not be valid in this case
@@ -837,9 +837,9 @@ getGroupCircularRAEConfInt <- function(groups = c('30','60'), set){
   for(group in groups){
     #data <- getGroupCircularRAE(group=group, set=set)
     if (set == 'su2020'){
-      data <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_CircularRAE.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+      data <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/processed/%s_CircularRAE.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
     } else if (set == 'fa2020'){
-      data <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_CircularRAE.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+      data <- read.csv(file=sprintf('data/mirrorreversal-fall/processed/%s_CircularRAE.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
     }
     
     #current fix for summer data being non-randomized and not counterbalanced
@@ -865,9 +865,9 @@ getGroupCircularRAEConfInt <- function(groups = c('30','60'), set){
       }
       
       if (set == 'su2020'){
-        write.csv(confidence, file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_CircularRAE_CI.csv', group), row.names = F) 
+        write.csv(confidence, file=sprintf('data/mReversalNewAlpha3-master/processed/%s_CircularRAE_CI.csv', group), row.names = F) 
       } else if (set == 'fa2020'){
-        write.csv(confidence, file=sprintf('data/mirrorreversal-fall/raw/processed/%s_CircularRAE_CI.csv', group), row.names = F) 
+        write.csv(confidence, file=sprintf('data/mirrorreversal-fall/processed/%s_CircularRAE_CI.csv', group), row.names = F) 
       }
     }
   }
@@ -897,7 +897,7 @@ plotCircularRAE <- function(groups = c('30', '60'), target='inline', set) {
     
     for(group in groups){
       #read in files created by getGroupConfidenceInterval in filehandling.R
-      groupconfidence <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_CircularRAE_CI.csv', group))
+      groupconfidence <- read.csv(file=sprintf('data/mirrorreversal-fall/processed/%s_CircularRAE_CI.csv', group))
       
       
       
@@ -956,7 +956,7 @@ plotCircularRAE <- function(groups = c('30', '60'), target='inline', set) {
     
     for(group in groups){
       #read in files created by getGroupConfidenceInterval in filehandling.R
-      groupconfidence <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_CircularRAE_CI.csv', group))
+      groupconfidence <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/processed/%s_CircularRAE_CI.csv', group))
       
       
       
@@ -1035,9 +1035,9 @@ plotCircularAllTasks <- function(groups = c('30', '60'), target='inline', set) {
     
     for(group in groups){
       #read in files created by getGroupConfidenceInterval in filehandling.R
-      groupconfidenceAligned <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_CircularAligned_CI.csv', group))
-      groupconfidenceLC <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_CircularLC_CI.csv', group))
-      groupconfidenceRAE <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_CircularRAE_CI.csv', group))
+      groupconfidenceAligned <- read.csv(file=sprintf('data/mirrorreversal-fall/processed/%s_CircularAligned_CI.csv', group))
+      groupconfidenceLC <- read.csv(file=sprintf('data/mirrorreversal-fall/processed/%s_CircularLC_CI.csv', group))
+      groupconfidenceRAE <- read.csv(file=sprintf('data/mirrorreversal-fall/processed/%s_CircularRAE_CI.csv', group))
       
       
       
@@ -1117,9 +1117,9 @@ plotCircularAllTasks <- function(groups = c('30', '60'), target='inline', set) {
     
     for(group in groups){
       #read in files created by getGroupConfidenceInterval in filehandling.R
-      groupconfidenceAligned <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_CircularAligned_CI.csv', group))
-      groupconfidenceLC <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_CircularLC_CI.csv', group))
-      groupconfidenceRAE <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_CircularRAE_CI.csv', group))
+      groupconfidenceAligned <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/processed/%s_CircularAligned_CI.csv', group))
+      groupconfidenceLC <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/processed/%s_CircularLC_CI.csv', group))
+      groupconfidenceRAE <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/processed/%s_CircularRAE_CI.csv', group))
       
       
       
@@ -1213,7 +1213,7 @@ getParticipantMirrorDistributions <- function(groups = c('30', '60'), target='in
         svglite(file=sprintf('doc/fig/mirrorreversal-fall/Fig1F_%s_ppDistributions.svg', group), width=20, height=12, pointsize=14, system_fonts=list(sans="Arial"))
       }
       
-      data_MIR<- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_CircularLC.csv', group), check.names = FALSE)
+      data_MIR<- read.csv(file=sprintf('data/mirrorreversal-fall/processed/%s_CircularLC.csv', group), check.names = FALSE)
       
       plot(NA, NA, xlim = c(0, 610), ylim = c(-200,200), 
            xlab = "Participants", ylab = "Angular reach deviation (°)", frame.plot = FALSE, #frame.plot takes away borders
@@ -1256,7 +1256,7 @@ getParticipantMirrorDistributions <- function(groups = c('30', '60'), target='in
         svglite(file=sprintf('doc/fig/mReversalNewAlpha3-master/Fig1F_%s_ppDistributions.svg', group), width=20, height=12, pointsize=14, system_fonts=list(sans="Arial"))
       }
       
-      data_MIR<- read.csv(file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_CircularLC.csv', group), check.names = FALSE)
+      data_MIR<- read.csv(file=sprintf('data/mReversalNewAlpha3-master/processed/%s_CircularLC.csv', group), check.names = FALSE)
       
       plot(NA, NA, xlim = c(0, 103), ylim = c(-200,200), 
            xlab = "Participants", ylab = "Angular reach deviation (°)", frame.plot = FALSE, #frame.plot takes away borders
@@ -1303,7 +1303,7 @@ getParticipantWashoutDistributions <- function(groups = c('30', '60'), target='i
         svglite(file=sprintf('doc/fig/mirrorreversal-fall/Fig1G_%s_ppWashoutDistributions.svg', group), width=20, height=12, pointsize=14, system_fonts=list(sans="Arial"))
       }
       
-      data_MIR<- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_CircularRAE.csv', group), check.names = FALSE)
+      data_MIR<- read.csv(file=sprintf('data/mirrorreversal-fall/processed/%s_CircularRAE.csv', group), check.names = FALSE)
       
       plot(NA, NA, xlim = c(0, 610), ylim = c(-200,200), 
            xlab = "Participants", ylab = "Angular reach deviation (°)", frame.plot = FALSE, #frame.plot takes away borders
@@ -1346,7 +1346,7 @@ getParticipantWashoutDistributions <- function(groups = c('30', '60'), target='i
         svglite(file=sprintf('doc/fig/mReversalNewAlpha3-master/Fig1G_%s_ppWashoutDistributions.svg', group), width=20, height=12, pointsize=14, system_fonts=list(sans="Arial"))
       }
       
-      data_MIR<- read.csv(file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_CircularRAE.csv', group), check.names = FALSE)
+      data_MIR<- read.csv(file=sprintf('data/mReversalNewAlpha3-master/processed/%s_CircularRAE.csv', group), check.names = FALSE)
       
       plot(NA, NA, xlim = c(0, 103), ylim = c(-200,200), 
            xlab = "Participants", ylab = "Angular reach deviation (°)", frame.plot = FALSE, #frame.plot takes away borders
@@ -1390,18 +1390,18 @@ plotMirWashParticipantDistributions <- function(set){
   if(set == 'fa2020'){
     pdf("doc/fig/mirrorreversal-fall/MirWashParticipantDistributions.pdf")
     
-    data_MIR_30<- read.csv(file='data/mirrorreversal-fall/raw/processed/30_CircularLC.csv', check.names = FALSE)
-    data_MIR_60<- read.csv(file='data/mirrorreversal-fall/raw/processed/60_CircularLC.csv', check.names = FALSE)
-    data_WASH_30<- read.csv(file='data/mirrorreversal-fall/raw/processed/30_CircularRAE.csv', check.names = FALSE)
-    data_WASH_60<- read.csv(file='data/mirrorreversal-fall/raw/processed/60_CircularRAE.csv', check.names = FALSE)
+    data_MIR_30<- read.csv(file='data/mirrorreversal-fall/processed/30_CircularLC.csv', check.names = FALSE)
+    data_MIR_60<- read.csv(file='data/mirrorreversal-fall/processed/60_CircularLC.csv', check.names = FALSE)
+    data_WASH_30<- read.csv(file='data/mirrorreversal-fall/processed/30_CircularRAE.csv', check.names = FALSE)
+    data_WASH_60<- read.csv(file='data/mirrorreversal-fall/processed/60_CircularRAE.csv', check.names = FALSE)
     
   } else if (set == 'su2020'){
     pdf("doc/fig/mReversalNewAlpha3-master/MirWashParticipantDistributions.pdf")
     
-    data_MIR_30<- read.csv(file='data/mReversalNewAlpha3-master/raw/processed/30_CircularLC.csv', check.names = FALSE)
-    data_MIR_60<- read.csv(file='data/mReversalNewAlpha3-master/raw/processed/60_CircularLC.csv', check.names = FALSE)
-    data_WASH_30<- read.csv(file='data/mReversalNewAlpha3-master/raw/processed/30_CircularRAE.csv', check.names = FALSE)
-    data_WASH_60<- read.csv(file='data/mReversalNewAlpha3-master/raw/processed/60_CircularRAE.csv', check.names = FALSE)
+    data_MIR_30<- read.csv(file='data/mReversalNewAlpha3-master/processed/30_CircularLC.csv', check.names = FALSE)
+    data_MIR_60<- read.csv(file='data/mReversalNewAlpha3-master/processed/60_CircularLC.csv', check.names = FALSE)
+    data_WASH_30<- read.csv(file='data/mReversalNewAlpha3-master/processed/30_CircularRAE.csv', check.names = FALSE)
+    data_WASH_60<- read.csv(file='data/mReversalNewAlpha3-master/processed/60_CircularRAE.csv', check.names = FALSE)
     
   }
   
@@ -1457,9 +1457,9 @@ plotIndividualAllTasks <- function(groups = c('30', '60'), target='inline', set)
       }
       
       
-      data_AL<- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_CircularAligned.csv', group), check.names = FALSE)
-      data_MIR<- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_CircularLC.csv', group), check.names = FALSE)
-      data_RAE<- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_CircularRAE.csv', group), check.names = FALSE)
+      data_AL<- read.csv(file=sprintf('data/mirrorreversal-fall/processed/%s_CircularAligned.csv', group), check.names = FALSE)
+      data_MIR<- read.csv(file=sprintf('data/mirrorreversal-fall/processed/%s_CircularLC.csv', group), check.names = FALSE)
+      data_RAE<- read.csv(file=sprintf('data/mirrorreversal-fall/processed/%s_CircularRAE.csv', group), check.names = FALSE)
       
       plot(NA, NA, xlim = c(0,131), ylim = c(-200,200), 
            xlab = "Trial", ylab = "Angular reach deviation (°)", frame.plot = FALSE, #frame.plot takes away borders
@@ -1487,7 +1487,7 @@ plotIndividualAllTasks <- function(groups = c('30', '60'), target='inline', set)
       }
       lines(x=c(1:20), y=mean_AL, col='orange', lw=2)
       #plot line indicating mean of data points as circular values
-      dat_CI <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_CircularAligned_CI.csv', group))
+      dat_CI <- read.csv(file=sprintf('data/mirrorreversal-fall/processed/%s_CircularAligned_CI.csv', group))
       circmean_AL <- dat_CI[,2]
       lines(x=c(1:20), y=circmean_AL, col='red', lw=2)
       
@@ -1507,7 +1507,7 @@ plotIndividualAllTasks <- function(groups = c('30', '60'), target='inline', set)
       }
       lines(x=c(21:110), y=mean_MIR, col='orange', lw=2)
       #plot line indicating mean of data points as circular values
-      dat_CI <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_CircularLC_CI.csv', group))
+      dat_CI <- read.csv(file=sprintf('data/mirrorreversal-fall/processed/%s_CircularLC_CI.csv', group))
       circmean_MIR <- dat_CI[,2]
       lines(x=c(21:110), y=circmean_MIR, col='red', lw=2)
       
@@ -1527,7 +1527,7 @@ plotIndividualAllTasks <- function(groups = c('30', '60'), target='inline', set)
       }
       lines(x=c(111:130), y=mean_RAE, col='orange', lw=2)
       #plot line indicating mean of data points as circular values
-      dat_CI <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_CircularRAE_CI.csv', group))
+      dat_CI <- read.csv(file=sprintf('data/mirrorreversal-fall/processed/%s_CircularRAE_CI.csv', group))
       circmean_RAE <- dat_CI[,2]
       lines(x=c(111:130), y=circmean_RAE, col='red', lw=2)
       
@@ -1549,9 +1549,9 @@ plotIndividualAllTasks <- function(groups = c('30', '60'), target='inline', set)
       }
       
       
-      data_AL<- read.csv(file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_CircularAligned.csv', group), check.names = FALSE)
-      data_MIR<- read.csv(file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_CircularLC.csv', group), check.names = FALSE)
-      data_RAE<- read.csv(file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_CircularRAE.csv', group), check.names = FALSE)
+      data_AL<- read.csv(file=sprintf('data/mReversalNewAlpha3-master/processed/%s_CircularAligned.csv', group), check.names = FALSE)
+      data_MIR<- read.csv(file=sprintf('data/mReversalNewAlpha3-master/processed/%s_CircularLC.csv', group), check.names = FALSE)
+      data_RAE<- read.csv(file=sprintf('data/mReversalNewAlpha3-master/processed/%s_CircularRAE.csv', group), check.names = FALSE)
       
       plot(NA, NA, xlim = c(0,131), ylim = c(-200,200), 
            xlab = "Trial", ylab = "Angular reach deviation (°)", frame.plot = FALSE, #frame.plot takes away borders
@@ -1584,7 +1584,7 @@ plotIndividualAllTasks <- function(groups = c('30', '60'), target='inline', set)
       }
       
       #plot line indicating mean of data points as circular values
-      dat_CI <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_CircularAligned_CI.csv', group))
+      dat_CI <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/processed/%s_CircularAligned_CI.csv', group))
       circmean_AL <- dat_CI[,2]
       if (group == '30'){
         lines(x=seq(1,20,2), y=na.omit(circmean_AL), col='red', lw=2)
@@ -1614,7 +1614,7 @@ plotIndividualAllTasks <- function(groups = c('30', '60'), target='inline', set)
       }
       
       #plot line indicating mean of data points as circular values
-      dat_CI <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_CircularLC_CI.csv', group))
+      dat_CI <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/processed/%s_CircularLC_CI.csv', group))
       circmean_MIR <- dat_CI[,2]
       if (group == '30'){
         lines(x=seq(21,110,2), y=na.omit(circmean_MIR), col='red', lw=2)
@@ -1643,7 +1643,7 @@ plotIndividualAllTasks <- function(groups = c('30', '60'), target='inline', set)
       }
       
       #plot line indicating mean of data points as circular values
-      dat_CI <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_CircularRAE_CI.csv', group))
+      dat_CI <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/processed/%s_CircularRAE_CI.csv', group))
       circmean_RAE <- dat_CI[,2]
       if (group == '30'){
         lines(x=seq(111,130,2), y=na.omit(circmean_RAE), col='red', lw=2)
@@ -1673,9 +1673,9 @@ plotHeatmaps <- function(groups = c('30', '60'), target = 'inline', set){
         svglite(file=sprintf('doc/fig/mirrorreversal-fall/Fig1E_%s_Heatmap.svg', group), width=20, height=12, pointsize=14, system_fonts=list(sans="Arial"))
       }
       
-      data_AL<- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_CircularAligned.csv', group), check.names = FALSE)
-      data_MIR<- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_CircularLC.csv', group), check.names = FALSE)
-      data_RAE<- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_CircularRAE.csv', group), check.names = FALSE)
+      data_AL<- read.csv(file=sprintf('data/mirrorreversal-fall/processed/%s_CircularAligned.csv', group), check.names = FALSE)
+      data_MIR<- read.csv(file=sprintf('data/mirrorreversal-fall/processed/%s_CircularLC.csv', group), check.names = FALSE)
+      data_RAE<- read.csv(file=sprintf('data/mirrorreversal-fall/processed/%s_CircularRAE.csv', group), check.names = FALSE)
       data <- rbind(data_AL, data_MIR, data_RAE)
       
       interval <- seq(-200, 200, 10) #group ang devs in bins of 10 degrees each, -200 and 200 due to some values above 180
@@ -1741,9 +1741,9 @@ plotHeatmaps <- function(groups = c('30', '60'), target = 'inline', set){
         svglite(file=sprintf('doc/fig/mReversalNewAlpha3-master/Fig1E_%s_Heatmap.svg', group), width=20, height=12, pointsize=20, system_fonts=list(sans="Arial"))
       }
       
-      data_AL<- read.csv(file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_CircularAligned.csv', group), check.names = FALSE)
-      data_MIR<- read.csv(file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_CircularLC.csv', group), check.names = FALSE)
-      data_RAE<- read.csv(file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_CircularRAE.csv', group), check.names = FALSE)
+      data_AL<- read.csv(file=sprintf('data/mReversalNewAlpha3-master/processed/%s_CircularAligned.csv', group), check.names = FALSE)
+      data_MIR<- read.csv(file=sprintf('data/mReversalNewAlpha3-master/processed/%s_CircularLC.csv', group), check.names = FALSE)
+      data_RAE<- read.csv(file=sprintf('data/mReversalNewAlpha3-master/processed/%s_CircularRAE.csv', group), check.names = FALSE)
       data <- rbind(data_AL, data_MIR, data_RAE)
       
       interval <- seq(-200, 200, 10) #group ang devs in bins of 10 degrees each, -200 and 200 due to some values above 180
@@ -1814,9 +1814,9 @@ plotGroupCircFreq <- function(groups = c('30', '60'), set){
     #dat <- getGroupCircFreq(group = group, set = set)
     #dat <- getGroupCircularLC(group=group, set=set)
     if (set == 'su2020'){
-      dat <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_CircularLC.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+      dat <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/processed/%s_CircularLC.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
     } else if (set == 'fa2020'){
-      dat <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_CircularLC.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+      dat <- read.csv(file=sprintf('data/mirrorreversal-fall/processed/%s_CircularLC.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
     }
     
     if(set == 'fa2020'){
@@ -1902,9 +1902,9 @@ plotMirTrialOneGroupCircFreq <- function(groups = c('30', '60'), set, target='in
     #dat <- getGroupCircFreq(group = group, set = set)
     #dat <- getGroupCircularLC(group=group, set=set)
     if (set == 'su2020'){
-      dat <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_CircularLC.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+      dat <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/processed/%s_CircularLC.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
     } else if (set == 'fa2020'){
-      dat <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_CircularLC.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+      dat <- read.csv(file=sprintf('data/mirrorreversal-fall/processed/%s_CircularLC.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
     }
     
     #current fix for summer data being non-randomized and not counterbalanced
@@ -2138,9 +2138,9 @@ getCheckGroupCircularLC <- function(group, set){
   
   #return(dataoutput)
   if (set == 'su2020'){
-    write.csv(dataoutput, file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_CheckGroupCircularLC.csv',group), row.names = F)
+    write.csv(dataoutput, file=sprintf('data/mReversalNewAlpha3-master/processed/%s_CheckGroupCircularLC.csv',group), row.names = F)
   } else if (set == 'fa2020'){
-    write.csv(dataoutput, file=sprintf('data/mirrorreversal-fall/raw/processed/%s_CheckGroupCircularLC.csv', group), row.names = F)
+    write.csv(dataoutput, file=sprintf('data/mirrorreversal-fall/processed/%s_CheckGroupCircularLC.csv', group), row.names = F)
   }
   #removed outlier procedure first. Due to circular statistics, mean and sd now differ.
   #typical outlier removal procedure would not be valid in this case
@@ -2192,9 +2192,9 @@ getCheckGroupStep1Samp <- function(group, set){
   
   #return(dataoutput)
   if (set == 'su2020'){
-    write.csv(dataoutput, file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_CheckGroupStep1Samp.csv',group), row.names = F)
+    write.csv(dataoutput, file=sprintf('data/mReversalNewAlpha3-master/processed/%s_CheckGroupStep1Samp.csv',group), row.names = F)
   } else if (set == 'fa2020'){
-    write.csv(dataoutput, file=sprintf('data/mirrorreversal-fall/raw/processed/%s_CheckGroupStep1Samp.csv', group), row.names = F)
+    write.csv(dataoutput, file=sprintf('data/mirrorreversal-fall/processed/%s_CheckGroupStep1Samp.csv', group), row.names = F)
   }
   #removed outlier procedure first. Due to circular statistics, mean and sd now differ.
   #typical outlier removal procedure would not be valid in this case
@@ -2207,11 +2207,11 @@ plotCheckGroupCircFreq <- function(groups = c('30', '60'), set){
     #dat <- getCheckGroupCircularLC(group=group, set=set)
     #dat1 <- getCheckGroupStep1Samp(group=group, set=set)
     if (set == 'su2020'){
-      dat <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_CheckGroupCircularLC.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
-      dat1 <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_CheckGroupStep1Samp.csv', group), check.names = FALSE)
+      dat <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/processed/%s_CheckGroupCircularLC.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+      dat1 <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/processed/%s_CheckGroupStep1Samp.csv', group), check.names = FALSE)
     } else if (set == 'fa2020'){
-      dat <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_CheckGroupCircularLC.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
-      dat1 <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_CheckGroupStep1Samp.csv', group), check.names = FALSE)    
+      dat <- read.csv(file=sprintf('data/mirrorreversal-fall/processed/%s_CheckGroupCircularLC.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+      dat1 <- read.csv(file=sprintf('data/mirrorreversal-fall/processed/%s_CheckGroupStep1Samp.csv', group), check.names = FALSE)    
     }
     
     
@@ -2317,11 +2317,11 @@ plotTrialOneCheckGroupCircFreq <- function(groups = c('30', '60'), target='inlin
     #dat <- getCheckGroupCircularLC(group=group, set=set)
     #dat1 <- getCheckGroupStep1Samp(group=group, set=set)
     if (set == 'su2020'){
-      dat <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_CheckGroupCircularLC.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
-      dat1 <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_CheckGroupStep1Samp.csv', group), check.names = FALSE)
+      dat <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/processed/%s_CheckGroupCircularLC.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+      dat1 <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/processed/%s_CheckGroupStep1Samp.csv', group), check.names = FALSE)
     } else if (set == 'fa2020'){
-      dat <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_CheckGroupCircularLC.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
-      dat1 <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_CheckGroupStep1Samp.csv', group), check.names = FALSE)    
+      dat <- read.csv(file=sprintf('data/mirrorreversal-fall/processed/%s_CheckGroupCircularLC.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+      dat1 <- read.csv(file=sprintf('data/mirrorreversal-fall/processed/%s_CheckGroupStep1Samp.csv', group), check.names = FALSE)    
     }
     
     #current fix for summer data being non-randomized and not counterbalanced
@@ -2407,9 +2407,9 @@ getParticipantMoveThrough <- function(group,set){
   
   #dat1 <- getCheckGroupStep1Samp(group=group, set=set)
   if (set == 'su2020'){
-    dat1 <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_CheckGroupStep1Samp.csv', group), check.names = FALSE)
+    dat1 <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/processed/%s_CheckGroupStep1Samp.csv', group), check.names = FALSE)
   } else if (set == 'fa2020'){
-    dat1 <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_CheckGroupStep1Samp.csv', group), check.names = FALSE)    
+    dat1 <- read.csv(file=sprintf('data/mirrorreversal-fall/processed/%s_CheckGroupStep1Samp.csv', group), check.names = FALSE)    
   }
   
   #current fix for summer data being non-randomized and not counterbalanced
@@ -2510,9 +2510,9 @@ getTrialOneParticipantsWMoveThrough<- function(group, set){
   colnames(dataoutput) <- c('participant', 'movethrough')
   #return(dataoutput)
   if (set == 'su2020'){
-    write.csv(dataoutput, file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_TrialOnePPMoveThrough.csv',group), row.names = F)
+    write.csv(dataoutput, file=sprintf('data/mReversalNewAlpha3-master/processed/%s_TrialOnePPMoveThrough.csv',group), row.names = F)
   } else if (set == 'fa2020'){
-    write.csv(dataoutput, file=sprintf('data/mirrorreversal-fall/raw/processed/%s_TrialOnePPMoveThrough.csv', group), row.names = F)
+    write.csv(dataoutput, file=sprintf('data/mirrorreversal-fall/processed/%s_TrialOnePPMoveThrough.csv', group), row.names = F)
   }
 }
 
@@ -2526,18 +2526,18 @@ getTrialOneParticipantsWMoveThrough<- function(group, set){
 getMovedGroupCircularConfInt <- function(groups = c('30', '60'), set, moved){
   for (group in groups){
     if (set == 'su2020'){
-      ppall <- read.csv(file='data/mReversalNewAlpha3-master/raw/processed/30_TrialOnePPMoveThrough.csv', check.names = FALSE) #summer data always has 30 deg as first trial
+      ppall <- read.csv(file='data/mReversalNewAlpha3-master/processed/30_TrialOnePPMoveThrough.csv', check.names = FALSE) #summer data always has 30 deg as first trial
     } else if (set == 'fa2020'){
-      ppall <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_TrialOnePPMoveThrough.csv', group), check.names = FALSE)    
+      ppall <- read.csv(file=sprintf('data/mirrorreversal-fall/processed/%s_TrialOnePPMoveThrough.csv', group), check.names = FALSE)    
     }
     pplist <- ppall[which(ppall$movethrough == moved),] #moved is 1 if movethrough, 0 if not
     pplist <- pplist$participant
     
     #dat <- getGroupCircularLC(group=group, set=set)
     if (set == 'su2020'){
-      dat <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_CircularLC.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+      dat <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/processed/%s_CircularLC.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
     } else if (set == 'fa2020'){
-      dat <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_CircularLC.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+      dat <- read.csv(file=sprintf('data/mirrorreversal-fall/processed/%s_CircularLC.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
     }
     trial <- dat$trial
     # get only participants specified in list
@@ -2570,9 +2570,9 @@ getMovedGroupCircularConfInt <- function(groups = c('30', '60'), set, moved){
         confidence <- rbind(confidence, citrial)
       }
       if (set == 'su2020'){
-        write.csv(confidence, file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_%s_CircularLC_CI.csv', group, moved), row.names = F) 
+        write.csv(confidence, file=sprintf('data/mReversalNewAlpha3-master/processed/%s_%s_CircularLC_CI.csv', group, moved), row.names = F) 
       } else if (set == 'fa2020'){
-        write.csv(confidence, file=sprintf('data/mirrorreversal-fall/raw/processed/%s_%s_CircularLC_CI.csv', group, moved), row.names = F) 
+        write.csv(confidence, file=sprintf('data/mirrorreversal-fall/processed/%s_%s_CircularLC_CI.csv', group, moved), row.names = F) 
       }
     }
   }
@@ -2582,9 +2582,9 @@ getMovedGroupCircularConfInt <- function(groups = c('30', '60'), set, moved){
 getAlignedMovedGroupCircularConfInt <- function(groups = c('30', '60'), set, moved){
   for (group in groups){
     if (set == 'su2020'){
-      ppall <- read.csv(file='data/mReversalNewAlpha3-master/raw/processed/30_TrialOnePPMoveThrough.csv', check.names = FALSE) #summer data always has 30 deg as first trial
+      ppall <- read.csv(file='data/mReversalNewAlpha3-master/processed/30_TrialOnePPMoveThrough.csv', check.names = FALSE) #summer data always has 30 deg as first trial
     } else if (set == 'fa2020'){
-      ppall <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_TrialOnePPMoveThrough.csv', group), check.names = FALSE)    
+      ppall <- read.csv(file=sprintf('data/mirrorreversal-fall/processed/%s_TrialOnePPMoveThrough.csv', group), check.names = FALSE)    
     }
     pplist <- ppall[which(ppall$movethrough == moved),] #moved is 1 if movethrough, 0 if not
     pplist <- pplist$participant
@@ -2592,9 +2592,9 @@ getAlignedMovedGroupCircularConfInt <- function(groups = c('30', '60'), set, mov
     #dat <- getGroupCircularAligned(group=group, set=set)
     #dat <- removeOutlierAlignedReaches(group=group, set=set)
     if (set == 'su2020'){
-      dat <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_CircularAligned.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+      dat <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/processed/%s_CircularAligned.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
     } else if (set == 'fa2020'){
-      dat <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_CircularAligned.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+      dat <- read.csv(file=sprintf('data/mirrorreversal-fall/processed/%s_CircularAligned.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
     }
     trial <- dat$trial
     # get only participants specified in list
@@ -2627,9 +2627,9 @@ getAlignedMovedGroupCircularConfInt <- function(groups = c('30', '60'), set, mov
         confidence <- rbind(confidence, citrial)
       }
       if (set == 'su2020'){
-        write.csv(confidence, file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_%s_CircularAligned_CI.csv', group, moved), row.names = F) 
+        write.csv(confidence, file=sprintf('data/mReversalNewAlpha3-master/processed/%s_%s_CircularAligned_CI.csv', group, moved), row.names = F) 
       } else if (set == 'fa2020'){
-        write.csv(confidence, file=sprintf('data/mirrorreversal-fall/raw/processed/%s_%s_CircularAligned_CI.csv', group, moved), row.names = F) 
+        write.csv(confidence, file=sprintf('data/mirrorreversal-fall/processed/%s_%s_CircularAligned_CI.csv', group, moved), row.names = F) 
       }
     }
   }
@@ -2639,18 +2639,18 @@ getAlignedMovedGroupCircularConfInt <- function(groups = c('30', '60'), set, mov
 getRAEMovedGroupCircularConfInt <- function(groups = c('30', '60'), set, moved){
   for (group in groups){
     if (set == 'su2020'){
-      ppall <- read.csv(file='data/mReversalNewAlpha3-master/raw/processed/30_TrialOnePPMoveThrough.csv', check.names = FALSE) #summer data always has 30 deg as first trial
+      ppall <- read.csv(file='data/mReversalNewAlpha3-master/processed/30_TrialOnePPMoveThrough.csv', check.names = FALSE) #summer data always has 30 deg as first trial
     } else if (set == 'fa2020'){
-      ppall <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_TrialOnePPMoveThrough.csv', group), check.names = FALSE)    
+      ppall <- read.csv(file=sprintf('data/mirrorreversal-fall/processed/%s_TrialOnePPMoveThrough.csv', group), check.names = FALSE)    
     }
     pplist <- ppall[which(ppall$movethrough == moved),] #moved is 1 if movethrough, 0 if not
     pplist <- pplist$participant
     
     #dat <- getGroupCircularRAE(group=group, set=set)
     if (set == 'su2020'){
-      dat <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_CircularRAE.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+      dat <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/processed/%s_CircularRAE.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
     } else if (set == 'fa2020'){
-      dat <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_CircularRAE.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+      dat <- read.csv(file=sprintf('data/mirrorreversal-fall/processed/%s_CircularRAE.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
     }
     trial <- dat$trial
     # get only participants specified in list
@@ -2683,9 +2683,9 @@ getRAEMovedGroupCircularConfInt <- function(groups = c('30', '60'), set, moved){
         confidence <- rbind(confidence, citrial)
       }
       if (set == 'su2020'){
-        write.csv(confidence, file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_%s_CircularRAE_CI.csv', group, moved), row.names = F) 
+        write.csv(confidence, file=sprintf('data/mReversalNewAlpha3-master/processed/%s_%s_CircularRAE_CI.csv', group, moved), row.names = F) 
       } else if (set == 'fa2020'){
-        write.csv(confidence, file=sprintf('data/mirrorreversal-fall/raw/processed/%s_%s_CircularRAE_CI.csv', group, moved), row.names = F) 
+        write.csv(confidence, file=sprintf('data/mirrorreversal-fall/processed/%s_%s_CircularRAE_CI.csv', group, moved), row.names = F) 
       }
     }
   }
@@ -2715,7 +2715,7 @@ plotMoveThroughLC <- function(groups = c('30', '60'), moves = c('0','1'), target
     
     for(move in moves){
       #read in files created by getGroupConfidenceInterval in filehandling.R
-      groupconfidence <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_%s_CircularLC_CI.csv', group, move))
+      groupconfidence <- read.csv(file=sprintf('data/mirrorreversal-fall/processed/%s_%s_CircularLC_CI.csv', group, move))
       
       
       
@@ -2777,7 +2777,7 @@ plotMoveThroughLCSU <- function(groups = c('30', '60'), moves = c('0','1'), targ
     
     for(group in groups){
       #read in files created by getGroupConfidenceInterval in filehandling.R
-      groupconfidence <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_%s_CircularLC_CI.csv', group, move))
+      groupconfidence <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/processed/%s_%s_CircularLC_CI.csv', group, move))
       
       
       
@@ -2853,9 +2853,9 @@ plotMoveThroughAllTasks <- function(groups = c('30', '60'), moves = c('0','1'), 
     
     for(move in moves){
       #read in files created by getGroupConfidenceInterval in filehandling.R
-      groupconfidenceAligned <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_%s_CircularAligned_CI.csv', group, move))
-      groupconfidenceLC <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_%s_CircularLC_CI.csv', group, move))
-      groupconfidenceRAE <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_%s_CircularRAE_CI.csv', group, move))
+      groupconfidenceAligned <- read.csv(file=sprintf('data/mirrorreversal-fall/processed/%s_%s_CircularAligned_CI.csv', group, move))
+      groupconfidenceLC <- read.csv(file=sprintf('data/mirrorreversal-fall/processed/%s_%s_CircularLC_CI.csv', group, move))
+      groupconfidenceRAE <- read.csv(file=sprintf('data/mirrorreversal-fall/processed/%s_%s_CircularRAE_CI.csv', group, move))
       
       
       
@@ -2943,9 +2943,9 @@ plotMoveThroughAllTasksSU <- function(groups = c('30', '60'), moves = c('0','1')
     
     for(move in moves){
       #read in files created by getGroupConfidenceInterval in filehandling.R
-      groupconfidenceAligned <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_%s_CircularAligned_CI.csv', group, move))
-      groupconfidenceLC <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_%s_CircularLC_CI.csv', group, move))
-      groupconfidenceRAE <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_%s_CircularRAE_CI.csv', group, move))
+      groupconfidenceAligned <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/processed/%s_%s_CircularAligned_CI.csv', group, move))
+      groupconfidenceLC <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/processed/%s_%s_CircularLC_CI.csv', group, move))
+      groupconfidenceRAE <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/processed/%s_%s_CircularRAE_CI.csv', group, move))
       
       
       
@@ -3148,10 +3148,10 @@ getGroupAllTasksMT <- function(group, set, step=2){
   #return(dataoutput)
   if (set == 'su2020'){
     #write.csv(dataoutput, file=sprintf('data/mReversalNewAlpha3-master/data/processed/%s_step%s_MovementTime_UNCORRECTED.csv',group,step), row.names = F)
-    write.csv(dataoutput, file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_step%s_MovementTime.csv',group,step), row.names = F)
+    write.csv(dataoutput, file=sprintf('data/mReversalNewAlpha3-master/processed/%s_step%s_MovementTime.csv',group,step), row.names = F)
   } else if (set == 'fa2020'){
     #write.csv(dataoutput, file=sprintf('data/mirrorreversal-fall/data/processed/%s_step%s_MovementTime_UNCORRECTED.csv', group,step), row.names = F)
-    write.csv(dataoutput, file=sprintf('data/mirrorreversal-fall/raw/processed/%s_step%s_MovementTime.csv', group,step), row.names = F)
+    write.csv(dataoutput, file=sprintf('data/mirrorreversal-fall/processed/%s_step%s_MovementTime.csv', group,step), row.names = F)
   }
   
   #can keep track of deleted trials here, by using the saved csv file or counting NA values in dataoutput
@@ -3166,9 +3166,9 @@ getGroupAllTasksMTConfInt <- function(groups = c('30','60'), type = 't', set, st
   for(group in groups){
     #data <- getGroupAllTasksMT(group = group, set = set, step = step)
     if (set == 'su2020'){
-      data <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_step%s_MovementTime.csv',group,step), check.names = FALSE) #check.names allows us to keep pp id as headers
+      data <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/processed/%s_step%s_MovementTime.csv',group,step), check.names = FALSE) #check.names allows us to keep pp id as headers
     } else if (set == 'fa2020'){
-      data <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_step%s_MovementTime.csv', group,step), check.names = FALSE) #check.names allows us to keep pp id as headers
+      data <- read.csv(file=sprintf('data/mirrorreversal-fall/processed/%s_step%s_MovementTime.csv', group,step), check.names = FALSE) #check.names allows us to keep pp id as headers
     }
     #current fix for summer data being non-randomized and not counterbalanced
     trialno <- data$trial
@@ -3212,9 +3212,9 @@ getGroupAllTasksMTConfInt <- function(groups = c('30','60'), type = 't', set, st
       }
       
       if (set == 'su2020'){
-        write.csv(confidence, file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_AllTasksMT_CI.csv', group), row.names = F) 
+        write.csv(confidence, file=sprintf('data/mReversalNewAlpha3-master/processed/%s_AllTasksMT_CI.csv', group), row.names = F) 
       } else if (set == 'fa2020'){
-        write.csv(confidence, file=sprintf('data/mirrorreversal-fall/raw/processed/%s_AllTasksMT_CI.csv', group), row.names = F) 
+        write.csv(confidence, file=sprintf('data/mirrorreversal-fall/processed/%s_AllTasksMT_CI.csv', group), row.names = F) 
       }
     }
   }
@@ -3243,7 +3243,7 @@ plotAllTasksMT <- function(groups = c('30', '60'), target='inline', set) {
     
     for(group in groups){
       #read in files created by getGroupConfidenceInterval in filehandling.R
-      groupconfidence <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_AllTasksMT_CI.csv', group))
+      groupconfidence <- read.csv(file=sprintf('data/mirrorreversal-fall/processed/%s_AllTasksMT_CI.csv', group))
       
       
       #split up data set for plotting purposes
@@ -3328,7 +3328,7 @@ plotAllTasksMT <- function(groups = c('30', '60'), target='inline', set) {
     
     for(group in groups){
       #read in files created by getGroupConfidenceInterval in filehandling.R
-      groupconfidence <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_AllTasksMT_CI.csv', group))
+      groupconfidence <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/processed/%s_AllTasksMT_CI.csv', group))
       
       
       #split up data set for plotting purposes
@@ -3473,9 +3473,9 @@ getGroupRDMT <- function(group, set){
   
   #return(dataoutput)
   if (set == 'su2020'){
-    write.csv(dataoutput, file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_RDMT.csv',group), row.names = F)
+    write.csv(dataoutput, file=sprintf('data/mReversalNewAlpha3-master/processed/%s_RDMT.csv',group), row.names = F)
   } else if (set == 'fa2020'){
-    write.csv(dataoutput, file=sprintf('data/mirrorreversal-fall/raw/processed/%s_RDMT.csv', group), row.names = F)
+    write.csv(dataoutput, file=sprintf('data/mirrorreversal-fall/processed/%s_RDMT.csv', group), row.names = F)
   }
   
 }
@@ -3496,9 +3496,9 @@ plotGroupRDMT <- function(group, target='inline', set) {
   #meanGroupReaches <- list() #empty list so that it plots the means last
   #dat <- getGroupRDMT(group=group, set = set)
   if (set == 'su2020'){
-    dat <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_RDMT.csv',group), check.names = FALSE) #check.names allows us to keep pp id as headers
+    dat <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/processed/%s_RDMT.csv',group), check.names = FALSE) #check.names allows us to keep pp id as headers
   } else if (set == 'fa2020'){
-    dat <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_RDMT.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+    dat <- read.csv(file=sprintf('data/mirrorreversal-fall/processed/%s_RDMT.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
   }
   # #in 60 deg group, one participant had MT of 52 seconds. we can remove them and see relationship
   # if(group == '60'){
@@ -3537,9 +3537,9 @@ plotGroupRDMT <- function(group, target='inline', set) {
 getGroupRDMTOutlierRemoved <- function(groups = c('30', '60'), set){
   for (group in groups){
     if (set == 'su2020'){
-      ppall <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_RDMT.csv',group), check.names = FALSE) #summer data always has 30 deg as first trial
+      ppall <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/processed/%s_RDMT.csv',group), check.names = FALSE) #summer data always has 30 deg as first trial
     } else if (set == 'fa2020'){
-      ppall <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_RDMT.csv',group), check.names = FALSE)    
+      ppall <- read.csv(file=sprintf('data/mirrorreversal-fall/processed/%s_RDMT.csv',group), check.names = FALSE)    
     }
     
     trialmu <- mean(ppall$time, na.rm = TRUE)
@@ -3555,9 +3555,9 @@ getGroupRDMTOutlierRemoved <- function(groups = c('30', '60'), set){
     
     #return(ppall)
     if (set == 'su2020'){
-      write.csv(ppall, file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_RDMT_OutlierRemoved.csv',group), row.names = F)
+      write.csv(ppall, file=sprintf('data/mReversalNewAlpha3-master/processed/%s_RDMT_OutlierRemoved.csv',group), row.names = F)
     } else if (set == 'fa2020'){
-      write.csv(ppall, file=sprintf('data/mirrorreversal-fall/raw/processed/%s_RDMT_OutlierRemoved.csv', group), row.names = F)
+      write.csv(ppall, file=sprintf('data/mirrorreversal-fall/processed/%s_RDMT_OutlierRemoved.csv', group), row.names = F)
     }
     
   }
@@ -3580,9 +3580,9 @@ plotGroupRDMTOutlierRemoved <- function(group, target='inline', set) {
   #meanGroupReaches <- list() #empty list so that it plots the means last
   #dat <- getGroupRDMT(group=group, set = set)
   if (set == 'su2020'){
-    dat <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_RDMT_OutlierRemoved.csv',group), check.names = FALSE) #check.names allows us to keep pp id as headers
+    dat <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/processed/%s_RDMT_OutlierRemoved.csv',group), check.names = FALSE) #check.names allows us to keep pp id as headers
   } else if (set == 'fa2020'){
-    dat <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_RDMT_OutlierRemoved.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+    dat <- read.csv(file=sprintf('data/mirrorreversal-fall/processed/%s_RDMT_OutlierRemoved.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
   }
   
   
@@ -3619,18 +3619,18 @@ getMoveThroughStep1MT <- function(groups=c('30','60'), type = 't', set, moved){
   
   for (group in groups){
     if (set == 'su2020'){
-      ppall <- read.csv(file='data/mReversalNewAlpha3-master/raw/processed/30_TrialOnePPMoveThrough.csv', check.names = FALSE) #summer data always has 30 deg as first trial
+      ppall <- read.csv(file='data/mReversalNewAlpha3-master/processed/30_TrialOnePPMoveThrough.csv', check.names = FALSE) #summer data always has 30 deg as first trial
     } else if (set == 'fa2020'){
-      ppall <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_TrialOnePPMoveThrough.csv', group), check.names = FALSE)    
+      ppall <- read.csv(file=sprintf('data/mirrorreversal-fall/processed/%s_TrialOnePPMoveThrough.csv', group), check.names = FALSE)    
     }
     pplist <- ppall[which(ppall$movethrough == moved),] #moved is 1 if movethrough, 0 if not
     pplist <- pplist$participant
     
     #dat <- getGroupAllTasksMT(group=group, set=set, step=1) #step 1, but can do other steps as well
     if (set == 'su2020'){
-      dat <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_step1_MovementTime.csv',group), check.names = FALSE) #check.names allows us to keep pp id as headers
+      dat <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/processed/%s_step1_MovementTime.csv',group), check.names = FALSE) #check.names allows us to keep pp id as headers
     } else if (set == 'fa2020'){
-      dat <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_step1_MovementTime.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+      dat <- read.csv(file=sprintf('data/mirrorreversal-fall/processed/%s_step1_MovementTime.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
     }
     
     trial <- dat$trial
@@ -3667,9 +3667,9 @@ getMoveThroughStep1MT <- function(groups=c('30','60'), type = 't', set, moved){
         confidence <- rbind(confidence, citrial)
       }
       if (set == 'su2020'){
-        write.csv(confidence, file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_%s_AllTasksMT_CI_Step1.csv', group, moved), row.names = F) 
+        write.csv(confidence, file=sprintf('data/mReversalNewAlpha3-master/processed/%s_%s_AllTasksMT_CI_Step1.csv', group, moved), row.names = F) 
       } else if (set == 'fa2020'){
-        write.csv(confidence, file=sprintf('data/mirrorreversal-fall/raw/processed/%s_%s_AllTasksMT_CI_Step1.csv', group, moved), row.names = F) 
+        write.csv(confidence, file=sprintf('data/mirrorreversal-fall/processed/%s_%s_AllTasksMT_CI_Step1.csv', group, moved), row.names = F) 
       }
     }
   }
@@ -3698,7 +3698,7 @@ plotMoveThroughAllTasksMTStep1 <- function(groups = c('30', '60'), moves = c('0'
     
     for(move in moves){
       #read in files created by getGroupConfidenceInterval in filehandling.R
-      groupconfidence <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_%s_AllTasksMT_CI_Step1.csv', group, move))
+      groupconfidence <- read.csv(file=sprintf('data/mirrorreversal-fall/processed/%s_%s_AllTasksMT_CI_Step1.csv', group, move))
       
       
       #split up data set for plotting purposes
@@ -3787,7 +3787,7 @@ plotMoveThroughAllTasksMTStep1SU <- function(groups = c('30', '60'), moves = c('
     
     for(group in groups){
       #read in files created by getGroupConfidenceInterval in filehandling.R
-      groupconfidence <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_%s_AllTasksMT_CI_Step1.csv', group, move))
+      groupconfidence <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/processed/%s_%s_AllTasksMT_CI_Step1.csv', group, move))
       
       
       #split up data set for plotting purposes
@@ -3878,18 +3878,18 @@ getMoveThroughGroupRDMT <- function(group, set, moved){
   
   #ppall <- getTrialOneParticipantsWMoveThrough(group=group, set=set)
   if (set == 'su2020'){
-    ppall <- read.csv(file='data/mReversalNewAlpha3-master/raw/processed/30_TrialOnePPMoveThrough.csv', check.names = FALSE) #summer data always has 30 deg as first trial
+    ppall <- read.csv(file='data/mReversalNewAlpha3-master/processed/30_TrialOnePPMoveThrough.csv', check.names = FALSE) #summer data always has 30 deg as first trial
   } else if (set == 'fa2020'){
-    ppall <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_TrialOnePPMoveThrough.csv', group), check.names = FALSE)    
+    ppall <- read.csv(file=sprintf('data/mirrorreversal-fall/processed/%s_TrialOnePPMoveThrough.csv', group), check.names = FALSE)    
   }
   pplist <- ppall[which(ppall$movethrough == moved),] #moved is 1 if movethrough, 0 if not
   pplist <- pplist$participant
   
   #dat <- getGroupRDMT(group=group, set=set)
   if (set == 'su2020'){
-    dat <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_RDMT.csv',group), check.names = FALSE) #check.names allows us to keep pp id as headers
+    dat <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/processed/%s_RDMT.csv',group), check.names = FALSE) #check.names allows us to keep pp id as headers
   } else if (set == 'fa2020'){
-    dat <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_RDMT.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+    dat <- read.csv(file=sprintf('data/mirrorreversal-fall/processed/%s_RDMT.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
   }
   
   # get only participants specified in list
@@ -3956,18 +3956,18 @@ getMoveThroughGroupRDMTOutlierRemoved <- function(group, set, moved){
   
   #ppall <- getTrialOneParticipantsWMoveThrough(group=group, set=set)
   if (set == 'su2020'){
-    ppall <- read.csv(file='data/mReversalNewAlpha3-master/raw/processed/30_TrialOnePPMoveThrough.csv', check.names = FALSE) #summer data always has 30 deg as first trial
+    ppall <- read.csv(file='data/mReversalNewAlpha3-master/processed/30_TrialOnePPMoveThrough.csv', check.names = FALSE) #summer data always has 30 deg as first trial
   } else if (set == 'fa2020'){
-    ppall <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_TrialOnePPMoveThrough.csv', group), check.names = FALSE)    
+    ppall <- read.csv(file=sprintf('data/mirrorreversal-fall/processed/%s_TrialOnePPMoveThrough.csv', group), check.names = FALSE)    
   }
   pplist <- ppall[which(ppall$movethrough == moved),] #moved is 1 if movethrough, 0 if not
   pplist <- pplist$participant
   
   #dat <- getGroupRDMT(group=group, set=set)
   if (set == 'su2020'){
-    dat <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_RDMT_OutlierRemoved.csv',group), check.names = FALSE) #check.names allows us to keep pp id as headers
+    dat <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/processed/%s_RDMT_OutlierRemoved.csv',group), check.names = FALSE) #check.names allows us to keep pp id as headers
   } else if (set == 'fa2020'){
-    dat <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_RDMT_OutlierRemoved.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+    dat <- read.csv(file=sprintf('data/mirrorreversal-fall/processed/%s_RDMT_OutlierRemoved.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
   }
   
   # get only participants specified in list
@@ -4037,19 +4037,19 @@ getTotalMTMoveThroughStep1 <- function(groups=c('30','60'), set, moved = 1){
   dataoutput <- data.frame()
   for (group in groups){
     if (set == 'su2020'){
-      ppall <- read.csv(file='data/mReversalNewAlpha3-master/raw/processed/30_TrialOnePPMoveThrough.csv', check.names = FALSE) #summer data always has 30 deg as first trial
+      ppall <- read.csv(file='data/mReversalNewAlpha3-master/processed/30_TrialOnePPMoveThrough.csv', check.names = FALSE) #summer data always has 30 deg as first trial
     } else if (set == 'fa2020'){
-      ppall <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_TrialOnePPMoveThrough.csv', group), check.names = FALSE)    
+      ppall <- read.csv(file=sprintf('data/mirrorreversal-fall/processed/%s_TrialOnePPMoveThrough.csv', group), check.names = FALSE)    
     }
     pplist <- ppall[which(ppall$movethrough == moved),] #moved is 1 if movethrough, 0 if not
     pplist <- pplist$participant
     
     #dat <- getGroupAllTasksMT(group=group, set=set, step=1) #step 1, but can do other steps as well
     if (set == 'su2020'){
-      dat <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_step1_MovementTime.csv',group), check.names = FALSE) #check.names allows us to keep pp id as headers
+      dat <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/processed/%s_step1_MovementTime.csv',group), check.names = FALSE) #check.names allows us to keep pp id as headers
       #dat1 <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_step1_MovementTime_UNCORRECTED.csv',group), check.names = FALSE)
     } else if (set == 'fa2020'){
-      dat <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_step1_MovementTime.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+      dat <- read.csv(file=sprintf('data/mirrorreversal-fall/processed/%s_step1_MovementTime.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
       #dat1 <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_step1_MovementTime_UNCORRECTED.csv',group), check.names = FALSE)
     }
     
@@ -4220,9 +4220,9 @@ getGroupAllTasksPathLength <- function(group, set, step=2){
   
   #return(dataoutput)
   if (set == 'su2020'){
-    write.csv(dataoutput, file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_step%s_PathLength.csv',group,step), row.names = F)
+    write.csv(dataoutput, file=sprintf('data/mReversalNewAlpha3-master/processed/%s_step%s_PathLength.csv',group,step), row.names = F)
   } else if (set == 'fa2020'){
-    write.csv(dataoutput, file=sprintf('data/mirrorreversal-fall/raw/processed/%s_step%s_PathLength.csv', group,step), row.names = F)
+    write.csv(dataoutput, file=sprintf('data/mirrorreversal-fall/processed/%s_step%s_PathLength.csv', group,step), row.names = F)
   }
   
   #can keep track of deleted trials here, by using the saved csv file or counting NA values in dataoutput
@@ -4237,9 +4237,9 @@ getGroupAllTasksPathLengthConfInt <- function(groups = c('30','60'), type = 't',
   for(group in groups){
     #data <- getGroupAllTasksPathLength(group = group, set = set, step = step)
     if (set == 'su2020'){
-      data <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_step%s_PathLength.csv',group,step), check.names = FALSE) #check.names allows us to keep pp id as headers
+      data <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/processed/%s_step%s_PathLength.csv',group,step), check.names = FALSE) #check.names allows us to keep pp id as headers
     } else if (set == 'fa2020'){
-      data <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_step%s_PathLength.csv', group,step), check.names = FALSE) #check.names allows us to keep pp id as headers
+      data <- read.csv(file=sprintf('data/mirrorreversal-fall/processed/%s_step%s_PathLength.csv', group,step), check.names = FALSE) #check.names allows us to keep pp id as headers
     }
     #current fix for summer data being non-randomized and not counterbalanced
     trialno <- data$trial
@@ -4270,9 +4270,9 @@ getGroupAllTasksPathLengthConfInt <- function(groups = c('30','60'), type = 't',
       }
       
       if (set == 'su2020'){
-        write.csv(confidence, file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_AllTasksPathLength_CI.csv', group), row.names = F) 
+        write.csv(confidence, file=sprintf('data/mReversalNewAlpha3-master/processed/%s_AllTasksPathLength_CI.csv', group), row.names = F) 
       } else if (set == 'fa2020'){
-        write.csv(confidence, file=sprintf('data/mirrorreversal-fall/raw/processed/%s_AllTasksPathLength_CI.csv', group), row.names = F) 
+        write.csv(confidence, file=sprintf('data/mirrorreversal-fall/processed/%s_AllTasksPathLength_CI.csv', group), row.names = F) 
       }
     }
   }
@@ -4301,7 +4301,7 @@ plotAllTasksPathLength <- function(groups = c('30', '60'), target='inline', set)
     
     for(group in groups){
       #read in files created by getGroupConfidenceInterval in filehandling.R
-      groupconfidence <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_AllTasksPathLength_CI.csv', group))
+      groupconfidence <- read.csv(file=sprintf('data/mirrorreversal-fall/processed/%s_AllTasksPathLength_CI.csv', group))
       
       
       #split up data set for plotting purposes
@@ -4386,7 +4386,7 @@ plotAllTasksPathLength <- function(groups = c('30', '60'), target='inline', set)
     
     for(group in groups){
       #read in files created by getGroupConfidenceInterval in filehandling.R
-      groupconfidence <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_AllTasksPathLength_CI.csv', group))
+      groupconfidence <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/processed/%s_AllTasksPathLength_CI.csv', group))
       
       
       #split up data set for plotting purposes
@@ -4531,9 +4531,9 @@ getGroupRDPL <- function(group, set){
   
   #return(dataoutput)
   if (set == 'su2020'){
-    write.csv(dataoutput, file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_RDPL.csv',group), row.names = F)
+    write.csv(dataoutput, file=sprintf('data/mReversalNewAlpha3-master/processed/%s_RDPL.csv',group), row.names = F)
   } else if (set == 'fa2020'){
-    write.csv(dataoutput, file=sprintf('data/mirrorreversal-fall/raw/processed/%s_RDPL.csv', group), row.names = F)
+    write.csv(dataoutput, file=sprintf('data/mirrorreversal-fall/processed/%s_RDPL.csv', group), row.names = F)
   }
   
 }
@@ -4553,9 +4553,9 @@ plotGroupRDPL <- function(group, target='inline', set) {
   #meanGroupReaches <- list() #empty list so that it plots the means last
   #dat <- getGroupRDPL(group=group, set = set)
   if (set == 'su2020'){
-    dat <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_RDPL.csv',group), check.names = FALSE) #check.names allows us to keep pp id as headers
+    dat <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/processed/%s_RDPL.csv',group), check.names = FALSE) #check.names allows us to keep pp id as headers
   } else if (set == 'fa2020'){
-    dat <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_RDPL.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+    dat <- read.csv(file=sprintf('data/mirrorreversal-fall/processed/%s_RDPL.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
   }
   # #in 60 deg group, one participant had PL of 71. we can remove them and see relationship
   # if (group == '60'){
@@ -4593,9 +4593,9 @@ plotGroupRDPL <- function(group, target='inline', set) {
 getGroupRDPLOutlierRemoved <- function(groups = c('30', '60'), set){
   for (group in groups){
     if (set == 'su2020'){
-      ppall <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_RDPL.csv',group), check.names = FALSE) #summer data always has 30 deg as first trial
+      ppall <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/processed/%s_RDPL.csv',group), check.names = FALSE) #summer data always has 30 deg as first trial
     } else if (set == 'fa2020'){
-      ppall <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_RDPL.csv',group), check.names = FALSE)    
+      ppall <- read.csv(file=sprintf('data/mirrorreversal-fall/processed/%s_RDPL.csv',group), check.names = FALSE)    
     }
     
     trialmu <- mean(ppall$path_length, na.rm = TRUE)
@@ -4611,9 +4611,9 @@ getGroupRDPLOutlierRemoved <- function(groups = c('30', '60'), set){
     
     #return(ppall)
     if (set == 'su2020'){
-      write.csv(ppall, file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_RDPL_OutlierRemoved.csv',group), row.names = F)
+      write.csv(ppall, file=sprintf('data/mReversalNewAlpha3-master/processed/%s_RDPL_OutlierRemoved.csv',group), row.names = F)
     } else if (set == 'fa2020'){
-      write.csv(ppall, file=sprintf('data/mirrorreversal-fall/raw/processed/%s_RDPL_OutlierRemoved.csv', group), row.names = F)
+      write.csv(ppall, file=sprintf('data/mirrorreversal-fall/processed/%s_RDPL_OutlierRemoved.csv', group), row.names = F)
     }
     
   }
@@ -4636,9 +4636,9 @@ plotGroupRDPLOutlierRemoved <- function(group, target='inline', set) {
   #meanGroupReaches <- list() #empty list so that it plots the means last
   #dat <- getGroupRDMT(group=group, set = set)
   if (set == 'su2020'){
-    dat <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_RDPL_OutlierRemoved.csv',group), check.names = FALSE) #check.names allows us to keep pp id as headers
+    dat <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/processed/%s_RDPL_OutlierRemoved.csv',group), check.names = FALSE) #check.names allows us to keep pp id as headers
   } else if (set == 'fa2020'){
-    dat <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_RDPL_OutlierRemoved.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+    dat <- read.csv(file=sprintf('data/mirrorreversal-fall/processed/%s_RDPL_OutlierRemoved.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
   }
   
   
@@ -4676,18 +4676,18 @@ getMoveThroughStep1PL <- function(groups=c('30','60'), type='t', set, moved){
   
   for (group in groups){
     if (set == 'su2020'){
-      ppall <- read.csv(file='data/mReversalNewAlpha3-master/raw/processed/30_TrialOnePPMoveThrough.csv', check.names = FALSE) #summer data always has 30 deg as first trial
+      ppall <- read.csv(file='data/mReversalNewAlpha3-master/processed/30_TrialOnePPMoveThrough.csv', check.names = FALSE) #summer data always has 30 deg as first trial
     } else if (set == 'fa2020'){
-      ppall <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_TrialOnePPMoveThrough.csv', group), check.names = FALSE)    
+      ppall <- read.csv(file=sprintf('data/mirrorreversal-fall/processed/%s_TrialOnePPMoveThrough.csv', group), check.names = FALSE)    
     }
     pplist <- ppall[which(ppall$movethrough == moved),] #moved is 1 if movethrough, 0 if not
     pplist <- pplist$participant
     
     #dat <- getGroupAllTasksPathLength(group=group, set=set, step=1) #step 1, but can do other steps as well
     if (set == 'su2020'){
-      dat <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_step1_PathLength.csv',group), check.names = FALSE) #check.names allows us to keep pp id as headers
+      dat <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/processed/%s_step1_PathLength.csv',group), check.names = FALSE) #check.names allows us to keep pp id as headers
     } else if (set == 'fa2020'){
-      dat <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_step1_PathLength.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+      dat <- read.csv(file=sprintf('data/mirrorreversal-fall/processed/%s_step1_PathLength.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
     }
     trial <- dat$trial
     # get only participants specified in list
@@ -4724,9 +4724,9 @@ getMoveThroughStep1PL <- function(groups=c('30','60'), type='t', set, moved){
         confidence <- rbind(confidence, citrial)
       }
       if (set == 'su2020'){
-        write.csv(confidence, file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_%s_AllTasksPL_CI_Step1.csv', group, moved), row.names = F) 
+        write.csv(confidence, file=sprintf('data/mReversalNewAlpha3-master/processed/%s_%s_AllTasksPL_CI_Step1.csv', group, moved), row.names = F) 
       } else if (set == 'fa2020'){
-        write.csv(confidence, file=sprintf('data/mirrorreversal-fall/raw/processed/%s_%s_AllTasksPL_CI_Step1.csv', group, moved), row.names = F) 
+        write.csv(confidence, file=sprintf('data/mirrorreversal-fall/processed/%s_%s_AllTasksPL_CI_Step1.csv', group, moved), row.names = F) 
       }
     }
   }
@@ -4755,7 +4755,7 @@ plotMoveThroughAllTasksPLStep1 <- function(groups = c('30', '60'), moves = c('0'
     
     for(move in moves){
       #read in files created by getGroupConfidenceInterval in filehandling.R
-      groupconfidence <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_%s_AllTasksPL_CI_Step1.csv', group, move))
+      groupconfidence <- read.csv(file=sprintf('data/mirrorreversal-fall/processed/%s_%s_AllTasksPL_CI_Step1.csv', group, move))
       
       
       #split up data set for plotting purposes
@@ -4844,7 +4844,7 @@ plotMoveThroughAllTasksPLStep1SU <- function(groups = c('30', '60'), moves = c('
     
     for(group in groups){
       #read in files created by getGroupConfidenceInterval in filehandling.R
-      groupconfidence <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_%s_AllTasksPL_CI_Step1.csv', group, move))
+      groupconfidence <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/processed/%s_%s_AllTasksPL_CI_Step1.csv', group, move))
       
       
       #split up data set for plotting purposes
@@ -4934,18 +4934,18 @@ getMoveThroughGroupRDPL <- function(group, set, moved){
   
   #ppall <- getTrialOneParticipantsWMoveThrough(group=group, set=set)
   if (set == 'su2020'){
-    ppall <- read.csv(file='data/mReversalNewAlpha3-master/raw/processed/30_TrialOnePPMoveThrough.csv', check.names = FALSE) #summer data always has 30 deg as first trial
+    ppall <- read.csv(file='data/mReversalNewAlpha3-master/processed/30_TrialOnePPMoveThrough.csv', check.names = FALSE) #summer data always has 30 deg as first trial
   } else if (set == 'fa2020'){
-    ppall <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_TrialOnePPMoveThrough.csv', group), check.names = FALSE)    
+    ppall <- read.csv(file=sprintf('data/mirrorreversal-fall/processed/%s_TrialOnePPMoveThrough.csv', group), check.names = FALSE)    
   }
   pplist <- ppall[which(ppall$movethrough == moved),] #moved is 1 if movethrough, 0 if not
   pplist <- pplist$participant
   
   #dat <- getGroupRDPL(group=group, set=set)
   if (set == 'su2020'){
-    dat <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_RDPL.csv',group), check.names = FALSE) #check.names allows us to keep pp id as headers
+    dat <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/processed/%s_RDPL.csv',group), check.names = FALSE) #check.names allows us to keep pp id as headers
   } else if (set == 'fa2020'){
-    dat <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_RDPL.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+    dat <- read.csv(file=sprintf('data/mirrorreversal-fall/processed/%s_RDPL.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
   }
   
   # get only participants specified in list
@@ -5013,18 +5013,18 @@ getMoveThroughGroupRDPLOutlierRemoved <- function(group, set, moved){
   
   #ppall <- getTrialOneParticipantsWMoveThrough(group=group, set=set)
   if (set == 'su2020'){
-    ppall <- read.csv(file='data/mReversalNewAlpha3-master/raw/processed/30_TrialOnePPMoveThrough.csv', check.names = FALSE) #summer data always has 30 deg as first trial
+    ppall <- read.csv(file='data/mReversalNewAlpha3-master/processed/30_TrialOnePPMoveThrough.csv', check.names = FALSE) #summer data always has 30 deg as first trial
   } else if (set == 'fa2020'){
-    ppall <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_TrialOnePPMoveThrough.csv', group), check.names = FALSE)    
+    ppall <- read.csv(file=sprintf('data/mirrorreversal-fall/processed/%s_TrialOnePPMoveThrough.csv', group), check.names = FALSE)    
   }
   pplist <- ppall[which(ppall$movethrough == moved),] #moved is 1 if movethrough, 0 if not
   pplist <- pplist$participant
   
   #dat <- getGroupRDPL(group=group, set=set)
   if (set == 'su2020'){
-    dat <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/raw/processed/%s_RDPL_OutlierRemoved.csv',group), check.names = FALSE) #check.names allows us to keep pp id as headers
+    dat <- read.csv(file=sprintf('data/mReversalNewAlpha3-master/processed/%s_RDPL_OutlierRemoved.csv',group), check.names = FALSE) #check.names allows us to keep pp id as headers
   } else if (set == 'fa2020'){
-    dat <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed/%s_RDPL_OutlierRemoved.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
+    dat <- read.csv(file=sprintf('data/mirrorreversal-fall/processed/%s_RDPL_OutlierRemoved.csv', group), check.names = FALSE) #check.names allows us to keep pp id as headers
   }
   
   # get only participants specified in list

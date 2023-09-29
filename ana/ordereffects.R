@@ -57,9 +57,9 @@ getROTOrderEffectsConfidenceInterval <- function(group, maxppid, location, condi
         confidence <- rbind(confidence, citrial)
       }
       if (group == 'noninstructed'){
-        write.csv(confidence, file='data/pilot/ROT_noninstructed_CI_ordereffects_1.csv', row.names = F) 
+        write.csv(confidence, file='data/pilot/processed/ROT_noninstructed_CI_ordereffects_1.csv', row.names = F) 
       } else if (group == 'instructed'){
-        write.csv(confidence, file='data/pilot/ROT_instructed_CI_ordereffects_1.csv', row.names = F)
+        write.csv(confidence, file='data/pilot/processed/ROT_instructed_CI_ordereffects_1.csv', row.names = F)
       }
       
     }
@@ -89,9 +89,9 @@ getROTOrderEffectsConfidenceInterval <- function(group, maxppid, location, condi
         confidence <- rbind(confidence, citrial)
       }
       if (group == 'noninstructed'){
-        write.csv(confidence, file='data/pilot/ROT_noninstructed_CI_ordereffects_2.csv', row.names = F) 
+        write.csv(confidence, file='data/pilot/processed/ROT_noninstructed_CI_ordereffects_2.csv', row.names = F) 
       } else if (group == 'instructed'){
-        write.csv(confidence, file='data/pilot/ROT_instructed_CI_ordereffects_2.csv', row.names = F)
+        write.csv(confidence, file='data/pilot/processed/ROT_instructed_CI_ordereffects_2.csv', row.names = F)
       }
       
     }
@@ -123,7 +123,7 @@ plotNIROTOrderEffects <- function(group = 'noninstructed', conditions = c(1,2), 
   
   for(condition in conditions){
     #read in files created by getGroupConfidenceInterval in filehandling.R
-    groupconfidence <- read.csv(file=sprintf('data/pilot/ROT_%s_CI_ordereffects_%d.csv', group, condition))
+    groupconfidence <- read.csv(file=sprintf('data/pilot/processed/ROT_%s_CI_ordereffects_%d.csv', group, condition))
     
     colourscheme <- getCtypeColourScheme(conditions = condition)
     #take only first, last and middle columns of file
@@ -182,7 +182,7 @@ plotIROTOrderEffects <- function(group = 'instructed', conditions = c(1,2), targ
   
   for(condition in conditions){
     #read in files created by getGroupConfidenceInterval in filehandling.R
-    groupconfidence <- read.csv(file=sprintf('data/pilot/ROT_%s_CI_ordereffects_%d.csv', group, condition))
+    groupconfidence <- read.csv(file=sprintf('data/pilot/processed/ROT_%s_CI_ordereffects_%d.csv', group, condition))
     
     colourscheme <- getCtypeColourScheme(conditions = condition)
     #take only first, last and middle columns of file
@@ -360,9 +360,9 @@ getMIROrderEffectsConfidenceInterval <- function(group, maxppid, location, condi
         confidence <- rbind(confidence, citrial)
       }
       if (group == 'noninstructed'){
-        write.csv(confidence, file='data/pilot/MIR_noninstructed_CI_ordereffects_1.csv', row.names = F) 
+        write.csv(confidence, file='data/pilot/processed/MIR_noninstructed_CI_ordereffects_1.csv', row.names = F) 
       } else if (group == 'instructed'){
-        write.csv(confidence, file='data/pilot/MIR_instructed_CI_ordereffects_1.csv', row.names = F)
+        write.csv(confidence, file='data/pilot/processed/MIR_instructed_CI_ordereffects_1.csv', row.names = F)
       }
       
     }
@@ -392,9 +392,9 @@ getMIROrderEffectsConfidenceInterval <- function(group, maxppid, location, condi
         confidence <- rbind(confidence, citrial)
       }
       if (group == 'noninstructed'){
-        write.csv(confidence, file='data/pilot/MIR_noninstructed_CI_ordereffects_2.csv', row.names = F) 
+        write.csv(confidence, file='data/pilot/processed/MIR_noninstructed_CI_ordereffects_2.csv', row.names = F) 
       } else if (group == 'instructed'){
-        write.csv(confidence, file='data/pilot/MIR_instructed_CI_ordereffects_2.csv', row.names = F)
+        write.csv(confidence, file='data/pilot/processed/MIR_instructed_CI_ordereffects_2.csv', row.names = F)
       }
       
     }
@@ -425,7 +425,7 @@ plotNIMIROrderEffects <- function(group = 'noninstructed', conditions = c(1,2), 
   
   for(condition in conditions){
     #read in files created by getGroupConfidenceInterval in filehandling.R
-    groupconfidence <- read.csv(file=sprintf('data/pilot/MIR_%s_CI_ordereffects_%d.csv', group, condition))
+    groupconfidence <- read.csv(file=sprintf('data/pilot/processed/MIR_%s_CI_ordereffects_%d.csv', group, condition))
     
     colourscheme <- getCtypeColourScheme(conditions = condition)
     #take only first, last and middle columns of file
@@ -484,7 +484,7 @@ plotIMIROrderEffects <- function(group = 'instructed', conditions = c(1,2), targ
   
   for(condition in conditions){
     #read in files created by getGroupConfidenceInterval in filehandling.R
-    groupconfidence <- read.csv(file=sprintf('data/pilot/MIR_%s_CI_ordereffects_%d.csv', group, condition))
+    groupconfidence <- read.csv(file=sprintf('data/pilot/processed/MIR_%s_CI_ordereffects_%d.csv', group, condition))
     
     colourscheme <- getCtypeColourScheme(conditions = condition)
     #take only first, last and middle columns of file
@@ -633,7 +633,7 @@ getROTOrderEffectsPars <- function(groups = c('noninstructed', 'instructed'), lo
         N0 <- c(N0, par['N0'])
       }
       
-      write.csv(data.frame(lambda, N0), file=sprintf('data/pilot/ROT_%s_modpar_ordereffects_%s.csv',group,condition), quote=F, row.names=F)
+      write.csv(data.frame(lambda, N0), file=sprintf('data/pilot/processed/ROT_%s_modpar_ordereffects_%s.csv',group,condition), quote=F, row.names=F)
     }
   }
   
@@ -667,7 +667,7 @@ plotROTOrderEffectsModel <- function(groups = c('noninstructed', 'instructed'), 
       }
       
       #show the percent compensation from data
-      groupconfidence <- read.csv(file=sprintf('data/pilot/ROT_%s_CI_ordereffects_%d.csv', group, condition))
+      groupconfidence <- read.csv(file=sprintf('data/pilot/processed/ROT_%s_CI_ordereffects_%d.csv', group, condition))
       mid <- groupconfidence[,2]
       x <- c(0:89)
       col <- '#A9A9A9ff'
@@ -681,7 +681,7 @@ plotROTOrderEffectsModel <- function(groups = c('noninstructed', 'instructed'), 
       
       #get CIs for rate of change, asymptote will just be 50%, then solid line is based from pars of data (no bootstrapping)
       #bootstrapped pars are used for lower and upper bounds
-      data <- read.csv(sprintf('data/pilot/ROT_%s_modpar_ordereffects_%s.csv', group, condition))
+      data <- read.csv(sprintf('data/pilot/processed/ROT_%s_modpar_ordereffects_%s.csv', group, condition))
       
       qs_lambda <- quantile(data$lambda, probs = c(0.025, 0.500, 0.975))
       qs_N0 <- quantile(data$N0, probs = c(0.025, 0.500, 0.975))
@@ -745,7 +745,7 @@ getMIROrderEffectsPars <- function(groups = c('noninstructed', 'instructed'), lo
         N0 <- c(N0, par['N0'])
       }
       
-      write.csv(data.frame(lambda, N0), file=sprintf('data/pilot/MIR_%s_modpar_ordereffects_%s.csv',group,condition), quote=F, row.names=F)
+      write.csv(data.frame(lambda, N0), file=sprintf('data/pilot/processed/MIR_%s_modpar_ordereffects_%s.csv',group,condition), quote=F, row.names=F)
     }
   }
   
@@ -779,7 +779,7 @@ plotMIROrderEffectsModel <- function(groups = c('noninstructed', 'instructed'), 
       }
       
       #show the percent compensation from data
-      groupconfidence <- read.csv(file=sprintf('data/pilot/MIR_%s_CI_ordereffects_%d.csv', group, condition))
+      groupconfidence <- read.csv(file=sprintf('data/pilot/processed/MIR_%s_CI_ordereffects_%d.csv', group, condition))
       x <- c(0:89)
       mid <- groupconfidence[,2]
       col <- '#A9A9A9ff'
@@ -793,7 +793,7 @@ plotMIROrderEffectsModel <- function(groups = c('noninstructed', 'instructed'), 
         
       #get CIs for rate of change, asymptote will just be 50%, then solid line is based from pars of data (no bootstrapping)
       #bootstrapped pars are used for lower and upper bounds
-      data <- read.csv(sprintf('data/pilot/MIR_%s_modpar_ordereffects_%s.csv', group, condition))
+      data <- read.csv(sprintf('data/pilot/processed/MIR_%s_modpar_ordereffects_%s.csv', group, condition))
         
       qs_lambda <- quantile(data$lambda, probs = c(0.025, 0.500, 0.975))
       qs_N0 <- quantile(data$N0, probs = c(0.025, 0.500, 0.975))
@@ -859,7 +859,7 @@ getROTOrderEffectsStepPars <- function(groups = c('noninstructed', 'instructed')
         asymptote <- c(asymptote, par['asymptote'])
       }
       
-      write.csv(data.frame(step, asymptote), file=sprintf('data/pilot/ROT_%s_stepmodpar_ordereffects_%s.csv',group,condition), quote=F, row.names=F)
+      write.csv(data.frame(step, asymptote), file=sprintf('data/pilot/processed/ROT_%s_stepmodpar_ordereffects_%s.csv',group,condition), quote=F, row.names=F)
     }
   }
   
@@ -893,7 +893,7 @@ plotROTOrderEffectsStepModel <- function(groups = c('noninstructed', 'instructed
       }
       
       #show the percent compensation from data
-      groupconfidence <- read.csv(file=sprintf('data/pilot/ROT_%s_CI_ordereffects_%d.csv', group, condition))
+      groupconfidence <- read.csv(file=sprintf('data/pilot/processed/ROT_%s_CI_ordereffects_%d.csv', group, condition))
       mid <- groupconfidence[,2]
       x <- c(0:89)
       col <- '#A9A9A9ff'
@@ -907,7 +907,7 @@ plotROTOrderEffectsStepModel <- function(groups = c('noninstructed', 'instructed
         
       #get CIs for rate of change, asymptote will just be 50%, then solid line is based from pars of data (no bootstrapping)
       #bootstrapped pars are used for lower and upper bounds
-      data <- read.csv(sprintf('data/pilot/ROT_%s_stepmodpar_ordereffects_%s.csv', group, condition))
+      data <- read.csv(sprintf('data/pilot/processed/ROT_%s_stepmodpar_ordereffects_%s.csv', group, condition))
         
       qs_step <- quantile(data$step, probs = c(0.025, 0.500, 0.975))
       qs_asymptote <- quantile(data$asymptote, probs = c(0.025, 0.500, 0.975))
@@ -971,7 +971,7 @@ getMIROrderEffectsStepPars <- function(groups = c('noninstructed', 'instructed')
         asymptote <- c(asymptote, par['asymptote'])
       }
       
-      write.csv(data.frame(step, asymptote), file=sprintf('data/pilot/MIR_%s_stepmodpar_ordereffects_%s.csv',group,condition), quote=F, row.names=F)
+      write.csv(data.frame(step, asymptote), file=sprintf('data/pilot/processed/MIR_%s_stepmodpar_ordereffects_%s.csv',group,condition), quote=F, row.names=F)
     }
   }
   
@@ -1005,7 +1005,7 @@ plotMIROrderEffectsStepModel <- function(groups = c('noninstructed', 'instructed
       }
       
       #show the percent compensation from data
-      groupconfidence <- read.csv(file=sprintf('data/pilot/MIR_%s_CI_ordereffects_%d.csv', group, condition))
+      groupconfidence <- read.csv(file=sprintf('data/pilot/processed/MIR_%s_CI_ordereffects_%d.csv', group, condition))
       x <- c(0:89)
       mid <- groupconfidence[,2]
       col <- '#A9A9A9ff'
@@ -1019,7 +1019,7 @@ plotMIROrderEffectsStepModel <- function(groups = c('noninstructed', 'instructed
         
       #get CIs for rate of change, asymptote will just be 50%, then solid line is based from pars of data (no bootstrapping)
       #bootstrapped pars are used for lower and upper bounds
-      data <- read.csv(sprintf('data/pilot/MIR_%s_stepmodpar_ordereffects_%s.csv', group, condition))
+      data <- read.csv(sprintf('data/pilot/processed/MIR_%s_stepmodpar_ordereffects_%s.csv', group, condition))
         
       qs_step <- quantile(data$step, probs = c(0.025, 0.500, 0.975))
       qs_asymptote <- quantile(data$asymptote, probs = c(0.025, 0.500, 0.975))
@@ -1089,7 +1089,7 @@ getROTOrderEffectsLogPars <- function(groups = c('noninstructed', 'instructed'),
         L <- c(L, par['L'])
       }
       
-      write.csv(data.frame(x0, k, L), file=sprintf('data/pilot/ROT_%s_logmodpar_ordereffects_%s.csv',group,condition), quote=F, row.names=F)
+      write.csv(data.frame(x0, k, L), file=sprintf('data/pilot/processed/ROT_%s_logmodpar_ordereffects_%s.csv',group,condition), quote=F, row.names=F)
     }
   }
   
@@ -1123,7 +1123,7 @@ plotROTOrderEffectsLogModel <- function(groups = c('noninstructed', 'instructed'
       }
       
       #show the percent compensation from data
-      groupconfidence <- read.csv(file=sprintf('data/pilot/ROT_%s_CI_ordereffects_%d.csv', group, condition))
+      groupconfidence <- read.csv(file=sprintf('data/pilot/processed/ROT_%s_CI_ordereffects_%d.csv', group, condition))
       mid <- groupconfidence[,2]
       x <- c(0:89)
       col <- '#A9A9A9ff'
@@ -1139,7 +1139,7 @@ plotROTOrderEffectsLogModel <- function(groups = c('noninstructed', 'instructed'
         
       #get CIs for rate of change, asymptote will just be 50%, then solid line is based from pars of data (no bootstrapping)
       #bootstrapped pars are used for lower and upper bounds
-      data <- read.csv(sprintf('data/pilot/ROT_%s_logmodpar_ordereffects_%s.csv', group, condition))
+      data <- read.csv(sprintf('data/pilot/processed/ROT_%s_logmodpar_ordereffects_%s.csv', group, condition))
         
       qs_x0 <- quantile(data$x0, probs = c(0.025, 0.500, 0.975))
       qs_k <- quantile(data$k, probs = c(0.025, 0.500, 0.975))
@@ -1208,7 +1208,7 @@ getMIROrderEffectsLogPars <- function(groups = c('noninstructed', 'instructed'),
         L <- c(L, par['L'])
       }
       
-      write.csv(data.frame(x0, k, L), file=sprintf('data/pilot/MIR_%s_logmodpar_ordereffects_%s.csv',group,condition), quote=F, row.names=F)
+      write.csv(data.frame(x0, k, L), file=sprintf('data/pilot/processed/MIR_%s_logmodpar_ordereffects_%s.csv',group,condition), quote=F, row.names=F)
     }
   }
   
@@ -1242,7 +1242,7 @@ plotMIROrderEffectsLogModel <- function(groups = c('noninstructed', 'instructed'
       }
       
       #show the percent compensation from data
-      groupconfidence <- read.csv(file=sprintf('data/pilot/MIR_%s_CI_ordereffects_%d.csv', group, condition))
+      groupconfidence <- read.csv(file=sprintf('data/pilot/processed/MIR_%s_CI_ordereffects_%d.csv', group, condition))
       mid <- groupconfidence[,2]
       x <- c(0:89)
       col <- '#A9A9A9ff'
@@ -1258,7 +1258,7 @@ plotMIROrderEffectsLogModel <- function(groups = c('noninstructed', 'instructed'
         
       #get CIs for rate of change, asymptote will just be 50%, then solid line is based from pars of data (no bootstrapping)
       #bootstrapped pars are used for lower and upper bounds
-      data <- read.csv(sprintf('data/pilot/MIR_%s_logmodpar_ordereffects_%s.csv', group, condition))
+      data <- read.csv(sprintf('data/pilot/processed/MIR_%s_logmodpar_ordereffects_%s.csv', group, condition))
         
       qs_x0 <- quantile(data$x0, probs = c(0.025, 0.500, 0.975))
       qs_k <- quantile(data$k, probs = c(0.025, 0.500, 0.975))
@@ -1357,7 +1357,7 @@ getOrderEffectsMSE <- function(perturb = c('ROT', 'MIR'), group = 'noninstructed
       }
     }
     ndat <- data.frame(step, asymptote, mse_step, lambda, N0, mse_expl, x0, k, L, mse_log, order)
-    write.csv(ndat, file=sprintf('data/pilot/%s_%s_MSE_ordereffects.csv',ptype, group), quote=F, row.names=F)
+    write.csv(ndat, file=sprintf('data/pilot/processed/%s_%s_MSE_ordereffects.csv',ptype, group), quote=F, row.names=F)
   }
 }
 
@@ -1367,7 +1367,7 @@ getParticipantOrderEffectsLikelihoods <- function(perturb = c('ROT', 'MIR'), kle
   loglikelihood_expl <- c()
   loglikelihood_log <- c()
   for(ptype in perturb){
-    data <- read.csv(sprintf('data/pilot/%s_noninstructed_MSE_ordereffects.csv', ptype))
+    data <- read.csv(sprintf('data/pilot/processed/%s_noninstructed_MSE_ordereffects.csv', ptype))
     for(condition in conditions){
       ndat <- data[which(data$order == condition),]
       for(irow in c(1:nrow(ndat))){
@@ -1392,7 +1392,7 @@ getParticipantOrderEffectsLikelihoods <- function(perturb = c('ROT', 'MIR'), kle
     }
   }
   alldat <- data.frame(participant, loglikelihood_step, loglikelihood_expl, loglikelihood_log)
-  write.csv(alldat,'data/pilot/participant_model_likelihoods.csv', row.names=FALSE)
+  write.csv(alldat,'data/pilot/processed/participant_model_likelihoods.csv', row.names=FALSE)
 }
 
 #do model comparisons on group level (sums of MSEs)
@@ -1402,7 +1402,7 @@ getGroupOrderEffectsLikelihoods <- function(perturb = c('ROT', 'MIR'), klevel = 
   loglikelihood_expl <- c()
   loglikelihood_log <- c()
   for(ptype in perturb){
-    data <- read.csv(sprintf('data/pilot/%s_noninstructed_MSE_ordereffects.csv', ptype))
+    data <- read.csv(sprintf('data/pilot/processed/%s_noninstructed_MSE_ordereffects.csv', ptype))
     for(cond in conditions){
       ndat <- data[which(data$order == cond),]
       MSE_step <- setNames(sum(ndat$mse_step), 'mse_step')
@@ -1424,7 +1424,7 @@ getGroupOrderEffectsLikelihoods <- function(perturb = c('ROT', 'MIR'), klevel = 
     }
   }
   alldat <- data.frame(group, loglikelihood_step, loglikelihood_expl, loglikelihood_log)
-  write.csv(alldat,'data/pilot/group_model_likelihoods.csv', row.names=FALSE)
+  write.csv(alldat,'data/pilot/processed/group_model_likelihoods.csv', row.names=FALSE)
 }
 
 getPerturbOrderEffectsLikelihoods <- function(perturb = c('ROT', 'MIR'), klevel = c(2,2,3), N = 2){
@@ -1433,7 +1433,7 @@ getPerturbOrderEffectsLikelihoods <- function(perturb = c('ROT', 'MIR'), klevel 
   loglikelihood_expl <- c()
   loglikelihood_log <- c()
   for(ptype in perturb){
-    data <- read.csv(sprintf('data/pilot/%s_noninstructed_MSE_ordereffects.csv', ptype))
+    data <- read.csv(sprintf('data/pilot/processed/%s_noninstructed_MSE_ordereffects.csv', ptype))
     
     MSE_step <- setNames(sum(data$mse_step), 'mse_step')
     MSE_expl <- setNames(sum(data$mse_expl), 'mse_expl')
@@ -1454,7 +1454,7 @@ getPerturbOrderEffectsLikelihoods <- function(perturb = c('ROT', 'MIR'), klevel 
     
   }
   alldat <- data.frame(group, loglikelihood_step, loglikelihood_expl, loglikelihood_log)
-  write.csv(alldat,'data/pilot/all_model_likelihoods.csv', row.names=FALSE)
+  write.csv(alldat,'data/pilot/processed/all_model_likelihoods.csv', row.names=FALSE)
 }
 
 #Order Effects: Stats----
@@ -1464,7 +1464,7 @@ getPerturbOrderEffectsLikelihoods <- function(perturb = c('ROT', 'MIR'), klevel 
 #We can then compare either lambdas or asymptotes for different conditions (e.g. order effects) using a t-test (frequentist and Bayesian)
 getLambdaOrderEffectsTTest <- function(perturbation = c('ROT', 'MIR')){
   for(ptype in perturbation){
-    data <- read.csv(sprintf('data/pilot/%s_noninstructed_MSE_ordereffects.csv', ptype))
+    data <- read.csv(sprintf('data/pilot/processed/%s_noninstructed_MSE_ordereffects.csv', ptype))
     
     subdat1 <- data[which(data$order == 1),]
     subdat1 <- subdat1$lambda
@@ -1483,7 +1483,7 @@ getLambdaOrderEffectsTTest <- function(perturbation = c('ROT', 'MIR')){
 
 getAsymptoteOrderEffectsTTest <- function(perturbation = c('ROT', 'MIR')){
   for(ptype in perturbation){
-    data <- read.csv(sprintf('data/pilot/%s_noninstructed_MSE_ordereffects.csv', ptype))
+    data <- read.csv(sprintf('data/pilot/processed/%s_noninstructed_MSE_ordereffects.csv', ptype))
     
     subdat1 <- data[which(data$order == 1),]
     subdat1 <- subdat1$N0
@@ -1663,9 +1663,9 @@ getROTTargetEffectsConfidenceInterval <- function(group, maxppid, location, cond
         confidence <- rbind(confidence, citrial)
       }
       if (group == 'noninstructed'){
-        write.csv(confidence, file='data/pilot/ROT_noninstructed_CI_targeteffects_1.csv', row.names = F) 
+        write.csv(confidence, file='data/pilot/processed/ROT_noninstructed_CI_targeteffects_1.csv', row.names = F) 
       } else if (group == 'instructed'){
-        write.csv(confidence, file='data/pilot/ROT_instructed_CI_targeteffects_1.csv', row.names = F)
+        write.csv(confidence, file='data/pilot/processed/ROT_instructed_CI_targeteffects_1.csv', row.names = F)
       }
       
     }
@@ -1695,9 +1695,9 @@ getROTTargetEffectsConfidenceInterval <- function(group, maxppid, location, cond
         confidence <- rbind(confidence, citrial)
       }
       if (group == 'noninstructed'){
-        write.csv(confidence, file='data/pilot/ROT_noninstructed_CI_targeteffects_2.csv', row.names = F) 
+        write.csv(confidence, file='data/pilot/processed/ROT_noninstructed_CI_targeteffects_2.csv', row.names = F) 
       } else if (group == 'instructed'){
-        write.csv(confidence, file='data/pilot/ROT_instructed_CI_targeteffects_2.csv', row.names = F)
+        write.csv(confidence, file='data/pilot/processed/ROT_instructed_CI_targeteffects_2.csv', row.names = F)
       }
       
     }
@@ -1727,7 +1727,7 @@ plotNIROTTargetEffects <- function(group = 'noninstructed', conditions = c(1,2),
   
   for(condition in conditions){
     #read in files created by getGroupConfidenceInterval in filehandling.R
-    groupconfidence <- read.csv(file=sprintf('data/pilot/ROT_%s_CI_targeteffects_%d.csv', group, condition))
+    groupconfidence <- read.csv(file=sprintf('data/pilot/processed/ROT_%s_CI_targeteffects_%d.csv', group, condition))
     
     colourscheme <- getCtypeColourScheme(conditions = condition)
     #take only first, last and middle columns of file
@@ -1786,7 +1786,7 @@ plotIROTTargetEffects <- function(group = 'instructed', conditions = c(1,2), tar
   
   for(condition in conditions){
     #read in files created by getGroupConfidenceInterval in filehandling.R
-    groupconfidence <- read.csv(file=sprintf('data/pilot/ROT_%s_CI_targeteffects_%d.csv', group, condition))
+    groupconfidence <- read.csv(file=sprintf('data/pilot/processed/ROT_%s_CI_targeteffects_%d.csv', group, condition))
     
     colourscheme <- getCtypeColourScheme(conditions = condition)
     #take only first, last and middle columns of file
@@ -1977,9 +1977,9 @@ getMIRTargetEffectsConfidenceInterval <- function(group, maxppid, location, cond
         confidence <- rbind(confidence, citrial)
       }
       if (group == 'noninstructed'){
-        write.csv(confidence, file='data/pilot/MIR_noninstructed_CI_targeteffects_1.csv', row.names = F) 
+        write.csv(confidence, file='data/pilot/processed/MIR_noninstructed_CI_targeteffects_1.csv', row.names = F) 
       } else if (group == 'instructed'){
-        write.csv(confidence, file='data/pilot/MIR_instructed_CI_targeteffects_1.csv', row.names = F)
+        write.csv(confidence, file='data/pilot/processed/MIR_instructed_CI_targeteffects_1.csv', row.names = F)
       }
       
     }
@@ -2009,9 +2009,9 @@ getMIRTargetEffectsConfidenceInterval <- function(group, maxppid, location, cond
         confidence <- rbind(confidence, citrial)
       }
       if (group == 'noninstructed'){
-        write.csv(confidence, file='data/pilot/MIR_noninstructed_CI_targeteffects_2.csv', row.names = F) 
+        write.csv(confidence, file='data/pilot/processed/MIR_noninstructed_CI_targeteffects_2.csv', row.names = F) 
       } else if (group == 'instructed'){
-        write.csv(confidence, file='data/pilot/MIR_instructed_CI_targeteffects_2.csv', row.names = F)
+        write.csv(confidence, file='data/pilot/processed/MIR_instructed_CI_targeteffects_2.csv', row.names = F)
       }
       
     }
@@ -2041,7 +2041,7 @@ plotNIMIRTargetEffects <- function(group = 'noninstructed', conditions = c(1,2),
   
   for(condition in conditions){
     #read in files created by getGroupConfidenceInterval in filehandling.R
-    groupconfidence <- read.csv(file=sprintf('data/pilot/MIR_%s_CI_targeteffects_%d.csv', group, condition))
+    groupconfidence <- read.csv(file=sprintf('data/pilot/processed/MIR_%s_CI_targeteffects_%d.csv', group, condition))
     
     colourscheme <- getCtypeColourScheme(conditions = condition)
     #take only first, last and middle columns of file
@@ -2100,7 +2100,7 @@ plotIMIRTargetEffects <- function(group = 'instructed', conditions = c(1,2), tar
   
   for(condition in conditions){
     #read in files created by getGroupConfidenceInterval in filehandling.R
-    groupconfidence <- read.csv(file=sprintf('data/pilot/MIR_%s_CI_targeteffects_%d.csv', group, condition))
+    groupconfidence <- read.csv(file=sprintf('data/pilot/processed/MIR_%s_CI_targeteffects_%d.csv', group, condition))
     
     colourscheme <- getCtypeColourScheme(conditions = condition)
     #take only first, last and middle columns of file
@@ -2192,7 +2192,7 @@ getTargetEffectsMSE <- function(perturb = c('ROT', 'MIR'), group = 'noninstructe
       }
     }
     ndat <- data.frame(step, asymptote, mse_step, lambda, N0, mse_expl, x0, k, L, mse_log, order)
-    write.csv(ndat, file=sprintf('data/pilot/%s_%s_MSE_targeteffects.csv',ptype, group), quote=F, row.names=F)
+    write.csv(ndat, file=sprintf('data/pilot/processed/%s_%s_MSE_targeteffects.csv',ptype, group), quote=F, row.names=F)
   }
 }
 
@@ -2202,7 +2202,7 @@ getGroupTargetEffectsLikelihoods <- function(perturb = c('ROT', 'MIR'), klevel =
   loglikelihood_expl <- c()
   loglikelihood_log <- c()
   for(ptype in perturb){
-    data <- read.csv(sprintf('data/pilot/%s_noninstructed_MSE_targeteffects.csv', ptype))
+    data <- read.csv(sprintf('data/pilot/processed/%s_noninstructed_MSE_targeteffects.csv', ptype))
     for(cond in conditions){
       ndat <- data[which(data$order == cond),]
       MSE_step <- setNames(sum(ndat$mse_step), 'mse_step')
@@ -2229,7 +2229,7 @@ getGroupTargetEffectsLikelihoods <- function(perturb = c('ROT', 'MIR'), klevel =
 
 getLambdaTargetEffectsTTest <- function(perturbation = c('ROT', 'MIR')){
   for(ptype in perturbation){
-    data <- read.csv(sprintf('data/pilot/%s_noninstructed_MSE_targeteffects.csv', ptype))
+    data <- read.csv(sprintf('data/pilot/processed/%s_noninstructed_MSE_targeteffects.csv', ptype))
     
     subdat1 <- data[which(data$order == 1),]
     subdat1 <- subdat1$lambda
@@ -2248,7 +2248,7 @@ getLambdaTargetEffectsTTest <- function(perturbation = c('ROT', 'MIR')){
 
 getAsymptoteTargetEffectsTTest <- function(perturbation = c('ROT', 'MIR')){
   for(ptype in perturbation){
-    data <- read.csv(sprintf('data/pilot/%s_noninstructed_MSE_targeteffects.csv', ptype))
+    data <- read.csv(sprintf('data/pilot/processed/%s_noninstructed_MSE_targeteffects.csv', ptype))
     
     subdat1 <- data[which(data$order == 1),]
     subdat1 <- subdat1$N0
@@ -2320,9 +2320,9 @@ getROTAxisEffectsConfidenceInterval <- function(group, maxppid, location, condit
         confidence <- rbind(confidence, citrial)
       }
       if (group == 'noninstructed'){
-        write.csv(confidence, file='data/pilot/ROT_noninstructed_CI_axiseffects_1.csv', row.names = F) 
+        write.csv(confidence, file='data/pilot/processed/ROT_noninstructed_CI_axiseffects_1.csv', row.names = F) 
       } else if (group == 'instructed'){
-        write.csv(confidence, file='data/pilot/ROT_instructed_CI_axiseffects_1.csv', row.names = F)
+        write.csv(confidence, file='data/pilot/processed/ROT_instructed_CI_axiseffects_1.csv', row.names = F)
       }
       
     }
@@ -2352,9 +2352,9 @@ getROTAxisEffectsConfidenceInterval <- function(group, maxppid, location, condit
         confidence <- rbind(confidence, citrial)
       }
       if (group == 'noninstructed'){
-        write.csv(confidence, file='data/pilot/ROT_noninstructed_CI_axiseffects_2.csv', row.names = F) 
+        write.csv(confidence, file='data/pilot/processed/ROT_noninstructed_CI_axiseffects_2.csv', row.names = F) 
       } else if (group == 'instructed'){
-        write.csv(confidence, file='data/pilot/ROT_instructed_CI_axiseffects_2.csv', row.names = F)
+        write.csv(confidence, file='data/pilot/processed/ROT_instructed_CI_axiseffects_2.csv', row.names = F)
       }
       
     }
@@ -2385,7 +2385,7 @@ plotNIROTAxisEffects <- function(group = 'noninstructed', conditions = c(1,2), t
   
   for(condition in conditions){
     #read in files created by getGroupConfidenceInterval in filehandling.R
-    groupconfidence <- read.csv(file=sprintf('data/pilot/ROT_%s_CI_axiseffects_%d.csv', group, condition))
+    groupconfidence <- read.csv(file=sprintf('data/pilot/processed/ROT_%s_CI_axiseffects_%d.csv', group, condition))
     
     colourscheme <- getCtypeColourScheme(conditions = condition)
     #take only first, last and middle columns of file
@@ -2444,7 +2444,7 @@ plotIROTAxisEffects <- function(group = 'instructed', conditions = c(1,2), targe
   
   for(condition in conditions){
     #read in files created by getGroupConfidenceInterval in filehandling.R
-    groupconfidence <- read.csv(file=sprintf('data/pilot/ROT_%s_CI_axiseffects_%d.csv', group, condition))
+    groupconfidence <- read.csv(file=sprintf('data/pilot/processed/ROT_%s_CI_axiseffects_%d.csv', group, condition))
     
     colourscheme <- getCtypeColourScheme(conditions = condition)
     #take only first, last and middle columns of file
@@ -2536,9 +2536,9 @@ getMIRAxisEffectsConfidenceInterval <- function(group, maxppid, location, condit
         confidence <- rbind(confidence, citrial)
       }
       if (group == 'noninstructed'){
-        write.csv(confidence, file='data/pilot/MIR_noninstructed_CI_axiseffects_1.csv', row.names = F) 
+        write.csv(confidence, file='data/pilot/processed/MIR_noninstructed_CI_axiseffects_1.csv', row.names = F) 
       } else if (group == 'instructed'){
-        write.csv(confidence, file='data/pilot/MIR_instructed_CI_axiseffects_1.csv', row.names = F)
+        write.csv(confidence, file='data/pilot/processed/MIR_instructed_CI_axiseffects_1.csv', row.names = F)
       }
       
     }
@@ -2568,9 +2568,9 @@ getMIRAxisEffectsConfidenceInterval <- function(group, maxppid, location, condit
         confidence <- rbind(confidence, citrial)
       }
       if (group == 'noninstructed'){
-        write.csv(confidence, file='data/pilot/MIR_noninstructed_CI_axiseffects_2.csv', row.names = F) 
+        write.csv(confidence, file='data/pilot/processed/MIR_noninstructed_CI_axiseffects_2.csv', row.names = F) 
       } else if (group == 'instructed'){
-        write.csv(confidence, file='data/pilot/MIR_instructed_CI_axiseffects_2.csv', row.names = F)
+        write.csv(confidence, file='data/pilot/processed/MIR_instructed_CI_axiseffects_2.csv', row.names = F)
       }
       
     }
@@ -2601,7 +2601,7 @@ plotNIMIRAxisEffects <- function(group = 'noninstructed', conditions = c(1,2), t
   
   for(condition in conditions){
     #read in files created by getGroupConfidenceInterval in filehandling.R
-    groupconfidence <- read.csv(file=sprintf('data/pilot/MIR_%s_CI_axiseffects_%d.csv', group, condition))
+    groupconfidence <- read.csv(file=sprintf('data/pilot/processed/MIR_%s_CI_axiseffects_%d.csv', group, condition))
     
     colourscheme <- getCtypeColourScheme(conditions = condition)
     #take only first, last and middle columns of file
@@ -2660,7 +2660,7 @@ plotIMIRAxisEffects <- function(group = 'instructed', conditions = c(1,2), targe
   
   for(condition in conditions){
     #read in files created by getGroupConfidenceInterval in filehandling.R
-    groupconfidence <- read.csv(file=sprintf('data/pilot/MIR_%s_CI_axiseffects_%d.csv', group, condition))
+    groupconfidence <- read.csv(file=sprintf('data/pilot/processed/MIR_%s_CI_axiseffects_%d.csv', group, condition))
     
     colourscheme <- getCtypeColourScheme(conditions = condition)
     #take only first, last and middle columns of file
@@ -2750,7 +2750,7 @@ getAxisEffectsMSE <- function(perturb = c('ROT', 'MIR'), group = 'noninstructed'
       }
     }
     ndat <- data.frame(step, asymptote, mse_step, lambda, N0, mse_expl, x0, k, L, mse_log, order)
-    write.csv(ndat, file=sprintf('data/pilot/%s_%s_MSE_axiseffects.csv',ptype, group), quote=F, row.names=F)
+    write.csv(ndat, file=sprintf('data/pilot/processed/%s_%s_MSE_axiseffects.csv',ptype, group), quote=F, row.names=F)
   }
 }
 
@@ -2760,7 +2760,7 @@ getGroupAxisEffectsLikelihoods <- function(perturb = c('ROT', 'MIR'), klevel = c
   loglikelihood_expl <- c()
   loglikelihood_log <- c()
   for(ptype in perturb){
-    data <- read.csv(sprintf('data/pilot/%s_noninstructed_MSE_axiseffects.csv', ptype))
+    data <- read.csv(sprintf('data/pilot/processed/%s_noninstructed_MSE_axiseffects.csv', ptype))
     for(cond in conditions){
       ndat <- data[which(data$order == cond),]
       MSE_step <- setNames(sum(ndat$mse_step), 'mse_step')
@@ -2787,7 +2787,7 @@ getGroupAxisEffectsLikelihoods <- function(perturb = c('ROT', 'MIR'), klevel = c
 
 getLambdaAxisEffectsTTest <- function(perturbation = c('ROT', 'MIR')){
   for(ptype in perturbation){
-    data <- read.csv(sprintf('data/pilot/%s_noninstructed_MSE_axiseffects.csv', ptype))
+    data <- read.csv(sprintf('data/pilot/processed/%s_noninstructed_MSE_axiseffects.csv', ptype))
     
     subdat1 <- data[which(data$order == 1),]
     subdat1 <- subdat1$lambda
@@ -2806,7 +2806,7 @@ getLambdaAxisEffectsTTest <- function(perturbation = c('ROT', 'MIR')){
 
 getAsymptoteAxisEffectsTTest <- function(perturbation = c('ROT', 'MIR')){
   for(ptype in perturbation){
-    data <- read.csv(sprintf('data/pilot/%s_noninstructed_MSE_axiseffects.csv', ptype))
+    data <- read.csv(sprintf('data/pilot/processed/%s_noninstructed_MSE_axiseffects.csv', ptype))
     
     subdat1 <- data[which(data$order == 1),]
     subdat1 <- subdat1$N0

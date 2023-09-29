@@ -118,12 +118,12 @@ getGroupLearningGen <- function(){
     }
   }
   
-  write.csv(dataoutput, file='data/mirrorgeneralization-master/raw/processed/LearningGen.csv', row.names = F)
+  write.csv(dataoutput, file='data/mirrorgeneralization-master/processed/LearningGen.csv', row.names = F)
 }
 
 getGroupLearningGenCI <- function(){
 
-    data <- read.csv(file='data/mirrorgeneralization-master/raw/processed/LearningGen.csv', check.names = FALSE) #check.names allows us to keep pp id as headers
+    data <- read.csv(file='data/mirrorgeneralization-master/processed/LearningGen.csv', check.names = FALSE) #check.names allows us to keep pp id as headers
     trialno <- data$trial
     
     confidence <- data.frame()
@@ -145,7 +145,7 @@ getGroupLearningGenCI <- function(){
         confidence <- rbind(confidence, citrial)
       }
 
-      write.csv(confidence, file='data/mirrorgeneralization-master/raw/processed/LearningGen_CI.csv', row.names = F) 
+      write.csv(confidence, file='data/mirrorgeneralization-master/processed/LearningGen_CI.csv', row.names = F) 
       
     }
   
@@ -177,10 +177,10 @@ plotLearningGen <- function(groups = c('far', 'near'), target='inline') {
   
   
   #read in CI file
-  groupconfidence <- read.csv(file='data/mirrorgeneralization-master/raw/processed/LearningGen_CI.csv')
+  groupconfidence <- read.csv(file='data/mirrorgeneralization-master/processed/LearningGen_CI.csv')
   # we want to color code plot according to target distance from mirror axis (far and near groups)
   # append far and near identifiers to CI data
-  dat <- read.csv(file='data/mirrorgeneralization-master/raw/processed/LearningGen.csv')
+  dat <- read.csv(file='data/mirrorgeneralization-master/processed/LearningGen.csv')
   dat <- dat$targetangle_deg
   groupconfidence$targetangle_deg <- dat
   targetdist <- c()
@@ -370,7 +370,7 @@ plotLearningGenSignFlip <- function(groups = c('far', 'near'), target='inline') 
   
   
   #read in CI file
-  groupconfidence <- read.csv(file='data/mirrorgeneralization-master/raw/processed/LearningGen_CI.csv')
+  groupconfidence <- read.csv(file='data/mirrorgeneralization-master/processed/LearningGen_CI.csv')
   #we would want to implement a sign flip for blocks with negative values (blocks 2 and 3)
   #But we would want to keep washout the same
   groupconfidence[21:60,] <- ((groupconfidence[21:60,])*-1)
@@ -378,7 +378,7 @@ plotLearningGenSignFlip <- function(groups = c('far', 'near'), target='inline') 
   
   # we want to color code plot according to target distance from mirror axis (far and near groups)
   # append far and near identifiers to CI data
-  dat <- read.csv(file='data/mirrorgeneralization-master/raw/processed/LearningGen.csv')
+  dat <- read.csv(file='data/mirrorgeneralization-master/processed/LearningGen.csv')
   dat <- dat$targetangle_deg
   groupconfidence$targetangle_deg <- dat
   targetdist <- c()
@@ -571,7 +571,7 @@ getGroupGenMT<- function(step){
   }
   
   #return(dataoutput)
-  write.csv(dataoutput, file='data/mirrorgeneralization-master/raw/processed/MTGen.csv', row.names = F)
+  write.csv(dataoutput, file='data/mirrorgeneralization-master/processed/MTGen.csv', row.names = F)
   
   #can keep track of deleted trials here, by using the saved csv file or counting NA values in dataoutput
 
@@ -579,7 +579,7 @@ getGroupGenMT<- function(step){
 
 getGroupGenMTCI <- function(type){
   
-  data <- read.csv(file='data/mirrorgeneralization-master/raw/processed/MTGen.csv', check.names = FALSE) #check.names allows us to keep pp id as headers
+  data <- read.csv(file='data/mirrorgeneralization-master/processed/MTGen.csv', check.names = FALSE) #check.names allows us to keep pp id as headers
   trialno <- data$trial
   
   data1 <- as.matrix(data[,3:dim(data)[2]])
@@ -605,7 +605,7 @@ getGroupGenMTCI <- function(type){
       confidence <- rbind(confidence, citrial)
     }
     
-    write.csv(confidence, file='data/mirrorgeneralization-master/raw/processed/MTGen_CI.csv', row.names = F) 
+    write.csv(confidence, file='data/mirrorgeneralization-master/processed/MTGen_CI.csv', row.names = F) 
     
   }
   
@@ -635,10 +635,10 @@ plotMTGen <- function(groups = c('far', 'near'), target='inline') {
   axis(2, at = c(0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5), las=2) #tick marks for y axis
   
   #read in CI file
-  groupconfidence <- read.csv(file='data/mirrorgeneralization-master/raw/processed/MTGen_CI.csv')
+  groupconfidence <- read.csv(file='data/mirrorgeneralization-master/processed/MTGen_CI.csv')
   # we want to color code plot according to target distance from mirror axis (far and near groups)
   # append far and near identifiers to CI data
-  dat <- read.csv(file='data/mirrorgeneralization-master/raw/processed/MTGen.csv')
+  dat <- read.csv(file='data/mirrorgeneralization-master/processed/MTGen.csv')
   dat <- dat$targetangle_deg
   groupconfidence$targetangle_deg <- dat
   targetdist <- c()
@@ -831,7 +831,7 @@ getGroupGenPL<- function(step){
   }
   
   #return(dataoutput)
-  write.csv(dataoutput, file='data/mirrorgeneralization-master/raw/processed/PLGen.csv', row.names = F)
+  write.csv(dataoutput, file='data/mirrorgeneralization-master/processed/PLGen.csv', row.names = F)
   
   #can keep track of deleted trials here, by using the saved csv file or counting NA values in dataoutput
   
@@ -839,7 +839,7 @@ getGroupGenPL<- function(step){
 
 getGroupGenPLCI <- function(type){
   
-  data <- read.csv(file='data/mirrorgeneralization-master/raw/processed/PLGen.csv', check.names = FALSE) #check.names allows us to keep pp id as headers
+  data <- read.csv(file='data/mirrorgeneralization-master/processed/PLGen.csv', check.names = FALSE) #check.names allows us to keep pp id as headers
   trialno <- data$trial
   
   data1 <- as.matrix(data[,3:dim(data)[2]])
@@ -865,7 +865,7 @@ getGroupGenPLCI <- function(type){
       confidence <- rbind(confidence, citrial)
     }
     
-    write.csv(confidence, file='data/mirrorgeneralization-master/raw/processed/PLGen_CI.csv', row.names = F) 
+    write.csv(confidence, file='data/mirrorgeneralization-master/processed/PLGen_CI.csv', row.names = F) 
     
   }
   
@@ -895,10 +895,10 @@ plotPLGen <- function(groups = c('far', 'near'), target='inline') {
   axis(2, at = c(0, 0.4, 0.6, 0.8, 1, 1.2, 1.4, 1.6, 1.8, 2), las=2) #tick marks for y axis
   
   #read in CI file
-  groupconfidence <- read.csv(file='data/mirrorgeneralization-master/raw/processed/PLGen_CI.csv')
+  groupconfidence <- read.csv(file='data/mirrorgeneralization-master/processed/PLGen_CI.csv')
   # we want to color code plot according to target distance from mirror axis (far and near groups)
   # append far and near identifiers to CI data
-  dat <- read.csv(file='data/mirrorgeneralization-master/raw/processed/PLGen.csv')
+  dat <- read.csv(file='data/mirrorgeneralization-master/processed/PLGen.csv')
   dat <- dat$targetangle_deg
   groupconfidence$targetangle_deg <- dat
   targetdist <- c()
@@ -1095,17 +1095,17 @@ getGroupDates<- function(sets = c('part1', 'part2')){
     }
     #return(dataoutput)
     if (set == 'part1'){
-      write.csv(dataoutput, file=sprintf('data/mirrorreversal-fall/raw/processed_post/%sDate.csv', set), row.names = F)
+      write.csv(dataoutput, file=sprintf('data/mirrorreversal-fall/processed_post/%sDate.csv', set), row.names = F)
     } else if (set == 'part2'){
-      write.csv(dataoutput, file=sprintf('data/mirrorgeneralization-master/raw/processed/%sDate.csv', set), row.names = F)
+      write.csv(dataoutput, file=sprintf('data/mirrorgeneralization-master/processed/%sDate.csv', set), row.names = F)
     }
   }
 }
 
 getMatchGroupDates <- function(){
   
-  part1dat <- read.csv(file='data/mirrorreversal-fall/raw/processed_post/part1Date.csv')
-  part2dat <- read.csv(file='data/mirrorgeneralization-master/raw/processed/part2Date.csv')
+  part1dat <- read.csv(file='data/mirrorreversal-fall/processed_post/part1Date.csv')
+  part2dat <- read.csv(file='data/mirrorgeneralization-master/processed/part2Date.csv')
   
   dat <- merge(part1dat, part2dat, by.x = 'id', by.y = 'id')
   colnames(dat) <- c('id', 'part1_date', 'part2_date')
@@ -1152,8 +1152,8 @@ plotDaysApart <- function(target='inline'){
 getPart1Files <- function(){
   # this function helps to list all files of participants that have also completed part 2
   #use the files already saved for the date function to identify id's
-  part1dat <- read.csv(file='data/mirrorreversal-fall/raw/processed_post/part1Date.csv')
-  part2dat <- read.csv(file='data/mirrorgeneralization-master/raw/processed/part2Date.csv')
+  part1dat <- read.csv(file='data/mirrorreversal-fall/processed_post/part1Date.csv')
+  part2dat <- read.csv(file='data/mirrorgeneralization-master/processed/part2Date.csv')
   
   ppid <- part1dat$id[which(part1dat$id %in% part2dat$id)]
   
@@ -1172,13 +1172,13 @@ getPart1Files <- function(){
   }
   #return(datfiles)
   datfiles <- data.frame(datfiles)
-  write.csv(datfiles, file='data/mirrorreversal-fall/raw/processed_post/pplist_matched_part2.csv', row.names = F)
+  write.csv(datfiles, file='data/mirrorreversal-fall/processed_post/pplist_matched_part2.csv', row.names = F)
 }
 
 getRetentionAligned <- function(group){
   
 
-  datafilenames <- read.csv('data/mirrorreversal-fall/raw/processed_post/pplist_matched_part2.csv', stringsAsFactors = F)
+  datafilenames <- read.csv('data/mirrorreversal-fall/processed_post/pplist_matched_part2.csv', stringsAsFactors = F)
   datafilenames <- datafilenames$datfiles
   
   
@@ -1234,7 +1234,7 @@ getRetentionAlignedOutlierRemoval <- function(groups = c('30', '60')){
       data[trialno, 2:ncol(data)] <- ndat
     }
     #return(data)
-    write.csv(data, file=sprintf('data/mirrorreversal-fall/raw/processed_post/%s_Retention_Aligned.csv', group), row.names = F)
+    write.csv(data, file=sprintf('data/mirrorreversal-fall/processed_post/%s_Retention_Aligned.csv', group), row.names = F)
   }
 
 }
@@ -1242,7 +1242,7 @@ getRetentionAlignedOutlierRemoval <- function(groups = c('30', '60')){
 getRetentionAlignedCI <- function(groups = c('30','60')){
   for(group in groups){
     # use cleaned aligned trials (i.e. only trials with reaches in correct quadrant)
-    data <- read.csv(sprintf('data/mirrorreversal-fall/raw/processed_post/%s_Retention_Aligned.csv', group), stringsAsFactors = F)
+    data <- read.csv(sprintf('data/mirrorreversal-fall/processed_post/%s_Retention_Aligned.csv', group), stringsAsFactors = F)
     #current fix for summer data being non-randomized and not counterbalanced
     trialno <- data$trial
     
@@ -1267,7 +1267,7 @@ getRetentionAlignedCI <- function(groups = c('30','60')){
       } else {
         confidence <- rbind(confidence, citrial)
       }
-      write.csv(confidence, file=sprintf('data/mirrorreversal-fall/raw/processed_post/%s_Retention_Aligned_CI.csv', group), row.names = F) 
+      write.csv(confidence, file=sprintf('data/mirrorreversal-fall/processed_post/%s_Retention_Aligned_CI.csv', group), row.names = F) 
       
     }
   }
@@ -1275,7 +1275,7 @@ getRetentionAlignedCI <- function(groups = c('30','60')){
 
 getRetentionMirror<- function(groups = c('30', '60')){
   for(group in groups){
-    datafilenames <- read.csv('data/mirrorreversal-fall/raw/processed_post/pplist_matched_part2.csv', stringsAsFactors = F)
+    datafilenames <- read.csv('data/mirrorreversal-fall/processed_post/pplist_matched_part2.csv', stringsAsFactors = F)
     datafilenames <- datafilenames$datfiles
     
     
@@ -1313,14 +1313,14 @@ getRetentionMirror<- function(groups = c('30', '60')){
     }
     
     #return(dataoutput)
-    write.csv(dataoutput, file=sprintf('data/mirrorreversal-fall/raw/processed_post/%s_Retention_Mirror.csv', group), row.names = F)
+    write.csv(dataoutput, file=sprintf('data/mirrorreversal-fall/processed_post/%s_Retention_Mirror.csv', group), row.names = F)
   }
   
 }
 
 getRetentionMirrorCI <- function(groups = c('30','60')){
   for(group in groups){
-    data <- read.csv(sprintf('data/mirrorreversal-fall/raw/processed_post/%s_Retention_Mirror.csv', group), stringsAsFactors = F)
+    data <- read.csv(sprintf('data/mirrorreversal-fall/processed_post/%s_Retention_Mirror.csv', group), stringsAsFactors = F)
     #current fix for summer data being non-randomized and not counterbalanced
     trialno <- data$trial
     
@@ -1343,7 +1343,7 @@ getRetentionMirrorCI <- function(groups = c('30','60')){
         confidence <- rbind(confidence, citrial)
       }
 
-      write.csv(confidence, file=sprintf('data/mirrorreversal-fall/raw/processed_post/%s_Retention_Mirror_CI.csv', group), row.names = F) 
+      write.csv(confidence, file=sprintf('data/mirrorreversal-fall/processed_post/%s_Retention_Mirror_CI.csv', group), row.names = F) 
       
     }
   }
@@ -1353,8 +1353,8 @@ getRetentionMirrorCI <- function(groups = c('30','60')){
 getParticipantPart2Retention <- function(filename){
   
   #read in aligned data, which already cleaned for baseline reaches
-  dat30 <- read.csv('data/mirrorreversal-fall/raw/processed_post/30_Retention_Aligned.csv', stringsAsFactors = F, check.names = FALSE)
-  dat60 <- read.csv('data/mirrorreversal-fall/raw/processed_post/60_Retention_Aligned.csv', stringsAsFactors = F, check.names = FALSE)
+  dat30 <- read.csv('data/mirrorreversal-fall/processed_post/30_Retention_Aligned.csv', stringsAsFactors = F, check.names = FALSE)
+  dat60 <- read.csv('data/mirrorreversal-fall/processed_post/60_Retention_Aligned.csv', stringsAsFactors = F, check.names = FALSE)
   
   part2dat <- getParticipantLearningGen(filename=filename)
   ppid <- unique(part2dat$participant)
@@ -1421,13 +1421,13 @@ getGroupPart2Retention <- function(groups=c('30','60')){
       }
     }
     #return(dataoutput)
-    write.csv(dataoutput, file=sprintf('data/mirrorgeneralization-master/raw/processed/%s_Retention_Mirror.csv', group), row.names = F) 
+    write.csv(dataoutput, file=sprintf('data/mirrorgeneralization-master/processed/%s_Retention_Mirror.csv', group), row.names = F) 
   }
 }
 
 getGroupPart2RetentionCI <- function(groups = c('30','60')){
   for(group in groups){
-    data <- read.csv(sprintf('data/mirrorgeneralization-master/raw/processed/%s_Retention_Mirror.csv',group), stringsAsFactors = F, check.names = FALSE)
+    data <- read.csv(sprintf('data/mirrorgeneralization-master/processed/%s_Retention_Mirror.csv',group), stringsAsFactors = F, check.names = FALSE)
     #current fix for summer data being non-randomized and not counterbalanced
     trialno <- data$trial
     
@@ -1450,7 +1450,7 @@ getGroupPart2RetentionCI <- function(groups = c('30','60')){
         confidence <- rbind(confidence, citrial)
       }
 
-      write.csv(confidence, file=sprintf('data/mirrorgeneralization-master/raw/processed/%s_Retention_Mirror_CI.csv', group), row.names = F) 
+      write.csv(confidence, file=sprintf('data/mirrorgeneralization-master/processed/%s_Retention_Mirror_CI.csv', group), row.names = F) 
       
     }
   }
@@ -1485,10 +1485,10 @@ plotRetention <- function(groups = c('30', '60'), target='inline') {
   
   for(group in groups){
     #read in files created by getGroupConfidenceInterval in filehandling.R
-    groupconfidenceAligned <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed_post/%s_Retention_Aligned_CI.csv', group))
-    groupconfidencePart1 <- read.csv(file=sprintf('data/mirrorreversal-fall/raw/processed_post/%s_Retention_Mirror_CI.csv', group))
+    groupconfidenceAligned <- read.csv(file=sprintf('data/mirrorreversal-fall/processed_post/%s_Retention_Aligned_CI.csv', group))
+    groupconfidencePart1 <- read.csv(file=sprintf('data/mirrorreversal-fall/processed_post/%s_Retention_Mirror_CI.csv', group))
     groupconfidencePart1 <- groupconfidencePart1[1:20,]
-    groupconfidencePart2 <- read.csv(file=sprintf('data/mirrorgeneralization-master/raw/processed/%s_Retention_Mirror_CI.csv', group))
+    groupconfidencePart2 <- read.csv(file=sprintf('data/mirrorgeneralization-master/processed/%s_Retention_Mirror_CI.csv', group))
     
     
     
@@ -1564,7 +1564,7 @@ plotRetention <- function(groups = c('30', '60'), target='inline') {
 plotPart2Density <- function(groups = c('far', 'near')){
   
   for(group in groups){
-    data <- read.csv(file='data/mirrorgeneralization-master/raw/processed/LearningGen.csv', check.names = FALSE)
+    data <- read.csv(file='data/mirrorgeneralization-master/processed/LearningGen.csv', check.names = FALSE)
 
     pdf(sprintf("doc/fig/mirrorgeneralization-master/Part2Density_%s.pdf", group))
 
@@ -1922,13 +1922,13 @@ getAllMoveThroughs <- function(){
   }
   
   #return(dataoutput)
-  write.csv(dataoutput, file='data/mirrorgeneralization-master/raw/processed/TrialMoveThroughs.csv', row.names = F)
+  write.csv(dataoutput, file='data/mirrorgeneralization-master/processed/TrialMoveThroughs.csv', row.names = F)
 }
 
 getTotalMoveThroughs <- function(){
   
   
-  dat1 <- read.csv('data/mirrorgeneralization-master/raw/processed/TrialMoveThroughs.csv', check.names = FALSE)
+  dat1 <- read.csv('data/mirrorgeneralization-master/processed/TrialMoveThroughs.csv', check.names = FALSE)
   
   #current fix for summer data being non-randomized and not counterbalanced
   #triallist <- dat$trial
@@ -1977,9 +1977,9 @@ plotTotalMoveThroughs <- function(target='inline'){
 plotRetentionDensityMoveThroughs <- function(groups = c('30', '60')){
   
   # we can use the outputs of 30_Retention_Mirror.csv and corresponding 60 degree file for reachdevs
-  dat30 <- read.csv('data/mirrorgeneralization-master/raw/processed/30_Retention_Mirror.csv', check.names = FALSE)
-  dat60 <- read.csv('data/mirrorgeneralization-master/raw/processed/60_Retention_Mirror.csv', check.names = FALSE)
-  dats1 <- read.csv('data/mirrorgeneralization-master/raw/processed/TrialMoveThroughs.csv', check.names = FALSE)
+  dat30 <- read.csv('data/mirrorgeneralization-master/processed/30_Retention_Mirror.csv', check.names = FALSE)
+  dat60 <- read.csv('data/mirrorgeneralization-master/processed/60_Retention_Mirror.csv', check.names = FALSE)
+  dats1 <- read.csv('data/mirrorgeneralization-master/processed/TrialMoveThroughs.csv', check.names = FALSE)
   
   for(group in groups){
 
@@ -2077,8 +2077,8 @@ plotRetentionDensityMoveThroughs <- function(groups = c('30', '60')){
 plotDensityMoveThroughs <- function(groups = c('far', 'near')){
   
   for(group in groups){
-    data <- read.csv(file='data/mirrorgeneralization-master/raw/processed/LearningGen.csv', check.names = FALSE)
-    dats1 <- read.csv('data/mirrorgeneralization-master/raw/processed/TrialMoveThroughs.csv', check.names = FALSE)
+    data <- read.csv(file='data/mirrorgeneralization-master/processed/LearningGen.csv', check.names = FALSE)
+    dats1 <- read.csv('data/mirrorgeneralization-master/processed/TrialMoveThroughs.csv', check.names = FALSE)
     
     pdf(sprintf("doc/fig/mirrorgeneralization-master/%s_DistbyStep1.pdf", group))
     
@@ -2538,8 +2538,8 @@ plotTrialOneDensityMoveThroughs <- function(target='inline', trials = c(1, 81)){
       svglite(file=sprintf('doc/fig/mirrorgeneralization-master/Fig7_Trial%s_DistributionbyStep1.svg', triali), width=10, height=7, pointsize=14, system_fonts=list(sans="Arial"))
     }
     
-    data <- read.csv(file='data/mirrorgeneralization-master/raw/processed/LearningGen.csv', check.names = FALSE)
-    dats1 <- read.csv('data/mirrorgeneralization-master/raw/processed/TrialMoveThroughs.csv', check.names = FALSE)
+    data <- read.csv(file='data/mirrorgeneralization-master/processed/LearningGen.csv', check.names = FALSE)
+    dats1 <- read.csv('data/mirrorgeneralization-master/processed/TrialMoveThroughs.csv', check.names = FALSE)
     
     
     
@@ -2601,7 +2601,7 @@ getDeviceGenCI<- function(devices = c('Mouse', 'Trackpad')){
     devqualt <- qualtdat[which(qualtdat$Q15 == device),]
     ppqualt <- devqualt$id
     
-    dat <- read.csv(file='data/mirrorgeneralization-master/raw/processed/LearningGen.csv', check.names = FALSE) #check.names allows us to keep pp id as headers
+    dat <- read.csv(file='data/mirrorgeneralization-master/processed/LearningGen.csv', check.names = FALSE) #check.names allows us to keep pp id as headers
     trial <- dat$trial
     #targetangle_deg <- dat$targetangle_deg
     ndat <- dat[,which(colnames(dat) %in% ppqualt)]
@@ -2631,7 +2631,7 @@ getDeviceGenCI<- function(devices = c('Mouse', 'Trackpad')){
         confidence <- rbind(confidence, citrial)
       }
       
-      write.csv(confidence, file=sprintf('data/mirrorgeneralization-master/raw/processed/LearningGen_CI_%s.csv', device), row.names = F)
+      write.csv(confidence, file=sprintf('data/mirrorgeneralization-master/processed/LearningGen_CI_%s.csv', device), row.names = F)
       
     }
   }

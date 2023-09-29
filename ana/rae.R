@@ -113,9 +113,9 @@ getAlignedGroupConfidenceInterval <- function(group, maxppid, location, type){
       confidence <- rbind(confidence, citrial)
     }
     if (group == 'noninstructed'){
-      write.csv(confidence, file='data/pilot/Aligned_noninstructed_CI.csv', row.names = F) 
+      write.csv(confidence, file='data/pilot/processed/Aligned_noninstructed_CI.csv', row.names = F) 
     } else if (group == 'instructed'){
-      write.csv(confidence, file='data/pilot/Aligned_instructed_CI.csv', row.names = F)
+      write.csv(confidence, file='data/pilot/processed/Aligned_instructed_CI.csv', row.names = F)
     } 
     
   }
@@ -258,9 +258,9 @@ getROTGroupRAEConfidenceInterval <- function(group, maxppid, location, type){
       confidence <- rbind(confidence, citrial)
     }
     if (group == 'noninstructed'){
-      write.csv(confidence, file='data/pilot/ROT_noninstructed_CI_aftereffects.csv', row.names = F) 
+      write.csv(confidence, file='data/pilot/processed/ROT_noninstructed_CI_aftereffects.csv', row.names = F) 
     } else if (group == 'instructed'){
-      write.csv(confidence, file='data/pilot/ROT_instructed_CI_aftereffects.csv', row.names = F)
+      write.csv(confidence, file='data/pilot/processed/ROT_instructed_CI_aftereffects.csv', row.names = F)
     } 
     
   }
@@ -289,7 +289,7 @@ plotROTAftereffects <- function(groups = c('noninstructed', 'instructed'),target
   
   for(group in groups){
     #read in files created by getGroupConfidenceInterval in filehandling.R
-    groupconfidence <- read.csv(file=sprintf('data/pilot/ROT_%s_CI_aftereffects.csv', group))
+    groupconfidence <- read.csv(file=sprintf('data/pilot/processed/ROT_%s_CI_aftereffects.csv', group))
     
     colourscheme <- getColourScheme(groups = group)
     #take only first, last and middle columns of file
@@ -455,9 +455,9 @@ getMIRGroupRAEConfidenceInterval <- function(group, maxppid, location, type){
       confidence <- rbind(confidence, citrial)
     }
     if (group == 'noninstructed'){
-      write.csv(confidence, file='data/pilot/MIR_noninstructed_CI_aftereffects.csv', row.names = F) 
+      write.csv(confidence, file='data/pilot/processed/MIR_noninstructed_CI_aftereffects.csv', row.names = F) 
     } else if (group == 'instructed'){
-      write.csv(confidence, file='data/pilot/MIR_instructed_CI_aftereffects.csv', row.names = F)
+      write.csv(confidence, file='data/pilot/processed/MIR_instructed_CI_aftereffects.csv', row.names = F)
     }
   }
   #}
@@ -486,7 +486,7 @@ plotMIRAftereffects <- function(groups = c('noninstructed', 'instructed'),target
   
   for(group in groups){
     #read in files created by getGroupConfidenceInterval in filehandling.R
-    groupconfidence <- read.csv(file=sprintf('data/pilot/MIR_%s_CI_aftereffects.csv', group))
+    groupconfidence <- read.csv(file=sprintf('data/pilot/processed/MIR_%s_CI_aftereffects.csv', group))
     
     colourscheme <- getColourScheme(groups = group)
     #take only first, last and middle columns of file
@@ -545,7 +545,7 @@ plotPTypeAftereffects <- function(perturb = c('ROT', 'MIR'), group = 'noninstruc
   
   for(ptype in perturb){
     #read in files created by getGroupConfidenceInterval in filehandling.R
-    groupconfidence <- read.csv(file=sprintf('data/pilot/%s_%s_CI_aftereffects.csv', ptype, group))
+    groupconfidence <- read.csv(file=sprintf('data/pilot/processed/%s_%s_CI_aftereffects.csv', ptype, group))
     
     colourscheme <- getPtypeColourScheme(ptype)
     #take only first, last and middle columns of file
@@ -1094,9 +1094,9 @@ getRAEGroupTargetCurveConfidenceInterval <- function(group, maxppid, location, a
         confidence <- rbind(confidence, citrial)
       }
       if (group == 'noninstructed'){
-        write.csv(confidence, file=sprintf('data/pilot/RAE_noninstructed_CI_targetcurve%s.csv', angle), row.names = F) 
+        write.csv(confidence, file=sprintf('data/pilot/processed/RAE_noninstructed_CI_targetcurve%s.csv', angle), row.names = F) 
       } else if (group == 'instructed'){
-        write.csv(confidence, file=sprintf('data/pilot/RAE_instructed_CI_targetcurve%s.csv', angle), row.names = F)
+        write.csv(confidence, file=sprintf('data/pilot/processed/RAE_instructed_CI_targetcurve%s.csv', angle), row.names = F)
       }
     }
   }
@@ -1125,7 +1125,7 @@ plotNIRAETargetCurve<- function(group = 'noninstructed', angles = c(15,30,45), t
   
   for(angle in angles){
     #read in files created by getGroupConfidenceInterval in filehandling.R
-    groupconfidence <- read.csv(file=sprintf('data/pilot/RAE_%s_CI_targetcurve%s.csv', group, angle))
+    groupconfidence <- read.csv(file=sprintf('data/pilot/processed/RAE_%s_CI_targetcurve%s.csv', group, angle))
     
     colourscheme <- getTtypeColourScheme(angles = angle)
     #take only first, last and middle columns of file
@@ -1185,7 +1185,7 @@ plotIRAETargetCurve<- function(group = 'instructed', angles = c(15,30,45), targe
   
   for(angle in angles){
     #read in files created by getGroupConfidenceInterval in filehandling.R
-    groupconfidence <- read.csv(file=sprintf('data/pilot/RAE_%s_CI_targetcurve%s.csv', group, angle))
+    groupconfidence <- read.csv(file=sprintf('data/pilot/processed/RAE_%s_CI_targetcurve%s.csv', group, angle))
     
     colourscheme <- getTtypeColourScheme(angles = angle)
     #take only first, last and middle columns of file
@@ -1247,7 +1247,7 @@ getROTRAEPars <- function(groups = c('noninstructed', 'instructed'), location = 
       N0 <- c(N0, par['N0'])
     }
     
-    write.csv(data.frame(lambda, N0), file=sprintf('data/pilot/ROT_%s_modpar_RAE.csv',group), quote=F, row.names=F)
+    write.csv(data.frame(lambda, N0), file=sprintf('data/pilot/processed/ROT_%s_modpar_RAE.csv',group), quote=F, row.names=F)
     
   }
   
@@ -1277,7 +1277,7 @@ plotROTRAEModel <- function(groups = c('noninstructed', 'instructed'), location 
     }
     
     #show the percent compensation from data
-    groupconfidence <- read.csv(file=sprintf('data/pilot/ROT_%s_CI_Aftereffects.csv', group))
+    groupconfidence <- read.csv(file=sprintf('data/pilot/processed/ROT_%s_CI_Aftereffects.csv', group))
     mid <- groupconfidence[,2]
     x <- c(0:47)
     col <- '#A9A9A9ff'
@@ -1291,7 +1291,7 @@ plotROTRAEModel <- function(groups = c('noninstructed', 'instructed'), location 
       
     #get CIs for rate of change, asymptote will just be 50%, then solid line is based from pars of data (no bootstrapping)
     #bootstrapped pars are used for lower and upper bounds
-    data <- read.csv(sprintf('data/pilot/ROT_%s_modpar_RAE.csv', group))
+    data <- read.csv(sprintf('data/pilot/processed/ROT_%s_modpar_RAE.csv', group))
       
     qs_lambda <- quantile(data$lambda, probs = c(0.025, 0.500, 0.975))
     qs_N0 <- quantile(data$N0, probs = c(0.025, 0.500, 0.975))
@@ -1355,7 +1355,7 @@ getMIRRAEPars <- function(groups = c('noninstructed', 'instructed'), location = 
       N0 <- c(N0, par['N0'])
     }
     
-    write.csv(data.frame(lambda, N0), file=sprintf('data/pilot/MIR_%s_modpar_RAE.csv',group), quote=F, row.names=F)
+    write.csv(data.frame(lambda, N0), file=sprintf('data/pilot/processed/MIR_%s_modpar_RAE.csv',group), quote=F, row.names=F)
     
   }
   
@@ -1385,7 +1385,7 @@ plotMIRRAEModel <- function(groups = c('noninstructed', 'instructed'), location 
     }
     
     #show the percent compensation from data
-    groupconfidence <- read.csv(file=sprintf('data/pilot/MIR_%s_CI_Aftereffects.csv', group))
+    groupconfidence <- read.csv(file=sprintf('data/pilot/processed/MIR_%s_CI_Aftereffects.csv', group))
     mid <- groupconfidence[,2]
     x <- c(0:47)
     col <- '#A9A9A9ff'
@@ -1399,7 +1399,7 @@ plotMIRRAEModel <- function(groups = c('noninstructed', 'instructed'), location 
       
     #get CIs for rate of change, asymptote will just be 50%, then solid line is based from pars of data (no bootstrapping)
     #bootstrapped pars are used for lower and upper bounds
-    data <- read.csv(sprintf('data/pilot/MIR_%s_modpar_RAE.csv', group))
+    data <- read.csv(sprintf('data/pilot/processed/MIR_%s_modpar_RAE.csv', group))
       
     qs_lambda <- quantile(data$lambda, probs = c(0.025, 0.500, 0.975))
     qs_N0 <- quantile(data$N0, probs = c(0.025, 0.500, 0.975))
@@ -1468,7 +1468,7 @@ getRAEMSE <- function(perturb = c('ROT', 'MIR'), group = 'noninstructed', maxppi
     }
     
     ndat <- data.frame(lambda, N0, mse_expl)
-    write.csv(ndat, file=sprintf('data/pilot/%s_%s_MSE_RAE.csv',ptype, group), quote=F, row.names=F)
+    write.csv(ndat, file=sprintf('data/pilot/processed/%s_%s_MSE_RAE.csv',ptype, group), quote=F, row.names=F)
   }
 }
 
@@ -1520,7 +1520,7 @@ getRAELongFormat <- function(groups = c('noninstructed','instructed'), location 
       ALdat <- cbind(ALdat, perturb)
       #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
       longALdata <- gather(ALdat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
-      write.csv(longALdata, file=sprintf('data/pilot/ALIGNED_%s_long.csv', group), row.names = F)
+      write.csv(longALdata, file=sprintf('data/pilot/processed/ALIGNED_%s_long.csv', group), row.names = F)
       
       
       #Rotation data
@@ -1533,7 +1533,7 @@ getRAELongFormat <- function(groups = c('noninstructed','instructed'), location 
       ROTdat <- cbind(ROTdat, perturb)
       #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
       longROTdata <- gather(ROTdat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
-      write.csv(longROTdata, file=sprintf('data/pilot/ROT_%s_aftereffects_long.csv', group), row.names = F)
+      write.csv(longROTdata, file=sprintf('data/pilot/processed/ROT_%s_aftereffects_long.csv', group), row.names = F)
       
       #Mirror data
       MIRdat <- getMIRGroupAftereffects(group=group,maxppid=maxppid,location=location)
@@ -1545,7 +1545,7 @@ getRAELongFormat <- function(groups = c('noninstructed','instructed'), location 
       MIRdat <- cbind(MIRdat, perturb)
       #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
       longMIRdata <- gather(MIRdat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
-      write.csv(longMIRdata, file=sprintf('data/pilot/MIR_%s_aftereffects_long.csv', group), row.names = F)
+      write.csv(longMIRdata, file=sprintf('data/pilot/processed/MIR_%s_aftereffects_long.csv', group), row.names = F)
     } else if (group == 'instructed'){
       maxppid = 31
       #Aligned data
@@ -1558,7 +1558,7 @@ getRAELongFormat <- function(groups = c('noninstructed','instructed'), location 
       ALdat <- cbind(ALdat, perturb)
       #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
       longALdata <- gather(ALdat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
-      write.csv(longALdata, file=sprintf('data/pilot/ALIGNED_%s_long.csv', group), row.names = F)
+      write.csv(longALdata, file=sprintf('data/pilot/processed/ALIGNED_%s_long.csv', group), row.names = F)
       
       
       #Rotation data
@@ -1571,7 +1571,7 @@ getRAELongFormat <- function(groups = c('noninstructed','instructed'), location 
       ROTdat <- cbind(ROTdat, perturb)
       #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
       longROTdata <- gather(ROTdat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
-      write.csv(longROTdata, file=sprintf('data/pilot/ROT_%s_aftereffects_long.csv', group), row.names = F)
+      write.csv(longROTdata, file=sprintf('data/pilot/processed/ROT_%s_aftereffects_long.csv', group), row.names = F)
       
       #Mirror data
       MIRdat <- getMIRGroupAftereffects(group=group,maxppid=maxppid,location=location)
@@ -1583,7 +1583,7 @@ getRAELongFormat <- function(groups = c('noninstructed','instructed'), location 
       MIRdat <- cbind(MIRdat, perturb)
       #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
       longMIRdata <- gather(MIRdat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
-      write.csv(longMIRdata, file=sprintf('data/pilot/MIR_%s_aftereffects_long.csv', group), row.names = F)
+      write.csv(longMIRdata, file=sprintf('data/pilot/processed/MIR_%s_aftereffects_long.csv', group), row.names = F)
     }
   }
 }
@@ -1591,7 +1591,7 @@ getRAELongFormat <- function(groups = c('noninstructed','instructed'), location 
 #First, we confirm the presence of aftereffects
 getBlockedAlignedData <- function(group, blockdefs){
   LCaov <- data.frame()
-  curves <- read.csv(sprintf('data/pilot/ALIGNED_%s_long.csv', group), stringsAsFactors=FALSE)  
+  curves <- read.csv(sprintf('data/pilot/processed/ALIGNED_%s_long.csv', group), stringsAsFactors=FALSE)  
   participants <- unique(curves$participant)
   #R <- dim(curves)[1] # not needed, checks if rows=90 (correct trial numbers)
   #curves <- curves[,-1] #take away trial column
@@ -1655,7 +1655,7 @@ getBlockedRAEAOV <- function(perturbations = c('ROT','MIR'), group, blockdefs) {
   LCaov <- data.frame()
   #to include instructed group, just create another for loop here
   for (perturb in perturbations){  
-    curves <- read.csv(sprintf('data/pilot/%s_%s_aftereffects_long.csv',perturb,group), stringsAsFactors=FALSE)  
+    curves <- read.csv(sprintf('data/pilot/processed/%s_%s_aftereffects_long.csv',perturb,group), stringsAsFactors=FALSE)  
     participants <- unique(curves$participant)
     #R <- dim(curves)[1] # not needed, checks if rows=90 (correct trial numbers)
     #curves <- curves[,-1] #take away trial column
@@ -1919,9 +1919,9 @@ getLambdaRAECorrelations <- function(group){
   MIRfirst <- LC4aov[which(LC4aov$block == 'first' & LC4aov$perturbtype == 'MIR'),]
   ROTfirst <- LC4aov[which(LC4aov$block == 'first' & LC4aov$perturbtype == 'ROT'),]
   
-  MIRLC <- read.csv('data/pilot/MIR_noninstructed_MSE_LearningCurves.csv')
+  MIRLC <- read.csv('data/pilot/processed/MIR_noninstructed_MSE_LearningCurves.csv')
   MIRlambda <- MIRLC$lambda
-  ROTLC <- read.csv('data/pilot/ROT_noninstructed_MSE_LearningCurves.csv')
+  ROTLC <- read.csv('data/pilot/processed/ROT_noninstructed_MSE_LearningCurves.csv')
   ROTlambda <- ROTLC$lambda
   
   
