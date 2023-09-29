@@ -11,7 +11,7 @@ output:
 
 # Overview
 
-This document discusses results for the tablet and online experiments. We also provide a more in depth analysis of the date here, and show additional figures and statistics.
+This document discusses results for the tablet and online experiments, with both Bayesian and frequentist analyses. We also  show additional figures and statistics.
 
 # Set up the R enviornment
 
@@ -190,7 +190,7 @@ getLambdaTargetEffectsTTest(perturbation = 'MIR')
 getAsymptoteTargetEffectsTTest(perturbation = 'MIR')
 ```
 
-We do not find any differences between learning rates and asymptotes in frequentist tests, suggesting that there are no target locations effects. However, the Bayesian t-test comparing learning rates between target locations suggests anecdotal evidence for a target location effect. This is likely due to the variability in compensations during initial trials of learning.
+We do not find any conclusive evidence of differences between learning rates and asymptotes.
 
 ## Learning Rates
 

@@ -4,6 +4,45 @@ source('ana/qualtricsdata.R')
 
 #pre-processing----
 
+checkScreenWidths <- function(){
+  
+  datafilenames <- list.files('data/controlmironline-master/raw', pattern = '*.csv')
+  dataoutput<- data.frame() #create place holder
+  for(datafilenum in c(1:length(datafilenames))){
+    datafilename <- sprintf('data/controlmironline-master/raw/%s', datafilenames[datafilenum])
+    df <- NULL
+    try(df <- read.csv(datafilename, stringsAsFactors = F), silent = TRUE)
+    if (is.null(df)) {
+      return(list())
+    }
+    
+    # remove empty lines:
+    df <- df[which(!is.na(df$trialsNum)),]
+    #df <- df[which(df$trialsNum == 2),]
+    
+    # loop through all trials
+    #plot(x,y,type='l',col='blue',xlim=c(-1.2,1.2),ylim=c(-1.2,1.2))
+    plot(0,0,col='black',xlim=c(-1,1),ylim=c(-1,1))
+    for (trialnum in c(1:dim(df)[1])) {
+      
+      x <- convertCellToNumVector(df$trialMouse.x[trialnum])
+      y <- convertCellToNumVector(df$trialMouse.y[trialnum])
+      s <- convertCellToNumVector(df$step[trialnum])
+      
+      # remove stuff that is not step==2
+      step2idx = which(s == 2)
+      x <- x[step2idx]
+      y <- y[step2idx]
+      
+      #plot(x,y,type='l',col='blue',xlim=c(-0.5,0.5),ylim=c(-0.5,0.5))
+      lines(x,y,col='blue')
+      # points(c(0,cos((a/180)*pi)),c(0,sin((a/180)*pi)),col='black')
+      
+      
+    }
+  }
+}
+
 #Function to handle one participant. Outputs a df with relevant information across trials
 handleOneCtrlFile <- function(filename) {
   
