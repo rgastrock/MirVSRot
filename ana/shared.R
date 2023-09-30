@@ -14,6 +14,7 @@ library(BayesFactor)
 library(bayestestR)
 library(tidyverse)
 library(plotrix)
+library(osfr)
 
 #Generic Functions----
 
