@@ -1440,6 +1440,46 @@ RTt.test <- function(group) {
   cat('Bayesian t-test Aligned (last block) compared to Mirror (last block):\n')
   print(ttestBF(ALdat$compensation, MIRdatlast$compensation, paired = TRUE))
   
+  #I add a comparison of last block of MIR WASHOUT compared to aligned
+  ROTWASHdatlast <- LC4test[which(LC4test$block == 'last' & LC4test$perturbtype == 'ROTWASH'),]
+  MIRWASHdatlast <-LC4test[which(LC4test$block == 'last' & LC4test$perturbtype == 'MIRWASH'),]
+  
+  cat('Aligned (last block) compared to Rotation Washout (last block):\n')
+  print(t.test(ALdat$compensation, ROTWASHdatlast$compensation, paired = TRUE))
+  cat('Effect Size - Cohen d:\n')
+  print(cohensD(ALdat$compensation, ROTWASHdatlast$compensation, method = 'paired'))
+  #cat('Bayesian t-test Aligned (last block) compared to Rotation Washout (last block):\n')
+  #print(ttestBF(ALdat$compensation, ROTWASHdatlast$compensation, paired = TRUE))
+  
+  cat('Aligned (last block) compared to Mirror Washout (last block):\n')
+  print(t.test(ALdat$compensation, MIRWASHdatlast$compensation, paired = TRUE))
+  cat('Effect Size - Cohen d:\n')
+  print(cohensD(ALdat$compensation, MIRWASHdatlast$compensation, method = 'paired'))
+  cat('Bayesian t-test Aligned (last block) compared to Mirror Washout (last block):\n')
+  print(ttestBF(ALdat$compensation, MIRWASHdatlast$compensation, paired = TRUE))
+  
+  #add comparison of first block of MIR WASHOUT to last block of MIR
+  cat('Rotation (last block) compared to Rotation Washout (first block):\n')
+  print(t.test(ROTdatlast$compensation, ROTWASHdat$compensation, paired = TRUE))
+  cat('Effect Size - Cohen d:\n')
+  print(cohensD(ROTdatlast$compensation, ROTWASHdat$compensation, method = 'paired'))
+  cat('Bayesian t-test Rotation (last block) compared to Rotation Washout (first block):\n')
+  print(ttestBF(ROTdatlast$compensation, ROTWASHdat$compensation, paired = TRUE))
+  
+  cat('Mirror (last block) compared to Mirror Washout (first block):\n')
+  print(t.test(MIRdatlast$compensation, MIRWASHdat$compensation, paired = TRUE))
+  cat('Effect Size - Cohen d:\n')
+  print(cohensD(MIRdatlast$compensation, MIRWASHdat$compensation, method = 'paired'))
+  cat('Bayesian t-test Mirror (last block) compared to Mirror Washout (first block):\n')
+  print(ttestBF(MIRdatlast$compensation, MIRWASHdat$compensation, paired = TRUE))
+  
+  #add comparison of first MIR WASHOUT block to last MIR WASHOUT block
+  cat('Mirror Washout (first block) compared to Mirror Washout (last block):\n')
+  print(t.test(MIRWASHdat$compensation, MIRWASHdatlast$compensation, paired = TRUE))
+  cat('Effect Size - Cohen d:\n')
+  print(cohensD(MIRWASHdat$compensation, MIRWASHdatlast$compensation, method = 'paired'))
+  cat('Bayesian t-test Mirror Washout (first block) compared to Mirror Washout (last block):\n')
+  print(ttestBF(MIRWASHdat$compensation, MIRWASHdatlast$compensation, paired = TRUE))
 }
 
 # We only see significant differences for ROT and MIR but not the washouts. We explore ROT and MIR further.
@@ -3019,19 +3059,46 @@ MTt.test <- function(group) {
   cat('Bayesian t-test Aligned (last block) compared to Mirror (last block):\n')
   print(ttestBF(ALdat$compensation, MIRdatlast$compensation, paired = TRUE))
   
-  # cat('Aligned (last block) compared to Rotation Washout (last block):\n')
-  # print(t.test(ALdat$compensation, ROTWASHdatlast$compensation, paired = TRUE))
-  # cat('Effect Size - Cohen d:\n')
-  # print(cohensD(ALdat$compensation, ROTWASHdatlast$compensation))
-  # cat('Bayesian t-test Aligned (last block) compared to Rotation Washout (last block):\n')
-  # print(ttestBF(ALdat$compensation, ROTWASHdatlast$compensation))
-  # 
-  # cat('Aligned (last block) compared to Mirror Washout (last block):\n')
-  # print(t.test(ALdat$compensation, MIRWASHdatlast$compensation, paired = TRUE))
-  # cat('Effect Size - Cohen d:\n')
-  # print(cohensD(ALdat$compensation, MIRWASHdatlast$compensation))
-  # cat('Bayesian t-test Aligned (last block) compared to Mirror Washout (last block):\n')
-  # print(ttestBF(ALdat$compensation, MIRWASHdatlast$compensation))
+  #I add a comparison of last block of MIR WASHOUT compared to aligned
+  ROTWASHdatlast <- LC4test[which(LC4test$block == 'last' & LC4test$perturbtype == 'ROTWASH'),]
+  MIRWASHdatlast <-LC4test[which(LC4test$block == 'last' & LC4test$perturbtype == 'MIRWASH'),]
+  
+  cat('Aligned (last block) compared to Rotation Washout (last block):\n')
+  print(t.test(ALdat$compensation, ROTWASHdatlast$compensation, paired = TRUE))
+  cat('Effect Size - Cohen d:\n')
+  print(cohensD(ALdat$compensation, ROTWASHdatlast$compensation, method = 'paired'))
+  cat('Bayesian t-test Aligned (last block) compared to Rotation Washout (last block):\n')
+  print(ttestBF(ALdat$compensation, ROTWASHdatlast$compensation, paired = TRUE))
+  
+  cat('Aligned (last block) compared to Mirror Washout (last block):\n')
+  print(t.test(ALdat$compensation, MIRWASHdatlast$compensation, paired = TRUE))
+  cat('Effect Size - Cohen d:\n')
+  print(cohensD(ALdat$compensation, MIRWASHdatlast$compensation, method = 'paired'))
+  cat('Bayesian t-test Aligned (last block) compared to Mirror Washout (last block):\n')
+  print(ttestBF(ALdat$compensation, MIRWASHdatlast$compensation, paired = TRUE))
+  
+  #add comparison of first block of MIR WASHOUT to last block of MIR
+  cat('Rotation (last block) compared to Rotation Washout (first block):\n')
+  print(t.test(ROTdatlast$compensation, ROTWASHdat$compensation, paired = TRUE))
+  cat('Effect Size - Cohen d:\n')
+  print(cohensD(ROTdatlast$compensation, ROTWASHdat$compensation, method = 'paired'))
+  cat('Bayesian t-test Rotation (last block) compared to Rotation Washout (first block):\n')
+  print(ttestBF(ROTdatlast$compensation, ROTWASHdat$compensation, paired = TRUE))
+  
+  cat('Mirror (last block) compared to Mirror Washout (first block):\n')
+  print(t.test(MIRdatlast$compensation, MIRWASHdat$compensation, paired = TRUE))
+  cat('Effect Size - Cohen d:\n')
+  print(cohensD(MIRdatlast$compensation, MIRWASHdat$compensation, method = 'paired'))
+  cat('Bayesian t-test Mirror (last block) compared to Mirror Washout (first block):\n')
+  print(ttestBF(MIRdatlast$compensation, MIRWASHdat$compensation, paired = TRUE))
+  
+  #add comparison of first MIR WASHOUT block to last MIR WASHOUT block
+  cat('Mirror Washout (first block) compared to Mirror Washout (last block):\n')
+  print(t.test(MIRWASHdat$compensation, MIRWASHdatlast$compensation, paired = TRUE))
+  cat('Effect Size - Cohen d:\n')
+  print(cohensD(MIRWASHdat$compensation, MIRWASHdatlast$compensation, method = 'paired'))
+  cat('Bayesian t-test Mirror Washout (first block) compared to Mirror Washout (last block):\n')
+  print(ttestBF(MIRWASHdat$compensation, MIRWASHdatlast$compensation, paired = TRUE))
   
 }
 

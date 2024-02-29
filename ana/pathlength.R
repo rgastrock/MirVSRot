@@ -768,6 +768,18 @@ getPathLongFormat <- function(groups = c('noninstructed','instructed'), location
       longROTdata <- gather(ROTdat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
       write.csv(longROTdata, file=sprintf('data/pilot/processed/ROT_%s_PL_long.csv', group), row.names = F)
       
+      #RotWASH data
+      ROTWASHdat <- getROTWASHGroupPLTrials(group=group,maxppid=maxppid)
+      ppcols <- c('p0','p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9', 'p10', 'p11', 'p12', 'p13', 'p14', 'p15')
+      colnames(ROTWASHdat) <- c('trial', 'p0','p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9', 'p10', 'p11', 'p12', 'p13', 'p14', 'p15')
+      
+      ROTWASHdat <- as.data.frame(ROTWASHdat)
+      perturb <- rep('ROTWASH', nrow(ROTWASHdat))
+      ROTWASHdat <- cbind(ROTWASHdat, perturb)
+      #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
+      longROTWASHdata <- gather(ROTWASHdat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
+      write.csv(longROTWASHdata, file=sprintf('data/pilot/processed/ROTWASH_%s_PL_long.csv', group), row.names = F)
+      
       #Mirror data
       MIRdat <- getMIRGroupPathLength(group=group,maxppid=maxppid)
       ppcols <- c('p0','p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9', 'p10', 'p11', 'p12', 'p13', 'p14', 'p15')
@@ -779,6 +791,19 @@ getPathLongFormat <- function(groups = c('noninstructed','instructed'), location
       #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
       longMIRdata <- gather(MIRdat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
       write.csv(longMIRdata, file=sprintf('data/pilot/processed/MIR_%s_PL_long.csv', group), row.names = F)
+      
+      #MirWASH data
+      MIRWASHdat <- getMIRWASHGroupPLTrials(group=group,maxppid=maxppid)
+      ppcols <- c('p0','p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9', 'p10', 'p11', 'p12', 'p13', 'p14', 'p15')
+      colnames(MIRWASHdat) <- c('trial', 'p0','p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9', 'p10', 'p11', 'p12', 'p13', 'p14', 'p15')
+      
+      MIRWASHdat <- as.data.frame(MIRWASHdat)
+      perturb <- rep('MIRWASH', nrow(MIRWASHdat))
+      MIRWASHdat <- cbind(MIRWASHdat, perturb)
+      #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
+      longMIRWASHdata <- gather(MIRWASHdat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
+      write.csv(longMIRWASHdata, file=sprintf('data/pilot/processed/MIRWASH_%s_PL_long.csv', group), row.names = F)
+      
     } else if (group == 'instructed'){
       maxppid = 31
       #Aligned data
@@ -806,6 +831,18 @@ getPathLongFormat <- function(groups = c('noninstructed','instructed'), location
       longROTdata <- gather(ROTdat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
       write.csv(longROTdata, file=sprintf('data/pilot/processed/ROT_%s_PL_long.csv', group), row.names = F)
       
+      #RotWASH data
+      ROTWASHdat <- getROTWASHGroupPLTrials(group=group,maxppid=maxppid)
+      ppcols <- c('p16','p17', 'p18', 'p19', 'p20', 'p21', 'p22', 'p23', 'p24', 'p25', 'p26', 'p27', 'p28', 'p29', 'p30', 'p31')
+      colnames(ROTWASHdat) <- c('trial', 'p16','p17', 'p18', 'p19', 'p20', 'p21', 'p22', 'p23', 'p24', 'p25', 'p26', 'p27', 'p28', 'p29', 'p30', 'p31')
+      
+      ROTWASHdat <- as.data.frame(ROTWASHdat)
+      perturb <- rep('ROTWASH', nrow(ROTWASHdat))
+      ROTWASHdat <- cbind(ROTWASHdat, perturb)
+      #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
+      longROTWASHdata <- gather(ROTWASHdat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
+      write.csv(longROTWASHdata, file=sprintf('data/pilot/processed/ROTWASH_%s_PL_long.csv', group), row.names = F)
+      
       #Mirror data
       MIRdat <- getMIRGroupPathLength(group=group,maxppid=maxppid)
       ppcols <- c('p16','p17', 'p18', 'p19', 'p20', 'p21', 'p22', 'p23', 'p24', 'p25', 'p26', 'p27', 'p28', 'p29', 'p30', 'p31')
@@ -817,6 +854,19 @@ getPathLongFormat <- function(groups = c('noninstructed','instructed'), location
       #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
       longMIRdata <- gather(MIRdat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
       write.csv(longMIRdata, file=sprintf('data/pilot/processed/MIR_%s_PL_long.csv', group), row.names = F)
+      
+      #MirWASH data
+      MIRWASHdat <- getMIRWASHGroupPLTrials(group=group,maxppid=maxppid)
+      ppcols <- c('p16','p17', 'p18', 'p19', 'p20', 'p21', 'p22', 'p23', 'p24', 'p25', 'p26', 'p27', 'p28', 'p29', 'p30', 'p31')
+      colnames(MIRWASHdat) <- c('trial', 'p16','p17', 'p18', 'p19', 'p20', 'p21', 'p22', 'p23', 'p24', 'p25', 'p26', 'p27', 'p28', 'p29', 'p30', 'p31')
+      
+      MIRWASHdat <- as.data.frame(MIRWASHdat)
+      perturb <- rep('MIRWASH', nrow(MIRWASHdat))
+      MIRWASHdat <- cbind(MIRWASHdat, perturb)
+      #gather(data, the pp cols changed to rows, reachdev values to rows, specify how many ppcols to change)
+      longMIRWASHdata <- gather(MIRWASHdat, participant, compensation, ppcols[1:length(ppcols)], factor_key=TRUE)
+      write.csv(longMIRWASHdata, file=sprintf('data/pilot/processed/MIRWASH_%s_PL_long.csv', group), row.names = F)
+      
     }
   }
 }
@@ -950,6 +1000,71 @@ getPLBlockedPerturbData <- function(perturbations = c('ROT','MIR'), group, block
   
 }
 
+getPLBlockedWashoutData <- function(perturbations = c('ROTWASH','MIRWASH'), group, blockdefs) {
+  #function reads in aftereffects_long.csv file then creates a df with cols participant, block, reachdev
+  LCaov <- data.frame()
+  #to include instructed group, just create another for loop here
+  for (perturb in perturbations){  
+    curves <- read.csv(sprintf('data/pilot/processed/%s_%s_PL_long.csv',perturb, group), stringsAsFactors=FALSE)  
+    participants <- unique(curves$participant)
+    #R <- dim(curves)[1] # not needed, checks if rows=90 (correct trial numbers)
+    #curves <- curves[,-1] #take away trial column
+    N <- length(participants) #gets the number of participants
+    
+    #blocked <- array(NA, dim=c(N,length(blockdefs))) #empty array where every participant will get 3 corresponding columns
+    #row.names(blocked) <- participants
+    #colnames(blocked) <- names(blockdefs)
+    
+    perturbtype <- c()
+    participant <- c()
+    block <- c()
+    compensation <- c()
+    
+    for (pp.idx in c(1:length(participants))) {
+      
+      pp <- participants[pp.idx] #loop through each participant
+      
+      for (blockno in c(1:length(blockdefs))) { #loop through each block (first, second, third)
+        
+        blockdef <- blockdefs[[blockno]] #creates a list which specifies start trial of every block, and how many trials in total for this block
+        blockstart <- blockdef[1] #either trial 1, 4, or 76
+        blockend <- blockstart + blockdef[2] - 1 #either trial 3, 6, or 90
+        #samples <- curves[blockstart:blockend,pp] #gets corresponding reach angle per participant
+        # moved to long format files:
+        samples <- c()
+        for (trial in c(blockstart:blockend)) {
+          # print(which(curves$participant == pp))
+          # print(which(curves$participant == pp & curves$trial == trial))
+          samples <- c(samples, curves$compensation[which(curves$participant == pp & curves$trial == trial)]) #get reachdev for current pp and trial
+          
+        }
+        #print(mean(samples, na.rm=TRUE))
+        #blocked[pp.idx,block] <- mean(samples, na.rm=TRUE) #compute the mean for it and put it in array
+        perturbtype <- c(perturbtype, perturb)
+        participant <- c(participant, pp) #the participant
+        block <- c(block, names(blockdefs)[blockno]) #the name of the block number (first, second or third)
+        compensation <- c(compensation, mean(samples, na.rm=T)) #mean compensation of trials for that block
+      }
+      
+    }
+    
+    GroupLCBlocked <- data.frame(perturbtype,participant,block,compensation)
+    
+    
+    if (prod(dim(LCaov)) == 0){
+      LCaov <- GroupLCBlocked
+    } else {
+      LCaov <- rbind(LCaov, GroupLCBlocked)
+    }
+  }
+  #need to make some columns as factors for ANOVA
+  LCaov$perturbtype <- as.factor(LCaov$perturbtype)
+  LCaov$block <- as.factor(LCaov$block)
+  LCaov$block <- factor(LCaov$block, levels = c('first','second','last')) #so that it does not order it alphabetically
+  return(LCaov)
+  
+}
+
 PLt.test <- function(group) {
   
   blockdefs <- list('first'=c(1,12),'second'=c(13,12),'last'=c(37,12))
@@ -958,12 +1073,17 @@ PLt.test <- function(group) {
   blockdefs <- list('first'=c(1,6),'second'=c(7,6),'last'=c(85,6)) #6 trials per block
   LC4test2 <- getPLBlockedPerturbData(group=group,blockdefs=blockdefs)
   
-  LC4test <- rbind(LC4test1, LC4test2)
+  blockdefs <- list('first'=c(1,6),'second'=c(7,6),'last'=c(43,6)) #6 trials per block
+  LC4test3 <- getPLBlockedWashoutData(group=group,blockdefs=blockdefs)
+  
+  LC4test <- rbind(LC4test1, LC4test2, LC4test3)
   LC4test$participant <- as.factor(LC4test$participant)
   
   ALdat <- LC4test[which(LC4test$block == 'last' & LC4test$perturbtype == 'AL'),]
   ROTdat <- LC4test[which(LC4test$block == 'first' & LC4test$perturbtype == 'ROT'),]
   MIRdat <-LC4test[which(LC4test$block == 'first' & LC4test$perturbtype == 'MIR'),]
+  ROTWASHdat <-LC4test[which(LC4test$block == 'first' & LC4test$perturbtype == 'ROTWASH'),]
+  MIRWASHdat <-LC4test[which(LC4test$block == 'first' & LC4test$perturbtype == 'MIRWASH'),]
   
   cat('Aligned (last block) compared to Rotation (first block):\n')
   print(t.test(ALdat$compensation, ROTdat$compensation, paired = TRUE))
@@ -978,6 +1098,20 @@ PLt.test <- function(group) {
   print(cohensD(ALdat$compensation, MIRdat$compensation, method = 'paired'))
   cat('Bayesian t-test Aligned (last block) compared to Mirror (first block):\n')
   print(ttestBF(ALdat$compensation, MIRdat$compensation, paired = TRUE))
+  
+  cat('Aligned (last block) compared to Rotation Washout (first block):\n')
+  print(t.test(ALdat$compensation, ROTWASHdat$compensation, paired = TRUE))
+  cat('Effect Size - Cohen d:\n')
+  print(cohensD(ALdat$compensation, ROTWASHdat$compensation, method = 'paired'))
+  cat('Bayesian t-test Aligned (last block) compared to Rotation Washout (first block):\n')
+  print(ttestBF(ALdat$compensation, ROTWASHdat$compensation, paired = TRUE))
+  
+  cat('Aligned (last block) compared to Mirror Washout (first block):\n')
+  print(t.test(ALdat$compensation, MIRWASHdat$compensation, paired = TRUE))
+  cat('Effect Size - Cohen d:\n')
+  print(cohensD(ALdat$compensation, MIRWASHdat$compensation, method = 'paired'))
+  cat('Bayesian t-test Aligned (last block) compared to Mirror Washout (first block):\n')
+  print(ttestBF(ALdat$compensation, MIRWASHdat$compensation, paired = TRUE))
   
   #I add a comparison of last block of ROT and MIR compared to aligned, and ROTWASH and MIRWASH last blocks.
   ROTdatlast <- LC4test[which(LC4test$block == 'last' & LC4test$perturbtype == 'ROT'),]
@@ -997,6 +1131,46 @@ PLt.test <- function(group) {
   cat('Bayesian t-test Aligned (last block) compared to Mirror (last block):\n')
   print(ttestBF(ALdat$compensation, MIRdatlast$compensation, paired = TRUE))
   
+  #I add a comparison of last block of MIR WASHOUT compared to aligned
+  ROTWASHdatlast <- LC4test[which(LC4test$block == 'last' & LC4test$perturbtype == 'ROTWASH'),]
+  MIRWASHdatlast <-LC4test[which(LC4test$block == 'last' & LC4test$perturbtype == 'MIRWASH'),]
+  
+  cat('Aligned (last block) compared to Rotation Washout (last block):\n')
+  print(t.test(ALdat$compensation, ROTWASHdatlast$compensation, paired = TRUE))
+  cat('Effect Size - Cohen d:\n')
+  print(cohensD(ALdat$compensation, ROTWASHdatlast$compensation, method = 'paired'))
+  cat('Bayesian t-test Aligned (last block) compared to Rotation Washout (last block):\n')
+  print(ttestBF(ALdat$compensation, ROTWASHdatlast$compensation, paired = TRUE))
+  
+  cat('Aligned (last block) compared to Mirror Washout (last block):\n')
+  print(t.test(ALdat$compensation, MIRWASHdatlast$compensation, paired = TRUE))
+  cat('Effect Size - Cohen d:\n')
+  print(cohensD(ALdat$compensation, MIRWASHdatlast$compensation, method = 'paired'))
+  cat('Bayesian t-test Aligned (last block) compared to Mirror Washout (last block):\n')
+  print(ttestBF(ALdat$compensation, MIRWASHdatlast$compensation, paired = TRUE))
+  
+  #add comparison of first block of MIR WASHOUT to last block of MIR
+  cat('Rotation (last block) compared to Rotation Washout (first block):\n')
+  print(t.test(ROTdatlast$compensation, ROTWASHdat$compensation, paired = TRUE))
+  cat('Effect Size - Cohen d:\n')
+  print(cohensD(ROTdatlast$compensation, ROTWASHdat$compensation, method = 'paired'))
+  cat('Bayesian t-test Rotation (last block) compared to Rotation Washout (first block):\n')
+  print(ttestBF(ROTdatlast$compensation, ROTWASHdat$compensation, paired = TRUE))
+  
+  cat('Mirror (last block) compared to Mirror Washout (first block):\n')
+  print(t.test(MIRdatlast$compensation, MIRWASHdat$compensation, paired = TRUE))
+  cat('Effect Size - Cohen d:\n')
+  print(cohensD(MIRdatlast$compensation, MIRWASHdat$compensation, method = 'paired'))
+  cat('Bayesian t-test Mirror (last block) compared to Mirror Washout (first block):\n')
+  print(ttestBF(MIRdatlast$compensation, MIRWASHdat$compensation, paired = TRUE))
+  
+  #add comparison of first MIR WASHOUT block to last MIR WASHOUT block
+  cat('Mirror Washout (first block) compared to Mirror Washout (last block):\n')
+  print(t.test(MIRWASHdat$compensation, MIRWASHdatlast$compensation, paired = TRUE))
+  cat('Effect Size - Cohen d:\n')
+  print(cohensD(MIRWASHdat$compensation, MIRWASHdatlast$compensation, method = 'paired'))
+  cat('Bayesian t-test Mirror Washout (first block) compared to Mirror Washout (last block):\n')
+  print(ttestBF(MIRWASHdat$compensation, MIRWASHdatlast$compensation, paired = TRUE))
 }
 
 pathlengthPerturbANOVA <- function(group) {

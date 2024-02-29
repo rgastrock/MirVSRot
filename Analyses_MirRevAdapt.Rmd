@@ -336,7 +336,7 @@ To quantify changes in RT across rotation and mirror reversed training, we condu
 RTt.test(group='noninstructed')
 ```
 
-As expected, participants were slower in initiating movements in the first block of perturbation training, regardless of the perturbation type. However, we do see in the plot that participants were much slower to initiate movements in mirror reversed reaches compared to rotated reaches. RTs taper off and go back to baseline levels for rotated reaches, but is still slower than baseline levels for mirror reversed reaches at the end of training. There are no effects between aligned and washout reaches.
+As expected, participants were slower in initiating movements in the first block of perturbation training, regardless of the perturbation type. However, we do see in the plot that participants were much slower to initiate movements in mirror reversed reaches compared to rotated reaches. RTs taper off and go back to baseline levels for rotated reaches, but is still slower than baseline levels for mirror reversed reaches at the end of training. There are no effects between aligned and washout reaches, except that RTs are faster by the last block of washout trials following Mirror training, compared to the first block of Mirror washout reaches.
 
 We also compared RTs between rotation and mirror reversed reaches across training trials.
 
